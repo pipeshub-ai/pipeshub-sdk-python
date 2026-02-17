@@ -1,0 +1,9 @@
+# UpdateUserGroupRequest
+
+
+## Fields
+
+| Field                                                                        | Type                                                                         | Required                                                                     | Description                                                                  | Example                                                                      |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `group_id`                                                                   | *str*                                                                        | :heavy_check_mark:                                                           | Unique identifier of the user group to update                                | 507f1f77bcf86cd799439011                                                     |
+| `body`                                                                       | [models.UpdateUserGroupRequestBody](../models/updateusergrouprequestbody.md) | :heavy_check_mark:                                                           | Request payload                                                              |                                                                              |

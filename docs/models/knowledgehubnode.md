@@ -1,0 +1,16 @@
+# KnowledgeHubNode
+
+A node in the knowledge hub tree structure
+
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `id`                                                                               | *Optional[str]*                                                                    | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `name`                                                                             | *Optional[str]*                                                                    | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `type`                                                                             | [Optional[models.KnowledgeHubNodeType]](../models/knowledgehubnodetype.md)         | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `parent_id`                                                                        | *Optional[str]*                                                                    | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `has_children`                                                                     | *Optional[bool]*                                                                   | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `child_count`                                                                      | *Optional[int]*                                                                    | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `metadata`                                                                         | [Optional[models.KnowledgeHubNodeMetadata]](../models/knowledgehubnodemetadata.md) | :heavy_minus_sign:                                                                 | N/A                                                                                |

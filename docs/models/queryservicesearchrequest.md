@@ -1,0 +1,12 @@
+# QueryServiceSearchRequest
+
+Request payload
+
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          | Example                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `query`                                                                              | *str*                                                                                | :heavy_check_mark:                                                                   | Search query text                                                                    | How do I configure SSO?                                                              |
+| `limit`                                                                              | *Optional[int]*                                                                      | :heavy_minus_sign:                                                                   | Maximum number of results                                                            |                                                                                      |
+| `filters`                                                                            | [Optional[models.QueryServiceSearchFilters]](../models/queryservicesearchfilters.md) | :heavy_minus_sign:                                                                   | Optional filters (e.g., kb IDs)                                                      |                                                                                      |

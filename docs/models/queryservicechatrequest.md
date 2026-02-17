@@ -1,0 +1,18 @@
+# QueryServiceChatRequest
+
+Request payload
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `query`                                                                          | *str*                                                                            | :heavy_check_mark:                                                               | User's question                                                                  |
+| `limit`                                                                          | *Optional[int]*                                                                  | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `previous_conversations`                                                         | List[[models.PreviousConversation](../models/previousconversation.md)]           | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `filters`                                                                        | [Optional[models.QueryServiceChatFilters]](../models/queryservicechatfilters.md) | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `retrieval_mode`                                                                 | [Optional[models.RetrievalMode]](../models/retrievalmode.md)                     | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `quick_mode`                                                                     | *Optional[bool]*                                                                 | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `model_key`                                                                      | *Optional[str]*                                                                  | :heavy_minus_sign:                                                               | UUID of the model configuration                                                  |
+| `model_name`                                                                     | *Optional[str]*                                                                  | :heavy_minus_sign:                                                               | Model name (e.g., gpt-4o-mini, claude-3-5-sonnet)                                |
+| `chat_mode`                                                                      | [Optional[models.ChatMode]](../models/chatmode.md)                               | :heavy_minus_sign:                                                               | N/A                                                                              |

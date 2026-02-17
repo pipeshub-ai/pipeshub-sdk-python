@@ -1,0 +1,11 @@
+# GetConnectorRegistryRequest
+
+
+## Fields
+
+| Field                                                          | Type                                                           | Required                                                       | Description                                                    | Example                                                        |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+| `scope`                                                        | [Optional[models.ConnectorScope]](../models/connectorscope.md) | :heavy_minus_sign:                                             | Filter by scope type                                           | team                                                           |
+| `page`                                                         | *Optional[int]*                                                | :heavy_minus_sign:                                             | Page number                                                    |                                                                |
+| `limit`                                                        | *Optional[int]*                                                | :heavy_minus_sign:                                             | Items per page                                                 |                                                                |
+| `search`                                                       | *Optional[str]*                                                | :heavy_minus_sign:                                             | Search term for connector names                                |                                                                |

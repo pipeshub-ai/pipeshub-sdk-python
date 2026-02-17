@@ -1,0 +1,17 @@
+# QueueStats
+
+Aggregate statistics for the crawling job queue
+
+
+## Fields
+
+| Field                                                         | Type                                                          | Required                                                      | Description                                                   | Example                                                       |
+| ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `waiting`                                                     | *int*                                                         | :heavy_check_mark:                                            | Number of jobs waiting to be processed                        | 5                                                             |
+| `active`                                                      | *int*                                                         | :heavy_check_mark:                                            | Number of jobs currently being processed                      | 2                                                             |
+| `completed`                                                   | *int*                                                         | :heavy_check_mark:                                            | Number of successfully completed jobs (limited to recent)     | 150                                                           |
+| `failed`                                                      | *int*                                                         | :heavy_check_mark:                                            | Number of failed jobs (limited to recent)                     | 3                                                             |
+| `delayed`                                                     | *int*                                                         | :heavy_check_mark:                                            | Number of jobs scheduled for future execution                 | 10                                                            |
+| `paused`                                                      | *int*                                                         | :heavy_check_mark:                                            | Number of manually paused jobs                                | 1                                                             |
+| `repeatable`                                                  | *int*                                                         | :heavy_check_mark:                                            | Number of repeatable job configurations (recurring schedules) | 8                                                             |
+| `total`                                                       | *int*                                                         | :heavy_check_mark:                                            | Total count of all jobs across all states                     | 171                                                           |

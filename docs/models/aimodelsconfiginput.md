@@ -1,0 +1,15 @@
+# AIModelsConfigInput
+
+Must have at least one model type configured
+
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `ocr`                                                                              | List[[models.AIModelProviderConfigInput](../models/aimodelproviderconfiginput.md)] | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `embedding`                                                                        | List[[models.AIModelProviderConfigInput](../models/aimodelproviderconfiginput.md)] | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `slm`                                                                              | List[[models.AIModelProviderConfigInput](../models/aimodelproviderconfiginput.md)] | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `llm`                                                                              | List[[models.AIModelProviderConfigInput](../models/aimodelproviderconfiginput.md)] | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `reasoning`                                                                        | List[[models.AIModelProviderConfigInput](../models/aimodelproviderconfiginput.md)] | :heavy_minus_sign:                                                                 | N/A                                                                                |
+| `multi_modal`                                                                      | List[[models.AIModelProviderConfigInput](../models/aimodelproviderconfiginput.md)] | :heavy_minus_sign:                                                                 | N/A                                                                                |

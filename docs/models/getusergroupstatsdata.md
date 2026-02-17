@@ -1,0 +1,11 @@
+# GetUserGroupStatsData
+
+
+## Fields
+
+| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `total_groups`                                                             | *Optional[int]*                                                            | :heavy_minus_sign:                                                         | N/A                                                                        | 12                                                                         |
+| `groups_by_type`                                                           | [Optional[models.GroupsByType]](../models/groupsbytype.md)                 | :heavy_minus_sign:                                                         | N/A                                                                        |                                                                            |
+| `total_members`                                                            | *Optional[int]*                                                            | :heavy_minus_sign:                                                         | Sum of all group memberships (may include duplicates)                      | 156                                                                        |
+| `groups`                                                                   | List[[models.GetUserGroupStatsGroup](../models/getusergroupstatsgroup.md)] | :heavy_minus_sign:                                                         | N/A                                                                        |                                                                            |

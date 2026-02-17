@@ -1,0 +1,10 @@
+# RegenerateAnswerRequest
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                        | *str*                                                                                    | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `message_id`                                                                             | *str*                                                                                    | :heavy_check_mark:                                                                       | ID of the message to regenerate response for                                             |
+| `body`                                                                                   | [Optional[models.RegenerateAnswerRequestBody]](../models/regenerateanswerrequestbody.md) | :heavy_minus_sign:                                                                       | Request payload                                                                          |

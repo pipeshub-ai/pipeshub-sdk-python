@@ -1,0 +1,20 @@
+# OAuthConfig
+
+OAuth configuration for a connector type. Created by admins to enable
+OAuth authentication for connectors.
+
+
+
+## Fields
+
+| Field                                                                | Type                                                                 | Required                                                             | Description                                                          | Example                                                              |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `config_id`                                                          | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Unique configuration ID                                              |                                                                      |
+| `connector_type`                                                     | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Connector type this config applies to                                |                                                                      |
+| `oauth_instance_name`                                                | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Name for this OAuth configuration                                    | Production Google OAuth                                              |
+| `org_id`                                                             | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | N/A                                                                  |                                                                      |
+| `created_by`                                                         | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | N/A                                                                  |                                                                      |
+| `config`                                                             | [Optional[models.OAuthConfigConfig]](../models/oauthconfigconfig.md) | :heavy_minus_sign:                                                   | OAuth credentials (admin-only view)                                  |                                                                      |
+| `base_url`                                                           | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Base URL for self-hosted instances                                   |                                                                      |
+| `created_at`                                                         | [date](https://docs.python.org/3/library/datetime.html#date-objects) | :heavy_minus_sign:                                                   | N/A                                                                  |                                                                      |
+| `updated_at`                                                         | [date](https://docs.python.org/3/library/datetime.html#date-objects) | :heavy_minus_sign:                                                   | N/A                                                                  |                                                                      |

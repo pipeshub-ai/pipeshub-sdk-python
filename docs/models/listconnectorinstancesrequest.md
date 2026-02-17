@@ -1,0 +1,11 @@
+# ListConnectorInstancesRequest
+
+
+## Fields
+
+| Field                                                          | Type                                                           | Required                                                       | Description                                                    | Example                                                        |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+| `scope`                                                        | [Optional[models.ConnectorScope]](../models/connectorscope.md) | :heavy_minus_sign:                                             | Filter by scope (team or personal)                             | team                                                           |
+| `page`                                                         | *Optional[int]*                                                | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
+| `limit`                                                        | *Optional[int]*                                                | :heavy_minus_sign:                                             | N/A                                                            |                                                                |
+| `search`                                                       | *Optional[str]*                                                | :heavy_minus_sign:                                             | Search by instance name                                        |                                                                |

@@ -1,0 +1,12 @@
+# GetUserCreatedTeamsResponse
+
+User's created teams retrieved successfully
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  | Example                                                                                      |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `success`                                                                                    | *Optional[bool]*                                                                             | :heavy_minus_sign:                                                                           | N/A                                                                                          | true                                                                                         |
+| `data`                                                                                       | List[[models.GetUserCreatedTeamsData](../models/getusercreatedteamsdata.md)]                 | :heavy_minus_sign:                                                                           | N/A                                                                                          |                                                                                              |
+| `pagination`                                                                                 | [Optional[models.GetUserCreatedTeamsPagination]](../models/getusercreatedteamspagination.md) | :heavy_minus_sign:                                                                           | N/A                                                                                          |                                                                                              |

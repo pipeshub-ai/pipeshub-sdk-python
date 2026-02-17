@@ -1,0 +1,9 @@
+# RemoveUsersFromTeamRequest
+
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          | Example                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `team_id`                                                                            | *str*                                                                                | :heavy_check_mark:                                                                   | Unique identifier of the team                                                        | 507f1f77bcf86cd799439011                                                             |
+| `body`                                                                               | [models.RemoveUsersFromTeamRequestBody](../models/removeusersfromteamrequestbody.md) | :heavy_check_mark:                                                                   | Request payload                                                                      |                                                                                      |

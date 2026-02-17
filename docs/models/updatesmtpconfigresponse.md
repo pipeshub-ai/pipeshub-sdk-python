@@ -1,0 +1,11 @@
+# UpdateSMTPConfigResponse
+
+SMTP configuration reloaded successfully
+
+
+## Fields
+
+| Field                                                                                                   | Type                                                                                                    | Required                                                                                                | Description                                                                                             | Example                                                                                                 |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `message`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Success message                                                                                         | SMTP configuration updated successfully                                                                 |
+| `smtp`                                                                                                  | [Optional[models.SMTPConfig]](../models/smtpconfig.md)                                                  | :heavy_minus_sign:                                                                                      | SMTP email server configuration for sending system emails (invitations, notifications, password resets) |                                                                                                         |

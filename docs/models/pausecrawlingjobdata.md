@@ -1,0 +1,10 @@
+# PauseCrawlingJobData
+
+
+## Fields
+
+| Field                                                                | Type                                                                 | Required                                                             | Description                                                          | Example                                                              |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `connector`                                                          | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | N/A                                                                  | drive                                                                |
+| `org_id`                                                             | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | N/A                                                                  | 507f1f77bcf86cd799439012                                             |
+| `paused_at`                                                          | [date](https://docs.python.org/3/library/datetime.html#date-objects) | :heavy_minus_sign:                                                   | N/A                                                                  | 2024-01-15T10:30:00Z                                                 |

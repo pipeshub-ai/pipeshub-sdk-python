@@ -1,0 +1,13 @@
+# OnceScheduleConfig
+
+Run crawling job once at a specific future datetime
+
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        | Example                                                                            |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `schedule_type`                                                                    | *Literal["once"]*                                                                  | :heavy_check_mark:                                                                 | N/A                                                                                |                                                                                    |
+| `is_enabled`                                                                       | *Optional[bool]*                                                                   | :heavy_minus_sign:                                                                 | Whether the schedule is active. Disabled schedules won't create new jobs.          |                                                                                    |
+| `timezone`                                                                         | *Optional[str]*                                                                    | :heavy_minus_sign:                                                                 | IANA timezone identifier (e.g., "America/New_York", "Europe/London", "Asia/Tokyo") | UTC                                                                                |
+| `scheduled_time`                                                                   | [date](https://docs.python.org/3/library/datetime.html#date-objects)               | :heavy_check_mark:                                                                 | ISO 8601 datetime when the job should run. Must be in the future.                  | 2024-12-25T10:00:00Z                                                               |

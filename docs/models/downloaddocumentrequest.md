@@ -1,0 +1,10 @@
+# DownloadDocumentRequest
+
+
+## Fields
+
+| Field                                                                     | Type                                                                      | Required                                                                  | Description                                                               | Example                                                                   |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `document_id`                                                             | *str*                                                                     | :heavy_check_mark:                                                        | Document ID (24-character MongoDB ObjectId)                               | 507f1f77bcf86cd799439011                                                  |
+| `version`                                                                 | *Optional[int]*                                                           | :heavy_minus_sign:                                                        | Version number to download (0-indexed). Must be less than total versions. | 2                                                                         |
+| `expiration_time_in_seconds`                                              | *Optional[int]*                                                           | :heavy_minus_sign:                                                        | Signed URL validity duration in seconds                                   | 7200                                                                      |

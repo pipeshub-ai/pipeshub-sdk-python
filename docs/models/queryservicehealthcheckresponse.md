@@ -1,0 +1,12 @@
+# QueryServiceHealthCheckResponse
+
+Model is healthy
+
+
+## Fields
+
+| Field                                                                                                      | Type                                                                                                       | Required                                                                                                   | Description                                                                                                |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `status`                                                                                                   | [Optional[models.QueryServiceHealthCheckStatusHealthy]](../models/queryservicehealthcheckstatushealthy.md) | :heavy_minus_sign:                                                                                         | N/A                                                                                                        |
+| `message`                                                                                                  | *Optional[str]*                                                                                            | :heavy_minus_sign:                                                                                         | N/A                                                                                                        |
+| `timestamp`                                                                                                | *Optional[int]*                                                                                            | :heavy_minus_sign:                                                                                         | N/A                                                                                                        |

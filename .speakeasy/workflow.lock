@@ -1,0 +1,39 @@
+speakeasyVersion: 1.718.0
+sources:
+    PipesHub API:
+        sourceNamespace: pipes-hub-api
+        sourceRevisionDigest: sha256:aa4e9dd0fddb74a7faa900bd9dc0115fa8d7e99c984c0b7d585775d1e3a9ab2c
+        sourceBlobDigest: sha256:57b684b3d1b565abb8b0a1157257b862304975e327581709cdb2aab39c3c2595
+        tags:
+            - latest
+            - 1.0.0
+targets:
+    pipeshub:
+        source: PipesHub API
+        sourceNamespace: pipes-hub-api
+        sourceRevisionDigest: sha256:aa4e9dd0fddb74a7faa900bd9dc0115fa8d7e99c984c0b7d585775d1e3a9ab2c
+        sourceBlobDigest: sha256:57b684b3d1b565abb8b0a1157257b862304975e327581709cdb2aab39c3c2595
+        codeSamplesNamespace: pipes-hub-api-python-code-samples
+        codeSamplesRevisionDigest: sha256:ceb566d93fb301462bac4e5a4f3aa02658577964c02ec8de7fb8fc7d61476249
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        PipesHub API:
+            inputs:
+                - location: /Users/anshika/work/PipesHub/pipeshub-sdk-python/pipeshub-openapi.yaml
+            overlays:
+                - location: .speakeasy/speakeasy-modifications-overlay.yaml
+            output: .speakeasy/out.openapi.yaml
+            registry:
+                location: registry.speakeasyapi.dev/pipeshub/test/pipes-hub-api
+    targets:
+        pipeshub:
+            target: python
+            source: PipesHub API
+            codeSamples:
+                registry:
+                    location: registry.speakeasyapi.dev/pipeshub/test/pipes-hub-api-python-code-samples
+                labelOverride:
+                    fixedValue: Python (SDK)
+                blocking: false

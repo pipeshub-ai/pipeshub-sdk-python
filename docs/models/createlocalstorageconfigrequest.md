@@ -1,0 +1,12 @@
+# CreateLocalStorageConfigRequest
+
+Request body for Configure Local Storage
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    | Example                                                                                        |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `storage_type`                                                                                 | [models.CreateLocalStorageConfigStorageType](../models/createlocalstorageconfigstoragetype.md) | :heavy_check_mark:                                                                             | Storage type identifier                                                                        | local                                                                                          |
+| `mount_name`                                                                                   | *Optional[str]*                                                                                | :heavy_minus_sign:                                                                             | Mount point name for local storage directory                                                   | PipesHub                                                                                       |
+| `base_url`                                                                                     | *Optional[str]*                                                                                | :heavy_minus_sign:                                                                             | Base URL for accessing locally stored files                                                    | http://localhost:3000/storage                                                                  |

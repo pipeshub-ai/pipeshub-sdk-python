@@ -1,0 +1,10 @@
+# UploadRecordsToFolderRequest
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `kb_id`                                                                                  | *str*                                                                                    | :heavy_check_mark:                                                                       | N/A                                                                                      |
+| `folder_id`                                                                              | *str*                                                                                    | :heavy_check_mark:                                                                       | Target folder ID                                                                         |
+| `body`                                                                                   | [models.UploadRecordsToFolderRequestBody](../models/uploadrecordstofolderrequestbody.md) | :heavy_check_mark:                                                                       | Request payload                                                                          |
