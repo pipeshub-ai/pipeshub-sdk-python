@@ -1,15 +1,17 @@
-# PublicUrls
+# PublicURLs
 
 ## Overview
 
+Configure public URLs for frontend application and connector callbacks.
+
 ### Available Operations
 
-* [set](#set) - Set frontend public URL
-* [get_frontend](#get_frontend) - Get frontend public URL
-* [set_connector](#set_connector) - Set connector public URL
-* [get_connector](#get_connector) - Get connector public URL
+* [set_frontend_public_url](#set_frontend_public_url) - Set frontend public URL
+* [get_frontend_public_url](#get_frontend_public_url) - Get frontend public URL
+* [set_connector_public_url](#set_connector_public_url) - Set connector public URL
+* [get_connector_public_url](#get_connector_public_url) - Get connector public URL
 
-## set
+## set_frontend_public_url
 
 Configure the public URL where the frontend application is accessible. Used for OAuth redirects and email links.
 
@@ -18,15 +20,16 @@ Configure the public URL where the frontend application is accessible. Used for 
 <!-- UsageSnippet language="python" operationID="setFrontendPublicUrl" method="post" path="/configurationManager/frontendPublicUrl" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.public_urls.set(url="https://app.example.com")
+    p_client.public_ur_ls.set_frontend_public_url(security=models.SetFrontendPublicURLSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), url="https://app.example.com")
 
     # Use the SDK ...
 
@@ -34,10 +37,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `url`                                                               | *str*                                                               | :heavy_check_mark:                                                  | Public URL                                                          | https://app.example.com                                             |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                           | Type                                                                                | Required                                                                            | Description                                                                         | Example                                                                             |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `security`                                                                          | [models.SetFrontendPublicURLSecurity](../../models/setfrontendpublicurlsecurity.md) | :heavy_check_mark:                                                                  | N/A                                                                                 |                                                                                     |
+| `url`                                                                               | *str*                                                                               | :heavy_check_mark:                                                                  | Public URL                                                                          | https://app.example.com                                                             |
+| `retries`                                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                    | :heavy_minus_sign:                                                                  | Configuration to override the default retry behavior of the client.                 |                                                                                     |
 
 ### Errors
 
@@ -45,7 +49,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_frontend
+## get_frontend_public_url
 
 Get frontend public URL.
 
@@ -54,15 +58,16 @@ Get frontend public URL.
 <!-- UsageSnippet language="python" operationID="getFrontendPublicUrl" method="get" path="/configurationManager/frontendPublicUrl" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.public_urls.get_frontend()
+    res = p_client.public_ur_ls.get_frontend_public_url(security=models.GetFrontendPublicURLSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -71,9 +76,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                    | Type                                                                         | Required                                                                     | Description                                                                  |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `security`                                                                   | [models.GetFrontendPublicURLSecurity](../../getfrontendpublicurlsecurity.md) | :heavy_check_mark:                                                           | The security requirements to use for the request.                            |
+| `retries`                                                                    | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)             | :heavy_minus_sign:                                                           | Configuration to override the default retry behavior of the client.          |
 
 ### Response
 
@@ -85,7 +91,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## set_connector
+## set_connector_public_url
 
 Configure the public URL for connector OAuth callbacks.
 
@@ -94,15 +100,16 @@ Configure the public URL for connector OAuth callbacks.
 <!-- UsageSnippet language="python" operationID="setConnectorPublicUrl" method="post" path="/configurationManager/connectorPublicUrl" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.public_urls.set_connector(url="https://app.example.com")
+    p_client.public_ur_ls.set_connector_public_url(security=models.SetConnectorPublicURLSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), url="https://app.example.com")
 
     # Use the SDK ...
 
@@ -110,10 +117,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `url`                                                               | *str*                                                               | :heavy_check_mark:                                                  | Public URL                                                          | https://app.example.com                                             |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           | Example                                                                               |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `security`                                                                            | [models.SetConnectorPublicURLSecurity](../../models/setconnectorpublicurlsecurity.md) | :heavy_check_mark:                                                                    | N/A                                                                                   |                                                                                       |
+| `url`                                                                                 | *str*                                                                                 | :heavy_check_mark:                                                                    | Public URL                                                                            | https://app.example.com                                                               |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |                                                                                       |
 
 ### Errors
 
@@ -121,7 +129,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_connector
+## get_connector_public_url
 
 Get connector public URL.
 
@@ -130,15 +138,16 @@ Get connector public URL.
 <!-- UsageSnippet language="python" operationID="getConnectorPublicUrl" method="get" path="/configurationManager/connectorPublicUrl" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.public_urls.get_connector()
+    res = p_client.public_ur_ls.get_connector_public_url(security=models.GetConnectorPublicURLSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -147,9 +156,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                      | Type                                                                           | Required                                                                       | Description                                                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `security`                                                                     | [models.GetConnectorPublicURLSecurity](../../getconnectorpublicurlsecurity.md) | :heavy_check_mark:                                                             | The security requirements to use for the request.                              |
+| `retries`                                                                      | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)               | :heavy_minus_sign:                                                             | Configuration to override the default retry behavior of the client.            |
 
 ### Response
 

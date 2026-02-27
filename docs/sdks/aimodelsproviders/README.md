@@ -1,58 +1,19 @@
-# AiModelsProviders
+# AIModelsProviders
 
 ## Overview
 
+Manage individual AI model providers - add, update, delete, and set defaults.
+
 ### Available Operations
 
-* [list](#list) - Get all AI model providers
-* [get_by_type](#get_by_type) - Get models by type
-* [get_available_by_type](#get_available_by_type) - Get available models for selection
-* [add](#add) - Add new AI model provider
-* [update](#update) - Update AI model provider
-* [delete](#delete) - Delete AI model provider
-* [set_default](#set_default) - Set default AI model
+* [get_models_by_type](#get_models_by_type) - Get models by type
+* [get_available_models_by_type](#get_available_models_by_type) - Get available models for selection
+* [add_ai_model_provider](#add_ai_model_provider) - Add new AI model provider
+* [update_ai_model_provider](#update_ai_model_provider) - Update AI model provider
+* [delete_ai_model_provider](#delete_ai_model_provider) - Delete AI model provider
+* [set_default_ai_model](#set_default_ai_model) - Set default AI model
 
-## list
-
-List all configured AI model providers with their configurations.
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getAIModelsProviders" method="get" path="/configurationManager/ai-models" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.ai_models_providers.list()
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.AIModelsConfig](../../models/aimodelsconfig.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_by_type
+## get_models_by_type
 
 Get all configured models of a specific type.
 
@@ -61,15 +22,16 @@ Get all configured models of a specific type.
 <!-- UsageSnippet language="python" operationID="getModelsByType" method="get" path="/configurationManager/ai-models/{modelType}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.ai_models_providers.get_by_type(model_type="embedding")
+    res = p_client.ai_models_providers.get_models_by_type(security=models.GetModelsByTypeSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), model_type="embedding")
 
     # Handle response
     print(res)
@@ -78,10 +40,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `model_type`                                                        | [models.ModelType](../../models/modeltype.md)                       | :heavy_check_mark:                                                  | Type of AI model                                                    |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `security`                                                                | [models.GetModelsByTypeSecurity](../../models/getmodelsbytypesecurity.md) | :heavy_check_mark:                                                        | N/A                                                                       |
+| `model_type`                                                              | [models.ModelType](../../models/modeltype.md)                             | :heavy_check_mark:                                                        | Type of AI model                                                          |
+| `retries`                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)          | :heavy_minus_sign:                                                        | Configuration to override the default retry behavior of the client.       |
 
 ### Response
 
@@ -93,7 +56,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_available_by_type
+## get_available_models_by_type
 
 Get available models in a flattened format for UI selection dropdowns.
 
@@ -102,15 +65,16 @@ Get available models in a flattened format for UI selection dropdowns.
 <!-- UsageSnippet language="python" operationID="getAvailableModelsByType" method="get" path="/configurationManager/ai-models/available/{modelType}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.ai_models_providers.get_available_by_type(model_type="llm")
+    res = p_client.ai_models_providers.get_available_models_by_type(security=models.GetAvailableModelsByTypeSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), model_type="llm")
 
     # Handle response
     print(res)
@@ -119,10 +83,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `model_type`                                                        | [models.ModelType](../../models/modeltype.md)                       | :heavy_check_mark:                                                  | Type of AI model                                                    |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                   | Type                                                                                        | Required                                                                                    | Description                                                                                 |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `security`                                                                                  | [models.GetAvailableModelsByTypeSecurity](../../models/getavailablemodelsbytypesecurity.md) | :heavy_check_mark:                                                                          | N/A                                                                                         |
+| `model_type`                                                                                | [models.ModelType](../../models/modeltype.md)                                               | :heavy_check_mark:                                                                          | Type of AI model                                                                            |
+| `retries`                                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                            | :heavy_minus_sign:                                                                          | Configuration to override the default retry behavior of the client.                         |
 
 ### Response
 
@@ -134,7 +99,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add
+## add_ai_model_provider
 
 Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
@@ -143,15 +108,16 @@ Add a new AI model provider configuration. Performs a health check before saving
 <!-- UsageSnippet language="python" operationID="addAIModelProvider" method="post" path="/configurationManager/ai-models/providers" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.ai_models_providers.add(model_type="embedding", provider="openai", configuration={
+    res = p_client.ai_models_providers.add_ai_model_provider(security=models.AddAIModelProviderSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), model_type="embedding", provider="openai", configuration={
         "model": "gpt-4",
     }, is_multimodal=False, is_reasoning=False, is_default=False)
 
@@ -164,6 +130,7 @@ with Pipeshub(
 
 | Parameter                                                                                               | Type                                                                                                    | Required                                                                                                | Description                                                                                             | Example                                                                                                 |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `security`                                                                                              | [models.AddAIModelProviderSecurity](../../models/addaimodelprovidersecurity.md)                         | :heavy_check_mark:                                                                                      | N/A                                                                                                     |                                                                                                         |
 | `model_type`                                                                                            | [models.ModelType](../../models/modeltype.md)                                                           | :heavy_check_mark:                                                                                      | Type of AI model                                                                                        |                                                                                                         |
 | `provider`                                                                                              | *str*                                                                                                   | :heavy_check_mark:                                                                                      | Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)                                      | openai                                                                                                  |
 | `configuration`                                                                                         | [models.AddAIModelProviderRequestConfiguration](../../models/addaimodelproviderrequestconfiguration.md) | :heavy_check_mark:                                                                                      | Provider-specific configuration                                                                         |                                                                                                         |
@@ -183,7 +150,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_ai_model_provider
 
 Update an existing AI model provider configuration.
 
@@ -192,15 +159,16 @@ Update an existing AI model provider configuration.
 <!-- UsageSnippet language="python" operationID="updateAIModelProvider" method="put" path="/configurationManager/ai-models/providers/{modelType}/{modelKey}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.ai_models_providers.update(model_type="reasoning", model_key="<value>", provider="<value>", configuration={})
+    p_client.ai_models_providers.update_ai_model_provider(security=models.UpdateAIModelProviderSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), model_type="reasoning", model_key="<value>", provider="<value>", configuration={})
 
     # Use the SDK ...
 
@@ -210,6 +178,7 @@ with Pipeshub(
 
 | Parameter                                                                                                     | Type                                                                                                          | Required                                                                                                      | Description                                                                                                   |
 | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `security`                                                                                                    | [models.UpdateAIModelProviderSecurity](../../models/updateaimodelprovidersecurity.md)                         | :heavy_check_mark:                                                                                            | N/A                                                                                                           |
 | `model_type`                                                                                                  | [models.ModelType](../../models/modeltype.md)                                                                 | :heavy_check_mark:                                                                                            | Type of AI model                                                                                              |
 | `model_key`                                                                                                   | *str*                                                                                                         | :heavy_check_mark:                                                                                            | Unique model key (UUID)                                                                                       |
 | `provider`                                                                                                    | *str*                                                                                                         | :heavy_check_mark:                                                                                            | Provider name                                                                                                 |
@@ -226,7 +195,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_ai_model_provider
 
 Remove an AI model provider configuration. Cannot delete the default model if it's the only one.
 
@@ -243,7 +212,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.ai_models_providers.delete(model_type="reasoning", model_key="<value>")
+    p_client.ai_models_providers.delete_ai_model_provider(model_type="reasoning", model_key="<value>")
 
     # Use the SDK ...
 
@@ -263,7 +232,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## set_default
+## set_default_ai_model
 
 Set a model as the default for its type.
 
@@ -272,15 +241,16 @@ Set a model as the default for its type.
 <!-- UsageSnippet language="python" operationID="setDefaultAIModel" method="put" path="/configurationManager/ai-models/default/{modelType}/{modelKey}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.ai_models_providers.set_default(model_type="ocr", model_key="<value>")
+    p_client.ai_models_providers.set_default_ai_model(security=models.SetDefaultAIModelSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), model_type="ocr", model_key="<value>")
 
     # Use the SDK ...
 
@@ -288,11 +258,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `model_type`                                                        | [models.ModelType](../../models/modeltype.md)                       | :heavy_check_mark:                                                  | Type of AI model                                                    |
-| `model_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                     | Type                                                                          | Required                                                                      | Description                                                                   |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `security`                                                                    | [models.SetDefaultAIModelSecurity](../../models/setdefaultaimodelsecurity.md) | :heavy_check_mark:                                                            | N/A                                                                           |
+| `model_type`                                                                  | [models.ModelType](../../models/modeltype.md)                                 | :heavy_check_mark:                                                            | Type of AI model                                                              |
+| `model_key`                                                                   | *str*                                                                         | :heavy_check_mark:                                                            | N/A                                                                           |
+| `retries`                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)              | :heavy_minus_sign:                                                            | Configuration to override the default retry behavior of the client.           |
 
 ### Errors
 

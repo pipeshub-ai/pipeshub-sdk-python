@@ -2,13 +2,15 @@
 
 ## Overview
 
+Dynamic filter options for selecting which data to sync
+
 ### Available Operations
 
-* [get](#get) - Get filter options
-* [save](#save) - Save filter selections
-* [get_options](#get_options) - Get dynamic filter options
+* [get_connector_filters](#get_connector_filters) - Get filter options
+* [save_connector_filters](#save_connector_filters) - Save filter selections
+* [get_filter_field_options](#get_filter_field_options) - Get dynamic filter options
 
-## get
+## get_connector_filters
 
 Get available filter options for a connector.<br><br>
 <b>Overview:</b><br>
@@ -25,15 +27,16 @@ options are loaded separately via the filter options endpoint.
 <!-- UsageSnippet language="python" operationID="getConnectorFilters" method="get" path="/connectors/{connectorId}/filters" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.connector_filters.get(connector_id="<id>")
+    res = p_client.connector_filters.get_connector_filters(security=models.GetConnectorFiltersSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), connector_id="<id>")
 
     # Handle response
     print(res)
@@ -42,10 +45,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.GetConnectorFiltersSecurity](../../models/getconnectorfilterssecurity.md) | :heavy_check_mark:                                                                | N/A                                                                               |
+| `connector_id`                                                                    | *str*                                                                             | :heavy_check_mark:                                                                | N/A                                                                               |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
 
 ### Response
 
@@ -57,7 +61,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## save
+## save_connector_filters
 
 Save the user's filter selections for a connector.<br><br>
 <b>Overview:</b><br>
@@ -78,7 +82,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.connector_filters.save(connector_id="<id>", filters={
+    res = p_client.connector_filters.save_connector_filters(connector_id="<id>", filters={
         "folders": [
             {
                 "id": "folder_123",
@@ -119,7 +123,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_options
+## get_filter_field_options
 
 Get options for a dynamic filter field with pagination.<br><br>
 <b>Overview:</b><br>
@@ -138,15 +142,16 @@ from the connected service. This supports pagination and search.<br><br>
 <!-- UsageSnippet language="python" operationID="getFilterFieldOptions" method="get" path="/connectors/{connectorId}/filters/{filterKey}/options" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.connector_filters.get_options(connector_id="<id>", filter_key="folders", page=1, limit=20)
+    res = p_client.connector_filters.get_filter_field_options(security=models.GetFilterFieldOptionsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), connector_id="<id>", filter_key="folders", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -155,15 +160,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `filter_key`                                                        | *str*                                                               | :heavy_check_mark:                                                  | Filter field key                                                    | folders                                                             |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `search`                                                            | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Search term for filtering options                                   |                                                                     |
-| `cursor`                                                            | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Cursor for cursor-based pagination                                  |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           | Example                                                                               |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `security`                                                                            | [models.GetFilterFieldOptionsSecurity](../../models/getfilterfieldoptionssecurity.md) | :heavy_check_mark:                                                                    | N/A                                                                                   |                                                                                       |
+| `connector_id`                                                                        | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |                                                                                       |
+| `filter_key`                                                                          | *str*                                                                                 | :heavy_check_mark:                                                                    | Filter field key                                                                      | folders                                                                               |
+| `page`                                                                                | *Optional[int]*                                                                       | :heavy_minus_sign:                                                                    | N/A                                                                                   |                                                                                       |
+| `limit`                                                                               | *Optional[int]*                                                                       | :heavy_minus_sign:                                                                    | N/A                                                                                   |                                                                                       |
+| `search`                                                                              | *Optional[str]*                                                                       | :heavy_minus_sign:                                                                    | Search term for filtering options                                                     |                                                                                       |
+| `cursor`                                                                              | *Optional[str]*                                                                       | :heavy_minus_sign:                                                                    | Cursor for cursor-based pagination                                                    |                                                                                       |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |                                                                                       |
 
 ### Response
 

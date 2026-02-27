@@ -2,11 +2,72 @@
 
 ## Overview
 
+Admin configuration of authentication methods including MFA steps and allowed providers
+
 ### Available Operations
 
-* [update_method](#update_method) - Update organization authentication methods
+* [get_auth_methods](#get_auth_methods) - Get organization authentication methods
+* [update_auth_method](#update_auth_method) - Update organization authentication methods
 
-## update_method
+## get_auth_methods
+
+Retrieve the configured authentication methods for the organization.
+<br><br>
+<b>Response Structure:</b><br>
+Returns an array of authentication steps, each containing:<br>
+- <code>order</code>: Step number (1-3)<br>
+- <code>allowedMethods</code>: Array of methods allowed for that step
+<br><br>
+<b>Example Response:</b><br>
+<pre>
+{
+  "authMethods": [
+    { "order": 1, "allowedMethods": [{ "type": "password" }, { "type": "google" }] },
+    { "order": 2, "allowedMethods": [{ "type": "otp" }] }
+  ]
+}
+</pre>
+<br>
+<b>Admin Access Required:</b> Only organization admins can view auth configuration.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getAuthMethods" method="get" path="/orgAuthConfig/authMethods" -->
+```python
+import os
+from pipeshub import Pipeshub
+
+
+with Pipeshub(
+    server_url="https://api.example.com",
+    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+) as p_client:
+
+    res = p_client.organization_auth_config.get_auth_methods()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.AuthConfig](../../models/authconfig.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## update_auth_method
 
 Update the authentication methods configuration for an organization.
 This allows admins to configure single or multi-factor authentication.
@@ -62,7 +123,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organization_auth_config.update_method(auth_methods=[
+    res = p_client.organization_auth_config.update_auth_method(auth_methods=[
         {
             "order": 195644,
             "allowed_methods": [

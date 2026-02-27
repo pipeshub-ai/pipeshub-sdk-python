@@ -4,11 +4,56 @@ from __future__ import annotations
 from .connectorpagination import ConnectorPagination, ConnectorPaginationTypedDict
 from .connectorscope import ConnectorScope
 from .connectortype import ConnectorType, ConnectorTypeTypedDict
+from .schemeoauth2 import SchemeOauth2, SchemeOauth2TypedDict
 from pipeshub.types import BaseModel, UNSET_SENTINEL
-from pipeshub.utils import FieldMetadata, QueryParamMetadata
+from pipeshub.utils import FieldMetadata, QueryParamMetadata, SecurityMetadata
 from pydantic import model_serializer
 from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+class GetConnectorRegistrySecurityTypedDict(TypedDict):
+    bearer_auth: NotRequired[str]
+    oauth2: NotRequired[SchemeOauth2TypedDict]
+
+
+class GetConnectorRegistrySecurity(BaseModel):
+    bearer_auth: Annotated[
+        Optional[str],
+        FieldMetadata(
+            security=SecurityMetadata(
+                scheme=True,
+                scheme_type="http",
+                sub_type="bearer",
+                field_name="Authorization",
+            )
+        ),
+    ] = None
+
+    oauth2: Annotated[
+        Optional[SchemeOauth2],
+        FieldMetadata(
+            security=SecurityMetadata(
+                scheme=True, scheme_type="oauth2", sub_type="client_credentials"
+            )
+        ),
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["bearerAuth", "oauth2"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class GetConnectorRegistryRequestTypedDict(TypedDict):

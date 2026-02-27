@@ -6,23 +6,22 @@ AI-powered conversational chat management with citations and follow-up questions
 
 ### Available Operations
 
-* [create](#create) - Create a new AI conversation
-* [create_with_streaming](#create_with_streaming) - Create conversation with streaming response
-* [list](#list) - List all conversations
-* [list_archived](#list_archived) - List archived conversations
-* [get_by_id](#get_by_id) - Get conversation by ID
-* [delete](#delete) - Delete conversation
+* [create_conversation](#create_conversation) - Create a new AI conversation
+* [stream_chat](#stream_chat) - Create conversation with streaming response
+* [get_all_conversations](#get_all_conversations) - List all conversations
+* [get_archived_conversations](#get_archived_conversations) - List archived conversations
+* [get_conversation_by_id](#get_conversation_by_id) - Get conversation by ID
+* [delete_conversation_by_id](#delete_conversation_by_id) - Delete conversation
 * [add_message](#add_message) - Add message to conversation
 * [add_message_stream](#add_message_stream) - Add message with streaming response
-* [share](#share) - Share conversation with users
-* [unshare](#unshare) - Revoke conversation access
-* [update_title](#update_title) - Update conversation title
-* [archive](#archive) - Archive conversation
-* [unarchive](#unarchive) - Unarchive conversation
-* [regenerate](#regenerate) - Regenerate AI response
-* [submit_feedback](#submit_feedback) - Submit feedback on AI response
+* [share_conversation](#share_conversation) - Share conversation with users
+* [update_conversation_title](#update_conversation_title) - Update conversation title
+* [archive_conversation](#archive_conversation) - Archive conversation
+* [unarchive_conversation](#unarchive_conversation) - Unarchive conversation
+* [regenerate_answer](#regenerate_answer) - Regenerate AI response
+* [update_message_feedback](#update_message_feedback) - Submit feedback on AI response
 
-## create
+## create_conversation
 
 Start a new conversation with PipesHub's AI assistant.<br><br>
 <b>Overview:</b><br>
@@ -53,15 +52,16 @@ Each model may have different capabilities, speed, and accuracy trade-offs.
 <!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/conversations/create" example="filtered" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.create(query="Summarize the Q4 sales report", record_ids=[
+    res = p_client.conversations.create_conversation(security=models.CreateConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), query="Summarize the Q4 sales report", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], filters={
@@ -79,15 +79,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/conversations/create" example="simple" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.create(query="What is our company's vacation policy?", record_ids=[
+    res = p_client.conversations.create_conversation(security=models.CreateConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), query="What is our company's vacation policy?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
@@ -101,6 +102,7 @@ with Pipeshub(
 
 | Parameter                                                                                                                      | Type                                                                                                                           | Required                                                                                                                       | Description                                                                                                                    | Example                                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `security`                                                                                                                     | [models.CreateConversationSecurity](../../models/createconversationsecurity.md)                                                | :heavy_check_mark:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
 | `query`                                                                                                                        | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>         | What are the key findings from our Q4 financial report?                                                                        |
 | `record_ids`                                                                                                                   | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/> | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                         |
 | `departments`                                                                                                                  | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Filter by department IDs to scope the search                                                                                   |                                                                                                                                |
@@ -120,7 +122,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_with_streaming
+## stream_chat
 
 Start a new conversation with real-time streaming response using Server-Sent Events (SSE).<br><br>
 <b>Overview:</b><br>
@@ -152,15 +154,16 @@ The conversation is marked as FAILED with the error reason stored.
 <!-- UsageSnippet language="python" operationID="streamChat" method="post" path="/conversations/stream" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.create_with_streaming(query="What are the key findings from our Q4 financial report?", record_ids=[
+    res = p_client.conversations.stream_chat(security=models.StreamChatSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
@@ -176,6 +179,7 @@ with Pipeshub(
 
 | Parameter                                                                                                                      | Type                                                                                                                           | Required                                                                                                                       | Description                                                                                                                    | Example                                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `security`                                                                                                                     | [models.StreamChatSecurity](../../models/streamchatsecurity.md)                                                                | :heavy_check_mark:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
 | `query`                                                                                                                        | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>         | What are the key findings from our Q4 financial report?                                                                        |
 | `record_ids`                                                                                                                   | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/> | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                         |
 | `departments`                                                                                                                  | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Filter by department IDs to scope the search                                                                                   |                                                                                                                                |
@@ -195,7 +199,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## get_all_conversations
 
 Retrieve all conversations for the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -215,15 +219,16 @@ Conversations are sorted by last activity timestamp (most recent first).
 <!-- UsageSnippet language="python" operationID="getAllConversations" method="get" path="/conversations" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.list()
+    res = p_client.conversations.get_all_conversations(security=models.GetAllConversationsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -232,9 +237,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `security`                                                                 | [models.GetAllConversationsSecurity](../../getallconversationssecurity.md) | :heavy_check_mark:                                                         | The security requirements to use for the request.                          |
+| `retries`                                                                  | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)           | :heavy_minus_sign:                                                         | Configuration to override the default retry behavior of the client.        |
 
 ### Response
 
@@ -246,7 +252,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_archived
+## get_archived_conversations
 
 Retrieve all archived conversations for the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -262,15 +268,16 @@ to the active list.
 <!-- UsageSnippet language="python" operationID="getArchivedConversations" method="get" path="/conversations/show/archives" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.list_archived()
+    res = p_client.conversations.get_archived_conversations(security=models.GetArchivedConversationsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -279,9 +286,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                            | Type                                                                                 | Required                                                                             | Description                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `security`                                                                           | [models.GetArchivedConversationsSecurity](../../getarchivedconversationssecurity.md) | :heavy_check_mark:                                                                   | The security requirements to use for the request.                                    |
+| `retries`                                                                            | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                     | :heavy_minus_sign:                                                                   | Configuration to override the default retry behavior of the client.                  |
 
 ### Response
 
@@ -293,7 +301,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_conversation_by_id
 
 Retrieve a specific conversation with its full message history.<br><br>
 <b>Overview:</b><br>
@@ -316,15 +324,16 @@ Users can access conversations they own or that have been shared with them.
 <!-- UsageSnippet language="python" operationID="getConversationById" method="get" path="/conversations/{conversationId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.get_by_id(conversation_id="507f1f77bcf86cd799439011", page=1, limit=10, sort_by="createdAt", sort_order="desc")
+    res = p_client.conversations.get_conversation_by_id(security=models.GetConversationByIDSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="507f1f77bcf86cd799439011", page=1, limit=10, sort_by="createdAt", sort_order="desc")
 
     # Handle response
     print(res)
@@ -335,6 +344,7 @@ with Pipeshub(
 
 | Parameter                                                                                     | Type                                                                                          | Required                                                                                      | Description                                                                                   | Example                                                                                       |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `security`                                                                                    | [models.GetConversationByIDSecurity](../../models/getconversationbyidsecurity.md)             | :heavy_check_mark:                                                                            | N/A                                                                                           |                                                                                               |
 | `conversation_id`                                                                             | *str*                                                                                         | :heavy_check_mark:                                                                            | Unique conversation identifier                                                                | 507f1f77bcf86cd799439011                                                                      |
 | `page`                                                                                        | *Optional[int]*                                                                               | :heavy_minus_sign:                                                                            | Page number for message pagination                                                            |                                                                                               |
 | `limit`                                                                                       | *Optional[int]*                                                                               | :heavy_minus_sign:                                                                            | Number of messages per page                                                                   |                                                                                               |
@@ -352,7 +362,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_conversation_by_id
 
 Delete a conversation by its ID.<br><br>
 <b>Overview:</b><br>
@@ -368,15 +378,16 @@ Shared users cannot delete conversations.
 <!-- UsageSnippet language="python" operationID="deleteConversationById" method="delete" path="/conversations/{conversationId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.delete(conversation_id="<value>")
+    res = p_client.conversations.delete_conversation_by_id(security=models.DeleteConversationByIDSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -385,10 +396,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Unique conversation identifier                                      |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `security`                                                                              | [models.DeleteConversationByIDSecurity](../../models/deleteconversationbyidsecurity.md) | :heavy_check_mark:                                                                      | N/A                                                                                     |
+| `conversation_id`                                                                       | *str*                                                                                   | :heavy_check_mark:                                                                      | Unique conversation identifier                                                          |
+| `retries`                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                        | :heavy_minus_sign:                                                                      | Configuration to override the default retry behavior of the client.                     |
 
 ### Response
 
@@ -474,15 +486,16 @@ See <code>/conversations/stream</code> for event type documentation.
 <!-- UsageSnippet language="python" operationID="addMessageStream" method="post" path="/conversations/{conversationId}/messages/stream" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.add_message_stream(conversation_id="<value>", query="Can you elaborate on the revenue trends?")
+    res = p_client.conversations.add_message_stream(security=models.AddMessageStreamSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>", query="Can you elaborate on the revenue trends?")
 
     with res as event_stream:
         for event in event_stream:
@@ -493,15 +506,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `query`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The follow-up question or message content                           | Can you elaborate on the revenue trends?                            |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override the model for this specific message                        |                                                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Display name of the model                                           |                                                                     |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Chat mode for this message                                          |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                   | Type                                                                        | Required                                                                    | Description                                                                 | Example                                                                     |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `security`                                                                  | [models.AddMessageStreamSecurity](../../models/addmessagestreamsecurity.md) | :heavy_check_mark:                                                          | N/A                                                                         |                                                                             |
+| `conversation_id`                                                           | *str*                                                                       | :heavy_check_mark:                                                          | N/A                                                                         |                                                                             |
+| `query`                                                                     | *str*                                                                       | :heavy_check_mark:                                                          | The follow-up question or message content                                   | Can you elaborate on the revenue trends?                                    |
+| `filters`                                                                   | [Optional[models.Filters]](../../models/filters.md)                         | :heavy_minus_sign:                                                          | N/A                                                                         |                                                                             |
+| `model_key`                                                                 | *Optional[str]*                                                             | :heavy_minus_sign:                                                          | Override the model for this specific message                                |                                                                             |
+| `model_name`                                                                | *Optional[str]*                                                             | :heavy_minus_sign:                                                          | Display name of the model                                                   |                                                                             |
+| `chat_mode`                                                                 | *Optional[str]*                                                             | :heavy_minus_sign:                                                          | Chat mode for this message                                                  |                                                                             |
+| `retries`                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)            | :heavy_minus_sign:                                                          | Configuration to override the default retry behavior of the client.         |                                                                             |
 
 ### Response
 
@@ -513,7 +527,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## share
+## share_conversation
 
 Share a conversation with other users in your organization.<br><br>
 <b>Overview:</b><br>
@@ -534,15 +548,16 @@ to the same organization.
 <!-- UsageSnippet language="python" operationID="shareConversation" method="post" path="/conversations/{conversationId}/share" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.share(conversation_id="<value>", user_ids=[
+    res = p_client.conversations.share_conversation(security=models.ShareConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>", user_ids=[
         "507f1f77bcf86cd799439011",
     ], access_level="read")
 
@@ -555,6 +570,7 @@ with Pipeshub(
 
 | Parameter                                                                                                                                | Type                                                                                                                                     | Required                                                                                                                                 | Description                                                                                                                              | Example                                                                                                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `security`                                                                                                                               | [models.ShareConversationSecurity](../../models/shareconversationsecurity.md)                                                            | :heavy_check_mark:                                                                                                                       | N/A                                                                                                                                      |                                                                                                                                          |
 | `conversation_id`                                                                                                                        | *str*                                                                                                                                    | :heavy_check_mark:                                                                                                                       | N/A                                                                                                                                      |                                                                                                                                          |
 | `user_ids`                                                                                                                               | List[*str*]                                                                                                                              | :heavy_check_mark:                                                                                                                       | IDs of users to share with                                                                                                               | [<br/>"507f1f77bcf86cd799439011"<br/>]                                                                                                   |
 | `access_level`                                                                                                                           | [Optional[models.ShareRequestAccessLevel]](../../models/sharerequestaccesslevel.md)                                                      | :heavy_minus_sign:                                                                                                                       | Permission level for shared users:<br/><ul><br/><li><code>read</code> - Can view only</li><br/><li><code>write</code> - Can add messages</li><br/></ul><br/> |                                                                                                                                          |
@@ -570,58 +586,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unshare
-
-Remove sharing access from users.<br><br>
-<b>Overview:</b><br>
-Removes specified users from the conversation's sharedWith list.
-Those users will no longer be able to access the conversation.<br><br>
-<b>Permissions:</b><br>
-Only the conversation owner can revoke access.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="unshareConversation" method="post" path="/conversations/{conversationId}/unshare" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.conversations.unshare(conversation_id="<value>", user_ids=[
-        "<value 1>",
-        "<value 2>",
-    ])
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | User IDs to remove access from                                      |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.Conversation](../../models/conversation.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## update_title
+## update_conversation_title
 
 Update the title of a conversation.<br><br>
 <b>Overview:</b><br>
@@ -639,15 +604,16 @@ Use this endpoint to set a custom, more descriptive title.<br><br>
 <!-- UsageSnippet language="python" operationID="updateConversationTitle" method="patch" path="/conversations/{conversationId}/title" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.update_title(conversation_id="<value>", title="Q4 Sales Analysis Discussion")
+    res = p_client.conversations.update_conversation_title(security=models.UpdateConversationTitleSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>", title="Q4 Sales Analysis Discussion")
 
     # Handle response
     print(res)
@@ -656,11 +622,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `title`                                                             | *str*                                                               | :heavy_check_mark:                                                  | New conversation title                                              | Q4 Sales Analysis Discussion                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               | Example                                                                                   |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `security`                                                                                | [models.UpdateConversationTitleSecurity](../../models/updateconversationtitlesecurity.md) | :heavy_check_mark:                                                                        | N/A                                                                                       |                                                                                           |
+| `conversation_id`                                                                         | *str*                                                                                     | :heavy_check_mark:                                                                        | N/A                                                                                       |                                                                                           |
+| `title`                                                                                   | *str*                                                                                     | :heavy_check_mark:                                                                        | New conversation title                                                                    | Q4 Sales Analysis Discussion                                                              |
+| `retries`                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                          | :heavy_minus_sign:                                                                        | Configuration to override the default retry behavior of the client.                       |                                                                                           |
 
 ### Response
 
@@ -672,7 +639,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## archive
+## archive_conversation
 
 Archive a conversation to hide it from the main list.<br><br>
 <b>Overview:</b><br>
@@ -687,15 +654,16 @@ View archived conversations using <code>GET /conversations/show/archives</code>.
 <!-- UsageSnippet language="python" operationID="archiveConversation" method="patch" path="/conversations/{conversationId}/archive" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.archive(conversation_id="<value>")
+    res = p_client.conversations.archive_conversation(security=models.ArchiveConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -704,10 +672,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.ArchiveConversationSecurity](../../models/archiveconversationsecurity.md) | :heavy_check_mark:                                                                | N/A                                                                               |
+| `conversation_id`                                                                 | *str*                                                                             | :heavy_check_mark:                                                                | N/A                                                                               |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
 
 ### Response
 
@@ -719,7 +688,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unarchive
+## unarchive_conversation
 
 Restore an archived conversation to the active list.<br><br>
 <b>Overview:</b><br>
@@ -731,15 +700,16 @@ Removes the archived flag, making the conversation visible in the main list agai
 <!-- UsageSnippet language="python" operationID="unarchiveConversation" method="patch" path="/conversations/{conversationId}/unarchive" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.unarchive(conversation_id="<value>")
+    res = p_client.conversations.unarchive_conversation(security=models.UnarchiveConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -748,10 +718,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `security`                                                                            | [models.UnarchiveConversationSecurity](../../models/unarchiveconversationsecurity.md) | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `conversation_id`                                                                     | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |
 
 ### Response
 
@@ -763,7 +734,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## regenerate
+## regenerate_answer
 
 Regenerate the AI response for a specific message.<br><br>
 <b>Overview:</b><br>
@@ -785,15 +756,16 @@ Specify <code>modelKey</code> to use a different model for regeneration.
 <!-- UsageSnippet language="python" operationID="regenerateAnswer" method="post" path="/conversations/{conversationId}/message/{messageId}/regenerate" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.regenerate(conversation_id="<value>", message_id="<value>")
+    res = p_client.conversations.regenerate_answer(security=models.RegenerateAnswerSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>", message_id="<value>")
 
     # Handle response
     print(res)
@@ -802,15 +774,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `message_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | ID of the message to regenerate response for                        |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override model for regeneration                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                   | Type                                                                        | Required                                                                    | Description                                                                 |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `security`                                                                  | [models.RegenerateAnswerSecurity](../../models/regenerateanswersecurity.md) | :heavy_check_mark:                                                          | N/A                                                                         |
+| `conversation_id`                                                           | *str*                                                                       | :heavy_check_mark:                                                          | N/A                                                                         |
+| `message_id`                                                                | *str*                                                                       | :heavy_check_mark:                                                          | ID of the message to regenerate response for                                |
+| `filters`                                                                   | [Optional[models.Filters]](../../models/filters.md)                         | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `model_key`                                                                 | *Optional[str]*                                                             | :heavy_minus_sign:                                                          | Override model for regeneration                                             |
+| `model_name`                                                                | *Optional[str]*                                                             | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `chat_mode`                                                                 | *Optional[str]*                                                             | :heavy_minus_sign:                                                          | N/A                                                                         |
+| `retries`                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)            | :heavy_minus_sign:                                                          | Configuration to override the default retry behavior of the client.         |
 
 ### Response
 
@@ -822,7 +795,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## submit_feedback
+## update_message_feedback
 
 Provide feedback on an AI-generated response.<br><br>
 <b>Overview:</b><br>
@@ -846,15 +819,16 @@ not on user queries or system messages.
 <!-- UsageSnippet language="python" operationID="updateMessageFeedback" method="post" path="/conversations/{conversationId}/message/{messageId}/feedback" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.conversations.submit_feedback(conversation_id="<value>", message_id="<value>")
+    res = p_client.conversations.update_message_feedback(security=models.UpdateMessageFeedbackSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), conversation_id="<value>", message_id="<value>")
 
     # Handle response
     print(res)
@@ -863,17 +837,18 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `message_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `is_helpful`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Overall helpfulness rating                                          |
-| `ratings`                                                           | [Optional[models.Ratings]](../../models/ratings.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `categories`                                                        | List[[models.Category](../../models/category.md)]                   | :heavy_minus_sign:                                                  | Categories of issues identified                                     |
-| `comments`                                                          | [Optional[models.Comments]](../../models/comments.md)               | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `citation_feedback`                                                 | List[[models.CitationFeedback](../../models/citationfeedback.md)]   | :heavy_minus_sign:                                                  | Feedback on individual citations                                    |
-| `follow_up_questions_helpful`                                       | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Were the suggested follow-up questions helpful                      |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `security`                                                                            | [models.UpdateMessageFeedbackSecurity](../../models/updatemessagefeedbacksecurity.md) | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `conversation_id`                                                                     | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `message_id`                                                                          | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `is_helpful`                                                                          | *Optional[bool]*                                                                      | :heavy_minus_sign:                                                                    | Overall helpfulness rating                                                            |
+| `ratings`                                                                             | [Optional[models.Ratings]](../../models/ratings.md)                                   | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `categories`                                                                          | List[[models.Category](../../models/category.md)]                                     | :heavy_minus_sign:                                                                    | Categories of issues identified                                                       |
+| `comments`                                                                            | [Optional[models.Comments]](../../models/comments.md)                                 | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `citation_feedback`                                                                   | List[[models.CitationFeedback](../../models/citationfeedback.md)]                     | :heavy_minus_sign:                                                                    | Feedback on individual citations                                                      |
+| `follow_up_questions_helpful`                                                         | *Optional[bool]*                                                                      | :heavy_minus_sign:                                                                    | Were the suggested follow-up questions helpful                                        |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |
 
 ### Response
 

@@ -6,18 +6,18 @@ Organization management operations
 
 ### Available Operations
 
-* [check_exists](#check_exists) - Check if organization exists
-* [create](#create) - Create organization
-* [get](#get) - Get current organization
-* [update](#update) - Update organization
-* [delete](#delete) - Delete organization
-* [upload_logo](#upload_logo) - Upload organization logo
-* [get_logo](#get_logo) - Get organization logo
-* [delete_logo](#delete_logo) - Delete organization logo
+* [check_org_exists](#check_org_exists) - Check if organization exists
+* [create_organization](#create_organization) - Create organization
+* [get_current_organization](#get_current_organization) - Get current organization
+* [update_organization](#update_organization) - Update organization
+* [delete_organization](#delete_organization) - Delete organization
+* [upload_organization_logo](#upload_organization_logo) - Upload organization logo
+* [get_organization_logo](#get_organization_logo) - Get organization logo
+* [delete_organization_logo](#delete_organization_logo) - Delete organization logo
 * [get_onboarding_status](#get_onboarding_status) - Get onboarding status
 * [update_onboarding_status](#update_onboarding_status) - Update onboarding status
 
-## check_exists
+## check_org_exists
 
 Check if any organization has been created in the system. This is typically the first API call made during initial setup.<br><br>
 <b>Overview:</b><br>
@@ -47,7 +47,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.organizations.check_exists()
+    res = p_client.organizations.check_org_exists()
 
     # Handle response
     print(res)
@@ -70,7 +70,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_organization
 
 Create a new organization and its first admin user. This is the initial setup endpoint for new PipesHub installations.<br><br>
 <b>Overview:</b><br>
@@ -115,7 +115,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.organizations.create(account_type="business", contact_email="admin@acme.com", admin_full_name="John Smith", password="SecurePassword123!", short_name="Acme", registered_name="Acme Corporation Inc.")
+    res = p_client.organizations.create_organization(account_type="business", contact_email="admin@acme.com", admin_full_name="John Smith", password="SecurePassword123!", short_name="Acme", registered_name="Acme Corporation Inc.")
 
     # Handle response
     print(res)
@@ -144,7 +144,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_current_organization
 
 Retrieve details about the authenticated user's organization.<br><br>
 <b>Overview:</b><br>
@@ -173,15 +173,16 @@ All authenticated users can access this endpoint to view their organization's de
 <!-- UsageSnippet language="python" operationID="getCurrentOrganization" method="get" path="/org" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organizations.get()
+    res = p_client.organizations.get_current_organization(security=models.GetCurrentOrganizationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -190,9 +191,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                        | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `security`                                                                       | [models.GetCurrentOrganizationSecurity](../../getcurrentorganizationsecurity.md) | :heavy_check_mark:                                                               | The security requirements to use for the request.                                |
+| `retries`                                                                        | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                 | :heavy_minus_sign:                                                               | Configuration to override the default retry behavior of the client.              |
 
 ### Response
 
@@ -204,7 +206,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_organization
 
 Update organization profile and settings information.<br><br>
 <b>Overview:</b><br>
@@ -241,15 +243,16 @@ This endpoint allows administrators to update the organization's profile informa
 <!-- UsageSnippet language="python" operationID="updateOrganization" method="put" path="/org" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organizations.update(registered_name="Acme Corporation Inc.", short_name="Acme Corp", phone_number="+15551234567")
+    res = p_client.organizations.update_organization(security=models.UpdateOrganizationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), registered_name="Acme Corporation Inc.", short_name="Acme Corp", phone_number="+15551234567")
 
     # Handle response
     print(res)
@@ -258,13 +261,14 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `registered_name`                                                   | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Official registered/legal name                                      | Acme Corporation Inc.                                               |
-| `short_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Short display name for UI                                           | Acme Corp                                                           |
-| `phone_number`                                                      | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Contact phone number (international format)                         | +15551234567                                                        |
-| `permanent_address`                                                 | [Optional[models.Address]](../../models/address.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     | Example                                                                         |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `security`                                                                      | [models.UpdateOrganizationSecurity](../../models/updateorganizationsecurity.md) | :heavy_check_mark:                                                              | N/A                                                                             |                                                                                 |
+| `registered_name`                                                               | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Official registered/legal name                                                  | Acme Corporation Inc.                                                           |
+| `short_name`                                                                    | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Short display name for UI                                                       | Acme Corp                                                                       |
+| `phone_number`                                                                  | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Contact phone number (international format)                                     | +15551234567                                                                    |
+| `permanent_address`                                                             | [Optional[models.Address]](../../models/address.md)                             | :heavy_minus_sign:                                                              | N/A                                                                             |                                                                                 |
+| `retries`                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                | :heavy_minus_sign:                                                              | Configuration to override the default retry behavior of the client.             |                                                                                 |
 
 ### Response
 
@@ -276,7 +280,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_organization
 
 Permanently delete an organization and all associated data.<br><br>
 <b>WARNING:</b> This action is <b>irreversible</b>.<br><br>
@@ -300,15 +304,16 @@ Permanently delete an organization and all associated data.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteOrganization" method="delete" path="/org" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organizations.delete(confirm="DELETE")
+    res = p_client.organizations.delete_organization(security=models.DeleteOrganizationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), confirm="DELETE")
 
     # Handle response
     print(res)
@@ -317,10 +322,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `confirm`                                                           | [models.Confirm](../../models/confirm.md)                           | :heavy_check_mark:                                                  | Must be "DELETE" to confirm deletion                                |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `security`                                                                      | [models.DeleteOrganizationSecurity](../../models/deleteorganizationsecurity.md) | :heavy_check_mark:                                                              | N/A                                                                             |
+| `confirm`                                                                       | [models.Confirm](../../models/confirm.md)                                       | :heavy_check_mark:                                                              | Must be "DELETE" to confirm deletion                                            |
+| `retries`                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                | :heavy_minus_sign:                                                              | Configuration to override the default retry behavior of the client.             |
 
 ### Response
 
@@ -332,7 +338,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## upload_logo
+## upload_organization_logo
 
 Upload or update the organization's logo image.<br><br>
 <b>Supported Formats:</b><br>
@@ -360,15 +366,16 @@ Upload or update the organization's logo image.<br><br>
 <!-- UsageSnippet language="python" operationID="uploadOrganizationLogo" method="put" path="/org/logo" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organizations.upload_logo(logo={
+    res = p_client.organizations.upload_organization_logo(security=models.UploadOrganizationLogoSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), logo={
         "file_name": "example.file",
         "content": open("example.file", "rb"),
     })
@@ -380,10 +387,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `logo`                                                              | [models.Logo](../../models/logo.md)                                 | :heavy_check_mark:                                                  | Logo image file                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `security`                                                                              | [models.UploadOrganizationLogoSecurity](../../models/uploadorganizationlogosecurity.md) | :heavy_check_mark:                                                                      | N/A                                                                                     |
+| `logo`                                                                                  | [models.Logo](../../models/logo.md)                                                     | :heavy_check_mark:                                                                      | Logo image file                                                                         |
+| `retries`                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                        | :heavy_minus_sign:                                                                      | Configuration to override the default retry behavior of the client.                     |
 
 ### Response
 
@@ -395,7 +403,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_logo
+## get_organization_logo
 
 Retrieve the organization's logo image or URL.<br><br>
 <b>Response Formats:</b><br>
@@ -416,15 +424,16 @@ Retrieve the organization's logo image or URL.<br><br>
 <!-- UsageSnippet language="python" operationID="getOrganizationLogo" method="get" path="/org/logo" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organizations.get_logo()
+    res = p_client.organizations.get_organization_logo(security=models.GetOrganizationLogoSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -433,9 +442,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `security`                                                                 | [models.GetOrganizationLogoSecurity](../../getorganizationlogosecurity.md) | :heavy_check_mark:                                                         | The security requirements to use for the request.                          |
+| `retries`                                                                  | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)           | :heavy_minus_sign:                                                         | Configuration to override the default retry behavior of the client.        |
 
 ### Response
 
@@ -447,7 +457,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_logo
+## delete_organization_logo
 
 Remove the organization's custom logo.<br><br>
 <b>Behavior:</b><br>
@@ -462,15 +472,16 @@ Remove the organization's custom logo.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteOrganizationLogo" method="delete" path="/org/logo" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.organizations.delete_logo()
+    res = p_client.organizations.delete_organization_logo(security=models.DeleteOrganizationLogoSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -479,9 +490,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                        | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `security`                                                                       | [models.DeleteOrganizationLogoSecurity](../../deleteorganizationlogosecurity.md) | :heavy_check_mark:                                                               | The security requirements to use for the request.                                |
+| `retries`                                                                        | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                 | :heavy_minus_sign:                                                               | Configuration to override the default retry behavior of the client.              |
 
 ### Response
 
