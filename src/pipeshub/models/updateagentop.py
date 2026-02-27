@@ -9,11 +9,11 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class UpdateAgentLlmConfigTypedDict(TypedDict):
+class UpdateAgentModelConfigTypedDict(TypedDict):
     pass
 
 
-class UpdateAgentLlmConfig(BaseModel):
+class UpdateAgentModelConfig(BaseModel):
     pass
 
 
@@ -25,7 +25,7 @@ class UpdateAgentRequestBodyTypedDict(TypedDict):
     system_prompt: NotRequired[str]
     tools: NotRequired[List[str]]
     knowledge_bases: NotRequired[List[str]]
-    llm_config: NotRequired[UpdateAgentLlmConfigTypedDict]
+    model_config_: NotRequired[UpdateAgentModelConfigTypedDict]
     is_public: NotRequired[bool]
 
 
@@ -44,8 +44,8 @@ class UpdateAgentRequestBody(BaseModel):
         Optional[List[str]], pydantic.Field(alias="knowledgeBases")
     ] = None
 
-    llm_config: Annotated[
-        Optional[UpdateAgentLlmConfig], pydantic.Field(alias="llmConfig")
+    model_config_: Annotated[
+        Optional[UpdateAgentModelConfig], pydantic.Field(alias="modelConfig")
     ] = None
 
     is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
@@ -59,7 +59,7 @@ class UpdateAgentRequestBody(BaseModel):
                 "systemPrompt",
                 "tools",
                 "knowledgeBases",
-                "llmConfig",
+                "modelConfig",
                 "isPublic",
             ]
         )

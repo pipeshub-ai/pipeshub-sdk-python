@@ -4,9 +4,7 @@
 from pipeshub import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as p_client:
 
     res = p_client.user_account.init_auth(email="user@example.com")
 
@@ -25,9 +23,7 @@ from pipeshub import Pipeshub
 
 async def main():
 
-    async with Pipeshub(
-        server_url="https://api.example.com",
-    ) as p_client:
+    async with Pipeshub() as p_client:
 
         res = await p_client.user_account.init_auth_async(email="user@example.com")
 

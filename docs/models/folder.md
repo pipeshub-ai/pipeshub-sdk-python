@@ -5,7 +5,7 @@
 
 | Field                         | Type                          | Required                      | Description                   |
 | ----------------------------- | ----------------------------- | ----------------------------- | ----------------------------- |
-| `key`                         | *Optional[str]*               | :heavy_minus_sign:            | Unique folder identifier      |
+| `id`                          | *Optional[str]*               | :heavy_minus_sign:            | Unique folder identifier      |
 | `name`                        | *str*                         | :heavy_check_mark:            | Name of the folder            |
 | `parent_id`                   | *Optional[str]*               | :heavy_minus_sign:            | Parent folder or KB ID        |
 | `kb_id`                       | *str*                         | :heavy_check_mark:            | Knowledge base ID             |

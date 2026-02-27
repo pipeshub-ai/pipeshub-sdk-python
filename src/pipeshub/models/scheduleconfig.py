@@ -10,7 +10,8 @@ from .weeklyscheduleconfig import WeeklyScheduleConfig, WeeklyScheduleConfigType
 from functools import partial
 from pipeshub.types import BaseModel
 from pipeshub.utils.unions import parse_open_union
-from pydantic import BeforeValidator, ConfigDict
+from pydantic import ConfigDict
+from pydantic.functional_validators import BeforeValidator
 from typing import Any, Literal, Union
 from typing_extensions import Annotated, TypeAliasType
 

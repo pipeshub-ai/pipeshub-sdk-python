@@ -8,8 +8,8 @@ Connector-related operations
 
 * [reindex_record](#reindex_record) - Reindex single record
 * [reindex_record_group](#reindex_record_group) - Reindex record group
-* [reindex_failed_records](#reindex_failed_records) - Reindex failed connector records
-* [get_stats](#get_stats) - Get connector statistics
+* [resync_connector](#resync_connector) - Resync connector
+* [get_connector_stats](#get_connector_stats) - Get connector statistics
 
 ## reindex_record
 
@@ -25,12 +25,13 @@ Controls processing depth for complex documents (-1 for full depth, 0-100 for li
 <!-- UsageSnippet language="python" operationID="reindexRecord" method="post" path="/knowledgeBase/reindex/record/{recordId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
 ) as p_client:
 
     p_client.connector.reindex_record(record_id="<id>", depth=-1)
@@ -65,12 +66,13 @@ Batch reindex operation for entire containers. The recordGroupId can be a folder
 <!-- UsageSnippet language="python" operationID="reindexRecordGroup" method="post" path="/knowledgeBase/reindex/record-group/{recordGroupId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
 ) as p_client:
 
     p_client.connector.reindex_record_group(record_group_id="<id>", depth=-1)
@@ -93,27 +95,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## reindex_failed_records
+## resync_connector
 
-Retry indexing for all failed records from a specific connector.<br><br>
-<b>Use Case:</b><br>
-After fixing connectivity issues or configuration problems, use this to reprocess all records that failed during the initial sync.
+Trigger a full resync of all records from a connector.<br><br>
+<b>Overview:</b><br>
+Fetches all content from the external source and updates local records. Use when you suspect data is out of sync.<br><br>
+<b>Warning:</b> This can be resource-intensive for large connectors.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="reindexFailedConnectorRecords" method="post" path="/knowledgeBase/reindex-failed/connector" -->
+<!-- UsageSnippet language="python" operationID="resyncConnector" method="post" path="/knowledgeBase/resync/connector" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
 ) as p_client:
 
-    p_client.connector.reindex_failed_records(app="GOOGLE_DRIVE", connector_id="<id>")
+    p_client.connector.resync_connector(connector_name="GOOGLE_DRIVE", connector_id="<id>")
 
     # Use the SDK ...
 
@@ -123,7 +127,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `app`                                                               | *str*                                                               | :heavy_check_mark:                                                  | Connector app name                                                  | GOOGLE_DRIVE                                                        |
+| `connector_name`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Connector type name                                                 | GOOGLE_DRIVE                                                        |
 | `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               |                                                                     |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
@@ -133,7 +137,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_stats
+## get_connector_stats
 
 Retrieve statistics for a specific connector including record counts, indexing status breakdown, and sync information.
 
@@ -143,15 +147,16 @@ Retrieve statistics for a specific connector including record counts, indexing s
 <!-- UsageSnippet language="python" operationID="getConnectorStats" method="get" path="/knowledgeBase/stats/{connectorId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
 ) as p_client:
 
-    res = p_client.connector.get_stats(connector_id="<id>")
+    res = p_client.connector.get_connector_stats(connector_id="<id>")
 
     # Handle response
     print(res)

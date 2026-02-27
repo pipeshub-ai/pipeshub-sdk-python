@@ -7,6 +7,7 @@ Name of the source connector
 
 | Name                | Value               |
 | ------------------- | ------------------- |
+| `KB`                | KB                  |
 | `ONEDRIVE`          | ONEDRIVE            |
 | `GOOGLE_DRIVE`      | GOOGLE_DRIVE        |
 | `CONFLUENCE`        | CONFLUENCE          |

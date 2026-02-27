@@ -8,13 +8,13 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class CreateAgentLlmConfigTypedDict(TypedDict):
+class CreateAgentModelConfigTypedDict(TypedDict):
     model_key: NotRequired[str]
     temperature: NotRequired[float]
     max_tokens: NotRequired[int]
 
 
-class CreateAgentLlmConfig(BaseModel):
+class CreateAgentModelConfig(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
 
     temperature: Optional[float] = None
@@ -51,7 +51,7 @@ class CreateAgentRequestTypedDict(TypedDict):
     r"""Tool keys the agent can use"""
     knowledge_bases: NotRequired[List[str]]
     r"""Knowledge base IDs to access"""
-    llm_config: NotRequired[CreateAgentLlmConfigTypedDict]
+    model_config_: NotRequired[CreateAgentModelConfigTypedDict]
     is_public: NotRequired[bool]
     r"""Make agent available to all org users"""
 
@@ -76,8 +76,8 @@ class CreateAgentRequest(BaseModel):
     ] = None
     r"""Knowledge base IDs to access"""
 
-    llm_config: Annotated[
-        Optional[CreateAgentLlmConfig], pydantic.Field(alias="llmConfig")
+    model_config_: Annotated[
+        Optional[CreateAgentModelConfig], pydantic.Field(alias="modelConfig")
     ] = None
 
     is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = False
@@ -91,7 +91,7 @@ class CreateAgentRequest(BaseModel):
                 "systemPrompt",
                 "tools",
                 "knowledgeBases",
-                "llmConfig",
+                "modelConfig",
                 "isPublic",
             ]
         )
@@ -110,7 +110,7 @@ class CreateAgentRequest(BaseModel):
 
 
 try:
-    CreateAgentLlmConfig.model_rebuild()
+    CreateAgentModelConfig.model_rebuild()
 except NameError:
     pass
 try:

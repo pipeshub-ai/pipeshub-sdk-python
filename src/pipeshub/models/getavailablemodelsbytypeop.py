@@ -60,17 +60,23 @@ class Model(BaseModel):
 class GetAvailableModelsByTypeResponseTypedDict(TypedDict):
     r"""Available models retrieved"""
 
+    status: NotRequired[str]
+    message: NotRequired[str]
     models: NotRequired[List[ModelTypedDict]]
 
 
 class GetAvailableModelsByTypeResponse(BaseModel):
     r"""Available models retrieved"""
 
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
     models: Optional[List[Model]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["models"])
+        optional_fields = set(["status", "message", "models"])
         serialized = handler(self)
         m = {}
 

@@ -12,7 +12,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ListConnectorInstancesRequestTypedDict(TypedDict):
-    scope: NotRequired[ConnectorScope]
+    scope: ConnectorScope
     r"""Filter by scope (team or personal)"""
     page: NotRequired[int]
     limit: NotRequired[int]
@@ -22,9 +22,9 @@ class ListConnectorInstancesRequestTypedDict(TypedDict):
 
 class ListConnectorInstancesRequest(BaseModel):
     scope: Annotated[
-        Optional[ConnectorScope],
+        ConnectorScope,
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
-    ] = None
+    ]
     r"""Filter by scope (team or personal)"""
 
     page: Annotated[
@@ -45,7 +45,7 @@ class ListConnectorInstancesRequest(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["scope", "page", "limit", "search"])
+        optional_fields = set(["page", "limit", "search"])
         serialized = handler(self)
         m = {}
 
