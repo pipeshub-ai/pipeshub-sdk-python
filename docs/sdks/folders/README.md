@@ -6,13 +6,14 @@ Folder organization and management
 
 ### Available Operations
 
-* [create_root](#create_root) - Create root folder
-* [get_contents](#get_contents) - Get folder contents
-* [update](#update) - Update folder
-* [delete](#delete) - Delete folder
-* [create_sub](#create_sub) - Create subfolder
+* [create_root_folder](#create_root_folder) - Create root folder
+* [get_folder_contents](#get_folder_contents) - Get folder contents
+* [update_folder](#update_folder) - Update folder
+* [delete_folder](#delete_folder) - Delete folder
+* [get_folder_children](#get_folder_children) - Get folder children (alias for folder contents)
+* [create_subfolder](#create_subfolder) - Create subfolder
 
-## create_root
+## create_root_folder
 
 Create a new folder at the root level of a knowledge base.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher<br><br>
@@ -35,15 +36,16 @@ Create a new folder at the root level of a knowledge base.<br><br>
 <!-- UsageSnippet language="python" operationID="createRootFolder" method="post" path="/knowledgeBase/{kbId}/folder" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.folders.create_root(kb_id="<id>", folder_name="Project Documents")
+    res = p_client.folders.create_root_folder(security=models.CreateRootFolderSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", folder_name="Project Documents")
 
     # Handle response
     print(res)
@@ -52,11 +54,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   |                                                                     |
-| `folder_name`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Name of the folder                                                  | Project Documents                                                   |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                   | Type                                                                        | Required                                                                    | Description                                                                 | Example                                                                     |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `security`                                                                  | [models.CreateRootFolderSecurity](../../models/createrootfoldersecurity.md) | :heavy_check_mark:                                                          | N/A                                                                         |                                                                             |
+| `kb_id`                                                                     | *str*                                                                       | :heavy_check_mark:                                                          | Knowledge base ID                                                           |                                                                             |
+| `folder_name`                                                               | *str*                                                                       | :heavy_check_mark:                                                          | Name of the folder                                                          | Project Documents                                                           |
+| `retries`                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)            | :heavy_minus_sign:                                                          | Configuration to override the default retry behavior of the client.         |                                                                             |
 
 ### Response
 
@@ -68,7 +71,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_contents
+## get_folder_contents
 
 Retrieve the contents of a folder including subfolders and records.<br><br>
 <b>Overview:</b><br>
@@ -82,15 +85,16 @@ Use this endpoint to browse folder hierarchies. Response includes folder metadat
 <!-- UsageSnippet language="python" operationID="getFolderContents" method="get" path="/knowledgeBase/{kbId}/folder/{folderId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.folders.get_contents(kb_id="<id>", folder_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
+    res = p_client.folders.get_folder_contents(security=models.GetFolderContentsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", folder_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
 
     # Handle response
     print(res)
@@ -101,6 +105,7 @@ with Pipeshub(
 
 | Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               |
 | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `security`                                                                                | [models.GetFolderContentsSecurity](../../models/getfoldercontentssecurity.md)             | :heavy_check_mark:                                                                        | N/A                                                                                       |
 | `kb_id`                                                                                   | *str*                                                                                     | :heavy_check_mark:                                                                        | Knowledge base ID                                                                         |
 | `folder_id`                                                                               | *str*                                                                                     | :heavy_check_mark:                                                                        | Folder ID                                                                                 |
 | `page`                                                                                    | *Optional[int]*                                                                           | :heavy_minus_sign:                                                                        | N/A                                                                                       |
@@ -120,7 +125,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_folder
 
 Rename a folder.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher
@@ -131,15 +136,16 @@ Rename a folder.<br><br>
 <!-- UsageSnippet language="python" operationID="updateFolder" method="put" path="/knowledgeBase/{kbId}/folder/{folderId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.folders.update(kb_id="<id>", folder_id="<id>", folder_name="<value>")
+    res = p_client.folders.update_folder(security=models.UpdateFolderSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", folder_id="<id>", folder_name="<value>")
 
     # Handle response
     print(res)
@@ -150,6 +156,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `security`                                                          | [models.UpdateFolderSecurity](../../models/updatefoldersecurity.md) | :heavy_check_mark:                                                  | N/A                                                                 |
 | `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `folder_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `folder_name`                                                       | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
@@ -165,7 +172,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_folder
 
 Delete a folder and all its contents.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher<br><br>
@@ -179,15 +186,16 @@ All subfolders and records within will be permanently deleted.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteFolder" method="delete" path="/knowledgeBase/{kbId}/folder/{folderId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.folders.delete(kb_id="<id>", folder_id="<id>")
+    p_client.folders.delete_folder(security=models.DeleteFolderSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", folder_id="<id>")
 
     # Use the SDK ...
 
@@ -197,6 +205,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `security`                                                          | [models.DeleteFolderSecurity](../../models/deletefoldersecurity.md) | :heavy_check_mark:                                                  | N/A                                                                 |
 | `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `folder_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
@@ -207,7 +216,61 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_sub
+## get_folder_children
+
+Retrieve the children (subfolders and records) of a folder.<br><br>
+<b>Overview:</b><br>
+This is an alias endpoint for <code>/knowledgeBase/{kbId}/folder/{folderId}</code>. Returns paginated list of records within the folder, with same filtering options as KB-level record listing.<br><br>
+<b>Navigation:</b><br>
+Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getFolderChildren" method="get" path="/knowledgeBase/{kbId}/folder/{folderId}/children" -->
+```python
+import os
+from pipeshub import Pipeshub, models
+
+
+with Pipeshub(
+    server_url="https://api.example.com",
+) as p_client:
+
+    res = p_client.folders.get_folder_children(security=models.GetFolderChildrenSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", folder_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `security`                                                                                | [models.GetFolderChildrenSecurity](../../models/getfolderchildrensecurity.md)             | :heavy_check_mark:                                                                        | N/A                                                                                       |
+| `kb_id`                                                                                   | *str*                                                                                     | :heavy_check_mark:                                                                        | Knowledge base ID                                                                         |
+| `folder_id`                                                                               | *str*                                                                                     | :heavy_check_mark:                                                                        | Folder ID                                                                                 |
+| `page`                                                                                    | *Optional[int]*                                                                           | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `limit`                                                                                   | *Optional[int]*                                                                           | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `search`                                                                                  | *Optional[str]*                                                                           | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `sort_by`                                                                                 | *Optional[str]*                                                                           | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `sort_order`                                                                              | [Optional[models.GetFolderChildrenSortOrder]](../../models/getfolderchildrensortorder.md) | :heavy_minus_sign:                                                                        | N/A                                                                                       |
+| `retries`                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                          | :heavy_minus_sign:                                                                        | Configuration to override the default retry behavior of the client.                       |
+
+### Response
+
+**[models.RecordsResponse](../../models/recordsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## create_subfolder
 
 Create a nested folder within an existing folder.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher<br><br>
@@ -220,15 +283,16 @@ Supports unlimited folder nesting depth for complex organizational structures.
 <!-- UsageSnippet language="python" operationID="createSubfolder" method="post" path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.folders.create_sub(kb_id="<id>", folder_id="<id>", folder_name="<value>")
+    res = p_client.folders.create_subfolder(security=models.CreateSubfolderSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", folder_id="<id>", folder_name="<value>")
 
     # Handle response
     print(res)
@@ -237,12 +301,13 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `folder_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Parent folder ID                                                    |
-| `folder_name`                                                       | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `security`                                                                | [models.CreateSubfolderSecurity](../../models/createsubfoldersecurity.md) | :heavy_check_mark:                                                        | N/A                                                                       |
+| `kb_id`                                                                   | *str*                                                                     | :heavy_check_mark:                                                        | N/A                                                                       |
+| `folder_id`                                                               | *str*                                                                     | :heavy_check_mark:                                                        | Parent folder ID                                                          |
+| `folder_name`                                                             | *str*                                                                     | :heavy_check_mark:                                                        | N/A                                                                       |
+| `retries`                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)          | :heavy_minus_sign:                                                        | Configuration to override the default retry behavior of the client.       |
 
 ### Response
 

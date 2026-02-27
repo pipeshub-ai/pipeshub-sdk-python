@@ -2,15 +2,17 @@
 
 ## Overview
 
+Platform-wide settings including file upload limits, feature flags, and custom system prompts.
+
 ### Available Operations
 
-* [set](#set) - Update platform settings
-* [get](#get) - Get platform settings
+* [set_platform_settings](#set_platform_settings) - Update platform settings
+* [get_platform_settings](#get_platform_settings) - Get platform settings
 * [get_available_feature_flags](#get_available_feature_flags) - Get available feature flags
-* [set_custom_prompt](#set_custom_prompt) - Update custom system prompt
-* [get_custom_prompt](#get_custom_prompt) - Get custom system prompt
+* [set_custom_system_prompt](#set_custom_system_prompt) - Update custom system prompt
+* [get_custom_system_prompt](#get_custom_system_prompt) - Get custom system prompt
 
-## set
+## set_platform_settings
 
 Configure platform-wide settings including file upload limits and feature flags.
 
@@ -27,15 +29,16 @@ Configure platform-wide settings including file upload limits and feature flags.
 <!-- UsageSnippet language="python" operationID="setPlatformSettings" method="post" path="/configurationManager/platform/settings" example="default30MB" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.platform_settings.set(file_upload_max_size_bytes=31457280, feature_flags={
+    p_client.platform_settings.set_platform_settings(security=models.SetPlatformSettingsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), file_upload_max_size_bytes=31457280, feature_flags={
         "ENABLE_BETA_CONNECTORS": False,
     })
 
@@ -47,15 +50,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="setPlatformSettings" method="post" path="/configurationManager/platform/settings" example="enableBetaFeatures" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.platform_settings.set(file_upload_max_size_bytes=31457280, feature_flags={
+    p_client.platform_settings.set_platform_settings(security=models.SetPlatformSettingsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), file_upload_max_size_bytes=31457280, feature_flags={
         "ENABLE_BETA_CONNECTORS": True,
     })
 
@@ -67,15 +71,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="setPlatformSettings" method="post" path="/configurationManager/platform/settings" example="increased100MB" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.platform_settings.set(file_upload_max_size_bytes=104857600, feature_flags={
+    p_client.platform_settings.set_platform_settings(security=models.SetPlatformSettingsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), file_upload_max_size_bytes=104857600, feature_flags={
         "ENABLE_BETA_CONNECTORS": False,
     })
 
@@ -85,11 +90,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                | Type                                                                     | Required                                                                 | Description                                                              | Example                                                                  |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| `file_upload_max_size_bytes`                                             | *int*                                                                    | :heavy_check_mark:                                                       | Maximum file upload size in bytes                                        | 31457280                                                                 |
-| `feature_flags`                                                          | Dict[str, *bool*]                                                        | :heavy_check_mark:                                                       | Key-value map of feature flags. Set to true to enable, false to disable. | {<br/>"ENABLE_BETA_CONNECTORS": false<br/>}                              |
-| `retries`                                                                | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)         | :heavy_minus_sign:                                                       | Configuration to override the default retry behavior of the client.      |                                                                          |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       | Example                                                                           |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.SetPlatformSettingsSecurity](../../models/setplatformsettingssecurity.md) | :heavy_check_mark:                                                                | N/A                                                                               |                                                                                   |
+| `file_upload_max_size_bytes`                                                      | *int*                                                                             | :heavy_check_mark:                                                                | Maximum file upload size in bytes                                                 | 31457280                                                                          |
+| `feature_flags`                                                                   | Dict[str, *bool*]                                                                 | :heavy_check_mark:                                                                | Key-value map of feature flags. Set to true to enable, false to disable.          | {<br/>"ENABLE_BETA_CONNECTORS": false<br/>}                                       |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |                                                                                   |
 
 ### Errors
 
@@ -97,7 +103,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_platform_settings
 
 Retrieve current platform settings including file upload limits and feature flag states.
 
@@ -106,15 +112,16 @@ Retrieve current platform settings including file upload limits and feature flag
 <!-- UsageSnippet language="python" operationID="getPlatformSettings" method="get" path="/configurationManager/platform/settings" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.platform_settings.get()
+    res = p_client.platform_settings.get_platform_settings(security=models.GetPlatformSettingsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -123,9 +130,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `security`                                                                 | [models.GetPlatformSettingsSecurity](../../getplatformsettingssecurity.md) | :heavy_check_mark:                                                         | The security requirements to use for the request.                          |
+| `retries`                                                                  | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)           | :heavy_minus_sign:                                                         | Configuration to override the default retry behavior of the client.        |
 
 ### Response
 
@@ -146,15 +154,16 @@ List all available feature flags with their descriptions and default values.
 <!-- UsageSnippet language="python" operationID="getAvailableFeatureFlags" method="get" path="/configurationManager/platform/feature-flags/available" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.platform_settings.get_available_feature_flags()
+    res = p_client.platform_settings.get_available_feature_flags(security=models.GetAvailableFeatureFlagsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -163,9 +172,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                            | Type                                                                                 | Required                                                                             | Description                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `security`                                                                           | [models.GetAvailableFeatureFlagsSecurity](../../getavailablefeatureflagssecurity.md) | :heavy_check_mark:                                                                   | The security requirements to use for the request.                                    |
+| `retries`                                                                            | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                     | :heavy_minus_sign:                                                                   | Configuration to override the default retry behavior of the client.                  |
 
 ### Response
 
@@ -177,7 +187,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## set_custom_prompt
+## set_custom_system_prompt
 
 Set a custom system prompt that will be used by AI models.
 
@@ -186,15 +196,16 @@ Set a custom system prompt that will be used by AI models.
 <!-- UsageSnippet language="python" operationID="setCustomSystemPrompt" method="put" path="/configurationManager/prompts/system" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.platform_settings.set_custom_prompt()
+    p_client.platform_settings.set_custom_system_prompt(security=models.SetCustomSystemPromptSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Use the SDK ...
 
@@ -202,10 +213,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `custom_system_prompt`                                              | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Custom system prompt text for AI models                             |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `security`                                                                            | [models.SetCustomSystemPromptSecurity](../../models/setcustomsystempromptsecurity.md) | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `custom_system_prompt`                                                                | *Optional[str]*                                                                       | :heavy_minus_sign:                                                                    | Custom system prompt text for AI models                                               |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |
 
 ### Errors
 
@@ -213,7 +225,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_custom_prompt
+## get_custom_system_prompt
 
 Get custom system prompt.
 
@@ -222,15 +234,16 @@ Get custom system prompt.
 <!-- UsageSnippet language="python" operationID="getCustomSystemPrompt" method="get" path="/configurationManager/prompts/system" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.platform_settings.get_custom_prompt()
+    res = p_client.platform_settings.get_custom_system_prompt(security=models.GetCustomSystemPromptSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -239,9 +252,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                      | Type                                                                           | Required                                                                       | Description                                                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `security`                                                                     | [models.GetCustomSystemPromptSecurity](../../getcustomsystempromptsecurity.md) | :heavy_check_mark:                                                             | The security requirements to use for the request.                              |
+| `retries`                                                                      | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)               | :heavy_minus_sign:                                                             | Configuration to override the default retry behavior of the client.            |
 
 ### Response
 

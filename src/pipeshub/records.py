@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 import httpx
 from pipeshub import errors, models, utils
 from pipeshub._hooks import HookContext
-from pipeshub.types import Nullable, OptionalNullable, UNSET
+from pipeshub.types import OptionalNullable, UNSET
 from pipeshub.utils import get_security_from_env
 from pipeshub.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Mapping, Optional, Union
@@ -13,9 +13,12 @@ from typing import Mapping, Optional, Union
 class Records(BaseSDK):
     r"""Record management and operations"""
 
-    def get_all(
+    def get_all_records(
         self,
         *,
+        security: Union[
+            models.GetAllRecordsSecurity, models.GetAllRecordsSecurityTypedDict
+        ],
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
         search: Optional[str] = None,
@@ -54,6 +57,7 @@ class Records(BaseSDK):
         </ul>
 
 
+        :param security:
         :param page:
         :param limit:
         :param search: Search query (max 1000 chars)
@@ -106,7 +110,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetAllRecordsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -124,10 +128,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAllRecords",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -149,9 +151,12 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_async(
+    async def get_all_records_async(
         self,
         *,
+        security: Union[
+            models.GetAllRecordsSecurity, models.GetAllRecordsSecurityTypedDict
+        ],
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
         search: Optional[str] = None,
@@ -190,6 +195,7 @@ class Records(BaseSDK):
         </ul>
 
 
+        :param security:
         :param page:
         :param limit:
         :param search: Search query (max 1000 chars)
@@ -242,7 +248,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetAllRecordsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -260,10 +266,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAllRecords",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -285,9 +289,12 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_kb_records(
         self,
         *,
+        security: Union[
+            models.GetKBRecordsSecurity, models.GetKBRecordsSecurityTypedDict
+        ],
         kb_id: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
@@ -321,6 +328,7 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
+        :param security:
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -373,7 +381,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetKBRecordsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -391,10 +399,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getKBRecords",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -416,9 +422,12 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_kb_records_async(
         self,
         *,
+        security: Union[
+            models.GetKBRecordsSecurity, models.GetKBRecordsSecurityTypedDict
+        ],
         kb_id: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
@@ -452,6 +461,7 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
+        :param security:
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -504,7 +514,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetKBRecordsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -522,10 +532,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getKBRecords",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -547,9 +555,278 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_kb_children(
         self,
         *,
+        security: Union[
+            models.GetKBChildrenSecurity, models.GetKBChildrenSecurityTypedDict
+        ],
+        kb_id: str,
+        page: Optional[int] = 1,
+        limit: Optional[int] = 20,
+        search: Optional[str] = None,
+        record_types: Optional[str] = None,
+        origins: Optional[str] = None,
+        indexing_status: Optional[str] = None,
+        date_from: Optional[int] = None,
+        date_to: Optional[int] = None,
+        sort_by: Optional[str] = "createdAtTimestamp",
+        sort_order: Optional[models.GetKBChildrenSortOrder] = "desc",
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RecordsResponse:
+        r"""Get KB children (alias for records)
+
+        Retrieve a paginated list of children (folders and records) within a specific knowledge base.<br><br>
+        <b>Overview:</b><br>
+        This is an alias endpoint for <code>/knowledgeBase/{kbId}/records</code>. It returns all direct children of the KB root, including both folders and records.<br><br>
+        <b>Filtering:</b><br>
+        <ul>
+        <li><b>search:</b> Search by record name (partial match, max 1000 chars)</li>
+        <li><b>recordTypes:</b> FILE, WEBPAGE, COMMENT, MESSAGE, EMAIL, TICKET</li>
+        <li><b>origins:</b> UPLOAD (manual uploads) or CONNECTOR (synced)</li>
+        <li><b>indexingStatus:</b> Filter by processing state</li>
+        <li><b>dateFrom/dateTo:</b> Creation date range (Unix timestamps)</li>
+        </ul>
+        <b>Sorting:</b><br>
+        Default sorts by <code>createdAtTimestamp</code> descending (newest first).
+
+
+        :param security:
+        :param kb_id: Knowledge base ID
+        :param page:
+        :param limit:
+        :param search: Search query for record names
+        :param record_types: Filter by record types (comma-separated)
+        :param origins: Filter by origin
+        :param indexing_status: Filter by indexing status
+        :param date_from: Start date filter (Unix timestamp)
+        :param date_to: End date filter (Unix timestamp)
+        :param sort_by:
+        :param sort_order:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetKBChildrenRequest(
+            kb_id=kb_id,
+            page=page,
+            limit=limit,
+            search=search,
+            record_types=record_types,
+            origins=origins,
+            indexing_status=indexing_status,
+            date_from=date_from,
+            date_to=date_to,
+            sort_by=sort_by,
+            sort_order=sort_order,
+        )
+
+        req = self._build_request(
+            method="GET",
+            path="/knowledgeBase/{kbId}/children",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=utils.get_pydantic_model(security, models.GetKBChildrenSecurity),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getKBChildren",
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.RecordsResponse, http_res)
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_kb_children_async(
+        self,
+        *,
+        security: Union[
+            models.GetKBChildrenSecurity, models.GetKBChildrenSecurityTypedDict
+        ],
+        kb_id: str,
+        page: Optional[int] = 1,
+        limit: Optional[int] = 20,
+        search: Optional[str] = None,
+        record_types: Optional[str] = None,
+        origins: Optional[str] = None,
+        indexing_status: Optional[str] = None,
+        date_from: Optional[int] = None,
+        date_to: Optional[int] = None,
+        sort_by: Optional[str] = "createdAtTimestamp",
+        sort_order: Optional[models.GetKBChildrenSortOrder] = "desc",
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RecordsResponse:
+        r"""Get KB children (alias for records)
+
+        Retrieve a paginated list of children (folders and records) within a specific knowledge base.<br><br>
+        <b>Overview:</b><br>
+        This is an alias endpoint for <code>/knowledgeBase/{kbId}/records</code>. It returns all direct children of the KB root, including both folders and records.<br><br>
+        <b>Filtering:</b><br>
+        <ul>
+        <li><b>search:</b> Search by record name (partial match, max 1000 chars)</li>
+        <li><b>recordTypes:</b> FILE, WEBPAGE, COMMENT, MESSAGE, EMAIL, TICKET</li>
+        <li><b>origins:</b> UPLOAD (manual uploads) or CONNECTOR (synced)</li>
+        <li><b>indexingStatus:</b> Filter by processing state</li>
+        <li><b>dateFrom/dateTo:</b> Creation date range (Unix timestamps)</li>
+        </ul>
+        <b>Sorting:</b><br>
+        Default sorts by <code>createdAtTimestamp</code> descending (newest first).
+
+
+        :param security:
+        :param kb_id: Knowledge base ID
+        :param page:
+        :param limit:
+        :param search: Search query for record names
+        :param record_types: Filter by record types (comma-separated)
+        :param origins: Filter by origin
+        :param indexing_status: Filter by indexing status
+        :param date_from: Start date filter (Unix timestamp)
+        :param date_to: End date filter (Unix timestamp)
+        :param sort_by:
+        :param sort_order:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetKBChildrenRequest(
+            kb_id=kb_id,
+            page=page,
+            limit=limit,
+            search=search,
+            record_types=record_types,
+            origins=origins,
+            indexing_status=indexing_status,
+            date_from=date_from,
+            date_to=date_to,
+            sort_by=sort_by,
+            sort_order=sort_order,
+        )
+
+        req = self._build_request_async(
+            method="GET",
+            path="/knowledgeBase/{kbId}/children",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=utils.get_pydantic_model(security, models.GetKBChildrenSecurity),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getKBChildren",
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.RecordsResponse, http_res)
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_record_by_id(
+        self,
+        *,
+        security: Union[
+            models.GetRecordByIDSecurity, models.GetRecordByIDSecurityTypedDict
+        ],
         record_id: str,
         convert_to: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -566,6 +843,7 @@ class Records(BaseSDK):
         Use the optional <code>convertTo</code> parameter to request file format conversion (e.g., PDF to text).
 
 
+        :param security:
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to
         :param retries: Override the default retry configuration for this method
@@ -600,7 +878,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetRecordByIDSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -618,10 +896,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getRecordById",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -643,9 +919,12 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_record_by_id_async(
         self,
         *,
+        security: Union[
+            models.GetRecordByIDSecurity, models.GetRecordByIDSecurityTypedDict
+        ],
         record_id: str,
         convert_to: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -662,6 +941,7 @@ class Records(BaseSDK):
         Use the optional <code>convertTo</code> parameter to request file format conversion (e.g., PDF to text).
 
 
+        :param security:
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to
         :param retries: Override the default retry configuration for this method
@@ -696,7 +976,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetRecordByIDSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -714,10 +994,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getRecordById",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -739,7 +1017,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_record(
         self,
         *,
         record_id: str,
@@ -808,7 +1086,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
                 True,
                 "multipart",
@@ -856,7 +1134,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_record_async(
         self,
         *,
         record_id: str,
@@ -925,7 +1203,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
                 True,
                 "multipart",
@@ -973,9 +1251,12 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_record(
         self,
         *,
+        security: Union[
+            models.DeleteRecordSecurity, models.DeleteRecordSecurityTypedDict
+        ],
         record_id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -995,6 +1276,7 @@ class Records(BaseSDK):
         <b>Warning:</b> This action is irreversible.
 
 
+        :param security:
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1027,7 +1309,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.DeleteRecordSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1045,10 +1327,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteRecord",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1070,9 +1350,12 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_record_async(
         self,
         *,
+        security: Union[
+            models.DeleteRecordSecurity, models.DeleteRecordSecurityTypedDict
+        ],
         record_id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1092,6 +1375,7 @@ class Records(BaseSDK):
         <b>Warning:</b> This action is irreversible.
 
 
+        :param security:
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1124,7 +1408,7 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.DeleteRecordSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1142,10 +1426,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteRecord",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1167,9 +1449,13 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def stream(
+    def stream_record_buffer(
         self,
         *,
+        security: Union[
+            models.StreamRecordBufferSecurity,
+            models.StreamRecordBufferSecurityTypedDict,
+        ],
         record_id: str,
         convert_to: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1192,6 +1478,7 @@ class Records(BaseSDK):
         Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to PDF).
 
 
+        :param security:
         :param record_id: Record ID
         :param convert_to: Target format for conversion
         :param retries: Override the default retry configuration for this method
@@ -1226,7 +1513,9 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/octet-stream",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.StreamRecordBufferSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1244,10 +1533,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="streamRecordBuffer",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -1273,9 +1560,13 @@ class Records(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def stream_async(
+    async def stream_record_buffer_async(
         self,
         *,
+        security: Union[
+            models.StreamRecordBufferSecurity,
+            models.StreamRecordBufferSecurityTypedDict,
+        ],
         record_id: str,
         convert_to: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1298,6 +1589,7 @@ class Records(BaseSDK):
         Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to PDF).
 
 
+        :param security:
         :param record_id: Record ID
         :param convert_to: Target format for conversion
         :param retries: Override the default retry configuration for this method
@@ -1332,7 +1624,9 @@ class Records(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/octet-stream",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.StreamRecordBufferSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1350,10 +1644,8 @@ class Records(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="streamRecordBuffer",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -1378,209 +1670,3 @@ class Records(BaseSDK):
         raise errors.PipeshubDefaultError(
             "Unexpected response received", http_res, http_res_text
         )
-
-    def move(
-        self,
-        *,
-        kb_id: str,
-        record_id: str,
-        new_parent_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ):
-        r"""Move a record to another folder
-
-        Move a record (file or folder) to a different parent folder within the same knowledge base.<br><br>
-        <b>Required Permission:</b> WRITER or higher<br><br>
-        <b>Moving to Root:</b><br>
-        Set <code>newParentId</code> to <code>null</code> to move the record to the root level of the knowledge base.
-
-
-        :param kb_id: Knowledge base ID
-        :param record_id: Record ID to move
-        :param new_parent_id: ID of the new parent folder, or null to move to root level
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.MoveRecordRequest(
-            kb_id=kb_id,
-            record_id=record_id,
-            body=models.MoveRecordRequestBody(
-                new_parent_id=new_parent_id,
-            ),
-        )
-
-        req = self._build_request(
-            method="PUT",
-            path="/knowledgeBase/{kbId}/record/{recordId}/move",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="*/*",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.MoveRecordRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="moveRecord",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "*"):
-            return
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def move_async(
-        self,
-        *,
-        kb_id: str,
-        record_id: str,
-        new_parent_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ):
-        r"""Move a record to another folder
-
-        Move a record (file or folder) to a different parent folder within the same knowledge base.<br><br>
-        <b>Required Permission:</b> WRITER or higher<br><br>
-        <b>Moving to Root:</b><br>
-        Set <code>newParentId</code> to <code>null</code> to move the record to the root level of the knowledge base.
-
-
-        :param kb_id: Knowledge base ID
-        :param record_id: Record ID to move
-        :param new_parent_id: ID of the new parent folder, or null to move to root level
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.MoveRecordRequest(
-            kb_id=kb_id,
-            record_id=record_id,
-            body=models.MoveRecordRequestBody(
-                new_parent_id=new_parent_id,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PUT",
-            path="/knowledgeBase/{kbId}/record/{recordId}/move",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="*/*",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.MoveRecordRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="moveRecord",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "*"):
-            return
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)

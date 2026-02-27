@@ -17,7 +17,7 @@ Contains token metadata if active, or just `active: false` if not.
 | `exp`                                   | *Optional[int]*                         | :heavy_minus_sign:                      | Token expiration timestamp (Unix epoch) |
 | `iat`                                   | *Optional[int]*                         | :heavy_minus_sign:                      | Token issuance timestamp (Unix epoch)   |
 | `nbf`                                   | *Optional[int]*                         | :heavy_minus_sign:                      | Token not-before timestamp (Unix epoch) |
-| `sub`                                   | *Optional[str]*                         | :heavy_minus_sign:                      | Subject (user ID)                       |
+| `user_id`                               | *Optional[str]*                         | :heavy_minus_sign:                      | User ID                                 |
 | `aud`                                   | *Optional[str]*                         | :heavy_minus_sign:                      | Audience (client ID)                    |
 | `iss`                                   | *Optional[str]*                         | :heavy_minus_sign:                      | Issuer URL                              |
 | `jti`                                   | *Optional[str]*                         | :heavy_minus_sign:                      | Unique token identifier                 |

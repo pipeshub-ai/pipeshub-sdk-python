@@ -12,9 +12,10 @@ from typing import List, Mapping, Optional, Union
 class Agents(BaseSDK):
     r"""Custom AI agents with specialized capabilities and tool integrations"""
 
-    def get_all(
+    def list_agents(
         self,
         *,
+        security: Union[models.ListAgentsSecurity, models.ListAgentsSecurityTypedDict],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -28,6 +29,7 @@ class Agents(BaseSDK):
         Each agent has unique capabilities defined by its tools and knowledge scope.
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -54,7 +56,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ListAgentsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -72,10 +74,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listAgents",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -97,9 +97,10 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_async(
+    async def list_agents_async(
         self,
         *,
+        security: Union[models.ListAgentsSecurity, models.ListAgentsSecurityTypedDict],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -113,6 +114,7 @@ class Agents(BaseSDK):
         Each agent has unique capabilities defined by its tools and knowledge scope.
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -139,7 +141,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ListAgentsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -157,10 +159,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listAgents",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -182,16 +182,19 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_agent(
         self,
         *,
+        security: Union[
+            models.CreateAgentSecurity, models.CreateAgentSecurityTypedDict
+        ],
         name: str,
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         tools: Optional[List[str]] = None,
         knowledge_bases: Optional[List[str]] = None,
-        llm_config: Optional[
-            Union[models.CreateAgentLlmConfig, models.CreateAgentLlmConfigTypedDict]
+        model_config: Optional[
+            Union[models.CreateAgentModelConfig, models.CreateAgentModelConfigTypedDict]
         ] = None,
         is_public: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -221,12 +224,13 @@ class Agents(BaseSDK):
         </ul>
 
 
+        :param security:
         :param name: Agent display name
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
         :param tools: Tool keys the agent can use
         :param knowledge_bases: Knowledge base IDs to access
-        :param llm_config:
+        :param model_config_:
         :param is_public: Make agent available to all org users
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -249,8 +253,8 @@ class Agents(BaseSDK):
             system_prompt=system_prompt,
             tools=tools,
             knowledge_bases=knowledge_bases,
-            llm_config=utils.get_pydantic_model(
-                llm_config, Optional[models.CreateAgentLlmConfig]
+            model_config_=utils.get_pydantic_model(
+                model_config, Optional[models.CreateAgentModelConfig]
             ),
             is_public=is_public,
         )
@@ -267,7 +271,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.CreateAgentSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.CreateAgentRequest
             ),
@@ -288,10 +292,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "4XX", "5XX"],
@@ -313,16 +315,19 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_agent_async(
         self,
         *,
+        security: Union[
+            models.CreateAgentSecurity, models.CreateAgentSecurityTypedDict
+        ],
         name: str,
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         tools: Optional[List[str]] = None,
         knowledge_bases: Optional[List[str]] = None,
-        llm_config: Optional[
-            Union[models.CreateAgentLlmConfig, models.CreateAgentLlmConfigTypedDict]
+        model_config: Optional[
+            Union[models.CreateAgentModelConfig, models.CreateAgentModelConfigTypedDict]
         ] = None,
         is_public: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -352,12 +357,13 @@ class Agents(BaseSDK):
         </ul>
 
 
+        :param security:
         :param name: Agent display name
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
         :param tools: Tool keys the agent can use
         :param knowledge_bases: Knowledge base IDs to access
-        :param llm_config:
+        :param model_config_:
         :param is_public: Make agent available to all org users
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -380,8 +386,8 @@ class Agents(BaseSDK):
             system_prompt=system_prompt,
             tools=tools,
             knowledge_bases=knowledge_bases,
-            llm_config=utils.get_pydantic_model(
-                llm_config, Optional[models.CreateAgentLlmConfig]
+            model_config_=utils.get_pydantic_model(
+                model_config, Optional[models.CreateAgentModelConfig]
             ),
             is_public=is_public,
         )
@@ -398,7 +404,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.CreateAgentSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.CreateAgentRequest
             ),
@@ -419,10 +425,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "4XX", "5XX"],
@@ -444,9 +448,12 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_tools(
+    def list_agent_tools(
         self,
         *,
+        security: Union[
+            models.ListAgentToolsSecurity, models.ListAgentToolsSecurityTypedDict
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -467,6 +474,7 @@ class Agents(BaseSDK):
         </ul>
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -493,7 +501,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ListAgentToolsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -511,10 +519,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listAgentTools",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -536,9 +542,12 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_tools_async(
+    async def list_agent_tools_async(
         self,
         *,
+        security: Union[
+            models.ListAgentToolsSecurity, models.ListAgentToolsSecurityTypedDict
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -559,6 +568,7 @@ class Agents(BaseSDK):
         </ul>
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -585,7 +595,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ListAgentToolsSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -603,10 +613,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listAgentTools",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -628,9 +636,10 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_agent(
         self,
         *,
+        security: Union[models.GetAgentSecurity, models.GetAgentSecurityTypedDict],
         agent_key: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -641,6 +650,7 @@ class Agents(BaseSDK):
 
         Retrieve agent details by its unique key.
 
+        :param security:
         :param agent_key: Unique agent identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -673,7 +683,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetAgentSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -691,10 +701,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -716,9 +724,10 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_agent_async(
         self,
         *,
+        security: Union[models.GetAgentSecurity, models.GetAgentSecurityTypedDict],
         agent_key: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -729,6 +738,7 @@ class Agents(BaseSDK):
 
         Retrieve agent details by its unique key.
 
+        :param security:
         :param agent_key: Unique agent identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -761,7 +771,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetAgentSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -779,10 +789,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -804,17 +812,20 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_agent(
         self,
         *,
+        security: Union[
+            models.UpdateAgentSecurity, models.UpdateAgentSecurityTypedDict
+        ],
         agent_key: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         tools: Optional[List[str]] = None,
         knowledge_bases: Optional[List[str]] = None,
-        llm_config: Optional[
-            Union[models.UpdateAgentLlmConfig, models.UpdateAgentLlmConfigTypedDict]
+        model_config: Optional[
+            Union[models.UpdateAgentModelConfig, models.UpdateAgentModelConfigTypedDict]
         ] = None,
         is_public: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -829,13 +840,14 @@ class Agents(BaseSDK):
         Only the agent creator can update it.
 
 
+        :param security:
         :param agent_key:
         :param name:
         :param description:
         :param system_prompt:
         :param tools:
         :param knowledge_bases:
-        :param llm_config:
+        :param model_config_:
         :param is_public:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -860,8 +872,8 @@ class Agents(BaseSDK):
                 system_prompt=system_prompt,
                 tools=tools,
                 knowledge_bases=knowledge_bases,
-                llm_config=utils.get_pydantic_model(
-                    llm_config, Optional[models.UpdateAgentLlmConfig]
+                model_config_=utils.get_pydantic_model(
+                    model_config, Optional[models.UpdateAgentModelConfig]
                 ),
                 is_public=is_public,
             ),
@@ -879,7 +891,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.UpdateAgentSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body, False, False, "json", models.UpdateAgentRequestBody
             ),
@@ -900,10 +912,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -925,17 +935,20 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_agent_async(
         self,
         *,
+        security: Union[
+            models.UpdateAgentSecurity, models.UpdateAgentSecurityTypedDict
+        ],
         agent_key: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         tools: Optional[List[str]] = None,
         knowledge_bases: Optional[List[str]] = None,
-        llm_config: Optional[
-            Union[models.UpdateAgentLlmConfig, models.UpdateAgentLlmConfigTypedDict]
+        model_config: Optional[
+            Union[models.UpdateAgentModelConfig, models.UpdateAgentModelConfigTypedDict]
         ] = None,
         is_public: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -950,13 +963,14 @@ class Agents(BaseSDK):
         Only the agent creator can update it.
 
 
+        :param security:
         :param agent_key:
         :param name:
         :param description:
         :param system_prompt:
         :param tools:
         :param knowledge_bases:
-        :param llm_config:
+        :param model_config_:
         :param is_public:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -981,8 +995,8 @@ class Agents(BaseSDK):
                 system_prompt=system_prompt,
                 tools=tools,
                 knowledge_bases=knowledge_bases,
-                llm_config=utils.get_pydantic_model(
-                    llm_config, Optional[models.UpdateAgentLlmConfig]
+                model_config_=utils.get_pydantic_model(
+                    model_config, Optional[models.UpdateAgentModelConfig]
                 ),
                 is_public=is_public,
             ),
@@ -1000,7 +1014,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.UpdateAgentSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body, False, False, "json", models.UpdateAgentRequestBody
             ),
@@ -1021,10 +1035,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1046,9 +1058,12 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_agent(
         self,
         *,
+        security: Union[
+            models.DeleteAgentSecurity, models.DeleteAgentSecurityTypedDict
+        ],
         agent_key: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1062,6 +1077,7 @@ class Agents(BaseSDK):
         All conversations with this agent will become inaccessible.
 
 
+        :param security:
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1094,7 +1110,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.DeleteAgentSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1112,10 +1128,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1137,9 +1151,12 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_agent_async(
         self,
         *,
+        security: Union[
+            models.DeleteAgentSecurity, models.DeleteAgentSecurityTypedDict
+        ],
         agent_key: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1153,6 +1170,7 @@ class Agents(BaseSDK):
         All conversations with this agent will become inaccessible.
 
 
+        :param security:
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1185,7 +1203,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.DeleteAgentSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1203,10 +1221,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1228,9 +1244,13 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_permissions(
+    def get_agent_permissions(
         self,
         *,
+        security: Union[
+            models.GetAgentPermissionsSecurity,
+            models.GetAgentPermissionsSecurityTypedDict,
+        ],
         agent_key: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1241,6 +1261,7 @@ class Agents(BaseSDK):
 
         Get the current permission configuration for an agent.
 
+        :param security:
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1273,7 +1294,9 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetAgentPermissionsSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1291,10 +1314,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAgentPermissions",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -1316,9 +1337,13 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_permissions_async(
+    async def get_agent_permissions_async(
         self,
         *,
+        security: Union[
+            models.GetAgentPermissionsSecurity,
+            models.GetAgentPermissionsSecurityTypedDict,
+        ],
         agent_key: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1329,6 +1354,7 @@ class Agents(BaseSDK):
 
         Get the current permission configuration for an agent.
 
+        :param security:
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1361,7 +1387,9 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetAgentPermissionsSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1379,10 +1407,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAgentPermissions",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -1404,9 +1430,13 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_permissions(
+    def update_agent_permissions(
         self,
         *,
+        security: Union[
+            models.UpdateAgentPermissionsSecurity,
+            models.UpdateAgentPermissionsSecurityTypedDict,
+        ],
         agent_key: str,
         is_public: Optional[bool] = None,
         shared_with: Optional[
@@ -1424,6 +1454,7 @@ class Agents(BaseSDK):
 
         Update who can access and use the agent.
 
+        :param security:
         :param agent_key:
         :param is_public:
         :param shared_with:
@@ -1464,7 +1495,9 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.UpdateAgentPermissionsSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body,
                 False,
@@ -1489,10 +1522,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAgentPermissions",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1514,9 +1545,13 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_permissions_async(
+    async def update_agent_permissions_async(
         self,
         *,
+        security: Union[
+            models.UpdateAgentPermissionsSecurity,
+            models.UpdateAgentPermissionsSecurityTypedDict,
+        ],
         agent_key: str,
         is_public: Optional[bool] = None,
         shared_with: Optional[
@@ -1534,6 +1569,7 @@ class Agents(BaseSDK):
 
         Update who can access and use the agent.
 
+        :param security:
         :param agent_key:
         :param is_public:
         :param shared_with:
@@ -1574,7 +1610,9 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.UpdateAgentPermissionsSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body,
                 False,
@@ -1599,10 +1637,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAgentPermissions",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1624,9 +1660,10 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def share(
+    def share_agent(
         self,
         *,
+        security: Union[models.ShareAgentSecurity, models.ShareAgentSecurityTypedDict],
         agent_key: str,
         user_ids: List[str],
         access_level: Optional[models.ShareRequestAccessLevel] = "read",
@@ -1639,6 +1676,7 @@ class Agents(BaseSDK):
 
         Share an agent with specific users.
 
+        :param security:
         :param agent_key:
         :param user_ids: IDs of users to share with
         :param access_level: Permission level for shared users:
@@ -1682,7 +1720,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ShareAgentSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body, False, False, "json", models.ShareRequest
             ),
@@ -1703,10 +1741,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="shareAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1728,9 +1764,10 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def share_async(
+    async def share_agent_async(
         self,
         *,
+        security: Union[models.ShareAgentSecurity, models.ShareAgentSecurityTypedDict],
         agent_key: str,
         user_ids: List[str],
         access_level: Optional[models.ShareRequestAccessLevel] = "read",
@@ -1743,6 +1780,7 @@ class Agents(BaseSDK):
 
         Share an agent with specific users.
 
+        :param security:
         :param agent_key:
         :param user_ids: IDs of users to share with
         :param access_level: Permission level for shared users:
@@ -1786,7 +1824,7 @@ class Agents(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ShareAgentSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body, False, False, "json", models.ShareRequest
             ),
@@ -1807,202 +1845,8 @@ class Agents(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="shareAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.Agent, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def unshare(
-        self,
-        *,
-        agent_key: str,
-        user_ids: List[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.Agent:
-        r"""Revoke agent access
-
-        Remove sharing access from specified users.
-
-        :param agent_key:
-        :param user_ids:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UnshareAgentRequest(
-            agent_key=agent_key,
-            body=models.UnshareAgentRequestBody(
-                user_ids=user_ids,
-            ),
-        )
-
-        req = self._build_request(
-            method="POST",
-            path="/agents/{agentKey}/unshare",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UnshareAgentRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="unshareAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.Agent, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def unshare_async(
-        self,
-        *,
-        agent_key: str,
-        user_ids: List[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.Agent:
-        r"""Revoke agent access
-
-        Remove sharing access from specified users.
-
-        :param agent_key:
-        :param user_ids:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UnshareAgentRequest(
-            agent_key=agent_key,
-            body=models.UnshareAgentRequestBody(
-                user_ids=user_ids,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="POST",
-            path="/agents/{agentKey}/unshare",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UnshareAgentRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="unshareAgent",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],

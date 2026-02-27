@@ -2,16 +2,16 @@
 
 ## Overview
 
+User authentication including multi-step MFA, password reset, OTP login, and token management
+
 ### Available Operations
 
 * [init_auth](#init_auth) - Initialize authentication session
 * [authenticate](#authenticate) - Authenticate user with credentials
-* [generate_otp](#generate_otp) - Generate and send OTP for login
-* [reset_password](#reset_password) - Reset password (authenticated user)
+* [generate_login_otp](#generate_login_otp) - Generate and send OTP for login
 * [forgot_password](#forgot_password) - Request password reset email
-* [reset_password_token](#reset_password_token) - Reset password with email token
-* [check_password_set](#check_password_set) - Check if user has password set (Internal)
-* [refresh](#refresh) - Refresh access token
+* [reset_password_with_token](#reset_password_with_token) - Reset password with email token
+* [refresh_token](#refresh_token) - Refresh access token
 * [logout](#logout) - Logout current session
 
 ## init_auth
@@ -140,7 +140,7 @@ with Pipeshub(
 | errors.AuthError            | 400, 401, 403, 404, 410     | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## generate_otp
+## generate_login_otp
 
 Generate and send a 6-digit one-time password (OTP) to the user's email.
 Use this endpoint before authenticating with the <code>otp</code> method.
@@ -169,7 +169,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.user_account.generate_otp(email="Garland.Sipes42@hotmail.com")
+    res = p_client.user_account.generate_login_otp(email="Garland.Sipes42@hotmail.com")
 
     # Handle response
     print(res)
@@ -193,62 +193,6 @@ with Pipeshub(
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.AuthError            | 400, 403, 404               | application/json            |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## reset_password
-
-Reset password for an authenticated user. Requires the current password for verification.
-<br><br>
-<b>Password Requirements:</b><br>
-- Minimum 8 characters<br>
-- At least 1 uppercase letter (A-Z)<br>
-- At least 1 lowercase letter (a-z)<br>
-- At least 1 number (0-9)<br>
-- At least 1 special character (#?!@$%^&*-)
-<br><br>
-<b>Security Notes:</b><br>
-- A new access token is returned (old tokens are invalidated)<br>
-- CAPTCHA may be required if enabled (pass <code>cf-turnstile-response</code>)
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="resetPassword" method="post" path="/userAccount/password/reset" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.user_account.reset_password(current_password="fR5Alu28cPCa984", new_password="vcFGz9GLaOB88kV")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                                                                                                                                               | Type                                                                                                                                                                                                    | Required                                                                                                                                                                                                | Description                                                                                                                                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `current_password`                                                                                                                                                                                      | *str*                                                                                                                                                                                                   | :heavy_check_mark:                                                                                                                                                                                      | Current password for verification                                                                                                                                                                       |
-| `new_password`                                                                                                                                                                                          | *str*                                                                                                                                                                                                   | :heavy_check_mark:                                                                                                                                                                                      | New password. Must meet the following requirements:<br/>- Minimum 8 characters<br/>- At least 1 uppercase letter<br/>- At least 1 lowercase letter<br/>- At least 1 number<br/>- At least 1 special character (#?!@$%^&*-)<br/> |
-| `cf_turnstile_response`                                                                                                                                                                                 | *Optional[str]*                                                                                                                                                                                         | :heavy_minus_sign:                                                                                                                                                                                      | Cloudflare Turnstile CAPTCHA token (optional)                                                                                                                                                           |
-| `retries`                                                                                                                                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                        | :heavy_minus_sign:                                                                                                                                                                                      | Configuration to override the default retry behavior of the client.                                                                                                                                     |
-
-### Response
-
-**[models.PasswordResetResponse](../../models/passwordresetresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.AuthError            | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
 ## forgot_password
@@ -295,7 +239,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## reset_password_token
+## reset_password_with_token
 
 Reset password using a token received via email from the forgot password flow.
 <br><br>
@@ -323,7 +267,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.user_account.reset_password_token(security=models.ResetPasswordWithTokenSecurity(
+    res = p_client.user_account.reset_password_with_token(security=models.ResetPasswordWithTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
     ), password="H9GEHoL829GXj06")
 
@@ -351,53 +295,7 @@ with Pipeshub(
 | errors.AuthError            | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## check_password_set
-
-Internal endpoint to check if a user has a password configured.
-Used by other services to determine authentication capabilities.
-<br><br>
-<b>Note:</b> This is an internal service-to-service endpoint.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="checkPasswordStatus" method="get" path="/userAccount/internal/password/check" -->
-```python
-import os
-from pipeshub import Pipeshub, models
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
-
-    res = p_client.user_account.check_password_set(security=models.CheckPasswordStatusSecurity(
-        scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
-    ))
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `security`                                                                 | [models.CheckPasswordStatusSecurity](../../checkpasswordstatussecurity.md) | :heavy_check_mark:                                                         | The security requirements to use for the request.                          |
-| `retries`                                                                  | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)           | :heavy_minus_sign:                                                         | Configuration to override the default retry behavior of the client.        |
-
-### Response
-
-**[models.CheckPasswordStatusResponse](../../models/checkpasswordstatusresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## refresh
+## refresh_token
 
 Get a new access token using a valid refresh token.
 <br><br>
@@ -427,7 +325,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.user_account.refresh(security=models.RefreshTokenSecurity(
+    res = p_client.user_account.refresh_token(security=models.RefreshTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
     ))
 

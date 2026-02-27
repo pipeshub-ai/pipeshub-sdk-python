@@ -6,7 +6,7 @@ from pipeshub._hooks import HookContext
 from pipeshub.types import OptionalNullable, UNSET
 from pipeshub.utils import get_security_from_env
 from pipeshub.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Union
 
 
 class Connector(BaseSDK):
@@ -15,6 +15,9 @@ class Connector(BaseSDK):
     def reindex_record(
         self,
         *,
+        security: Union[
+            models.ReindexRecordSecurity, models.ReindexRecordSecurityTypedDict
+        ],
         record_id: str,
         depth: Optional[int] = -1,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -31,6 +34,7 @@ class Connector(BaseSDK):
         Controls processing depth for complex documents (-1 for full depth, 0-100 for limited).
 
 
+        :param security:
         :param record_id:
         :param depth: Processing depth (-1 for unlimited)
         :param retries: Override the default retry configuration for this method
@@ -67,9 +71,9 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ReindexRecordSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
                 True,
                 "json",
@@ -92,10 +96,8 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reindexRecord",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -120,6 +122,9 @@ class Connector(BaseSDK):
     async def reindex_record_async(
         self,
         *,
+        security: Union[
+            models.ReindexRecordSecurity, models.ReindexRecordSecurityTypedDict
+        ],
         record_id: str,
         depth: Optional[int] = -1,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -136,6 +141,7 @@ class Connector(BaseSDK):
         Controls processing depth for complex documents (-1 for full depth, 0-100 for limited).
 
 
+        :param security:
         :param record_id:
         :param depth: Processing depth (-1 for unlimited)
         :param retries: Override the default retry configuration for this method
@@ -172,9 +178,9 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ReindexRecordSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
                 True,
                 "json",
@@ -197,10 +203,8 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reindexRecord",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -225,6 +229,10 @@ class Connector(BaseSDK):
     def reindex_record_group(
         self,
         *,
+        security: Union[
+            models.ReindexRecordGroupSecurity,
+            models.ReindexRecordGroupSecurityTypedDict,
+        ],
         record_group_id: str,
         depth: Optional[int] = -1,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -239,6 +247,7 @@ class Connector(BaseSDK):
         Batch reindex operation for entire containers. The recordGroupId can be a folder ID or KB ID.
 
 
+        :param security:
         :param record_group_id: Folder ID or KB ID
         :param depth:
         :param retries: Override the default retry configuration for this method
@@ -275,9 +284,11 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.ReindexRecordGroupSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
                 True,
                 "json",
@@ -300,10 +311,8 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reindexRecordGroup",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -328,6 +337,10 @@ class Connector(BaseSDK):
     async def reindex_record_group_async(
         self,
         *,
+        security: Union[
+            models.ReindexRecordGroupSecurity,
+            models.ReindexRecordGroupSecurityTypedDict,
+        ],
         record_group_id: str,
         depth: Optional[int] = -1,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -342,6 +355,7 @@ class Connector(BaseSDK):
         Batch reindex operation for entire containers. The recordGroupId can be a folder ID or KB ID.
 
 
+        :param security:
         :param record_group_id: Folder ID or KB ID
         :param depth:
         :param retries: Override the default retry configuration for this method
@@ -378,9 +392,11 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.ReindexRecordGroupSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
                 True,
                 "json",
@@ -403,10 +419,8 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reindexRecordGroup",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -428,24 +442,29 @@ class Connector(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def reindex_failed_records(
+    def resync_connector(
         self,
         *,
-        app: str,
+        security: Union[
+            models.ResyncConnectorSecurity, models.ResyncConnectorSecurityTypedDict
+        ],
+        connector_name: str,
         connector_id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ):
-        r"""Reindex failed connector records
+        r"""Resync connector
 
-        Retry indexing for all failed records from a specific connector.<br><br>
-        <b>Use Case:</b><br>
-        After fixing connectivity issues or configuration problems, use this to reprocess all records that failed during the initial sync.
+        Trigger a full resync of all records from a connector.<br><br>
+        <b>Overview:</b><br>
+        Fetches all content from the external source and updates local records. Use when you suspect data is out of sync.<br><br>
+        <b>Warning:</b> This can be resource-intensive for large connectors.
 
 
-        :param app: Connector app name
+        :param security:
+        :param connector_name: Connector type name
         :param connector_id: Connector instance ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -462,14 +481,14 @@ class Connector(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.ReindexFailedConnectorRecordsRequest(
-            app=app,
+        request = models.ResyncConnectorRequest(
+            connector_name=connector_name,
             connector_id=connector_id,
         )
 
         req = self._build_request(
             method="POST",
-            path="/knowledgeBase/reindex-failed/connector",
+            path="/knowledgeBase/resync/connector",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -479,13 +498,9 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ResyncConnectorSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
-                request,
-                False,
-                False,
-                "json",
-                models.ReindexFailedConnectorRecordsRequest,
+                request, False, False, "json", models.ResyncConnectorRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -503,11 +518,9 @@ class Connector(BaseSDK):
             hook_ctx=HookContext(
                 config=self.sdk_configuration,
                 base_url=base_url or "",
-                operation_id="reindexFailedConnectorRecords",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                operation_id="resyncConnector",
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "4XX", "5XX"],
@@ -529,24 +542,29 @@ class Connector(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def reindex_failed_records_async(
+    async def resync_connector_async(
         self,
         *,
-        app: str,
+        security: Union[
+            models.ResyncConnectorSecurity, models.ResyncConnectorSecurityTypedDict
+        ],
+        connector_name: str,
         connector_id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ):
-        r"""Reindex failed connector records
+        r"""Resync connector
 
-        Retry indexing for all failed records from a specific connector.<br><br>
-        <b>Use Case:</b><br>
-        After fixing connectivity issues or configuration problems, use this to reprocess all records that failed during the initial sync.
+        Trigger a full resync of all records from a connector.<br><br>
+        <b>Overview:</b><br>
+        Fetches all content from the external source and updates local records. Use when you suspect data is out of sync.<br><br>
+        <b>Warning:</b> This can be resource-intensive for large connectors.
 
 
-        :param app: Connector app name
+        :param security:
+        :param connector_name: Connector type name
         :param connector_id: Connector instance ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -563,14 +581,14 @@ class Connector(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.ReindexFailedConnectorRecordsRequest(
-            app=app,
+        request = models.ResyncConnectorRequest(
+            connector_name=connector_name,
             connector_id=connector_id,
         )
 
         req = self._build_request_async(
             method="POST",
-            path="/knowledgeBase/reindex-failed/connector",
+            path="/knowledgeBase/resync/connector",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -580,13 +598,9 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="*/*",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ResyncConnectorSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
-                request,
-                False,
-                False,
-                "json",
-                models.ReindexFailedConnectorRecordsRequest,
+                request, False, False, "json", models.ResyncConnectorRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -604,11 +618,9 @@ class Connector(BaseSDK):
             hook_ctx=HookContext(
                 config=self.sdk_configuration,
                 base_url=base_url or "",
-                operation_id="reindexFailedConnectorRecords",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                operation_id="resyncConnector",
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "4XX", "5XX"],
@@ -630,9 +642,12 @@ class Connector(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_stats(
+    def get_connector_stats(
         self,
         *,
+        security: Union[
+            models.GetConnectorStatsSecurity, models.GetConnectorStatsSecurityTypedDict
+        ],
         connector_id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -644,6 +659,7 @@ class Connector(BaseSDK):
         Retrieve statistics for a specific connector including record counts, indexing status breakdown, and sync information.
 
 
+        :param security:
         :param connector_id: Connector ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -676,7 +692,9 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetConnectorStatsSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -694,10 +712,8 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getConnectorStats",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -719,9 +735,12 @@ class Connector(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_stats_async(
+    async def get_connector_stats_async(
         self,
         *,
+        security: Union[
+            models.GetConnectorStatsSecurity, models.GetConnectorStatsSecurityTypedDict
+        ],
         connector_id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -733,6 +752,7 @@ class Connector(BaseSDK):
         Retrieve statistics for a specific connector including record counts, indexing status breakdown, and sync information.
 
 
+        :param security:
         :param connector_id: Connector ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -765,7 +785,9 @@ class Connector(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetConnectorStatsSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -783,10 +805,8 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getConnectorStats",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["kb:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],

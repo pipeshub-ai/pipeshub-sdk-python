@@ -2,20 +2,20 @@
 
 ## Overview
 
+User group management operations
+
 ### Available Operations
 
-* [create](#create) - Create user group
-* [list](#list) - Get all user groups
-* [get_by_id](#get_by_id) - Get user group by ID
-* [update](#update) - Update user group
-* [delete](#delete) - Delete user group
-* [add_users](#add_users) - Add users to group
-* [remove_users](#remove_users) - Remove users from group
-* [list_users](#list_users) - Get users in a group
-* [get_for_user](#get_for_user) - Get groups for a user
-* [get_stats](#get_stats) - Get user group statistics
+* [create_user_group](#create_user_group) - Create user group
+* [get_all_user_groups](#get_all_user_groups) - Get all user groups
+* [get_user_group_by_id](#get_user_group_by_id) - Get user group by ID
+* [update_user_group](#update_user_group) - Update user group
+* [delete_user_group](#delete_user_group) - Delete user group
+* [add_users_to_group](#add_users_to_group) - Add users to group
+* [remove_users_from_group](#remove_users_from_group) - Remove users from group
+* [get_groups_for_user](#get_groups_for_user) - Get groups for a user
 
-## create
+## create_user_group
 
 Create a new user group within the organization.<br><br>
 <b>Group Types:</b><br>
@@ -51,7 +51,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.create(name="Engineering Team", type_="standard", description="All engineering department members")
+    res = p_client.user_groups.create_user_group(name="Engineering Team", type_="standard", description="All engineering department members")
 
     # Handle response
     print(res)
@@ -77,7 +77,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## get_all_user_groups
 
 Retrieve all user groups in the organization.<br><br>
 <b>Response Details:</b><br>
@@ -107,7 +107,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.list()
+    res = p_client.user_groups.get_all_user_groups()
 
     # Handle response
     print(res)
@@ -130,7 +130,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_user_group_by_id
 
 Retrieve detailed information about a specific user group.<br><br>
 <b>Response Includes:</b><br>
@@ -155,7 +155,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.get_by_id(group_id="507f1f77bcf86cd799439011")
+    res = p_client.user_groups.get_user_group_by_id(group_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -179,7 +179,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_user_group
 
 Update an existing user group's information.<br><br>
 <b>Updatable Fields:</b><br>
@@ -203,7 +203,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.update(group_id="507f1f77bcf86cd799439011", name="Engineering Team - Updated", description="All engineering and DevOps members")
+    res = p_client.user_groups.update_user_group(group_id="507f1f77bcf86cd799439011", name="Engineering Team - Updated", description="All engineering and DevOps members")
 
     # Handle response
     print(res)
@@ -229,7 +229,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_user_group
 
 Soft delete a user group.<br><br>
 <b>Behavior:</b><br>
@@ -258,7 +258,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.delete(group_id="507f1f77bcf86cd799439011")
+    res = p_client.user_groups.delete_user_group(group_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -282,7 +282,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add_users
+## add_users_to_group
 
 Add one or more users to a user group.<br><br>
 <b>Behavior:</b><br>
@@ -312,7 +312,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.add_users(group_id="507f1f77bcf86cd799439011", user_ids=[
+    res = p_client.user_groups.add_users_to_group(group_id="507f1f77bcf86cd799439011", user_ids=[
         "507f1f77bcf86cd799439012",
         "507f1f77bcf86cd799439013",
     ])
@@ -340,7 +340,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## remove_users
+## remove_users_from_group
 
 Remove one or more users from a user group.<br><br>
 <b>Behavior:</b><br>
@@ -368,7 +368,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.remove_users(group_id="507f1f77bcf86cd799439011", user_ids=[
+    res = p_client.user_groups.remove_users_from_group(group_id="507f1f77bcf86cd799439011", user_ids=[
         "507f1f77bcf86cd799439012",
     ])
 
@@ -395,57 +395,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_users
-
-Retrieve all users that belong to a specific user group.<br><br>
-<b>Response Details:</b><br>
-<ul>
-<li>Returns user profiles with basic information</li>
-<li>Supports pagination for large groups</li>
-<li>Excludes deleted users</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getUsersInGroup" method="get" path="/user-groups/{groupId}/users" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.user_groups.list_users(group_id="507f1f77bcf86cd799439011", page=1, limit=20)
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `group_id`                                                          | *str*                                                               | :heavy_check_mark:                                                  | Unique identifier of the user group                                 | 507f1f77bcf86cd799439011                                            |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Page number for pagination (1-based)                                |                                                                     |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Number of users per page                                            |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.GetUsersInGroupResponse](../../models/getusersingroupresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_for_user
+## get_groups_for_user
 
 Retrieve all user groups that a specific user belongs to.<br><br>
 <b>Response Details:</b><br>
@@ -474,7 +424,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.user_groups.get_for_user(user_id="507f1f77bcf86cd799439012")
+    res = p_client.user_groups.get_groups_for_user(user_id="507f1f77bcf86cd799439012")
 
     # Handle response
     print(res)
@@ -491,60 +441,6 @@ with Pipeshub(
 ### Response
 
 **[models.GetGroupsForUserResponse](../../models/getgroupsforuserresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_stats
-
-Retrieve statistics for all user groups in the organization.<br><br>
-<b>Statistics Include:</b><br>
-<ul>
-<li>Total number of groups by type</li>
-<li>Member counts per group</li>
-<li>Active vs deleted groups</li>
-<li>Recently created/modified groups</li>
-</ul>
-<b>Use Cases:</b><br>
-<ul>
-<li>Admin dashboard displays</li>
-<li>Organization analytics</li>
-<li>Capacity planning</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getUserGroupStats" method="get" path="/user-groups/stats/list" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.user_groups.get_stats()
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.GetUserGroupStatsResponse](../../models/getusergroupstatsresponse.md)**
 
 ### Errors
 

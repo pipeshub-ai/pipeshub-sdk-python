@@ -6,15 +6,15 @@ Record management and operations
 
 ### Available Operations
 
-* [get_all](#get_all) - Get all records across knowledge bases
-* [get](#get) - Get records for a knowledge base
-* [get_by_id](#get_by_id) - Get record by ID
-* [update](#update) - Update record
-* [delete](#delete) - Delete record
-* [stream](#stream) - Stream record content
-* [move](#move) - Move a record to another folder
+* [get_all_records](#get_all_records) - Get all records across knowledge bases
+* [get_kb_records](#get_kb_records) - Get records for a knowledge base
+* [get_kb_children](#get_kb_children) - Get KB children (alias for records)
+* [get_record_by_id](#get_record_by_id) - Get record by ID
+* [update_record](#update_record) - Update record
+* [delete_record](#delete_record) - Delete record
+* [stream_record_buffer](#stream_record_buffer) - Stream record content
 
-## get_all
+## get_all_records
 
 Retrieve records from all knowledge bases accessible to the user.<br><br>
 <b>Overview:</b><br>
@@ -41,15 +41,16 @@ Search and filter records across your entire organization. Useful for global sea
 <!-- UsageSnippet language="python" operationID="getAllRecords" method="get" path="/knowledgeBase/records" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.records.get_all(page=1, limit=20, record_types="FILE,WEBPAGE,EMAIL", connectors="GOOGLE_DRIVE,ONEDRIVE", indexing_status="COMPLETED,FAILED", sort_by="createdAtTimestamp", sort_order="desc")
+    res = p_client.records.get_all_records(security=models.GetAllRecordsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), page=1, limit=20, record_types="FILE,WEBPAGE,EMAIL", connectors="GOOGLE_DRIVE,ONEDRIVE", indexing_status="COMPLETED,FAILED", sort_by="createdAtTimestamp", sort_order="desc")
 
     # Handle response
     print(res)
@@ -60,6 +61,7 @@ with Pipeshub(
 
 | Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       | Example                                                                           |
 | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.GetAllRecordsSecurity](../../models/getallrecordssecurity.md)             | :heavy_check_mark:                                                                | N/A                                                                               |                                                                                   |
 | `page`                                                                            | *Optional[int]*                                                                   | :heavy_minus_sign:                                                                | N/A                                                                               |                                                                                   |
 | `limit`                                                                           | *Optional[int]*                                                                   | :heavy_minus_sign:                                                                | N/A                                                                               |                                                                                   |
 | `search`                                                                          | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | Search query (max 1000 chars)                                                     |                                                                                   |
@@ -83,7 +85,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_kb_records
 
 Retrieve a paginated list of records within a specific knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -105,15 +107,16 @@ Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 <!-- UsageSnippet language="python" operationID="getKBRecords" method="get" path="/knowledgeBase/{kbId}/records" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.records.get(kb_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
+    res = p_client.records.get_kb_records(security=models.GetKBRecordsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
 
     # Handle response
     print(res)
@@ -124,6 +127,7 @@ with Pipeshub(
 
 | Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `security`                                                                      | [models.GetKBRecordsSecurity](../../models/getkbrecordssecurity.md)             | :heavy_check_mark:                                                              | N/A                                                                             |
 | `kb_id`                                                                         | *str*                                                                           | :heavy_check_mark:                                                              | Knowledge base ID                                                               |
 | `page`                                                                          | *Optional[int]*                                                                 | :heavy_minus_sign:                                                              | N/A                                                                             |
 | `limit`                                                                         | *Optional[int]*                                                                 | :heavy_minus_sign:                                                              | N/A                                                                             |
@@ -147,7 +151,73 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_kb_children
+
+Retrieve a paginated list of children (folders and records) within a specific knowledge base.<br><br>
+<b>Overview:</b><br>
+This is an alias endpoint for <code>/knowledgeBase/{kbId}/records</code>. It returns all direct children of the KB root, including both folders and records.<br><br>
+<b>Filtering:</b><br>
+<ul>
+<li><b>search:</b> Search by record name (partial match, max 1000 chars)</li>
+<li><b>recordTypes:</b> FILE, WEBPAGE, COMMENT, MESSAGE, EMAIL, TICKET</li>
+<li><b>origins:</b> UPLOAD (manual uploads) or CONNECTOR (synced)</li>
+<li><b>indexingStatus:</b> Filter by processing state</li>
+<li><b>dateFrom/dateTo:</b> Creation date range (Unix timestamps)</li>
+</ul>
+<b>Sorting:</b><br>
+Default sorts by <code>createdAtTimestamp</code> descending (newest first).
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getKBChildren" method="get" path="/knowledgeBase/{kbId}/children" -->
+```python
+import os
+from pipeshub import Pipeshub, models
+
+
+with Pipeshub(
+    server_url="https://api.example.com",
+) as p_client:
+
+    res = p_client.records.get_kb_children(security=models.GetKBChildrenSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.GetKBChildrenSecurity](../../models/getkbchildrensecurity.md)             | :heavy_check_mark:                                                                | N/A                                                                               |
+| `kb_id`                                                                           | *str*                                                                             | :heavy_check_mark:                                                                | Knowledge base ID                                                                 |
+| `page`                                                                            | *Optional[int]*                                                                   | :heavy_minus_sign:                                                                | N/A                                                                               |
+| `limit`                                                                           | *Optional[int]*                                                                   | :heavy_minus_sign:                                                                | N/A                                                                               |
+| `search`                                                                          | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | Search query for record names                                                     |
+| `record_types`                                                                    | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | Filter by record types (comma-separated)                                          |
+| `origins`                                                                         | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | Filter by origin                                                                  |
+| `indexing_status`                                                                 | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | Filter by indexing status                                                         |
+| `date_from`                                                                       | *Optional[int]*                                                                   | :heavy_minus_sign:                                                                | Start date filter (Unix timestamp)                                                |
+| `date_to`                                                                         | *Optional[int]*                                                                   | :heavy_minus_sign:                                                                | End date filter (Unix timestamp)                                                  |
+| `sort_by`                                                                         | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | N/A                                                                               |
+| `sort_order`                                                                      | [Optional[models.GetKBChildrenSortOrder]](../../models/getkbchildrensortorder.md) | :heavy_minus_sign:                                                                | N/A                                                                               |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
+
+### Response
+
+**[models.RecordsResponse](../../models/recordsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## get_record_by_id
 
 Retrieve detailed information about a specific record.<br><br>
 <b>Overview:</b><br>
@@ -161,15 +231,16 @@ Use the optional <code>convertTo</code> parameter to request file format convers
 <!-- UsageSnippet language="python" operationID="getRecordById" method="get" path="/knowledgeBase/record/{recordId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.records.get_by_id(record_id="<id>", convert_to="txt")
+    res = p_client.records.get_record_by_id(security=models.GetRecordByIDSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), record_id="<id>", convert_to="txt")
 
     # Handle response
     print(res)
@@ -178,11 +249,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID                                                           |                                                                     |
-| `convert_to`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Optional format to convert the file to                              | txt                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           | Example                                                               |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `security`                                                            | [models.GetRecordByIDSecurity](../../models/getrecordbyidsecurity.md) | :heavy_check_mark:                                                    | N/A                                                                   |                                                                       |
+| `record_id`                                                           | *str*                                                                 | :heavy_check_mark:                                                    | Record ID                                                             |                                                                       |
+| `convert_to`                                                          | *Optional[str]*                                                       | :heavy_minus_sign:                                                    | Optional format to convert the file to                                | txt                                                                   |
+| `retries`                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)      | :heavy_minus_sign:                                                    | Configuration to override the default retry behavior of the client.   |                                                                       |
 
 ### Response
 
@@ -194,7 +266,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_record
 
 Update a record's name and/or file content.<br><br>
 <b>Overview:</b><br>
@@ -223,7 +295,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.records.update(record_id="<id>")
+    res = p_client.records.update_record(record_id="<id>")
 
     # Handle response
     print(res)
@@ -249,7 +321,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_record
 
 Permanently delete a record from the knowledge base.<br><br>
 <b>Required Permission:</b> WRITER or higher<br><br>
@@ -267,15 +339,16 @@ Permanently delete a record from the knowledge base.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteRecord" method="delete" path="/knowledgeBase/record/{recordId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.records.delete(record_id="<id>")
+    p_client.records.delete_record(security=models.DeleteRecordSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), record_id="<id>")
 
     # Use the SDK ...
 
@@ -285,6 +358,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `security`                                                          | [models.DeleteRecordSecurity](../../models/deleterecordsecurity.md) | :heavy_check_mark:                                                  | N/A                                                                 |
 | `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID                                                           |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
@@ -294,7 +368,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## stream
+## stream_record_buffer
 
 Stream the binary content of a record's file.<br><br>
 <b>Overview:</b><br>
@@ -314,15 +388,16 @@ Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to P
 <!-- UsageSnippet language="python" operationID="streamRecordBuffer" method="get" path="/knowledgeBase/stream/record/{recordId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.records.stream(record_id="<id>")
+    res = p_client.records.stream_record_buffer(security=models.StreamRecordBufferSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), record_id="<id>")
 
     # Handle response
     print(res)
@@ -331,75 +406,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID                                                           |
-| `convert_to`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Target format for conversion                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `security`                                                                      | [models.StreamRecordBufferSecurity](../../models/streamrecordbuffersecurity.md) | :heavy_check_mark:                                                              | N/A                                                                             |
+| `record_id`                                                                     | *str*                                                                           | :heavy_check_mark:                                                              | Record ID                                                                       |
+| `convert_to`                                                                    | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Target format for conversion                                                    |
+| `retries`                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                | :heavy_minus_sign:                                                              | Configuration to override the default retry behavior of the client.             |
 
 ### Response
 
 **[httpx.Response](../../models/.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## move
-
-Move a record (file or folder) to a different parent folder within the same knowledge base.<br><br>
-<b>Required Permission:</b> WRITER or higher<br><br>
-<b>Moving to Root:</b><br>
-Set <code>newParentId</code> to <code>null</code> to move the record to the root level of the knowledge base.
-
-
-### Example Usage: moveToFolder
-
-<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToFolder" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    p_client.records.move(kb_id="702f8ff0-0a01-4354-b592-eea268f40f25", record_id="<id>", new_parent_id="folder-abc123")
-
-    # Use the SDK ...
-
-```
-### Example Usage: moveToRoot
-
-<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToRoot" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    p_client.records.move(kb_id="8bdbd4fc-ec2e-4e15-8a88-ae59a5b4bad2", record_id="<id>", new_parent_id=None)
-
-    # Use the SDK ...
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID to move                                                   |
-| `new_parent_id`                                                     | *Nullable[str]*                                                     | :heavy_check_mark:                                                  | ID of the new parent folder, or null to move to root level          |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Errors
 
