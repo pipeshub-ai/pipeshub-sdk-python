@@ -1,16 +1,35 @@
-# OauthProvider
+# OAuthProvider
 
 ## Overview
 
+PipesHub OAuth 2.0 Authorization Server implementing RFC 6749, RFC 7636 (PKCE), and OpenID Connect.
+
+**Supported Grant Types:**
+- `authorization_code` - Standard OAuth flow with PKCE support
+- `client_credentials` - Machine-to-machine authentication
+- `refresh_token` - Token refresh for long-lived access
+
+**Security Features:**
+- PKCE (Proof Key for Code Exchange) for public clients
+- State parameter for CSRF protection
+- Configurable token lifetimes
+- Token revocation and introspection
+
+**OpenID Connect:**
+- ID tokens with standard claims
+- UserInfo endpoint for profile data
+- Discovery endpoint for automatic configuration
+
+
 ### Available Operations
 
-* [authorize](#authorize) - Initiate OAuth authorization flow
-* [submit_consent](#submit_consent) - Submit authorization consent
-* [exchange_token](#exchange_token) - Exchange authorization code for tokens
-* [revoke](#revoke) - Revoke an access or refresh token
-* [introspect](#introspect) - Introspect a token
+* [oauth_authorize](#oauth_authorize) - Initiate OAuth authorization flow
+* [oauth_authorize_consent](#oauth_authorize_consent) - Submit authorization consent
+* [oauth_token](#oauth_token) - Exchange authorization code for tokens
+* [oauth_revoke](#oauth_revoke) - Revoke an access or refresh token
+* [oauth_introspect](#oauth_introspect) - Introspect a token
 
-## authorize
+## oauth_authorize
 
 OAuth 2.0 Authorization Endpoint (RFC 6749 Section 4.1.1).
 <br><br>
@@ -46,7 +65,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.oauth_provider.authorize(response_type="code", client_id="<id>", redirect_uri="https://coordinated-dime.biz/", scope="openid profile email read:records", state="Delaware")
+    res = p_client.o_auth_provider.oauth_authorize(response_type="code", client_id="<id>", redirect_uri="https://coordinated-dime.biz/", scope="openid profile email read:records", state="Delaware")
 
     # Handle response
     print(res)
@@ -78,7 +97,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## submit_consent
+## oauth_authorize_consent
 
 Submit user's consent decision for OAuth authorization.
 <br><br>
@@ -103,7 +122,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_provider.submit_consent(client_id="<id>", redirect_uri="https://excellent-license.com", scope="<value>", state="South Dakota", consent="denied")
+    res = p_client.o_auth_provider.oauth_authorize_consent(client_id="<id>", redirect_uri="https://excellent-license.com", scope="<value>", state="South Dakota", consent="denied")
 
     # Handle response
     print(res)
@@ -134,7 +153,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## exchange_token
+## oauth_token
 
 OAuth 2.0 Token Endpoint (RFC 6749 Section 4.1.3).
 <br><br>
@@ -166,7 +185,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.oauth_provider.exchange_token(grant_type="client_credentials")
+    res = p_client.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -198,7 +217,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 400, 401                    | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## revoke
+## oauth_revoke
 
 OAuth 2.0 Token Revocation Endpoint (RFC 7009).
 <br><br>
@@ -225,7 +244,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    p_client.oauth_provider.revoke(token="<value>", client_id="<id>")
+    p_client.o_auth_provider.oauth_revoke(token="<value>", client_id="<id>")
 
     # Use the SDK ...
 
@@ -248,7 +267,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 401                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## introspect
+## oauth_introspect
 
 OAuth 2.0 Token Introspection Endpoint (RFC 7662).
 <br><br>
@@ -275,7 +294,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.oauth_provider.introspect(token="<value>", client_id="<id>")
+    res = p_client.o_auth_provider.oauth_introspect(token="<value>", client_id="<id>")
 
     # Handle response
     print(res)
@@ -292,7 +311,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.oauth_provider.introspect(token="<value>", client_id="<id>")
+    res = p_client.o_auth_provider.oauth_introspect(token="<value>", client_id="<id>")
 
     # Handle response
     print(res)

@@ -2,17 +2,19 @@
 
 ## Overview
 
+Knowledge base management operations
+
 ### Available Operations
 
-* [create](#create) - Create a new knowledge base
-* [list](#list) - List all knowledge bases
-* [get](#get) - Get knowledge base by ID
-* [update](#update) - Update knowledge base
-* [delete](#delete) - Delete knowledge base
-* [get_root_nodes](#get_root_nodes) - Get knowledge hub root nodes
-* [get_child_nodes](#get_child_nodes) - Get knowledge hub child nodes
+* [create_knowledge_base](#create_knowledge_base) - Create a new knowledge base
+* [list_knowledge_bases](#list_knowledge_bases) - List all knowledge bases
+* [get_knowledge_base](#get_knowledge_base) - Get knowledge base by ID
+* [update_knowledge_base](#update_knowledge_base) - Update knowledge base
+* [delete_knowledge_base](#delete_knowledge_base) - Delete knowledge base
+* [get_knowledge_hub_root_nodes](#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
+* [get_knowledge_hub_child_nodes](#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
-## create
+## create_knowledge_base
 
 Create a new knowledge base for organizing and managing documents within your organization.<br><br>
 <b>Overview:</b><br>
@@ -40,15 +42,16 @@ The user creating the KB automatically becomes the OWNER with full administrativ
 <!-- UsageSnippet language="python" operationID="createKnowledgeBase" method="post" path="/knowledgeBase" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.create(kb_name="Product Documentation")
+    res = p_client.knowledge_bases.create_knowledge_base(security=models.CreateKnowledgeBaseSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_name="Product Documentation")
 
     # Handle response
     print(res)
@@ -57,10 +60,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_name`                                                           | *str*                                                               | :heavy_check_mark:                                                  | Name of the knowledge base                                          | Product Documentation                                               |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       | Example                                                                           |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.CreateKnowledgeBaseSecurity](../../models/createknowledgebasesecurity.md) | :heavy_check_mark:                                                                | N/A                                                                               |                                                                                   |
+| `kb_name`                                                                         | *str*                                                                             | :heavy_check_mark:                                                                | Name of the knowledge base                                                        | Product Documentation                                                             |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |                                                                                   |
 
 ### Response
 
@@ -72,7 +76,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## list_knowledge_bases
 
 Retrieve a paginated list of all knowledge bases accessible to the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -98,15 +102,16 @@ Uses efficient pagination with limit/offset. For large result sets, use smaller 
 <!-- UsageSnippet language="python" operationID="listKnowledgeBases" method="get" path="/knowledgeBase" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.list(page=1, limit=20, permissions="OWNER,ORGANIZER,WRITER", sort_by="name", sort_order="asc")
+    res = p_client.knowledge_bases.list_knowledge_bases(security=models.ListKnowledgeBasesSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), page=1, limit=20, permissions="OWNER,ORGANIZER,WRITER", sort_by="name", sort_order="asc")
 
     # Handle response
     print(res)
@@ -117,6 +122,7 @@ with Pipeshub(
 
 | Parameter                                                                                   | Type                                                                                        | Required                                                                                    | Description                                                                                 | Example                                                                                     |
 | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `security`                                                                                  | [models.ListKnowledgeBasesSecurity](../../models/listknowledgebasessecurity.md)             | :heavy_check_mark:                                                                          | N/A                                                                                         |                                                                                             |
 | `page`                                                                                      | *Optional[int]*                                                                             | :heavy_minus_sign:                                                                          | Page number (1-indexed)                                                                     |                                                                                             |
 | `limit`                                                                                     | *Optional[int]*                                                                             | :heavy_minus_sign:                                                                          | Results per page (max 100)                                                                  |                                                                                             |
 | `search`                                                                                    | *Optional[str]*                                                                             | :heavy_minus_sign:                                                                          | Search query for KB names (max 1000 chars)                                                  |                                                                                             |
@@ -135,7 +141,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_knowledge_base
 
 Retrieve detailed information about a specific knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -149,15 +155,16 @@ User must have at least READER permission to view KB details.
 <!-- UsageSnippet language="python" operationID="getKnowledgeBase" method="get" path="/knowledgeBase/{kbId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.get(kb_id="kb_550e8400-e29b-41d4-a716")
+    res = p_client.knowledge_bases.get_knowledge_base(security=models.GetKnowledgeBaseSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="kb_550e8400-e29b-41d4-a716")
 
     # Handle response
     print(res)
@@ -166,10 +173,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   | kb_550e8400-e29b-41d4-a716                                          |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                   | Type                                                                        | Required                                                                    | Description                                                                 | Example                                                                     |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `security`                                                                  | [models.GetKnowledgeBaseSecurity](../../models/getknowledgebasesecurity.md) | :heavy_check_mark:                                                          | N/A                                                                         |                                                                             |
+| `kb_id`                                                                     | *str*                                                                       | :heavy_check_mark:                                                          | Knowledge base ID                                                           | kb_550e8400-e29b-41d4-a716                                                  |
+| `retries`                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)            | :heavy_minus_sign:                                                          | Configuration to override the default retry behavior of the client.         |                                                                             |
 
 ### Response
 
@@ -181,7 +189,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_knowledge_base
 
 Update a knowledge base's name.<br><br>
 <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
@@ -197,15 +205,16 @@ Update a knowledge base's name.<br><br>
 <!-- UsageSnippet language="python" operationID="updateKnowledgeBase" method="put" path="/knowledgeBase/{kbId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.update(kb_id="<id>", kb_name="Updated Documentation Hub")
+    res = p_client.knowledge_bases.update_knowledge_base(security=models.UpdateKnowledgeBaseSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>", kb_name="Updated Documentation Hub")
 
     # Handle response
     print(res)
@@ -214,11 +223,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   |                                                                     |
-| `kb_name`                                                           | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | New name for the knowledge base                                     | Updated Documentation Hub                                           |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       | Example                                                                           |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.UpdateKnowledgeBaseSecurity](../../models/updateknowledgebasesecurity.md) | :heavy_check_mark:                                                                | N/A                                                                               |                                                                                   |
+| `kb_id`                                                                           | *str*                                                                             | :heavy_check_mark:                                                                | Knowledge base ID                                                                 |                                                                                   |
+| `kb_name`                                                                         | *Optional[str]*                                                                   | :heavy_minus_sign:                                                                | New name for the knowledge base                                                   | Updated Documentation Hub                                                         |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |                                                                                   |
 
 ### Response
 
@@ -230,7 +240,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_knowledge_base
 
 Permanently delete a knowledge base and all its contents.<br><br>
 <b>Required Permission:</b> OWNER only<br><br>
@@ -249,15 +259,16 @@ Permanently delete a knowledge base and all its contents.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteKnowledgeBase" method="delete" path="/knowledgeBase/{kbId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.delete(kb_id="<id>")
+    res = p_client.knowledge_bases.delete_knowledge_base(security=models.DeleteKnowledgeBaseSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), kb_id="<id>")
 
     # Handle response
     print(res)
@@ -266,10 +277,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `security`                                                                        | [models.DeleteKnowledgeBaseSecurity](../../models/deleteknowledgebasesecurity.md) | :heavy_check_mark:                                                                | N/A                                                                               |
+| `kb_id`                                                                           | *str*                                                                             | :heavy_check_mark:                                                                | Knowledge base ID                                                                 |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
 
 ### Response
 
@@ -281,7 +293,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_root_nodes
+## get_knowledge_hub_root_nodes
 
 Retrieve root-level nodes for unified knowledge hub browsing.<br><br>
 <b>Overview:</b><br>
@@ -299,15 +311,16 @@ Provides a unified view across all knowledge sources - KBs, connectors, and apps
 <!-- UsageSnippet language="python" operationID="getKnowledgeHubRootNodes" method="get" path="/knowledgeBase/knowledge-hub/nodes" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.get_root_nodes()
+    res = p_client.knowledge_bases.get_knowledge_hub_root_nodes(security=models.GetKnowledgeHubRootNodesSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ))
 
     # Handle response
     print(res)
@@ -316,14 +329,15 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `view`                                                              | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | View mode                                                           |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `node_types`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Filter by node types (comma-separated)                              |
-| `q`                                                                 | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Search query                                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                   | Type                                                                                        | Required                                                                                    | Description                                                                                 |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `security`                                                                                  | [models.GetKnowledgeHubRootNodesSecurity](../../models/getknowledgehubrootnodessecurity.md) | :heavy_check_mark:                                                                          | N/A                                                                                         |
+| `view`                                                                                      | *Optional[str]*                                                                             | :heavy_minus_sign:                                                                          | View mode                                                                                   |
+| `page`                                                                                      | *Optional[int]*                                                                             | :heavy_minus_sign:                                                                          | N/A                                                                                         |
+| `limit`                                                                                     | *Optional[int]*                                                                             | :heavy_minus_sign:                                                                          | N/A                                                                                         |
+| `node_types`                                                                                | *Optional[str]*                                                                             | :heavy_minus_sign:                                                                          | Filter by node types (comma-separated)                                                      |
+| `q`                                                                                         | *Optional[str]*                                                                             | :heavy_minus_sign:                                                                          | Search query                                                                                |
+| `retries`                                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                            | :heavy_minus_sign:                                                                          | Configuration to override the default retry behavior of the client.                         |
 
 ### Response
 
@@ -335,7 +349,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_child_nodes
+## get_knowledge_hub_child_nodes
 
 Retrieve child nodes under a specific parent in the knowledge hub tree.<br><br>
 <b>Navigation:</b><br>
@@ -347,15 +361,16 @@ Use this to drill down into KBs, folders, and connector hierarchies.
 <!-- UsageSnippet language="python" operationID="getKnowledgeHubChildNodes" method="get" path="/knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.knowledge_bases.get_child_nodes(parent_type="<value>", parent_id="<id>")
+    res = p_client.knowledge_bases.get_knowledge_hub_child_nodes(security=models.GetKnowledgeHubChildNodesSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), parent_type="<value>", parent_id="<id>")
 
     # Handle response
     print(res)
@@ -364,14 +379,15 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `parent_type`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Type of parent node (KB, FOLDER, CONNECTOR, APP)                    |
-| `parent_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | ID of parent node                                                   |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `q`                                                                 | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Search query                                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                     | Type                                                                                          | Required                                                                                      | Description                                                                                   |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `security`                                                                                    | [models.GetKnowledgeHubChildNodesSecurity](../../models/getknowledgehubchildnodessecurity.md) | :heavy_check_mark:                                                                            | N/A                                                                                           |
+| `parent_type`                                                                                 | *str*                                                                                         | :heavy_check_mark:                                                                            | Type of parent node (KB, FOLDER, CONNECTOR, APP)                                              |
+| `parent_id`                                                                                   | *str*                                                                                         | :heavy_check_mark:                                                                            | ID of parent node                                                                             |
+| `page`                                                                                        | *Optional[int]*                                                                               | :heavy_minus_sign:                                                                            | N/A                                                                                           |
+| `limit`                                                                                       | *Optional[int]*                                                                               | :heavy_minus_sign:                                                                            | N/A                                                                                           |
+| `q`                                                                                           | *Optional[str]*                                                                               | :heavy_minus_sign:                                                                            | Search query                                                                                  |
+| `retries`                                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                              | :heavy_minus_sign:                                                                            | Configuration to override the default retry behavior of the client.                           |
 
 ### Response
 

@@ -2,12 +2,14 @@
 
 ## Overview
 
+Browse available connector types and their configuration schemas
+
 ### Available Operations
 
-* [list](#list) - List available connector types
-* [get_schema](#get_schema) - Get connector configuration schema
+* [get_connector_registry](#get_connector_registry) - List available connector types
+* [get_connector_schema](#get_connector_schema) - Get connector configuration schema
 
-## list
+## get_connector_registry
 
 Get all available connector types from the registry.<br><br>
 <b>Overview:</b><br>
@@ -31,15 +33,16 @@ Use <code>search</code> for full-text search across connector names.
 <!-- UsageSnippet language="python" operationID="getConnectorRegistry" method="get" path="/connectors/registry" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.connector_registry.list(scope="team", page=1, limit=20)
+    res = p_client.connector_registry.get_connector_registry(security=models.GetConnectorRegistrySecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -48,13 +51,14 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `scope`                                                             | [Optional[models.ConnectorScope]](../../models/connectorscope.md)   | :heavy_minus_sign:                                                  | Filter by scope type                                                | team                                                                |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Page number                                                         |                                                                     |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Items per page                                                      |                                                                     |
-| `search`                                                            | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Search term for connector names                                     |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                           | Type                                                                                | Required                                                                            | Description                                                                         | Example                                                                             |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `security`                                                                          | [models.GetConnectorRegistrySecurity](../../models/getconnectorregistrysecurity.md) | :heavy_check_mark:                                                                  | N/A                                                                                 |                                                                                     |
+| `scope`                                                                             | [Optional[models.ConnectorScope]](../../models/connectorscope.md)                   | :heavy_minus_sign:                                                                  | Filter by scope type                                                                | team                                                                                |
+| `page`                                                                              | *Optional[int]*                                                                     | :heavy_minus_sign:                                                                  | Page number                                                                         |                                                                                     |
+| `limit`                                                                             | *Optional[int]*                                                                     | :heavy_minus_sign:                                                                  | Items per page                                                                      |                                                                                     |
+| `search`                                                                            | *Optional[str]*                                                                     | :heavy_minus_sign:                                                                  | Search term for connector names                                                     |                                                                                     |
+| `retries`                                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                    | :heavy_minus_sign:                                                                  | Configuration to override the default retry behavior of the client.                 |                                                                                     |
 
 ### Response
 
@@ -66,7 +70,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_schema
+## get_connector_schema
 
 Get the configuration schema for a specific connector type.<br><br>
 <b>Overview:</b><br>
@@ -85,15 +89,16 @@ filter options. Use this to dynamically build configuration forms.<br><br>
 <!-- UsageSnippet language="python" operationID="getConnectorSchema" method="get" path="/connectors/registry/{connectorType}/schema" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.connector_registry.get_schema(connector_type="google-drive")
+    res = p_client.connector_registry.get_connector_schema(security=models.GetConnectorSchemaSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), connector_type="google-drive")
 
     # Handle response
     print(res)
@@ -102,10 +107,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_type`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Connector type identifier                                           | google-drive                                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     | Example                                                                         |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `security`                                                                      | [models.GetConnectorSchemaSecurity](../../models/getconnectorschemasecurity.md) | :heavy_check_mark:                                                              | N/A                                                                             |                                                                                 |
+| `connector_type`                                                                | *str*                                                                           | :heavy_check_mark:                                                              | Connector type identifier                                                       | google-drive                                                                    |
+| `retries`                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                | :heavy_minus_sign:                                                              | Configuration to override the default retry behavior of the client.             |                                                                                 |
 
 ### Response
 

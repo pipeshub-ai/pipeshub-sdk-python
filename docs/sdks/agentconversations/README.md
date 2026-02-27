@@ -2,18 +2,20 @@
 
 ## Overview
 
+Conversations with custom AI agents including streaming and feedback
+
 ### Available Operations
 
-* [list](#list) - List agent conversations
-* [create](#create) - Create agent conversation
-* [stream](#stream) - Create agent conversation with streaming
-* [get](#get) - Get agent conversation
-* [delete](#delete) - Delete agent conversation
-* [add_message](#add_message) - Add message to agent conversation
-* [stream_message](#stream_message) - Add message with streaming
-* [regenerate_response](#regenerate_response) - Regenerate agent response
+* [list_agent_conversations](#list_agent_conversations) - List agent conversations
+* [create_agent_conversation](#create_agent_conversation) - Create agent conversation
+* [stream_agent_conversation](#stream_agent_conversation) - Create agent conversation with streaming
+* [get_agent_conversation](#get_agent_conversation) - Get agent conversation
+* [delete_agent_conversation](#delete_agent_conversation) - Delete agent conversation
+* [add_agent_message](#add_agent_message) - Add message to agent conversation
+* [stream_agent_message](#stream_agent_message) - Add message with streaming
+* [regenerate_agent_answer](#regenerate_agent_answer) - Regenerate agent response
 
-## list
+## list_agent_conversations
 
 Get all conversations with a specific agent.<br><br>
 <b>Overview:</b><br>
@@ -26,15 +28,16 @@ Agent conversations maintain the agent's context and capabilities.
 <!-- UsageSnippet language="python" operationID="listAgentConversations" method="get" path="/agents/{agentKey}/conversations" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.list(agent_key="<value>")
+    res = p_client.agent_conversations.list_agent_conversations(security=models.ListAgentConversationsSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>")
 
     # Handle response
     print(res)
@@ -43,10 +46,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Agent identifier                                                    |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `security`                                                                              | [models.ListAgentConversationsSecurity](../../models/listagentconversationssecurity.md) | :heavy_check_mark:                                                                      | N/A                                                                                     |
+| `agent_key`                                                                             | *str*                                                                                   | :heavy_check_mark:                                                                      | Agent identifier                                                                        |
+| `retries`                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                        | :heavy_minus_sign:                                                                      | Configuration to override the default retry behavior of the client.                     |
 
 ### Response
 
@@ -58,7 +62,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_agent_conversation
 
 Start a new conversation with an agent.<br><br>
 <b>Overview:</b><br>
@@ -71,15 +75,16 @@ its system prompt, tools, and knowledge base access.
 <!-- UsageSnippet language="python" operationID="createAgentConversation" method="post" path="/agents/{agentKey}/conversations" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.create(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
+    res = p_client.agent_conversations.create_agent_conversation(security=models.CreateAgentConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
@@ -93,6 +98,7 @@ with Pipeshub(
 
 | Parameter                                                                                                                      | Type                                                                                                                           | Required                                                                                                                       | Description                                                                                                                    | Example                                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `security`                                                                                                                     | [models.CreateAgentConversationSecurity](../../models/createagentconversationsecurity.md)                                      | :heavy_check_mark:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
 | `agent_key`                                                                                                                    | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
 | `query`                                                                                                                        | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>         | What are the key findings from our Q4 financial report?                                                                        |
 | `record_ids`                                                                                                                   | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/> | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                         |
@@ -113,7 +119,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## stream
+## stream_agent_conversation
 
 Start a new agent conversation with SSE streaming response.<br><br>
 <b>Overview:</b><br>
@@ -125,15 +131,16 @@ Same as POST /agents/{agentKey}/conversations but with real-time streaming.
 <!-- UsageSnippet language="python" operationID="streamAgentConversation" method="post" path="/agents/{agentKey}/conversations/stream" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.stream(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
+    res = p_client.agent_conversations.stream_agent_conversation(security=models.StreamAgentConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
@@ -149,6 +156,7 @@ with Pipeshub(
 
 | Parameter                                                                                                                      | Type                                                                                                                           | Required                                                                                                                       | Description                                                                                                                    | Example                                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `security`                                                                                                                     | [models.StreamAgentConversationSecurity](../../models/streamagentconversationsecurity.md)                                      | :heavy_check_mark:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
 | `agent_key`                                                                                                                    | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
 | `query`                                                                                                                        | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>         | What are the key findings from our Q4 financial report?                                                                        |
 | `record_ids`                                                                                                                   | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/> | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                         |
@@ -169,7 +177,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_agent_conversation
 
 Retrieve a specific agent conversation by ID.
 
@@ -178,15 +186,16 @@ Retrieve a specific agent conversation by ID.
 <!-- UsageSnippet language="python" operationID="getAgentConversation" method="get" path="/agents/{agentKey}/conversations/{conversationId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.get(agent_key="<value>", conversation_id="<value>")
+    res = p_client.agent_conversations.get_agent_conversation(security=models.GetAgentConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -195,11 +204,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                           | Type                                                                                | Required                                                                            | Description                                                                         |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `security`                                                                          | [models.GetAgentConversationSecurity](../../models/getagentconversationsecurity.md) | :heavy_check_mark:                                                                  | N/A                                                                                 |
+| `agent_key`                                                                         | *str*                                                                               | :heavy_check_mark:                                                                  | N/A                                                                                 |
+| `conversation_id`                                                                   | *str*                                                                               | :heavy_check_mark:                                                                  | N/A                                                                                 |
+| `retries`                                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                    | :heavy_minus_sign:                                                                  | Configuration to override the default retry behavior of the client.                 |
 
 ### Response
 
@@ -211,7 +221,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_agent_conversation
 
 Delete a conversation with an agent.
 
@@ -220,15 +230,16 @@ Delete a conversation with an agent.
 <!-- UsageSnippet language="python" operationID="deleteAgentConversation" method="delete" path="/agents/{agentKey}/conversations/{conversationId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    p_client.agent_conversations.delete(agent_key="<value>", conversation_id="<value>")
+    p_client.agent_conversations.delete_agent_conversation(security=models.DeleteAgentConversationSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", conversation_id="<value>")
 
     # Use the SDK ...
 
@@ -236,11 +247,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `security`                                                                                | [models.DeleteAgentConversationSecurity](../../models/deleteagentconversationsecurity.md) | :heavy_check_mark:                                                                        | N/A                                                                                       |
+| `agent_key`                                                                               | *str*                                                                                     | :heavy_check_mark:                                                                        | N/A                                                                                       |
+| `conversation_id`                                                                         | *str*                                                                                     | :heavy_check_mark:                                                                        | N/A                                                                                       |
+| `retries`                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                          | :heavy_minus_sign:                                                                        | Configuration to override the default retry behavior of the client.                       |
 
 ### Errors
 
@@ -248,7 +260,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add_message
+## add_agent_message
 
 Add a follow-up message to an agent conversation.
 
@@ -257,15 +269,16 @@ Add a follow-up message to an agent conversation.
 <!-- UsageSnippet language="python" operationID="addAgentMessage" method="post" path="/agents/{agentKey}/conversations/{conversationId}/messages" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.add_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?")
+    res = p_client.agent_conversations.add_agent_message(security=models.AddAgentMessageSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?")
 
     # Handle response
     print(res)
@@ -274,16 +287,17 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `query`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The follow-up question or message content                           | Can you elaborate on the revenue trends?                            |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override the model for this specific message                        |                                                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Display name of the model                                           |                                                                     |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Chat mode for this message                                          |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               | Example                                                                   |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `security`                                                                | [models.AddAgentMessageSecurity](../../models/addagentmessagesecurity.md) | :heavy_check_mark:                                                        | N/A                                                                       |                                                                           |
+| `agent_key`                                                               | *str*                                                                     | :heavy_check_mark:                                                        | N/A                                                                       |                                                                           |
+| `conversation_id`                                                         | *str*                                                                     | :heavy_check_mark:                                                        | N/A                                                                       |                                                                           |
+| `query`                                                                   | *str*                                                                     | :heavy_check_mark:                                                        | The follow-up question or message content                                 | Can you elaborate on the revenue trends?                                  |
+| `filters`                                                                 | [Optional[models.Filters]](../../models/filters.md)                       | :heavy_minus_sign:                                                        | N/A                                                                       |                                                                           |
+| `model_key`                                                               | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | Override the model for this specific message                              |                                                                           |
+| `model_name`                                                              | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | Display name of the model                                                 |                                                                           |
+| `chat_mode`                                                               | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | Chat mode for this message                                                |                                                                           |
+| `retries`                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)          | :heavy_minus_sign:                                                        | Configuration to override the default retry behavior of the client.       |                                                                           |
 
 ### Response
 
@@ -295,7 +309,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## stream_message
+## stream_agent_message
 
 Add a message to agent conversation with SSE streaming response.
 
@@ -304,15 +318,16 @@ Add a message to agent conversation with SSE streaming response.
 <!-- UsageSnippet language="python" operationID="streamAgentMessage" method="post" path="/agents/{agentKey}/conversations/{conversationId}/messages/stream" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.stream_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?")
+    res = p_client.agent_conversations.stream_agent_message(security=models.StreamAgentMessageSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?")
 
     with res as event_stream:
         for event in event_stream:
@@ -323,16 +338,17 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `query`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The follow-up question or message content                           | Can you elaborate on the revenue trends?                            |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override the model for this specific message                        |                                                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Display name of the model                                           |                                                                     |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Chat mode for this message                                          |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                       | Type                                                                            | Required                                                                        | Description                                                                     | Example                                                                         |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `security`                                                                      | [models.StreamAgentMessageSecurity](../../models/streamagentmessagesecurity.md) | :heavy_check_mark:                                                              | N/A                                                                             |                                                                                 |
+| `agent_key`                                                                     | *str*                                                                           | :heavy_check_mark:                                                              | N/A                                                                             |                                                                                 |
+| `conversation_id`                                                               | *str*                                                                           | :heavy_check_mark:                                                              | N/A                                                                             |                                                                                 |
+| `query`                                                                         | *str*                                                                           | :heavy_check_mark:                                                              | The follow-up question or message content                                       | Can you elaborate on the revenue trends?                                        |
+| `filters`                                                                       | [Optional[models.Filters]](../../models/filters.md)                             | :heavy_minus_sign:                                                              | N/A                                                                             |                                                                                 |
+| `model_key`                                                                     | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Override the model for this specific message                                    |                                                                                 |
+| `model_name`                                                                    | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Display name of the model                                                       |                                                                                 |
+| `chat_mode`                                                                     | *Optional[str]*                                                                 | :heavy_minus_sign:                                                              | Chat mode for this message                                                      |                                                                                 |
+| `retries`                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                | :heavy_minus_sign:                                                              | Configuration to override the default retry behavior of the client.             |                                                                                 |
 
 ### Response
 
@@ -344,7 +360,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## regenerate_response
+## regenerate_agent_answer
 
 Regenerate the agent's response for a specific message.<br><br>
 <b>Overview:</b><br>
@@ -356,15 +372,16 @@ Similar to conversation regeneration but uses the agent's configuration.
 <!-- UsageSnippet language="python" operationID="regenerateAgentAnswer" method="post" path="/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/regenerate" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.agent_conversations.regenerate_response(agent_key="<value>", conversation_id="<value>", message_id="<value>")
+    res = p_client.agent_conversations.regenerate_agent_answer(security=models.RegenerateAgentAnswerSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), agent_key="<value>", conversation_id="<value>", message_id="<value>")
 
     # Handle response
     print(res)
@@ -373,15 +390,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `message_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `security`                                                                            | [models.RegenerateAgentAnswerSecurity](../../models/regenerateagentanswersecurity.md) | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `agent_key`                                                                           | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `conversation_id`                                                                     | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `message_id`                                                                          | *str*                                                                                 | :heavy_check_mark:                                                                    | N/A                                                                                   |
+| `filters`                                                                             | [Optional[models.Filters]](../../models/filters.md)                                   | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `model_key`                                                                           | *Optional[str]*                                                                       | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `chat_mode`                                                                           | *Optional[str]*                                                                       | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |
 
 ### Response
 

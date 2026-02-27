@@ -12,7 +12,7 @@ from typing import Mapping, Optional, Union
 class Organizations(BaseSDK):
     r"""Organization management operations"""
 
-    def check_exists(
+    def check_org_exists(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -105,7 +105,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def check_exists_async(
+    async def check_org_exists_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -198,7 +198,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_organization(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -331,7 +331,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_organization_async(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -464,9 +464,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_current_organization(
         self,
         *,
+        security: Union[
+            models.GetCurrentOrganizationSecurity,
+            models.GetCurrentOrganizationSecurityTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -496,6 +500,7 @@ class Organizations(BaseSDK):
         All authenticated users can access this endpoint to view their organization's details.
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -522,7 +527,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetCurrentOrganizationSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -540,10 +547,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getCurrentOrganization",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -567,9 +572,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_current_organization_async(
         self,
         *,
+        security: Union[
+            models.GetCurrentOrganizationSecurity,
+            models.GetCurrentOrganizationSecurityTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -599,6 +608,7 @@ class Organizations(BaseSDK):
         All authenticated users can access this endpoint to view their organization's details.
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -625,7 +635,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetCurrentOrganizationSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -643,10 +655,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getCurrentOrganization",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -670,9 +680,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_organization(
         self,
         *,
+        security: Union[
+            models.UpdateOrganizationSecurity,
+            models.UpdateOrganizationSecurityTypedDict,
+        ],
         registered_name: Optional[str] = None,
         short_name: Optional[str] = None,
         phone_number: Optional[str] = None,
@@ -716,6 +730,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param registered_name: Official registered/legal name
         :param short_name: Short display name for UI
         :param phone_number: Contact phone number (international format)
@@ -756,7 +771,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.UpdateOrganizationSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.UpdateOrganizationRequest
             ),
@@ -777,10 +794,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOrganization",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "5XX"],
@@ -802,9 +817,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_organization_async(
         self,
         *,
+        security: Union[
+            models.UpdateOrganizationSecurity,
+            models.UpdateOrganizationSecurityTypedDict,
+        ],
         registered_name: Optional[str] = None,
         short_name: Optional[str] = None,
         phone_number: Optional[str] = None,
@@ -848,6 +867,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param registered_name: Official registered/legal name
         :param short_name: Short display name for UI
         :param phone_number: Contact phone number (international format)
@@ -888,7 +908,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.UpdateOrganizationSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.UpdateOrganizationRequest
             ),
@@ -909,10 +931,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOrganization",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "5XX"],
@@ -934,9 +954,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_organization(
         self,
         *,
+        security: Union[
+            models.DeleteOrganizationSecurity,
+            models.DeleteOrganizationSecurityTypedDict,
+        ],
         confirm: models.Confirm,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -962,6 +986,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param confirm: Must be \"DELETE\" to confirm deletion
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -994,7 +1019,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.DeleteOrganizationSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1012,10 +1039,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganization",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:admin"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "5XX"],
@@ -1037,9 +1062,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_organization_async(
         self,
         *,
+        security: Union[
+            models.DeleteOrganizationSecurity,
+            models.DeleteOrganizationSecurityTypedDict,
+        ],
         confirm: models.Confirm,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1065,6 +1094,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param confirm: Must be \"DELETE\" to confirm deletion
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1097,7 +1127,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.DeleteOrganizationSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1115,10 +1147,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganization",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:admin"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "5XX"],
@@ -1140,9 +1170,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def upload_logo(
+    def upload_organization_logo(
         self,
         *,
+        security: Union[
+            models.UploadOrganizationLogoSecurity,
+            models.UploadOrganizationLogoSecurityTypedDict,
+        ],
         logo: Union[models.Logo, models.LogoTypedDict],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1172,6 +1206,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param logo: Logo image file
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1204,7 +1239,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.UploadOrganizationLogoSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "multipart", models.UploadOrganizationLogoRequest
             ),
@@ -1225,10 +1262,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadOrganizationLogo",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "5XX"],
@@ -1252,9 +1287,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def upload_logo_async(
+    async def upload_organization_logo_async(
         self,
         *,
+        security: Union[
+            models.UploadOrganizationLogoSecurity,
+            models.UploadOrganizationLogoSecurityTypedDict,
+        ],
         logo: Union[models.Logo, models.LogoTypedDict],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1284,6 +1323,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param logo: Logo image file
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1316,7 +1356,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.UploadOrganizationLogoSecurity
+            ),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "multipart", models.UploadOrganizationLogoRequest
             ),
@@ -1337,10 +1379,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadOrganizationLogo",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "5XX"],
@@ -1364,9 +1404,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_logo(
+    def get_organization_logo(
         self,
         *,
+        security: Union[
+            models.GetOrganizationLogoSecurity,
+            models.GetOrganizationLogoSecurityTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1388,6 +1432,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1414,7 +1459,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetOrganizationLogoSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1432,10 +1479,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOrganizationLogo",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -1457,9 +1502,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_logo_async(
+    async def get_organization_logo_async(
         self,
         *,
+        security: Union[
+            models.GetOrganizationLogoSecurity,
+            models.GetOrganizationLogoSecurityTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1481,6 +1530,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1507,7 +1557,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.GetOrganizationLogoSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1525,10 +1577,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOrganizationLogo",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "404", "4XX", "5XX"],
@@ -1550,9 +1600,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_logo(
+    def delete_organization_logo(
         self,
         *,
+        security: Union[
+            models.DeleteOrganizationLogoSecurity,
+            models.DeleteOrganizationLogoSecurityTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1568,6 +1622,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1594,7 +1649,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.DeleteOrganizationLogoSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1612,10 +1669,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganizationLogo",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:admin"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],
@@ -1639,9 +1694,13 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_logo_async(
+    async def delete_organization_logo_async(
         self,
         *,
+        security: Union[
+            models.DeleteOrganizationLogoSecurity,
+            models.DeleteOrganizationLogoSecurityTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1657,6 +1716,7 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        :param security:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1683,7 +1743,9 @@ class Organizations(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(
+                security, models.DeleteOrganizationLogoSecurity
+            ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1701,10 +1763,8 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganizationLogo",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["org:admin"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "403", "404", "4XX", "5XX"],

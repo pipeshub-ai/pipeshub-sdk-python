@@ -2,66 +2,14 @@
 
 ## Overview
 
+OAuth 2.0 authorization flow for connectors requiring user consent
+
 ### Available Operations
 
-* [exchange_code_for_token](#exchange_code_for_token) - Exchange authorization code for tokens (legacy)
-* [get_authorization_url](#get_authorization_url) - Get OAuth authorization URL
-* [handle_callback](#handle_callback) - OAuth callback handler
+* [get_o_auth_authorization_url](#get_o_auth_authorization_url) - Get OAuth authorization URL
+* [handle_o_auth_callback](#handle_o_auth_callback) - OAuth callback handler
 
-## exchange_code_for_token
-
-Exchange a Google Workspace authorization code for access and refresh tokens.<br><br>
-<b>Note:</b> This is a legacy endpoint specific to Google Workspace connectors.
-For new integrations, use the standard OAuth flow via
-<code>/connectors/{connectorId}/oauth/authorize</code> and the callback.<br><br>
-<b>Flow:</b><br>
-<ol>
-<li>User completes Google Workspace OAuth consent in the browser</li>
-<li>Browser receives authorization code</li>
-<li>Frontend sends the code to this endpoint</li>
-<li>Backend exchanges code for tokens and stores them</li>
-</ol>
-<b>Admin Only:</b> Requires admin privileges.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getTokenFromCode" method="post" path="/connectors/getTokenFromCode" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.connector_o_auth.exchange_code_for_token(code="<value>")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `code`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Authorization code from Google OAuth consent flow                   |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.GetTokenFromCodeResponse](../../models/gettokenfromcoderesponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_authorization_url
+## get_o_auth_authorization_url
 
 Generate an OAuth authorization URL to start the OAuth flow.<br><br>
 <b>Flow:</b><br>
@@ -82,15 +30,16 @@ connector ID. This is validated in the callback.
 <!-- UsageSnippet language="python" operationID="getOAuthAuthorizationUrl" method="get" path="/connectors/{connectorId}/oauth/authorize" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub import Pipeshub, models
 
 
 with Pipeshub(
     server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.connector_o_auth.get_authorization_url(connector_id="<id>")
+    res = p_client.connector_o_auth.get_o_auth_authorization_url(security=models.GetOAuthAuthorizationURLSecurity(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ), connector_id="<id>")
 
     # Handle response
     print(res)
@@ -99,11 +48,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `base_url`                                                          | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Base URL for self-hosted instances                                  |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                   | Type                                                                                        | Required                                                                                    | Description                                                                                 |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `security`                                                                                  | [models.GetOAuthAuthorizationURLSecurity](../../models/getoauthauthorizationurlsecurity.md) | :heavy_check_mark:                                                                          | N/A                                                                                         |
+| `connector_id`                                                                              | *str*                                                                                       | :heavy_check_mark:                                                                          | N/A                                                                                         |
+| `base_url`                                                                                  | *Optional[str]*                                                                             | :heavy_minus_sign:                                                                          | Base URL for self-hosted instances                                                          |
+| `retries`                                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                            | :heavy_minus_sign:                                                                          | Configuration to override the default retry behavior of the client.                         |
 
 ### Response
 
@@ -115,7 +65,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## handle_callback
+## handle_o_auth_callback
 
 Handle the OAuth callback from the identity provider.<br><br>
 <b>Note:</b><br>
@@ -140,7 +90,7 @@ with Pipeshub(
     server_url="https://api.example.com",
 ) as p_client:
 
-    res = p_client.connector_o_auth.handle_callback()
+    res = p_client.connector_o_auth.handle_o_auth_callback()
 
     # Handle response
     print(res)

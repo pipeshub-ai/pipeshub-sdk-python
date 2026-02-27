@@ -11,7 +11,7 @@ from pipeshub.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
 
 
-class GetDisplayPictureAcceptEnum(str, Enum):
+class GetUserDisplayPictureAcceptEnum(str, Enum):
     IMAGE_JPEG = "image/jpeg"
     IMAGE_PNG = "image/png"
 
@@ -19,9 +19,12 @@ class GetDisplayPictureAcceptEnum(str, Enum):
 class Users(BaseSDK):
     r"""User management operations"""
 
-    def get_all(
+    def get_all_users(
         self,
         *,
+        security: Union[
+            models.GetAllUsersSecurity, models.GetAllUsersSecurityTypedDict
+        ],
         page: Optional[int] = 1,
         limit: Optional[int] = 50,
         search: Optional[str] = None,
@@ -56,6 +59,7 @@ class Users(BaseSDK):
         </ul>
 
 
+        :param security:
         :param page: Page number for pagination (1-based)
         :param limit: Number of users per page
         :param search: Search users by name or email
@@ -92,7 +96,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetAllUsersSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -110,10 +114,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAllUsers",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -135,9 +137,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_async(
+    async def get_all_users_async(
         self,
         *,
+        security: Union[
+            models.GetAllUsersSecurity, models.GetAllUsersSecurityTypedDict
+        ],
         page: Optional[int] = 1,
         limit: Optional[int] = 50,
         search: Optional[str] = None,
@@ -172,6 +177,7 @@ class Users(BaseSDK):
         </ul>
 
 
+        :param security:
         :param page: Page number for pagination (1-based)
         :param limit: Number of users per page
         :param search: Search users by name or email
@@ -208,7 +214,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetAllUsersSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -226,10 +232,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAllUsers",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -251,7 +255,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_user(
         self,
         *,
         full_name: str,
@@ -381,7 +385,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_user_async(
         self,
         *,
         full_name: str,
@@ -511,9 +515,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_user_by_id(
         self,
         *,
+        security: Union[
+            models.GetUserByIDSecurity, models.GetUserByIDSecurityTypedDict
+        ],
         id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -546,6 +553,7 @@ class Users(BaseSDK):
         </ul>
 
 
+        :param security:
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -578,7 +586,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetUserByIDSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -596,10 +604,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserById",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "404", "4XX", "5XX"],
@@ -621,9 +627,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_user_by_id_async(
         self,
         *,
+        security: Union[
+            models.GetUserByIDSecurity, models.GetUserByIDSecurityTypedDict
+        ],
         id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -656,6 +665,7 @@ class Users(BaseSDK):
         </ul>
 
 
+        :param security:
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -688,7 +698,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.GetUserByIDSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -706,10 +716,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserById",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "404", "4XX", "5XX"],
@@ -731,9 +739,10 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_user(
         self,
         *,
+        security: Union[models.UpdateUserSecurity, models.UpdateUserSecurityTypedDict],
         id: str,
         full_name: Optional[str] = None,
         first_name: Optional[str] = None,
@@ -782,6 +791,7 @@ class Users(BaseSDK):
         </ul>
 
 
+        :param security:
         :param id: User ID (24-character MongoDB ObjectId)
         :param full_name: Full display name
         :param first_name: First name only
@@ -830,7 +840,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.UpdateUserSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body, False, False, "json", models.UpdateUserRequestBody
             ),
@@ -851,10 +861,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateUser",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
@@ -876,9 +884,10 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_user_async(
         self,
         *,
+        security: Union[models.UpdateUserSecurity, models.UpdateUserSecurityTypedDict],
         id: str,
         full_name: Optional[str] = None,
         first_name: Optional[str] = None,
@@ -927,6 +936,7 @@ class Users(BaseSDK):
         </ul>
 
 
+        :param security:
         :param id: User ID (24-character MongoDB ObjectId)
         :param full_name: Full display name
         :param first_name: First name only
@@ -975,7 +985,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.UpdateUserSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request.body, False, False, "json", models.UpdateUserRequestBody
             ),
@@ -996,10 +1006,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateUser",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:write"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
@@ -1021,9 +1029,10 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_user(
         self,
         *,
+        security: Union[models.DeleteUserSecurity, models.DeleteUserSecurityTypedDict],
         id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1061,6 +1070,7 @@ class Users(BaseSDK):
         Deleted users can be restored by organization admins within a configurable retention period.
 
 
+        :param security:
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1093,7 +1103,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.DeleteUserSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1111,10 +1121,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteUser",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:delete"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
@@ -1136,9 +1144,10 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_user_async(
         self,
         *,
+        security: Union[models.DeleteUserSecurity, models.DeleteUserSecurityTypedDict],
         id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1176,6 +1185,7 @@ class Users(BaseSDK):
         Deleted users can be restored by organization admins within a configurable retention period.
 
 
+        :param security:
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1208,7 +1218,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.DeleteUserSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -1226,10 +1236,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteUser",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:delete"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
@@ -1251,243 +1259,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_all_with_groups(
-        self,
-        *,
-        include_deleted: Optional[bool] = False,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetAllUsersWithGroupsResponse:
-        r"""Get all users with their groups
-
-        Retrieve all users along with their group memberships in a single optimized query.<br><br>
-        <b>Overview:</b><br>
-        This endpoint returns users with their associated groups pre-loaded, eliminating the need for separate group lookup calls. Ideal for admin dashboards that need to display user permissions at a glance.<br><br>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Admin dashboards showing user-group matrix</li>
-        <li>Permission auditing and compliance checks</li>
-        <li>Bulk user management interfaces</li>
-        <li>Access control visualization</li>
-        </ul>
-        <b>Response Data per User:</b><br>
-        <ul>
-        <li><code>_id</code>: User's unique identifier</li>
-        <li><code>userId</code>: User's public-facing ID</li>
-        <li><code>orgId</code>: Organization identifier</li>
-        <li><code>fullName</code>: User's display name</li>
-        <li><code>hasLoggedIn</code>: Whether user has ever logged in</li>
-        <li><code>groups</code>: Array of group objects with name and type</li>
-        </ul>
-        <b>Group Types Returned:</b><br>
-        <ul>
-        <li><code>admin</code>: Administrative groups with elevated permissions</li>
-        <li><code>standard</code>: Regular user groups</li>
-        <li><code>everyone</code>: Default group containing all org users</li>
-        <li><code>custom</code>: Custom groups created by admins</li>
-        </ul>
-        <b>Performance Notes:</b><br>
-        Uses aggregation pipeline for efficient single-query retrieval. Cached results for improved performance on large organizations.
-
-
-        :param include_deleted: Include soft-deleted users (admin only)
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetAllUsersWithGroupsRequest(
-            include_deleted=include_deleted,
-        )
-
-        req = self._build_request(
-            method="GET",
-            path="/users/fetch/with-groups",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getAllUsersWithGroups",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.GetAllUsersWithGroupsResponse, http_res
-            )
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_all_with_groups_async(
-        self,
-        *,
-        include_deleted: Optional[bool] = False,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetAllUsersWithGroupsResponse:
-        r"""Get all users with their groups
-
-        Retrieve all users along with their group memberships in a single optimized query.<br><br>
-        <b>Overview:</b><br>
-        This endpoint returns users with their associated groups pre-loaded, eliminating the need for separate group lookup calls. Ideal for admin dashboards that need to display user permissions at a glance.<br><br>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Admin dashboards showing user-group matrix</li>
-        <li>Permission auditing and compliance checks</li>
-        <li>Bulk user management interfaces</li>
-        <li>Access control visualization</li>
-        </ul>
-        <b>Response Data per User:</b><br>
-        <ul>
-        <li><code>_id</code>: User's unique identifier</li>
-        <li><code>userId</code>: User's public-facing ID</li>
-        <li><code>orgId</code>: Organization identifier</li>
-        <li><code>fullName</code>: User's display name</li>
-        <li><code>hasLoggedIn</code>: Whether user has ever logged in</li>
-        <li><code>groups</code>: Array of group objects with name and type</li>
-        </ul>
-        <b>Group Types Returned:</b><br>
-        <ul>
-        <li><code>admin</code>: Administrative groups with elevated permissions</li>
-        <li><code>standard</code>: Regular user groups</li>
-        <li><code>everyone</code>: Default group containing all org users</li>
-        <li><code>custom</code>: Custom groups created by admins</li>
-        </ul>
-        <b>Performance Notes:</b><br>
-        Uses aggregation pipeline for efficient single-query retrieval. Cached results for improved performance on large organizations.
-
-
-        :param include_deleted: Include soft-deleted users (admin only)
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetAllUsersWithGroupsRequest(
-            include_deleted=include_deleted,
-        )
-
-        req = self._build_request_async(
-            method="GET",
-            path="/users/fetch/with-groups",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getAllUsersWithGroups",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.GetAllUsersWithGroupsResponse, http_res
-            )
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def get_email(
+    def get_user_email_by_id(
         self,
         *,
         id: str,
@@ -1593,7 +1365,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_email_async(
+    async def get_user_email_by_id_async(
         self,
         *,
         id: str,
@@ -1699,1821 +1471,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_ids(
-        self,
-        *,
-        user_ids: List[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetUsersByIdsResponse:
-        r"""Get users by IDs (bulk)
-
-        Retrieve multiple users by their IDs in a single optimized request. Ideal for efficiently fetching a specific set of users.<br><br>
-        <b>Overview:</b><br>
-        This bulk endpoint allows fetching multiple users in a single API call, reducing network overhead when you need to display information about several known users.<br><br>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Fetching user details for a list of team members</li>
-        <li>Populating user cards in a dashboard</li>
-        <li>Loading participants in a document or conversation</li>
-        <li>Building user mention/autocomplete features</li>
-        </ul>
-        <b>Request Format:</b><br>
-        <ul>
-        <li>Send array of user IDs in request body</li>
-        <li>Each ID must be valid 24-character MongoDB ObjectId</li>
-        <li>Maximum 100 IDs per request (for performance)</li>
-        <li>Duplicate IDs are automatically deduplicated</li>
-        </ul>
-        <b>Response Behavior:</b><br>
-        <ul>
-        <li>Returns array of found users</li>
-        <li>Order matches order of requested IDs</li>
-        <li>Non-existent or deleted users are silently omitted</li>
-        <li>Partial results returned if some IDs are invalid</li>
-        </ul>
-        <b>Performance Notes:</b><br>
-        Uses single database query with $in operator for optimal performance. Preferable to multiple individual user fetches.
-
-
-        :param user_ids: Array of user IDs to retrieve
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetUsersByIdsRequest(
-            user_ids=user_ids,
-        )
-
-        req = self._build_request(
-            method="POST",
-            path="/users/by-ids",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.GetUsersByIdsRequest
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getUsersByIds",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetUsersByIdsResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_by_ids_async(
-        self,
-        *,
-        user_ids: List[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetUsersByIdsResponse:
-        r"""Get users by IDs (bulk)
-
-        Retrieve multiple users by their IDs in a single optimized request. Ideal for efficiently fetching a specific set of users.<br><br>
-        <b>Overview:</b><br>
-        This bulk endpoint allows fetching multiple users in a single API call, reducing network overhead when you need to display information about several known users.<br><br>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Fetching user details for a list of team members</li>
-        <li>Populating user cards in a dashboard</li>
-        <li>Loading participants in a document or conversation</li>
-        <li>Building user mention/autocomplete features</li>
-        </ul>
-        <b>Request Format:</b><br>
-        <ul>
-        <li>Send array of user IDs in request body</li>
-        <li>Each ID must be valid 24-character MongoDB ObjectId</li>
-        <li>Maximum 100 IDs per request (for performance)</li>
-        <li>Duplicate IDs are automatically deduplicated</li>
-        </ul>
-        <b>Response Behavior:</b><br>
-        <ul>
-        <li>Returns array of found users</li>
-        <li>Order matches order of requested IDs</li>
-        <li>Non-existent or deleted users are silently omitted</li>
-        <li>Partial results returned if some IDs are invalid</li>
-        </ul>
-        <b>Performance Notes:</b><br>
-        Uses single database query with $in operator for optimal performance. Preferable to multiple individual user fetches.
-
-
-        :param user_ids: Array of user IDs to retrieve
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetUsersByIdsRequest(
-            user_ids=user_ids,
-        )
-
-        req = self._build_request_async(
-            method="POST",
-            path="/users/by-ids",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.GetUsersByIdsRequest
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getUsersByIds",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetUsersByIdsResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def exists_by_email(
-        self,
-        *,
-        security: Union[
-            models.CheckUserExistsByEmailSecurity,
-            models.CheckUserExistsByEmailSecurityTypedDict,
-        ],
-        email: str,
-        include_deleted: Optional[bool] = True,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CheckUserExistsByEmailResponse:
-        r"""Check if user exists by email
-
-        Check if a user account exists with the given email address. Used for pre-validation in registration and invitation flows.<br><br>
-        <b>Overview:</b><br>
-        This internal service endpoint validates email existence before creating accounts or sending invitations. It helps prevent duplicate accounts and validates recovery email addresses.<br><br>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Pre-flight check before user invitation</li>
-        <li>Email validation during registration</li>
-        <li>Account recovery flow validation</li>
-        <li>Duplicate prevention checks</li>
-        </ul>
-        <b>Security Model:</b><br>
-        <ul>
-        <li>Requires scoped token with USER_LOOKUP privilege</li>
-        <li>Not accessible with regular bearer tokens</li>
-        <li>Typically called from internal services only</li>
-        </ul>
-        <b>Response Behavior:</b><br>
-        <ul>
-        <li>Returns matching users (including soft-deleted for recovery)</li>
-        <li>Empty array if no match found</li>
-        <li>Does not expose whether email exists to prevent enumeration</li>
-        </ul>
-        <b>Note:</b> May return soft-deleted users to support account recovery workflows.
-
-
-        :param security:
-        :param email: Email address to check
-        :param include_deleted: Whether to include soft-deleted users
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.CheckUserExistsByEmailRequest(
-            email=email,
-            include_deleted=include_deleted,
-        )
-
-        req = self._build_request(
-            method="GET",
-            path="/users/email/exists",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=utils.get_pydantic_model(
-                security, models.CheckUserExistsByEmailSecurity
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="checkUserExistsByEmail",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(security, models.Security),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.CheckUserExistsByEmailResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def exists_by_email_async(
-        self,
-        *,
-        security: Union[
-            models.CheckUserExistsByEmailSecurity,
-            models.CheckUserExistsByEmailSecurityTypedDict,
-        ],
-        email: str,
-        include_deleted: Optional[bool] = True,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CheckUserExistsByEmailResponse:
-        r"""Check if user exists by email
-
-        Check if a user account exists with the given email address. Used for pre-validation in registration and invitation flows.<br><br>
-        <b>Overview:</b><br>
-        This internal service endpoint validates email existence before creating accounts or sending invitations. It helps prevent duplicate accounts and validates recovery email addresses.<br><br>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Pre-flight check before user invitation</li>
-        <li>Email validation during registration</li>
-        <li>Account recovery flow validation</li>
-        <li>Duplicate prevention checks</li>
-        </ul>
-        <b>Security Model:</b><br>
-        <ul>
-        <li>Requires scoped token with USER_LOOKUP privilege</li>
-        <li>Not accessible with regular bearer tokens</li>
-        <li>Typically called from internal services only</li>
-        </ul>
-        <b>Response Behavior:</b><br>
-        <ul>
-        <li>Returns matching users (including soft-deleted for recovery)</li>
-        <li>Empty array if no match found</li>
-        <li>Does not expose whether email exists to prevent enumeration</li>
-        </ul>
-        <b>Note:</b> May return soft-deleted users to support account recovery workflows.
-
-
-        :param security:
-        :param email: Email address to check
-        :param include_deleted: Whether to include soft-deleted users
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.CheckUserExistsByEmailRequest(
-            email=email,
-            include_deleted=include_deleted,
-        )
-
-        req = self._build_request_async(
-            method="GET",
-            path="/users/email/exists",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=utils.get_pydantic_model(
-                security, models.CheckUserExistsByEmailSecurity
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="checkUserExistsByEmail",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(security, models.Security),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.CheckUserExistsByEmailResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def get_internal(
-        self,
-        *,
-        security: Union[
-            models.GetInternalUserSecurity, models.GetInternalUserSecurityTypedDict
-        ],
-        id: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetInternalUserResponse:
-        r"""Get user (internal service-to-service)
-
-        Internal endpoint for service-to-service user lookup. Returns complete user data without privacy masking.<br><br>
-        <b>Overview:</b><br>
-        This internal endpoint provides full user data access for trusted backend services. Unlike public endpoints, it bypasses privacy controls and returns complete user information.<br><br>
-        <b>Security Model:</b><br>
-        <ul>
-        <li>Requires scoped token with USER_LOOKUP privilege</li>
-        <li>Not accessible via regular bearer tokens</li>
-        <li>Intended for trusted internal services only</li>
-        <li>All access is logged for audit purposes</li>
-        </ul>
-        <b>Intended Consumers:</b><br>
-        <ul>
-        <li>Email notification service</li>
-        <li>Analytics and reporting services</li>
-        <li>Audit logging service</li>
-        <li>Integration sync services</li>
-        </ul>
-        <b>Data Returned:</b><br>
-        Complete user object including fields that may be masked in public endpoints (email, phone, etc.).<br><br>
-        <b>Warning:</b><br>
-        This endpoint returns sensitive data. Ensure consuming services handle data according to privacy policies.
-
-
-        :param security:
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetInternalUserRequest(
-            id=id,
-        )
-
-        req = self._build_request(
-            method="GET",
-            path="/users/internal/{id}",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=utils.get_pydantic_model(security, models.GetInternalUserSecurity),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getInternalUser",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(security, models.Security),
-            ),
-            request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetInternalUserResponse, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_internal_async(
-        self,
-        *,
-        security: Union[
-            models.GetInternalUserSecurity, models.GetInternalUserSecurityTypedDict
-        ],
-        id: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetInternalUserResponse:
-        r"""Get user (internal service-to-service)
-
-        Internal endpoint for service-to-service user lookup. Returns complete user data without privacy masking.<br><br>
-        <b>Overview:</b><br>
-        This internal endpoint provides full user data access for trusted backend services. Unlike public endpoints, it bypasses privacy controls and returns complete user information.<br><br>
-        <b>Security Model:</b><br>
-        <ul>
-        <li>Requires scoped token with USER_LOOKUP privilege</li>
-        <li>Not accessible via regular bearer tokens</li>
-        <li>Intended for trusted internal services only</li>
-        <li>All access is logged for audit purposes</li>
-        </ul>
-        <b>Intended Consumers:</b><br>
-        <ul>
-        <li>Email notification service</li>
-        <li>Analytics and reporting services</li>
-        <li>Audit logging service</li>
-        <li>Integration sync services</li>
-        </ul>
-        <b>Data Returned:</b><br>
-        Complete user object including fields that may be masked in public endpoints (email, phone, etc.).<br><br>
-        <b>Warning:</b><br>
-        This endpoint returns sensitive data. Ensure consuming services handle data according to privacy policies.
-
-
-        :param security:
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetInternalUserRequest(
-            id=id,
-        )
-
-        req = self._build_request_async(
-            method="GET",
-            path="/users/internal/{id}",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=utils.get_pydantic_model(security, models.GetInternalUserSecurity),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getInternalUser",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(security, models.Security),
-            ),
-            request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetInternalUserResponse, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def update_full_name(
-        self,
-        *,
-        id: str,
-        full_name: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.User:
-        r"""Update user full name
-
-        Update the full name of a user. This is a targeted update endpoint for changing only the display name without affecting other profile fields.<br><br>
-        <b>Overview:</b><br>
-        This endpoint updates a user's fullName field, which is their primary display name throughout the application. The firstName and lastName fields may also be updated based on name parsing logic.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own full name</li>
-        <li><b>Admin-update:</b> Admins can update any user's name</li>
-        </ul>
-        <b>Side Effects:</b><br>
-        <ul>
-        <li>Updates fullName field</li>
-        <li>May parse and update firstName/lastName</li>
-        <li>User update event published</li>
-        <li>Cached user data invalidated</li>
-        </ul>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>User profile name change</li>
-        <li>Name correction by admin</li>
-        <li>Legal name update</li>
-        </ul>
-
-
-        :param id:
-        :param full_name:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserFullNameRequest(
-            id=id,
-            body=models.UpdateUserFullNameRequestBody(
-                full_name=full_name,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/users/{id}/fullname",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UpdateUserFullNameRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserFullName",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.User, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def update_full_name_async(
-        self,
-        *,
-        id: str,
-        full_name: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.User:
-        r"""Update user full name
-
-        Update the full name of a user. This is a targeted update endpoint for changing only the display name without affecting other profile fields.<br><br>
-        <b>Overview:</b><br>
-        This endpoint updates a user's fullName field, which is their primary display name throughout the application. The firstName and lastName fields may also be updated based on name parsing logic.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own full name</li>
-        <li><b>Admin-update:</b> Admins can update any user's name</li>
-        </ul>
-        <b>Side Effects:</b><br>
-        <ul>
-        <li>Updates fullName field</li>
-        <li>May parse and update firstName/lastName</li>
-        <li>User update event published</li>
-        <li>Cached user data invalidated</li>
-        </ul>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>User profile name change</li>
-        <li>Name correction by admin</li>
-        <li>Legal name update</li>
-        </ul>
-
-
-        :param id:
-        :param full_name:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserFullNameRequest(
-            id=id,
-            body=models.UpdateUserFullNameRequestBody(
-                full_name=full_name,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/users/{id}/fullname",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UpdateUserFullNameRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserFullName",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.User, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def update_first_name(
-        self,
-        *,
-        id: str,
-        first_name: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateUserFirstNameResponse:
-        r"""Update user first name
-
-        Update only the first name of a user without affecting other profile fields.<br><br>
-        <b>Overview:</b><br>
-        This targeted endpoint updates just the firstName field. Useful when you need fine-grained control over name components rather than updating the full name.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own first name</li>
-        <li><b>Admin-update:</b> Admins can update any user's first name</li>
-        </ul>
-        <b>Note:</b> This does NOT automatically update the fullName field. Use <code>/users/{id}/fullname</code> if you need to update the complete display name.
-
-
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param first_name: New first name
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserFirstNameRequest(
-            id=id,
-            body=models.UpdateUserFirstNameRequestBody(
-                first_name=first_name,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/users/{id}/firstName",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateUserFirstNameRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserFirstName",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateUserFirstNameResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def update_first_name_async(
-        self,
-        *,
-        id: str,
-        first_name: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateUserFirstNameResponse:
-        r"""Update user first name
-
-        Update only the first name of a user without affecting other profile fields.<br><br>
-        <b>Overview:</b><br>
-        This targeted endpoint updates just the firstName field. Useful when you need fine-grained control over name components rather than updating the full name.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own first name</li>
-        <li><b>Admin-update:</b> Admins can update any user's first name</li>
-        </ul>
-        <b>Note:</b> This does NOT automatically update the fullName field. Use <code>/users/{id}/fullname</code> if you need to update the complete display name.
-
-
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param first_name: New first name
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserFirstNameRequest(
-            id=id,
-            body=models.UpdateUserFirstNameRequestBody(
-                first_name=first_name,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/users/{id}/firstName",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateUserFirstNameRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserFirstName",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateUserFirstNameResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def update_last_name(
-        self,
-        *,
-        id: str,
-        last_name: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateUserLastNameResponse:
-        r"""Update user last name
-
-        Update only the last name of a user without affecting other profile fields.<br><br>
-        <b>Overview:</b><br>
-        This targeted endpoint updates just the lastName field. Useful for fine-grained control over name components.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own last name</li>
-        <li><b>Admin-update:</b> Admins can update any user's last name</li>
-        </ul>
-        <b>Note:</b> This does NOT automatically update the fullName field. Use <code>/users/{id}/fullname</code> if you need to update the complete display name.
-
-
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param last_name: New last name
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserLastNameRequest(
-            id=id,
-            body=models.UpdateUserLastNameRequestBody(
-                last_name=last_name,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/users/{id}/lastName",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UpdateUserLastNameRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserLastName",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateUserLastNameResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def update_last_name_async(
-        self,
-        *,
-        id: str,
-        last_name: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateUserLastNameResponse:
-        r"""Update user last name
-
-        Update only the last name of a user without affecting other profile fields.<br><br>
-        <b>Overview:</b><br>
-        This targeted endpoint updates just the lastName field. Useful for fine-grained control over name components.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own last name</li>
-        <li><b>Admin-update:</b> Admins can update any user's last name</li>
-        </ul>
-        <b>Note:</b> This does NOT automatically update the fullName field. Use <code>/users/{id}/fullname</code> if you need to update the complete display name.
-
-
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param last_name: New last name
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserLastNameRequest(
-            id=id,
-            body=models.UpdateUserLastNameRequestBody(
-                last_name=last_name,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/users/{id}/lastName",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UpdateUserLastNameRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserLastName",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateUserLastNameResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def update_designation(
-        self,
-        *,
-        id: str,
-        designation: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateUserDesignationResponse:
-        r"""Update user designation
-
-        Update the job title or designation of a user.<br><br>
-        <b>Overview:</b><br>
-        This endpoint updates the user's designation field, which typically represents their job title, role, or position within the organization.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own designation</li>
-        <li><b>Admin-update:</b> Admins can update any user's designation</li>
-        </ul>
-        <b>Common Values:</b><br>
-        <ul>
-        <li>Software Engineer</li>
-        <li>Product Manager</li>
-        <li>Team Lead</li>
-        <li>Director of Engineering</li>
-        </ul>
-        <b>Display:</b><br>
-        Designation is shown in user profiles, team views, and organizational charts.
-
-
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param designation: Job title or designation
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserDesignationRequest(
-            id=id,
-            body=models.UpdateUserDesignationRequestBody(
-                designation=designation,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/users/{id}/designation",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateUserDesignationRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserDesignation",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateUserDesignationResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def update_designation_async(
-        self,
-        *,
-        id: str,
-        designation: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateUserDesignationResponse:
-        r"""Update user designation
-
-        Update the job title or designation of a user.<br><br>
-        <b>Overview:</b><br>
-        This endpoint updates the user's designation field, which typically represents their job title, role, or position within the organization.<br><br>
-        <b>Authorization:</b><br>
-        <ul>
-        <li><b>Self-update:</b> Users can update their own designation</li>
-        <li><b>Admin-update:</b> Admins can update any user's designation</li>
-        </ul>
-        <b>Common Values:</b><br>
-        <ul>
-        <li>Software Engineer</li>
-        <li>Product Manager</li>
-        <li>Team Lead</li>
-        <li>Director of Engineering</li>
-        </ul>
-        <b>Display:</b><br>
-        Designation is shown in user profiles, team views, and organizational charts.
-
-
-        :param id: User ID (24-character MongoDB ObjectId)
-        :param designation: Job title or designation
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateUserDesignationRequest(
-            id=id,
-            body=models.UpdateUserDesignationRequestBody(
-                designation=designation,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/users/{id}/designation",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateUserDesignationRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateUserDesignation",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateUserDesignationResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def check_admin_status(
-        self,
-        *,
-        id: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CheckUserIsAdminResponse:
-        r"""Check if user is admin
-
-        Verify whether a specific user has administrative privileges in the organization.<br><br>
-        <b>Overview:</b><br>
-        This endpoint checks if the specified user belongs to an admin group and has elevated permissions. It's useful for authorization checks before performing admin-only operations.<br><br>
-        <b>What Makes a User an Admin:</b><br>
-        <ul>
-        <li>Member of a group with type \"admin\"</li>
-        <li>Has explicit admin role assignment</li>
-        <li>Organization owner (always admin)</li>
-        </ul>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>UI permission checks before showing admin features</li>
-        <li>Pre-flight authorization validation</li>
-        <li>Access control for sensitive operations</li>
-        </ul>
-        <b>Response Codes:</b><br>
-        <ul>
-        <li><code>200</code>: User IS an admin</li>
-        <li><code>403</code>: User is NOT an admin</li>
-        </ul>
-
-
-        :param id: User ID to check for admin privileges
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.CheckUserIsAdminRequest(
-            id=id,
-        )
-
-        req = self._build_request(
-            method="GET",
-            path="/users/{id}/adminCheck",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="checkUserIsAdmin",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.CheckUserIsAdminResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def check_admin_status_async(
-        self,
-        *,
-        id: str,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CheckUserIsAdminResponse:
-        r"""Check if user is admin
-
-        Verify whether a specific user has administrative privileges in the organization.<br><br>
-        <b>Overview:</b><br>
-        This endpoint checks if the specified user belongs to an admin group and has elevated permissions. It's useful for authorization checks before performing admin-only operations.<br><br>
-        <b>What Makes a User an Admin:</b><br>
-        <ul>
-        <li>Member of a group with type \"admin\"</li>
-        <li>Has explicit admin role assignment</li>
-        <li>Organization owner (always admin)</li>
-        </ul>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>UI permission checks before showing admin features</li>
-        <li>Pre-flight authorization validation</li>
-        <li>Access control for sensitive operations</li>
-        </ul>
-        <b>Response Codes:</b><br>
-        <ul>
-        <li><code>200</code>: User IS an admin</li>
-        <li><code>403</code>: User is NOT an admin</li>
-        </ul>
-
-
-        :param id: User ID to check for admin privileges
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.CheckUserIsAdminRequest(
-            id=id,
-        )
-
-        req = self._build_request_async(
-            method="GET",
-            path="/users/{id}/adminCheck",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="checkUserIsAdmin",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.CheckUserIsAdminResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def upload_display_picture(
+    def upload_user_display_picture(
         self,
         *,
         file: Union[
@@ -3640,7 +1598,7 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def upload_display_picture_async(
+    async def upload_user_display_picture_async(
         self,
         *,
         file: Union[
@@ -3767,13 +1725,13 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def get_display_picture(
+    def get_user_display_picture(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
-        accept_header_override: Optional[GetDisplayPictureAcceptEnum] = None,
+        accept_header_override: Optional[GetUserDisplayPictureAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetUserDisplayPictureResponse:
         r"""Get display picture
@@ -3875,13 +1833,13 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def get_display_picture_async(
+    async def get_user_display_picture_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
-        accept_header_override: Optional[GetDisplayPictureAcceptEnum] = None,
+        accept_header_override: Optional[GetUserDisplayPictureAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetUserDisplayPictureResponse:
         r"""Get display picture
@@ -3983,7 +1941,7 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def remove_display_picture(
+    def remove_user_display_picture(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -4078,7 +2036,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def remove_display_picture_async(
+    async def remove_user_display_picture_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -4173,9 +2131,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def bulk_invite(
+    def bulk_invite_users(
         self,
         *,
+        security: Union[
+            models.BulkInviteUsersSecurity, models.BulkInviteUsersSecurityTypedDict
+        ],
         emails: List[str],
         group_ids: Optional[List[str]] = None,
         send_email: Optional[bool] = True,
@@ -4215,6 +2176,7 @@ class Users(BaseSDK):
         Response includes count of successful invites and any failures with reasons.
 
 
+        :param security:
         :param emails: Array of email addresses to invite (max 100)
         :param group_ids: Optional group IDs to add all invited users to
         :param send_email: Whether to send invitation emails immediately
@@ -4251,7 +2213,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.BulkInviteUsersSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.BulkInviteUsersRequest
             ),
@@ -4272,10 +2234,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="bulkInviteUsers",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:invite"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "503", "5XX"],
@@ -4297,9 +2257,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def bulk_invite_async(
+    async def bulk_invite_users_async(
         self,
         *,
+        security: Union[
+            models.BulkInviteUsersSecurity, models.BulkInviteUsersSecurityTypedDict
+        ],
         emails: List[str],
         group_ids: Optional[List[str]] = None,
         send_email: Optional[bool] = True,
@@ -4339,6 +2302,7 @@ class Users(BaseSDK):
         Response includes count of successful invites and any failures with reasons.
 
 
+        :param security:
         :param emails: Array of email addresses to invite (max 100)
         :param group_ids: Optional group IDs to add all invited users to
         :param send_email: Whether to send invitation emails immediately
@@ -4375,7 +2339,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.BulkInviteUsersSecurity),
             get_serialized_body=lambda: utils.serialize_request_body(
                 request, False, False, "json", models.BulkInviteUsersRequest
             ),
@@ -4396,10 +2360,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="bulkInviteUsers",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:invite"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["400", "401", "403", "4XX", "503", "5XX"],
@@ -4421,7 +2383,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def resend_invite(
+    def resend_user_invite(
         self,
         *,
         id: str,
@@ -4533,7 +2495,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def resend_invite_async(
+    async def resend_user_invite_async(
         self,
         *,
         id: str,
@@ -4645,9 +2607,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_with_graph(
+    def list_users_graph(
         self,
         *,
+        security: Union[
+            models.ListUsersGraphSecurity, models.ListUsersGraphSecurityTypedDict
+        ],
         page: Optional[int] = 1,
         limit: Optional[int] = 10,
         search: Optional[str] = None,
@@ -4686,6 +2651,7 @@ class Users(BaseSDK):
         Use this endpoint when you need advanced search or are dealing with large user bases. Use <code>/users</code> for simple full-list retrieval.
 
 
+        :param security:
         :param page: Page number (1-based)
         :param limit: Number of results per page
         :param search: Search query (searches name and email)
@@ -4726,7 +2692,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ListUsersGraphSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -4744,10 +2710,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listUsersGraph",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -4769,9 +2733,12 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_with_graph_async(
+    async def list_users_graph_async(
         self,
         *,
+        security: Union[
+            models.ListUsersGraphSecurity, models.ListUsersGraphSecurityTypedDict
+        ],
         page: Optional[int] = 1,
         limit: Optional[int] = 10,
         search: Optional[str] = None,
@@ -4810,6 +2777,7 @@ class Users(BaseSDK):
         Use this endpoint when you need advanced search or are dealing with large user bases. Use <code>/users</code> for simple full-list retrieval.
 
 
+        :param security:
         :param page: Page number (1-based)
         :param limit: Number of results per page
         :param search: Search query (searches name and email)
@@ -4850,7 +2818,7 @@ class Users(BaseSDK):
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=self.sdk_configuration.security,
+            security=utils.get_pydantic_model(security, models.ListUsersGraphSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -4868,10 +2836,8 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listUsersGraph",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
+                oauth2_scopes=["user:read"],
+                security_source=get_security_from_env(security, models.Security),
             ),
             request=req,
             error_status_codes=["401", "4XX", "5XX"],
@@ -4893,24 +2859,40 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_teams(
+    def unblock_user(
         self,
         *,
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        search: Optional[str] = None,
+        id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.Team]:
-        r"""Get current user's teams
+    ) -> models.UnblockUserResponse:
+        r"""Unblock a user in organization
 
-        Get teams that the current user belongs to
+        Unblock a previously blocked user within the authenticated administrator's organization.<br><br>
 
-        :param page:
-        :param limit:
-        :param search:
+        <b>Overview:</b><br>
+        This endpoint updates the user's credential record by setting <code>isBlocked</code> to <code>false</code>
+        and resetting <code>wrongCredentialCount</code> to <code>0</code>.<br><br>
+
+        <b>Authorization:</b><br>
+        <ul>
+        <li><b>Admin only:</b> Only organization administrators can unblock users</li>
+        <li>Requires a valid Bearer token</li>
+        </ul>
+
+        <b>Validation & Conditions:</b><br>
+        <ul>
+        <li>User must belong to the same <code>orgId</code> as the authenticated admin</li>
+        <li>User must currently be blocked (<code>isBlocked: true</code>)</li>
+        <li>User must not be deleted (<code>isDeleted: false</code>)</li>
+        </ul>
+
+        <b>Note:</b> If the user is not blocked or does not exist in the organization, a 404 response is returned.
+
+
+        :param id: User ID to unblock
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4926,20 +2908,18 @@ class Users(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.GetCurrentUserTeamsRequest(
-            page=page,
-            limit=limit,
-            search=search,
+        request = models.UnblockUserRequest(
+            id=id,
         )
 
         req = self._build_request(
-            method="GET",
-            path="/users/teams/list",
+            method="PUT",
+            path="/users/{id}/unblock",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
             request_body_required=False,
-            request_has_path_params=False,
+            request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
@@ -4961,25 +2941,25 @@ class Users(BaseSDK):
             hook_ctx=HookContext(
                 config=self.sdk_configuration,
                 base_url=base_url or "",
-                operation_id="getCurrentUserTeams",
+                operation_id="unblockUser",
                 oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
             ),
             request=req,
-            error_status_codes=["401", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.Team], http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+            return unmarshal_json_response(models.UnblockUserResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "5XX", "*"):
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4987,24 +2967,40 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_teams_async(
+    async def unblock_user_async(
         self,
         *,
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        search: Optional[str] = None,
+        id: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.Team]:
-        r"""Get current user's teams
+    ) -> models.UnblockUserResponse:
+        r"""Unblock a user in organization
 
-        Get teams that the current user belongs to
+        Unblock a previously blocked user within the authenticated administrator's organization.<br><br>
 
-        :param page:
-        :param limit:
-        :param search:
+        <b>Overview:</b><br>
+        This endpoint updates the user's credential record by setting <code>isBlocked</code> to <code>false</code>
+        and resetting <code>wrongCredentialCount</code> to <code>0</code>.<br><br>
+
+        <b>Authorization:</b><br>
+        <ul>
+        <li><b>Admin only:</b> Only organization administrators can unblock users</li>
+        <li>Requires a valid Bearer token</li>
+        </ul>
+
+        <b>Validation & Conditions:</b><br>
+        <ul>
+        <li>User must belong to the same <code>orgId</code> as the authenticated admin</li>
+        <li>User must currently be blocked (<code>isBlocked: true</code>)</li>
+        <li>User must not be deleted (<code>isDeleted: false</code>)</li>
+        </ul>
+
+        <b>Note:</b> If the user is not blocked or does not exist in the organization, a 404 response is returned.
+
+
+        :param id: User ID to unblock
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -5020,20 +3016,18 @@ class Users(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.GetCurrentUserTeamsRequest(
-            page=page,
-            limit=limit,
-            search=search,
+        request = models.UnblockUserRequest(
+            id=id,
         )
 
         req = self._build_request_async(
-            method="GET",
-            path="/users/teams/list",
+            method="PUT",
+            path="/users/{id}/unblock",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
             request_body_required=False,
-            request_has_path_params=False,
+            request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
@@ -5055,25 +3049,25 @@ class Users(BaseSDK):
             hook_ctx=HookContext(
                 config=self.sdk_configuration,
                 base_url=base_url or "",
-                operation_id="getCurrentUserTeams",
+                operation_id="unblockUser",
                 oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
             ),
             request=req,
-            error_status_codes=["401", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.Team], http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+            return unmarshal_json_response(models.UnblockUserResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "5XX", "*"):
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

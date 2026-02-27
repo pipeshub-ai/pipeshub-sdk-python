@@ -1,19 +1,21 @@
-# OauthConfiguration
+# OAuthConfiguration
 
 ## Overview
 
+Admin management of OAuth credentials for connector types
+
 ### Available Operations
 
-* [list_registry](#list_registry) - List OAuth-capable connector types
-* [get_connector_type](#get_connector_type) - Get OAuth connector type details
-* [list](#list) - List OAuth configurations
-* [list_by_type](#list_by_type) - List OAuth configs for connector type
-* [create](#create) - Create OAuth configuration
-* [get](#get) - Get OAuth configuration
-* [update](#update) - Update OAuth configuration
-* [delete](#delete) - Delete OAuth configuration
+* [get_o_auth_registry](#get_o_auth_registry) - List OAuth-capable connector types
+* [get_o_auth_connector_type](#get_o_auth_connector_type) - Get OAuth connector type details
+* [list_o_auth_configs](#list_o_auth_configs) - List OAuth configurations
+* [list_o_auth_configs_by_type](#list_o_auth_configs_by_type) - List OAuth configs for connector type
+* [create_o_auth_config](#create_o_auth_config) - Create OAuth configuration
+* [get_o_auth_config](#get_o_auth_config) - Get OAuth configuration
+* [update_o_auth_config](#update_o_auth_config) - Update OAuth configuration
+* [delete_o_auth_config](#delete_o_auth_config) - Delete OAuth configuration
 
-## list_registry
+## get_o_auth_registry
 
 Get all connector types that support OAuth authentication.<br><br>
 <b>Admin Use:</b><br>
@@ -34,7 +36,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.list_registry(page=1, limit=20)
+    res = p_client.o_auth_configuration.get_o_auth_registry(page=1, limit=20)
 
     # Handle response
     print(res)
@@ -60,7 +62,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_connector_type
+## get_o_auth_connector_type
 
 Get details for a specific OAuth-capable connector type.
 
@@ -77,7 +79,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.get_connector_type(connector_type="<value>")
+    res = p_client.o_auth_configuration.get_o_auth_connector_type(connector_type="<value>")
 
     # Handle response
     print(res)
@@ -101,7 +103,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## list_o_auth_configs
 
 List all OAuth configurations for the organization.<br><br>
 <b>Security:</b><br>
@@ -124,7 +126,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.list(page=1, limit=20)
+    res = p_client.o_auth_configuration.list_o_auth_configs(page=1, limit=20)
 
     # Handle response
     print(res)
@@ -150,7 +152,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_by_type
+## list_o_auth_configs_by_type
 
 Get all OAuth configurations for a specific connector type.
 
@@ -167,7 +169,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.list_by_type(connector_type="<value>", page=1, limit=20)
+    res = p_client.o_auth_configuration.list_o_auth_configs_by_type(connector_type="<value>", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -194,7 +196,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_o_auth_config
 
 Create a new OAuth configuration for a connector type.<br><br>
 <b>Admin Only:</b><br>
@@ -219,7 +221,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.create(connector_type="<value>", oauth_instance_name="Production Google OAuth Credentials", config={
+    res = p_client.o_auth_configuration.create_o_auth_config(connector_type="<value>", oauth_instance_name="Production Google OAuth Credentials", config={
         "client_id": "123456789-abc.apps.googleusercontent.com",
         "client_secret": "GOCSPX-xxxxxxxxxxxxx",
         "tenant_id": "12345678-1234-1234-1234-123456789abc",
@@ -250,7 +252,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_o_auth_config
 
 Get a specific OAuth configuration by ID.
 
@@ -267,7 +269,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.get(connector_type="<value>", config_id="<id>")
+    res = p_client.o_auth_configuration.get_o_auth_config(connector_type="<value>", config_id="<id>")
 
     # Handle response
     print(res)
@@ -292,7 +294,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_o_auth_config
 
 Update an OAuth configuration.<br><br>
 <b>Admin Only:</b><br>
@@ -312,7 +314,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.update(connector_type="<value>", config_id="<id>")
+    res = p_client.o_auth_configuration.update_o_auth_config(connector_type="<value>", config_id="<id>")
 
     # Handle response
     print(res)
@@ -339,7 +341,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_o_auth_config
 
 Delete an OAuth configuration.<br><br>
 <b>Warning:</b><br>
@@ -360,7 +362,7 @@ with Pipeshub(
     bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
 ) as p_client:
 
-    res = p_client.oauth_configuration.delete(connector_type="<value>", config_id="<id>")
+    res = p_client.o_auth_configuration.delete_o_auth_config(connector_type="<value>", config_id="<id>")
 
     # Handle response
     print(res)

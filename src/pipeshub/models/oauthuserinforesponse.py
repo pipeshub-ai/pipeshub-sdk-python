@@ -13,8 +13,8 @@ class OAuthUserInfoResponseTypedDict(TypedDict):
 
     """
 
-    sub: str
-    r"""Subject identifier (user ID)"""
+    user_id: str
+    r"""User ID"""
     name: NotRequired[str]
     r"""Full name"""
     given_name: NotRequired[str]
@@ -37,8 +37,8 @@ class OAuthUserInfoResponse(BaseModel):
 
     """
 
-    sub: str
-    r"""Subject identifier (user ID)"""
+    user_id: str
+    r"""User ID"""
 
     name: Optional[str] = None
     r"""Full name"""
