@@ -4,61 +4,72 @@ from __future__ import annotations
 from pipeshub.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class ConnectorStatsTypedDict(TypedDict):
-    r"""Statistics for a connector's records"""
+class StatsTypedDict(TypedDict):
+    total: NotRequired[int]
+    indexing_status: NotRequired[Dict[str, int]]
 
+
+class Stats(BaseModel):
+    total: Optional[int] = None
+
+    indexing_status: Annotated[
+        Optional[Dict[str, int]], pydantic.Field(alias="indexingStatus")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["total", "indexingStatus"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ByRecordTypeTypedDict(TypedDict):
+    pass
+
+
+class ByRecordType(BaseModel):
+    pass
+
+
+class DataTypedDict(TypedDict):
+    org_id: NotRequired[str]
     connector_id: NotRequired[str]
-    total_records: NotRequired[int]
-    indexed_records: NotRequired[int]
-    failed_records: NotRequired[int]
-    pending_records: NotRequired[int]
-    last_sync_time: NotRequired[int]
-    status_breakdown: NotRequired[Dict[str, int]]
+    origin: NotRequired[str]
+    stats: NotRequired[StatsTypedDict]
+    by_record_type: NotRequired[List[ByRecordTypeTypedDict]]
 
 
-class ConnectorStats(BaseModel):
-    r"""Statistics for a connector's records"""
+class Data(BaseModel):
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
 
     connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
 
-    total_records: Annotated[Optional[int], pydantic.Field(alias="totalRecords")] = None
+    origin: Optional[str] = None
 
-    indexed_records: Annotated[
-        Optional[int], pydantic.Field(alias="indexedRecords")
-    ] = None
+    stats: Optional[Stats] = None
 
-    failed_records: Annotated[Optional[int], pydantic.Field(alias="failedRecords")] = (
-        None
-    )
-
-    pending_records: Annotated[
-        Optional[int], pydantic.Field(alias="pendingRecords")
-    ] = None
-
-    last_sync_time: Annotated[Optional[int], pydantic.Field(alias="lastSyncTime")] = (
-        None
-    )
-
-    status_breakdown: Annotated[
-        Optional[Dict[str, int]], pydantic.Field(alias="statusBreakdown")
+    by_record_type: Annotated[
+        Optional[List[ByRecordType]], pydantic.Field(alias="byRecordType")
     ] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            [
-                "connectorId",
-                "totalRecords",
-                "indexedRecords",
-                "failedRecords",
-                "pendingRecords",
-                "lastSyncTime",
-                "statusBreakdown",
-            ]
+            ["orgId", "connectorId", "origin", "stats", "byRecordType"]
         )
         serialized = handler(self)
         m = {}
@@ -74,7 +85,42 @@ class ConnectorStats(BaseModel):
         return m
 
 
+class ConnectorStatsTypedDict(TypedDict):
+    r"""Statistics for a connector's records"""
+
+    success: NotRequired[bool]
+    data: NotRequired[DataTypedDict]
+
+
+class ConnectorStats(BaseModel):
+    r"""Statistics for a connector's records"""
+
+    success: Optional[bool] = None
+
+    data: Optional[Data] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["success", "data"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 try:
-    ConnectorStats.model_rebuild()
+    Stats.model_rebuild()
+except NameError:
+    pass
+try:
+    Data.model_rebuild()
 except NameError:
     pass

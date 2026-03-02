@@ -19,47 +19,73 @@ KBPermissionRole = Union[
     ],
     UnrecognizedStr,
 ]
-r"""Permission role"""
+
+
+KBPermissionType = Union[
+    Literal[
+        "USER",
+        "TEAM",
+    ],
+    UnrecognizedStr,
+]
+r"""Whether permission is for a user or team"""
 
 
 class KBPermissionTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Permission entry ID"""
     user_id: NotRequired[str]
     r"""User ID"""
-    team_id: NotRequired[str]
-    r"""Team ID"""
+    email: NotRequired[str]
+    r"""User email"""
+    name: NotRequired[str]
+    r"""User display name"""
     role: NotRequired[KBPermissionRole]
-    r"""Permission role"""
-    kb_id: NotRequired[str]
-    r"""Knowledge base ID"""
-    granted_by: NotRequired[str]
-    r"""User ID who granted the permission"""
-    granted_at: NotRequired[int]
-    r"""Timestamp when permission was granted"""
+    type: NotRequired[KBPermissionType]
+    r"""Whether permission is for a user or team"""
+    created_at_timestamp: NotRequired[int]
+    updated_at_timestamp: NotRequired[int]
 
 
 class KBPermission(BaseModel):
+    id: Optional[str] = None
+    r"""Permission entry ID"""
+
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
     r"""User ID"""
 
-    team_id: Annotated[Optional[str], pydantic.Field(alias="teamId")] = None
-    r"""Team ID"""
+    email: Optional[str] = None
+    r"""User email"""
+
+    name: Optional[str] = None
+    r"""User display name"""
 
     role: Optional[KBPermissionRole] = None
-    r"""Permission role"""
 
-    kb_id: Annotated[Optional[str], pydantic.Field(alias="kbId")] = None
-    r"""Knowledge base ID"""
+    type: Optional[KBPermissionType] = None
+    r"""Whether permission is for a user or team"""
 
-    granted_by: Annotated[Optional[str], pydantic.Field(alias="grantedBy")] = None
-    r"""User ID who granted the permission"""
+    created_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="createdAtTimestamp")
+    ] = None
 
-    granted_at: Annotated[Optional[int], pydantic.Field(alias="grantedAt")] = None
-    r"""Timestamp when permission was granted"""
+    updated_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="updatedAtTimestamp")
+    ] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["userId", "teamId", "role", "kbId", "grantedBy", "grantedAt"]
+            [
+                "id",
+                "userId",
+                "email",
+                "name",
+                "role",
+                "type",
+                "createdAtTimestamp",
+                "updatedAtTimestamp",
+            ]
         )
         serialized = handler(self)
         m = {}

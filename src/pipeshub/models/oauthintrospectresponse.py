@@ -29,8 +29,8 @@ class OAuthIntrospectResponseTypedDict(TypedDict):
     r"""Token issuance timestamp (Unix epoch)"""
     nbf: NotRequired[int]
     r"""Token not-before timestamp (Unix epoch)"""
-    sub: NotRequired[str]
-    r"""Subject (user ID)"""
+    user_id: NotRequired[str]
+    r"""User ID"""
     aud: NotRequired[str]
     r"""Audience (client ID)"""
     iss: NotRequired[str]
@@ -69,8 +69,8 @@ class OAuthIntrospectResponse(BaseModel):
     nbf: Optional[int] = None
     r"""Token not-before timestamp (Unix epoch)"""
 
-    sub: Optional[str] = None
-    r"""Subject (user ID)"""
+    user_id: Optional[str] = None
+    r"""User ID"""
 
     aud: Optional[str] = None
     r"""Audience (client ID)"""
@@ -92,7 +92,7 @@ class OAuthIntrospectResponse(BaseModel):
                 "exp",
                 "iat",
                 "nbf",
-                "sub",
+                "user_id",
                 "aud",
                 "iss",
                 "jti",

@@ -24,14 +24,14 @@ class GetAvailableModelsByTypeRequest(BaseModel):
     r"""Type of AI model"""
 
 
-class ModelTypedDict(TypedDict):
+class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     model_key: NotRequired[str]
     provider: NotRequired[str]
     model: NotRequired[str]
     is_default: NotRequired[bool]
 
 
-class Model(BaseModel):
+class GetAvailableModelsByTypeModel(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
 
     provider: Optional[str] = None
@@ -60,17 +60,23 @@ class Model(BaseModel):
 class GetAvailableModelsByTypeResponseTypedDict(TypedDict):
     r"""Available models retrieved"""
 
-    models: NotRequired[List[ModelTypedDict]]
+    status: NotRequired[str]
+    message: NotRequired[str]
+    models: NotRequired[List[GetAvailableModelsByTypeModelTypedDict]]
 
 
 class GetAvailableModelsByTypeResponse(BaseModel):
     r"""Available models retrieved"""
 
-    models: Optional[List[Model]] = None
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    models: Optional[List[GetAvailableModelsByTypeModel]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["models"])
+        optional_fields = set(["status", "message", "models"])
         serialized = handler(self)
         m = {}
 
@@ -86,6 +92,6 @@ class GetAvailableModelsByTypeResponse(BaseModel):
 
 
 try:
-    Model.model_rebuild()
+    GetAvailableModelsByTypeModel.model_rebuild()
 except NameError:
     pass

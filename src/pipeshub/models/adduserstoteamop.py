@@ -5,35 +5,24 @@ from pipeshub.types import BaseModel, UNSET_SENTINEL
 from pipeshub.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Literal, Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-AddUsersToTeamRole = Literal[
-    "admin",
-    "member",
-    "viewer",
-]
-r"""Role to assign to the user"""
+class AddUsersToTeamRequestBodyTypedDict(TypedDict):
+    r"""Request payload"""
+
+    user_ids: NotRequired[List[str]]
 
 
-class AddUsersToTeamUserTypedDict(TypedDict):
-    user_id: str
-    r"""User ID to add to the team"""
-    role: NotRequired[AddUsersToTeamRole]
-    r"""Role to assign to the user"""
+class AddUsersToTeamRequestBody(BaseModel):
+    r"""Request payload"""
 
-
-class AddUsersToTeamUser(BaseModel):
-    user_id: Annotated[str, pydantic.Field(alias="userId")]
-    r"""User ID to add to the team"""
-
-    role: Optional[AddUsersToTeamRole] = "member"
-    r"""Role to assign to the user"""
+    user_ids: Annotated[Optional[List[str]], pydantic.Field(alias="userIds")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["role"])
+        optional_fields = set(["userIds"])
         serialized = handler(self)
         m = {}
 
@@ -48,21 +37,8 @@ class AddUsersToTeamUser(BaseModel):
         return m
 
 
-class AddUsersToTeamRequestBodyTypedDict(TypedDict):
-    r"""Request payload"""
-
-    users: List[AddUsersToTeamUserTypedDict]
-
-
-class AddUsersToTeamRequestBody(BaseModel):
-    r"""Request payload"""
-
-    users: List[AddUsersToTeamUser]
-
-
 class AddUsersToTeamRequestTypedDict(TypedDict):
     team_id: str
-    r"""Unique identifier of the team"""
     body: AddUsersToTeamRequestBodyTypedDict
     r"""Request payload"""
 
@@ -73,7 +49,6 @@ class AddUsersToTeamRequest(BaseModel):
         pydantic.Field(alias="teamId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Unique identifier of the team"""
 
     body: Annotated[
         AddUsersToTeamRequestBody,
@@ -85,28 +60,17 @@ class AddUsersToTeamRequest(BaseModel):
 class AddUsersToTeamResponseTypedDict(TypedDict):
     r"""Users added to team successfully"""
 
-    success: NotRequired[bool]
     message: NotRequired[str]
-    added_count: NotRequired[int]
-    skipped_count: NotRequired[int]
-    r"""Number of users already in the team"""
 
 
 class AddUsersToTeamResponse(BaseModel):
     r"""Users added to team successfully"""
 
-    success: Optional[bool] = None
-
     message: Optional[str] = None
-
-    added_count: Annotated[Optional[int], pydantic.Field(alias="addedCount")] = None
-
-    skipped_count: Annotated[Optional[int], pydantic.Field(alias="skippedCount")] = None
-    r"""Number of users already in the team"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "message", "addedCount", "skippedCount"])
+        optional_fields = set(["message"])
         serialized = handler(self)
         m = {}
 
@@ -122,10 +86,6 @@ class AddUsersToTeamResponse(BaseModel):
 
 
 try:
-    AddUsersToTeamUser.model_rebuild()
-except NameError:
-    pass
-try:
-    AddUsersToTeamResponse.model_rebuild()
+    AddUsersToTeamRequestBody.model_rebuild()
 except NameError:
     pass

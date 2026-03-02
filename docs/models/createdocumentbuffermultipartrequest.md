@@ -1,0 +1,9 @@
+# CreateDocumentBufferMultipartRequest
+
+
+## Fields
+
+| Field                                                                                                    | Type                                                                                                     | Required                                                                                                 | Description                                                                                              |
+| -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `document_id`                                                                                            | *str*                                                                                                    | :heavy_check_mark:                                                                                       | N/A                                                                                                      |
+| `body`                                                                                                   | [models.CreateDocumentBufferMultipartRequestBody](../models/createdocumentbuffermultipartrequestbody.md) | :heavy_check_mark:                                                                                       | N/A                                                                                                      |

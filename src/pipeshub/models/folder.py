@@ -15,7 +15,7 @@ class FolderTypedDict(TypedDict):
     r"""Knowledge base ID"""
     org_id: str
     r"""Organization ID"""
-    key: NotRequired[str]
+    id: NotRequired[str]
     r"""Unique folder identifier"""
     parent_id: NotRequired[str]
     r"""Parent folder or KB ID"""
@@ -37,7 +37,7 @@ class Folder(BaseModel):
     org_id: Annotated[str, pydantic.Field(alias="orgId")]
     r"""Organization ID"""
 
-    key: Annotated[Optional[str], pydantic.Field(alias="_key")] = None
+    id: Optional[str] = None
     r"""Unique folder identifier"""
 
     parent_id: Annotated[Optional[str], pydantic.Field(alias="parentId")] = None
@@ -59,13 +59,7 @@ class Folder(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            [
-                "_key",
-                "parentId",
-                "createdAtTimestamp",
-                "updatedAtTimestamp",
-                "isDeleted",
-            ]
+            ["id", "parentId", "createdAtTimestamp", "updatedAtTimestamp", "isDeleted"]
         )
         serialized = handler(self)
         m = {}

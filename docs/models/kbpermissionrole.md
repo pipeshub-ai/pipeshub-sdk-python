@@ -1,7 +1,5 @@
 # KBPermissionRole
 
-Permission role
-
 
 ## Values
 

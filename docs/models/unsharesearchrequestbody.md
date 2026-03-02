@@ -1,10 +1,10 @@
 # UnshareSearchRequestBody
 
-Request body for Revoke search access
+Request payload
 
 
 ## Fields
 
 | Field              | Type               | Required           | Description        |
 | ------------------ | ------------------ | ------------------ | ------------------ |
-| `user_ids`         | List[*str*]        | :heavy_check_mark: | N/A                |
+| `user_ids`         | List[*str*]        | :heavy_minus_sign: | N/A                |

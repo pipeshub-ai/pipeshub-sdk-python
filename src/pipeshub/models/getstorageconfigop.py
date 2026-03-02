@@ -8,7 +8,7 @@ from typing import Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-GetStorageConfigStorageType = Union[
+StorageType = Union[
     Literal[
         "local",
         "s3",
@@ -22,7 +22,7 @@ r"""Currently configured storage type"""
 class GetStorageConfigResponseTypedDict(TypedDict):
     r"""Storage configuration retrieved"""
 
-    storage_type: NotRequired[GetStorageConfigStorageType]
+    storage_type: NotRequired[StorageType]
     r"""Currently configured storage type"""
     mount_name: NotRequired[str]
     r"""Mount point name (Local)"""
@@ -46,7 +46,7 @@ class GetStorageConfigResponse(BaseModel):
     r"""Storage configuration retrieved"""
 
     storage_type: Annotated[
-        Optional[GetStorageConfigStorageType], pydantic.Field(alias="storageType")
+        Optional[StorageType], pydantic.Field(alias="storageType")
     ] = None
     r"""Currently configured storage type"""
 

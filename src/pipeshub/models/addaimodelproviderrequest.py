@@ -23,9 +23,9 @@ class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
     deployment_name: NotRequired[str]
     r"""Deployment name (Azure OpenAI)"""
     aws_access_key_id: NotRequired[str]
-    r"""AWS access key (Bedrock)"""
+    r"""AWS access key (Bedrock). Optional - omit to use IAM role credentials."""
     aws_access_secret_key: NotRequired[str]
-    r"""AWS secret key (Bedrock)"""
+    r"""AWS secret key (Bedrock). Optional - omit to use IAM role credentials."""
     region: NotRequired[str]
     r"""AWS region (Bedrock)"""
 
@@ -55,12 +55,12 @@ class AddAIModelProviderRequestConfiguration(BaseModel):
     aws_access_key_id: Annotated[
         Optional[str], pydantic.Field(alias="awsAccessKeyId")
     ] = None
-    r"""AWS access key (Bedrock)"""
+    r"""AWS access key (Bedrock). Optional - omit to use IAM role credentials."""
 
     aws_access_secret_key: Annotated[
         Optional[str], pydantic.Field(alias="awsAccessSecretKey")
     ] = None
-    r"""AWS secret key (Bedrock)"""
+    r"""AWS secret key (Bedrock). Optional - omit to use IAM role credentials."""
 
     region: Optional[str] = None
     r"""AWS region (Bedrock)"""
