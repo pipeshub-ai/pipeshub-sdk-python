@@ -1,9 +1,10 @@
 # UploadDocumentResponse
 
+Document uploaded successfully
+
 
 ## Fields
 
-| Field                                    | Type                                     | Required                                 | Description                              |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| `headers`                                | Dict[str, List[*str*]]                   | :heavy_check_mark:                       | N/A                                      |
-| `result`                                 | [models.Document](../models/document.md) | :heavy_check_mark:                       | N/A                                      |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `message`          | *Optional[str]*    | :heavy_minus_sign: | N/A                |

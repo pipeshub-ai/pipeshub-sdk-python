@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .address import Address, AddressTypedDict
+from datetime import datetime
 from pipeshub.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
@@ -41,10 +42,12 @@ class UserTypedDict(TypedDict):
     r"""Soft delete flag"""
     deleted_by: NotRequired[str]
     r"""ID of user who deleted this user"""
-    created_at: NotRequired[int]
-    r"""Creation timestamp (milliseconds since epoch)"""
-    updated_at: NotRequired[int]
-    r"""Last update timestamp (milliseconds since epoch)"""
+    v: NotRequired[int]
+    r"""Document version (MongoDB)"""
+    created_at: NotRequired[datetime]
+    r"""Creation timestamp (ISO 8601)"""
+    updated_at: NotRequired[datetime]
+    r"""Last update timestamp (ISO 8601)"""
 
 
 class User(BaseModel):
@@ -98,11 +101,14 @@ class User(BaseModel):
     deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
     r"""ID of user who deleted this user"""
 
-    created_at: Annotated[Optional[int], pydantic.Field(alias="createdAt")] = None
-    r"""Creation timestamp (milliseconds since epoch)"""
+    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
+    r"""Document version (MongoDB)"""
 
-    updated_at: Annotated[Optional[int], pydantic.Field(alias="updatedAt")] = None
-    r"""Last update timestamp (milliseconds since epoch)"""
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+    r"""Creation timestamp (ISO 8601)"""
+
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
+    r"""Last update timestamp (ISO 8601)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -121,6 +127,7 @@ class User(BaseModel):
                 "dataCollectionConsent",
                 "isDeleted",
                 "deletedBy",
+                "__v",
                 "createdAt",
                 "updatedAt",
             ]

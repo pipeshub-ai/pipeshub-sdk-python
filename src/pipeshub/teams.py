@@ -7,12 +7,13 @@ from pipeshub.types import OptionalNullable, UNSET
 from pipeshub.utils import get_security_from_env
 from pipeshub.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
+from typing_extensions import deprecated
 
 
 class Teams(BaseSDK):
     r"""Team management operations"""
 
-    def create(
+    def create_team(
         self,
         *,
         name: str,
@@ -113,7 +114,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createTeam",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -138,7 +139,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_team_async(
         self,
         *,
         name: str,
@@ -239,7 +240,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createTeam",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -264,7 +265,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list(
+    def list_teams(
         self,
         *,
         search: Optional[str] = None,
@@ -352,7 +353,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listTeams",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -377,7 +378,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_async(
+    async def list_teams_async(
         self,
         *,
         search: Optional[str] = None,
@@ -465,7 +466,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listTeams",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -490,7 +491,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_team_by_id(
         self,
         *,
         team_id: str,
@@ -569,7 +570,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getTeamById",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -594,7 +595,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_team_by_id_async(
         self,
         *,
         team_id: str,
@@ -673,7 +674,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getTeamById",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -698,7 +699,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_team(
         self,
         *,
         team_id: str,
@@ -792,7 +793,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateTeam",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -817,7 +818,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_team_async(
         self,
         *,
         team_id: str,
@@ -911,7 +912,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateTeam",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -936,7 +937,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_team(
         self,
         *,
         team_id: str,
@@ -1011,7 +1012,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteTeam",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1036,7 +1037,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_team_async(
         self,
         *,
         team_id: str,
@@ -1111,7 +1112,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteTeam",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1136,907 +1137,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_members(
-        self,
-        *,
-        team_id: str,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetTeamUsersResponse:
-        r"""Get team members
-
-        Retrieve all users that are members of a specific team.<br><br>
-        <b>Response Details:</b><br>
-        <ul>
-        <li>Returns user profiles with their team role</li>
-        <li>Supports pagination for large teams</li>
-        <li>Excludes deleted or inactive users</li>
-        </ul>
-        <b>Team Roles:</b><br>
-        <ul>
-        <li><code>owner</code> - Full control over team settings and members</li>
-        <li><code>admin</code> - Can manage members and most settings</li>
-        <li><code>member</code> - Standard team member</li>
-        <li><code>viewer</code> - Read-only access to team resources</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param page: Page number for pagination (1-based)
-        :param limit: Number of users per page
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetTeamUsersRequest(
-            team_id=team_id,
-            page=page,
-            limit=limit,
-        )
-
-        req = self._build_request(
-            method="GET",
-            path="/teams/{teamId}/users",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getTeamUsers",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetTeamUsersResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_members_async(
-        self,
-        *,
-        team_id: str,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetTeamUsersResponse:
-        r"""Get team members
-
-        Retrieve all users that are members of a specific team.<br><br>
-        <b>Response Details:</b><br>
-        <ul>
-        <li>Returns user profiles with their team role</li>
-        <li>Supports pagination for large teams</li>
-        <li>Excludes deleted or inactive users</li>
-        </ul>
-        <b>Team Roles:</b><br>
-        <ul>
-        <li><code>owner</code> - Full control over team settings and members</li>
-        <li><code>admin</code> - Can manage members and most settings</li>
-        <li><code>member</code> - Standard team member</li>
-        <li><code>viewer</code> - Read-only access to team resources</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param page: Page number for pagination (1-based)
-        :param limit: Number of users per page
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetTeamUsersRequest(
-            team_id=team_id,
-            page=page,
-            limit=limit,
-        )
-
-        req = self._build_request_async(
-            method="GET",
-            path="/teams/{teamId}/users",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getTeamUsers",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetTeamUsersResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def add_users(
-        self,
-        *,
-        team_id: str,
-        users: Union[
-            List[models.AddUsersToTeamUser], List[models.AddUsersToTeamUserTypedDict]
-        ],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AddUsersToTeamResponse:
-        r"""Add users to team
-
-        Add one or more users to a team with specified roles.<br><br>
-        <b>Behavior:</b><br>
-        <ul>
-        <li>Users already in the team are skipped</li>
-        <li>Default role is \"member\" if not specified</li>
-        <li>Sends invitation notification to added users</li>
-        </ul>
-        <b>Validation:</b><br>
-        <ul>
-        <li>All user IDs must be valid and from the same organization</li>
-        <li>Role must be one of the allowed values</li>
-        <li>Only team owner/admin can add members</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param users:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.AddUsersToTeamRequest(
-            team_id=team_id,
-            body=models.AddUsersToTeamRequestBody(
-                users=utils.get_pydantic_model(users, List[models.AddUsersToTeamUser]),
-            ),
-        )
-
-        req = self._build_request(
-            method="POST",
-            path="/teams/{teamId}/users",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.AddUsersToTeamRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="addUsersToTeam",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AddUsersToTeamResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def add_users_async(
-        self,
-        *,
-        team_id: str,
-        users: Union[
-            List[models.AddUsersToTeamUser], List[models.AddUsersToTeamUserTypedDict]
-        ],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AddUsersToTeamResponse:
-        r"""Add users to team
-
-        Add one or more users to a team with specified roles.<br><br>
-        <b>Behavior:</b><br>
-        <ul>
-        <li>Users already in the team are skipped</li>
-        <li>Default role is \"member\" if not specified</li>
-        <li>Sends invitation notification to added users</li>
-        </ul>
-        <b>Validation:</b><br>
-        <ul>
-        <li>All user IDs must be valid and from the same organization</li>
-        <li>Role must be one of the allowed values</li>
-        <li>Only team owner/admin can add members</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param users:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.AddUsersToTeamRequest(
-            team_id=team_id,
-            body=models.AddUsersToTeamRequestBody(
-                users=utils.get_pydantic_model(users, List[models.AddUsersToTeamUser]),
-            ),
-        )
-
-        req = self._build_request_async(
-            method="POST",
-            path="/teams/{teamId}/users",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.AddUsersToTeamRequestBody
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="addUsersToTeam",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AddUsersToTeamResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def remove_users(
-        self,
-        *,
-        team_id: str,
-        user_ids: List[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.RemoveUsersFromTeamResponse:
-        r"""Remove users from team
-
-        Remove one or more users from a team.<br><br>
-        <b>Behavior:</b><br>
-        <ul>
-        <li>Users not in the team are silently skipped</li>
-        <li>Removed users lose access to team resources immediately</li>
-        </ul>
-        <b>Restrictions:</b><br>
-        <ul>
-        <li>Cannot remove the team owner</li>
-        <li>Only team owner/admin can remove members</li>
-        <li>Admins cannot remove other admins (only owner can)</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param user_ids: Array of user IDs to remove from the team
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.RemoveUsersFromTeamRequest(
-            team_id=team_id,
-            body=models.RemoveUsersFromTeamRequestBody(
-                user_ids=user_ids,
-            ),
-        )
-
-        req = self._build_request(
-            method="DELETE",
-            path="/teams/{teamId}/users",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.RemoveUsersFromTeamRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="removeUsersFromTeam",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.RemoveUsersFromTeamResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def remove_users_async(
-        self,
-        *,
-        team_id: str,
-        user_ids: List[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.RemoveUsersFromTeamResponse:
-        r"""Remove users from team
-
-        Remove one or more users from a team.<br><br>
-        <b>Behavior:</b><br>
-        <ul>
-        <li>Users not in the team are silently skipped</li>
-        <li>Removed users lose access to team resources immediately</li>
-        </ul>
-        <b>Restrictions:</b><br>
-        <ul>
-        <li>Cannot remove the team owner</li>
-        <li>Only team owner/admin can remove members</li>
-        <li>Admins cannot remove other admins (only owner can)</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param user_ids: Array of user IDs to remove from the team
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.RemoveUsersFromTeamRequest(
-            team_id=team_id,
-            body=models.RemoveUsersFromTeamRequestBody(
-                user_ids=user_ids,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="DELETE",
-            path="/teams/{teamId}/users",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.RemoveUsersFromTeamRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="removeUsersFromTeam",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.RemoveUsersFromTeamResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def update_user_permissions(
-        self,
-        *,
-        team_id: str,
-        user_id: str,
-        role: models.UpdateTeamUserPermissionsRole,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateTeamUserPermissionsResponse:
-        r"""Update user role in team
-
-        Update a user's role/permissions within a team.<br><br>
-        <b>Available Roles:</b><br>
-        <ul>
-        <li><code>owner</code> - Full control (only one per team, transferable)</li>
-        <li><code>admin</code> - Can manage members and settings</li>
-        <li><code>member</code> - Standard access</li>
-        <li><code>viewer</code> - Read-only access</li>
-        </ul>
-        <b>Restrictions:</b><br>
-        <ul>
-        <li>Only team owner can promote to admin</li>
-        <li>Only team owner can transfer ownership</li>
-        <li>Admins can modify member/viewer roles</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param user_id: ID of the user whose role to update
-        :param role: New role to assign to the user
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateTeamUserPermissionsRequest(
-            team_id=team_id,
-            body=models.UpdateTeamUserPermissionsRequestBody(
-                user_id=user_id,
-                role=role,
-            ),
-        )
-
-        req = self._build_request(
-            method="PUT",
-            path="/teams/{teamId}/users/permissions",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateTeamUserPermissionsRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateTeamUserPermissions",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateTeamUserPermissionsResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def update_user_permissions_async(
-        self,
-        *,
-        team_id: str,
-        user_id: str,
-        role: models.UpdateTeamUserPermissionsRole,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateTeamUserPermissionsResponse:
-        r"""Update user role in team
-
-        Update a user's role/permissions within a team.<br><br>
-        <b>Available Roles:</b><br>
-        <ul>
-        <li><code>owner</code> - Full control (only one per team, transferable)</li>
-        <li><code>admin</code> - Can manage members and settings</li>
-        <li><code>member</code> - Standard access</li>
-        <li><code>viewer</code> - Read-only access</li>
-        </ul>
-        <b>Restrictions:</b><br>
-        <ul>
-        <li>Only team owner can promote to admin</li>
-        <li>Only team owner can transfer ownership</li>
-        <li>Admins can modify member/viewer roles</li>
-        </ul>
-
-
-        :param team_id: Unique identifier of the team
-        :param user_id: ID of the user whose role to update
-        :param role: New role to assign to the user
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.UpdateTeamUserPermissionsRequest(
-            team_id=team_id,
-            body=models.UpdateTeamUserPermissionsRequestBody(
-                user_id=user_id,
-                role=role,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PUT",
-            path="/teams/{teamId}/users/permissions",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateTeamUserPermissionsRequestBody,
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="updateTeamUserPermissions",
-                oauth2_scopes=None,
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateTeamUserPermissionsResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def get_user(
+    def get_user_teams(
         self,
         *,
         page: Optional[int] = 1,
@@ -2115,7 +1216,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserTeams",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2140,7 +1241,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_user_async(
+    async def get_user_teams_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -2219,7 +1320,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserTeams",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2244,29 +1345,833 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_created(
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    def get_team_users(
         self,
         *,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
+        team_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetTeamUsersResponse:
+        r"""Get users in team
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Retrieve all users that belong to a specific team.
+
+
+        :param team_id:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetTeamUsersRequest(
+            team_id=team_id,
+        )
+
+        req = self._build_request(
+            method="GET",
+            path="/teams/{teamId}/users",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getTeamUsers",
+                oauth2_scopes=["team:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.GetTeamUsersResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    async def get_team_users_async(
+        self,
+        *,
+        team_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetTeamUsersResponse:
+        r"""Get users in team
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Retrieve all users that belong to a specific team.
+
+
+        :param team_id:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetTeamUsersRequest(
+            team_id=team_id,
+        )
+
+        req = self._build_request_async(
+            method="GET",
+            path="/teams/{teamId}/users",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getTeamUsers",
+                oauth2_scopes=["team:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.GetTeamUsersResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    def add_users_to_team(
+        self,
+        *,
+        team_id: str,
+        user_ids: Optional[List[str]] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.AddUsersToTeamResponse:
+        r"""Add users to team
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Add one or more users to a team.
+
+
+        :param team_id:
+        :param user_ids:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.AddUsersToTeamRequest(
+            team_id=team_id,
+            body=models.AddUsersToTeamRequestBody(
+                user_ids=user_ids,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/teams/{teamId}/users",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.AddUsersToTeamRequestBody
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="addUsersToTeam",
+                oauth2_scopes=["team:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.AddUsersToTeamResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    async def add_users_to_team_async(
+        self,
+        *,
+        team_id: str,
+        user_ids: Optional[List[str]] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.AddUsersToTeamResponse:
+        r"""Add users to team
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Add one or more users to a team.
+
+
+        :param team_id:
+        :param user_ids:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.AddUsersToTeamRequest(
+            team_id=team_id,
+            body=models.AddUsersToTeamRequestBody(
+                user_ids=user_ids,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/teams/{teamId}/users",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.AddUsersToTeamRequestBody
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="addUsersToTeam",
+                oauth2_scopes=["team:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.AddUsersToTeamResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    def remove_user_from_team(
+        self,
+        *,
+        team_id: str,
+        user_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RemoveUserFromTeamResponse:
+        r"""Remove user from team
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Remove a user from a team.
+
+
+        :param team_id:
+        :param user_id:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.RemoveUserFromTeamRequest(
+            team_id=team_id,
+            body=models.RemoveUserFromTeamRequestBody(
+                user_id=user_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="DELETE",
+            path="/teams/{teamId}/users",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.RemoveUserFromTeamRequestBody
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="removeUserFromTeam",
+                oauth2_scopes=["team:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.RemoveUserFromTeamResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    async def remove_user_from_team_async(
+        self,
+        *,
+        team_id: str,
+        user_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RemoveUserFromTeamResponse:
+        r"""Remove user from team
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Remove a user from a team.
+
+
+        :param team_id:
+        :param user_id:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.RemoveUserFromTeamRequest(
+            team_id=team_id,
+            body=models.RemoveUserFromTeamRequestBody(
+                user_id=user_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="DELETE",
+            path="/teams/{teamId}/users",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.RemoveUserFromTeamRequestBody
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="removeUserFromTeam",
+                oauth2_scopes=["team:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.RemoveUserFromTeamResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    def update_team_users_permissions(
+        self,
+        *,
+        team_id: str,
+        body: Union[
+            models.UpdateTeamUsersPermissionsRequestBody,
+            models.UpdateTeamUsersPermissionsRequestBodyTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.UpdateTeamUsersPermissionsResponse:
+        r"""Update team users permissions
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Update permissions for users within a team.
+
+
+        :param team_id:
+        :param body: Request payload
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UpdateTeamUsersPermissionsRequest(
+            team_id=team_id,
+            body=utils.get_pydantic_model(
+                body, models.UpdateTeamUsersPermissionsRequestBody
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/teams/{teamId}/users/permissions",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.UpdateTeamUsersPermissionsRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateTeamUsersPermissions",
+                oauth2_scopes=["team:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.UpdateTeamUsersPermissionsResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    async def update_team_users_permissions_async(
+        self,
+        *,
+        team_id: str,
+        body: Union[
+            models.UpdateTeamUsersPermissionsRequestBody,
+            models.UpdateTeamUsersPermissionsRequestBodyTypedDict,
+        ],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.UpdateTeamUsersPermissionsResponse:
+        r"""Update team users permissions
+
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Update permissions for users within a team.
+
+
+        :param team_id:
+        :param body: Request payload
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UpdateTeamUsersPermissionsRequest(
+            team_id=team_id,
+            body=utils.get_pydantic_model(
+                body, models.UpdateTeamUsersPermissionsRequestBody
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/teams/{teamId}/users/permissions",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.UpdateTeamUsersPermissionsRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateTeamUsersPermissions",
+                oauth2_scopes=["team:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.UpdateTeamUsersPermissionsResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    def get_user_created_teams(
+        self,
+        *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetUserCreatedTeamsResponse:
-        r"""Get teams created by current user
+        r"""Get user created teams
 
-        Retrieve all teams that were created by the authenticated user.<br><br>
-        <b>Response Details:</b><br>
-        <ul>
-        <li>Only includes teams where user is the original creator</li>
-        <li>User may or may not still be the owner (ownership can be transferred)</li>
-        <li>Useful for tracking team creation history</li>
-        </ul>
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Retrieve teams created by the authenticated user.
 
 
-        :param page: Page number for pagination (1-based)
-        :param limit: Number of teams per page
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2281,18 +2186,12 @@ class Teams(BaseSDK):
             base_url = server_url
         else:
             base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetUserCreatedTeamsRequest(
-            page=page,
-            limit=limit,
-        )
-
         req = self._build_request(
             method="GET",
             path="/teams/user/teams/created",
             base_url=base_url,
             url_variables=url_variables,
-            request=request,
+            request=None,
             request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
@@ -2317,7 +2216,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserCreatedTeams",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2342,29 +2241,23 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_created_async(
+    @deprecated(
+        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
+    )
+    async def get_user_created_teams_async(
         self,
         *,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetUserCreatedTeamsResponse:
-        r"""Get teams created by current user
+        r"""Get user created teams
 
-        Retrieve all teams that were created by the authenticated user.<br><br>
-        <b>Response Details:</b><br>
-        <ul>
-        <li>Only includes teams where user is the original creator</li>
-        <li>User may or may not still be the owner (ownership can be transferred)</li>
-        <li>Useful for tracking team creation history</li>
-        </ul>
+        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+        Retrieve teams created by the authenticated user.
 
 
-        :param page: Page number for pagination (1-based)
-        :param limit: Number of teams per page
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2379,18 +2272,12 @@ class Teams(BaseSDK):
             base_url = server_url
         else:
             base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetUserCreatedTeamsRequest(
-            page=page,
-            limit=limit,
-        )
-
         req = self._build_request_async(
             method="GET",
             path="/teams/user/teams/created",
             base_url=base_url,
             url_variables=url_variables,
-            request=request,
+            request=None,
             request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
@@ -2415,7 +2302,7 @@ class Teams(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserCreatedTeams",
-                oauth2_scopes=None,
+                oauth2_scopes=["team:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

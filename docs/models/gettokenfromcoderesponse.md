@@ -1,11 +1,17 @@
 # GetTokenFromCodeResponse
 
-Tokens exchanged and stored successfully
 
+## Supported Types
 
-## Fields
+### `models.GetTokenFromCodeResponseBody1`
 
-| Field              | Type               | Required           | Description        |
-| ------------------ | ------------------ | ------------------ | ------------------ |
-| `success`          | *Optional[bool]*   | :heavy_minus_sign: | N/A                |
-| `message`          | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+```python
+value: models.GetTokenFromCodeResponseBody1 = /* values here */
+```
+
+### `models.GetTokenFromCodeResponseBody2`
+
+```python
+value: models.GetTokenFromCodeResponseBody2 = /* values here */
+```
+

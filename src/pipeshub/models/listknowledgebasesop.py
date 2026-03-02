@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 from .knowledgebase import KnowledgeBase, KnowledgeBaseTypedDict
-from .paginationinfo import PaginationInfo, PaginationInfoTypedDict
 from pipeshub.types import BaseModel, UNSET_SENTINEL
 from pipeshub.utils import FieldMetadata, QueryParamMetadata
 import pydantic
@@ -100,25 +99,45 @@ class ListKnowledgeBasesRequest(BaseModel):
         return m
 
 
-class ListKnowledgeBasesResponseTypedDict(TypedDict):
-    r"""Successful operation"""
+class ListKnowledgeBasesPaginationTypedDict(TypedDict):
+    page: NotRequired[int]
+    r"""Current page number"""
+    limit: NotRequired[int]
+    r"""Items per page"""
+    total_count: NotRequired[int]
+    r"""Total number of items"""
+    total_pages: NotRequired[int]
+    r"""Total number of pages"""
+    has_next: NotRequired[bool]
+    r"""Whether there is a next page"""
+    has_prev: NotRequired[bool]
+    r"""Whether there is a previous page"""
 
-    knowledge_bases: NotRequired[List[KnowledgeBaseTypedDict]]
-    pagination: NotRequired[PaginationInfoTypedDict]
 
+class ListKnowledgeBasesPagination(BaseModel):
+    page: Optional[int] = None
+    r"""Current page number"""
 
-class ListKnowledgeBasesResponse(BaseModel):
-    r"""Successful operation"""
+    limit: Optional[int] = None
+    r"""Items per page"""
 
-    knowledge_bases: Annotated[
-        Optional[List[KnowledgeBase]], pydantic.Field(alias="knowledgeBases")
-    ] = None
+    total_count: Annotated[Optional[int], pydantic.Field(alias="totalCount")] = None
+    r"""Total number of items"""
 
-    pagination: Optional[PaginationInfo] = None
+    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
+    r"""Total number of pages"""
+
+    has_next: Annotated[Optional[bool], pydantic.Field(alias="hasNext")] = None
+    r"""Whether there is a next page"""
+
+    has_prev: Annotated[Optional[bool], pydantic.Field(alias="hasPrev")] = None
+    r"""Whether there is a previous page"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["knowledgeBases", "pagination"])
+        optional_fields = set(
+            ["page", "limit", "totalCount", "totalPages", "hasNext", "hasPrev"]
+        )
         serialized = handler(self)
         m = {}
 
@@ -133,6 +152,95 @@ class ListKnowledgeBasesResponse(BaseModel):
         return m
 
 
+class ListKnowledgeBasesAppliedTypedDict(TypedDict):
+    pass
+
+
+class ListKnowledgeBasesApplied(BaseModel):
+    pass
+
+
+class ListKnowledgeBasesAvailableTypedDict(TypedDict):
+    pass
+
+
+class ListKnowledgeBasesAvailable(BaseModel):
+    pass
+
+
+class ListKnowledgeBasesFiltersTypedDict(TypedDict):
+    r"""Applied and available filters"""
+
+    applied: NotRequired[ListKnowledgeBasesAppliedTypedDict]
+    available: NotRequired[ListKnowledgeBasesAvailableTypedDict]
+
+
+class ListKnowledgeBasesFilters(BaseModel):
+    r"""Applied and available filters"""
+
+    applied: Optional[ListKnowledgeBasesApplied] = None
+
+    available: Optional[ListKnowledgeBasesAvailable] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["applied", "available"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ListKnowledgeBasesResponseTypedDict(TypedDict):
+    r"""Successful operation"""
+
+    knowledge_bases: NotRequired[List[KnowledgeBaseTypedDict]]
+    pagination: NotRequired[ListKnowledgeBasesPaginationTypedDict]
+    filters: NotRequired[ListKnowledgeBasesFiltersTypedDict]
+    r"""Applied and available filters"""
+
+
+class ListKnowledgeBasesResponse(BaseModel):
+    r"""Successful operation"""
+
+    knowledge_bases: Annotated[
+        Optional[List[KnowledgeBase]], pydantic.Field(alias="knowledgeBases")
+    ] = None
+
+    pagination: Optional[ListKnowledgeBasesPagination] = None
+
+    filters: Optional[ListKnowledgeBasesFilters] = None
+    r"""Applied and available filters"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["knowledgeBases", "pagination", "filters"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    ListKnowledgeBasesPagination.model_rebuild()
+except NameError:
+    pass
 try:
     ListKnowledgeBasesResponse.model_rebuild()
 except NameError:

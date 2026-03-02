@@ -11,9 +11,9 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class GenericOAuthConfigTypedDict(TypedDict):
     r"""Generic OAuth 2.0 provider configuration"""
 
-    provider_name: str
+    provider_name: NotRequired[str]
     r"""Display name for the OAuth provider"""
-    client_id: str
+    client_id: NotRequired[str]
     r"""OAuth client ID"""
     client_secret: NotRequired[str]
     r"""OAuth client secret"""
@@ -32,10 +32,10 @@ class GenericOAuthConfigTypedDict(TypedDict):
 class GenericOAuthConfig(BaseModel):
     r"""Generic OAuth 2.0 provider configuration"""
 
-    provider_name: Annotated[str, pydantic.Field(alias="providerName")]
+    provider_name: Annotated[Optional[str], pydantic.Field(alias="providerName")] = None
     r"""Display name for the OAuth provider"""
 
-    client_id: Annotated[str, pydantic.Field(alias="clientId")]
+    client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
     r"""OAuth client ID"""
 
     client_secret: Annotated[Optional[str], pydantic.Field(alias="clientSecret")] = None
@@ -66,6 +66,8 @@ class GenericOAuthConfig(BaseModel):
     def serialize_model(self, handler):
         optional_fields = set(
             [
+                "providerName",
+                "clientId",
                 "clientSecret",
                 "authorizationUrl",
                 "tokenEndpoint",
