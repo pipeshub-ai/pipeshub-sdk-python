@@ -11,7 +11,6 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class DeleteDocumentByIDRequestTypedDict(TypedDict):
     document_id: str
-    r"""Document ID (24-character MongoDB ObjectId)"""
 
 
 class DeleteDocumentByIDRequest(BaseModel):
@@ -20,61 +19,22 @@ class DeleteDocumentByIDRequest(BaseModel):
         pydantic.Field(alias="documentId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Document ID (24-character MongoDB ObjectId)"""
-
-
-class DeleteDocumentByIDDataTypedDict(TypedDict):
-    id: NotRequired[str]
-    is_deleted: NotRequired[bool]
-    deleted_by_user_id: NotRequired[str]
-
-
-class DeleteDocumentByIDData(BaseModel):
-    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
-
-    is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = None
-
-    deleted_by_user_id: Annotated[
-        Optional[str], pydantic.Field(alias="deletedByUserId")
-    ] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["_id", "isDeleted", "deletedByUserId"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
 
 
 class DeleteDocumentByIDResponseTypedDict(TypedDict):
     r"""Document deleted successfully"""
 
-    success: NotRequired[bool]
     message: NotRequired[str]
-    data: NotRequired[DeleteDocumentByIDDataTypedDict]
 
 
 class DeleteDocumentByIDResponse(BaseModel):
     r"""Document deleted successfully"""
 
-    success: Optional[bool] = None
-
     message: Optional[str] = None
-
-    data: Optional[DeleteDocumentByIDData] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "message", "data"])
+        optional_fields = set(["message"])
         serialized = handler(self)
         m = {}
 
@@ -87,9 +47,3 @@ class DeleteDocumentByIDResponse(BaseModel):
                     m[k] = val
 
         return m
-
-
-try:
-    DeleteDocumentByIDData.model_rebuild()
-except NameError:
-    pass

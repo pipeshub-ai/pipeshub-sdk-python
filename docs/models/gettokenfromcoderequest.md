@@ -1,10 +1,8 @@
 # GetTokenFromCodeRequest
 
-Authorization code from Google OAuth consent
-
 
 ## Fields
 
-| Field                                             | Type                                              | Required                                          | Description                                       |
-| ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- |
-| `code`                                            | *str*                                             | :heavy_check_mark:                                | Authorization code from Google OAuth consent flow |
+| Field                                                          | Type                                                           | Required                                                       | Description                                                    |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+| `temp_code`                                                    | *str*                                                          | :heavy_check_mark:                                             | Google OAuth authorization code received from the consent flow |

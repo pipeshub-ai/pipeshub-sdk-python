@@ -9,7 +9,7 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class LlmConfigTypedDict(TypedDict):
+class ModelConfigTypedDict(TypedDict):
     r"""AI model configuration"""
 
     model_key: NotRequired[str]
@@ -17,7 +17,7 @@ class LlmConfigTypedDict(TypedDict):
     max_tokens: NotRequired[int]
 
 
-class LlmConfig(BaseModel):
+class ModelConfig(BaseModel):
     r"""AI model configuration"""
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
@@ -62,7 +62,7 @@ class AgentTypedDict(TypedDict):
     r"""List of tool keys the agent can use"""
     knowledge_bases: NotRequired[List[str]]
     r"""Knowledge bases the agent has access to"""
-    llm_config: NotRequired[LlmConfigTypedDict]
+    model_config_: NotRequired[ModelConfigTypedDict]
     r"""AI model configuration"""
     is_public: NotRequired[bool]
     r"""Whether agent is available to all org users"""
@@ -99,7 +99,9 @@ class Agent(BaseModel):
     ] = None
     r"""Knowledge bases the agent has access to"""
 
-    llm_config: Annotated[Optional[LlmConfig], pydantic.Field(alias="llmConfig")] = None
+    model_config_: Annotated[
+        Optional[ModelConfig], pydantic.Field(alias="modelConfig")
+    ] = None
     r"""AI model configuration"""
 
     is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
@@ -123,7 +125,7 @@ class Agent(BaseModel):
                 "systemPrompt",
                 "tools",
                 "knowledgeBases",
-                "llmConfig",
+                "modelConfig",
                 "isPublic",
                 "createdBy",
                 "orgId",
@@ -146,7 +148,7 @@ class Agent(BaseModel):
 
 
 try:
-    LlmConfig.model_rebuild()
+    ModelConfig.model_rebuild()
 except NameError:
     pass
 try:

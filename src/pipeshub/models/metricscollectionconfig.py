@@ -14,12 +14,12 @@ class MetricsCollectionConfigTypedDict(TypedDict):
 
     """
 
-    enable_metric_collection: NotRequired[bool]
+    enable_metric_collection: NotRequired[str]
     r"""Master switch for metrics collection. When disabled, no metrics are collected or pushed.
-    Default: true
+    Default: \"true\" 
 
     """
-    push_interval_ms: NotRequired[int]
+    push_interval_ms: NotRequired[str]
     r"""Interval in milliseconds between metrics pushes to the remote server.
     Minimum: 1000ms (1 second), Default: 60000ms (1 minute)
 
@@ -33,10 +33,6 @@ class MetricsCollectionConfigTypedDict(TypedDict):
     r"""API key for authenticating with the metrics server. Auto-generated if not provided.
 
     """
-    instance_id: NotRequired[str]
-    r"""Unique identifier for this PipesHub instance. Auto-generated based on hostname.
-
-    """
     app_version: NotRequired[str]
     r"""Current application version for metrics tagging."""
 
@@ -48,16 +44,16 @@ class MetricsCollectionConfig(BaseModel):
     """
 
     enable_metric_collection: Annotated[
-        Optional[bool], pydantic.Field(alias="enableMetricCollection")
+        Optional[str], pydantic.Field(alias="enableMetricCollection")
     ] = None
     r"""Master switch for metrics collection. When disabled, no metrics are collected or pushed.
-    Default: true
+    Default: \"true\" 
 
     """
 
     push_interval_ms: Annotated[
-        Optional[int], pydantic.Field(alias="pushIntervalMs")
-    ] = 60000
+        Optional[str], pydantic.Field(alias="pushIntervalMs")
+    ] = None
     r"""Interval in milliseconds between metrics pushes to the remote server.
     Minimum: 1000ms (1 second), Default: 60000ms (1 minute)
 
@@ -74,11 +70,6 @@ class MetricsCollectionConfig(BaseModel):
 
     """
 
-    instance_id: Annotated[Optional[str], pydantic.Field(alias="instanceId")] = None
-    r"""Unique identifier for this PipesHub instance. Auto-generated based on hostname.
-
-    """
-
     app_version: Annotated[Optional[str], pydantic.Field(alias="appVersion")] = None
     r"""Current application version for metrics tagging."""
 
@@ -90,7 +81,6 @@ class MetricsCollectionConfig(BaseModel):
                 "pushIntervalMs",
                 "serverUrl",
                 "apiKey",
-                "instanceId",
                 "appVersion",
             ]
         )

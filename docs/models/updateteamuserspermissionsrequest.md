@@ -1,0 +1,9 @@
+# UpdateTeamUsersPermissionsRequest
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `team_id`                                                                                          | *str*                                                                                              | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `body`                                                                                             | [models.UpdateTeamUsersPermissionsRequestBody](../models/updateteamuserspermissionsrequestbody.md) | :heavy_check_mark:                                                                                 | Request payload                                                                                    |

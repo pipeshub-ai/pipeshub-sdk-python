@@ -12,7 +12,7 @@ from typing import List, Mapping, Optional
 class PermissionsSDK(BaseSDK):
     r"""Permission management for knowledge bases"""
 
-    def grant(
+    def create_kb_permission(
         self,
         *,
         kb_id: str,
@@ -102,7 +102,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createKBPermission",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -127,7 +127,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def grant_async(
+    async def create_kb_permission_async(
         self,
         *,
         kb_id: str,
@@ -217,7 +217,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createKBPermission",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -242,7 +242,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list(
+    def list_kb_permissions(
         self,
         *,
         kb_id: str,
@@ -307,7 +307,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listKBPermissions",
-                oauth2_scopes=None,
+                oauth2_scopes=["kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -332,7 +332,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_async(
+    async def list_kb_permissions_async(
         self,
         *,
         kb_id: str,
@@ -397,7 +397,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listKBPermissions",
-                oauth2_scopes=None,
+                oauth2_scopes=["kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -422,7 +422,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_kb_permissions(
         self,
         *,
         kb_id: str,
@@ -505,7 +505,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateKBPermissions",
-                oauth2_scopes=None,
+                oauth2_scopes=["kb:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -530,7 +530,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_kb_permissions_async(
         self,
         *,
         kb_id: str,
@@ -613,7 +613,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateKBPermissions",
-                oauth2_scopes=None,
+                oauth2_scopes=["kb:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -638,7 +638,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_kb_permissions(
         self,
         *,
         kb_id: str,
@@ -719,7 +719,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteKBPermissions",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -744,7 +744,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_kb_permissions_async(
         self,
         *,
         kb_id: str,
@@ -825,7 +825,7 @@ class PermissionsSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteKBPermissions",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

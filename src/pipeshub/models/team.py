@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .userrole import UserRole, UserRoleTypedDict
+from datetime import datetime
 from pipeshub.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
@@ -20,10 +21,10 @@ class TeamTypedDict(TypedDict):
     r"""Organization ID"""
     user_roles: NotRequired[List[UserRoleTypedDict]]
     r"""Users and their roles in the team"""
-    created_at: NotRequired[int]
-    r"""Creation timestamp"""
-    updated_at: NotRequired[int]
-    r"""Last update timestamp"""
+    created_at: NotRequired[datetime]
+    r"""Creation timestamp (ISO 8601)"""
+    updated_at: NotRequired[datetime]
+    r"""Last update timestamp (ISO 8601)"""
 
 
 class Team(BaseModel):
@@ -44,11 +45,11 @@ class Team(BaseModel):
     ] = None
     r"""Users and their roles in the team"""
 
-    created_at: Annotated[Optional[int], pydantic.Field(alias="createdAt")] = None
-    r"""Creation timestamp"""
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+    r"""Creation timestamp (ISO 8601)"""
 
-    updated_at: Annotated[Optional[int], pydantic.Field(alias="updatedAt")] = None
-    r"""Last update timestamp"""
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
+    r"""Last update timestamp (ISO 8601)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

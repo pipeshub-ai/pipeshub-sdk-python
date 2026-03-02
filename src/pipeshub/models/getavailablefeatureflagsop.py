@@ -3,28 +3,25 @@
 from __future__ import annotations
 from .featureflag import FeatureFlag, FeatureFlagTypedDict
 from pipeshub.types import BaseModel, UNSET_SENTINEL
-import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict
 
 
 class GetAvailableFeatureFlagsResponseTypedDict(TypedDict):
     r"""Feature flags retrieved"""
 
-    feature_flags: NotRequired[List[FeatureFlagTypedDict]]
+    flags: NotRequired[List[FeatureFlagTypedDict]]
 
 
 class GetAvailableFeatureFlagsResponse(BaseModel):
     r"""Feature flags retrieved"""
 
-    feature_flags: Annotated[
-        Optional[List[FeatureFlag]], pydantic.Field(alias="featureFlags")
-    ] = None
+    flags: Optional[List[FeatureFlag]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["featureFlags"])
+        optional_fields = set(["flags"])
         serialized = handler(self)
         m = {}
 
@@ -37,9 +34,3 @@ class GetAvailableFeatureFlagsResponse(BaseModel):
                     m[k] = val
 
         return m
-
-
-try:
-    GetAvailableFeatureFlagsResponse.model_rebuild()
-except NameError:
-    pass

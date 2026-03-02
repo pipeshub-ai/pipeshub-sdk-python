@@ -1,0 +1,14 @@
+# GetAllConversationsResponse
+
+List of conversations
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `conversations`                                                                              | List[[models.Conversation](../models/conversation.md)]                                       | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `shared_with_me_conversations`                                                               | List[[models.Conversation](../models/conversation.md)]                                       | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `pagination`                                                                                 | [Optional[models.GetAllConversationsPagination]](../models/getallconversationspagination.md) | :heavy_minus_sign:                                                                           | N/A                                                                                          |
+| `filters`                                                                                    | [Optional[models.GetAllConversationsFilters]](../models/getallconversationsfilters.md)       | :heavy_minus_sign:                                                                           | Applied and available filters                                                                |
+| `meta`                                                                                       | [Optional[models.GetAllConversationsMeta]](../models/getallconversationsmeta.md)             | :heavy_minus_sign:                                                                           | N/A                                                                                          |
