@@ -10,7 +10,6 @@ from typing_extensions import NotRequired, TypedDict
 class CheckOrgExistsResponseTypedDict(TypedDict):
     r"""Organization existence check completed"""
 
-    success: NotRequired[bool]
     exists: NotRequired[bool]
     r"""Whether an organization has been created"""
 
@@ -18,14 +17,12 @@ class CheckOrgExistsResponseTypedDict(TypedDict):
 class CheckOrgExistsResponse(BaseModel):
     r"""Organization existence check completed"""
 
-    success: Optional[bool] = None
-
     exists: Optional[bool] = None
     r"""Whether an organization has been created"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "exists"])
+        optional_fields = set(["exists"])
         serialized = handler(self)
         m = {}
 

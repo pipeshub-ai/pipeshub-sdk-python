@@ -7,4 +7,4 @@ Feature flags retrieved
 
 | Field                                                | Type                                                 | Required                                             | Description                                          |
 | ---------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------- |
-| `feature_flags`                                      | List[[models.FeatureFlag](../models/featureflag.md)] | :heavy_minus_sign:                                   | N/A                                                  |
+| `flags`                                              | List[[models.FeatureFlag](../models/featureflag.md)] | :heavy_minus_sign:                                   | N/A                                                  |

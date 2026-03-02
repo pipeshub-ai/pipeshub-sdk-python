@@ -1,12 +1,14 @@
-# Oauth
+# OAuth
 
 ## Overview
 
+OAuth 2.0 token exchange for third-party authentication providers
+
 ### Available Operations
 
-* [exchange_code](#exchange_code) - Exchange OAuth authorization code for tokens
+* [exchange_o_auth_code](#exchange_o_auth_code) - Exchange OAuth authorization code for tokens
 
-## exchange_code
+## exchange_o_auth_code
 
 Exchange an OAuth authorization code for access and ID tokens.
 Used after the OAuth authorization flow redirects back to the application.
@@ -28,11 +30,9 @@ Used after the OAuth authorization flow redirects back to the application.
 from pipeshub import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as p_client:
 
-    res = p_client.oauth.exchange_code(code="<value>", email="Jason2@gmail.com", provider="<value>", redirect_uri="https://enlightened-developing.info")
+    res = p_client.o_auth.exchange_o_auth_code(code="<value>", email="Jason2@gmail.com", provider="<value>", redirect_uri="https://enlightened-developing.info")
 
     # Handle response
     print(res)

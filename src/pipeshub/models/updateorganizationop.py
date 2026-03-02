@@ -62,7 +62,6 @@ class UpdateOrganizationRequest(BaseModel):
 class UpdateOrganizationResponseTypedDict(TypedDict):
     r"""Organization updated successfully"""
 
-    success: NotRequired[bool]
     message: NotRequired[str]
     data: NotRequired[OrganizationTypedDict]
 
@@ -70,15 +69,13 @@ class UpdateOrganizationResponseTypedDict(TypedDict):
 class UpdateOrganizationResponse(BaseModel):
     r"""Organization updated successfully"""
 
-    success: Optional[bool] = None
-
     message: Optional[str] = None
 
     data: Optional[Organization] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "message", "data"])
+        optional_fields = set(["message", "data"])
         serialized = handler(self)
         m = {}
 

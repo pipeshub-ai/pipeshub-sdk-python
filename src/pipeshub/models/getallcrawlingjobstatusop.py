@@ -12,7 +12,6 @@ class GetAllCrawlingJobStatusResponseTypedDict(TypedDict):
     r"""All job statuses retrieved successfully"""
 
     success: NotRequired[bool]
-    message: NotRequired[str]
     data: NotRequired[List[JobStatusTypedDict]]
 
 
@@ -21,13 +20,11 @@ class GetAllCrawlingJobStatusResponse(BaseModel):
 
     success: Optional[bool] = None
 
-    message: Optional[str] = None
-
     data: Optional[List[JobStatus]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "message", "data"])
+        optional_fields = set(["success", "data"])
         serialized = handler(self)
         m = {}
 

@@ -9,7 +9,7 @@ Contains claims about the authenticated user.
 
 | Field                                      | Type                                       | Required                                   | Description                                |
 | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ |
-| `sub`                                      | *str*                                      | :heavy_check_mark:                         | Subject identifier (user ID)               |
+| `user_id`                                  | *str*                                      | :heavy_check_mark:                         | User ID                                    |
 | `name`                                     | *Optional[str]*                            | :heavy_minus_sign:                         | Full name                                  |
 | `given_name`                               | *Optional[str]*                            | :heavy_minus_sign:                         | First name                                 |
 | `family_name`                              | *Optional[str]*                            | :heavy_minus_sign:                         | Last name                                  |

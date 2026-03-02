@@ -12,7 +12,7 @@ from typing import Mapping, Optional, Union
 class Organizations(BaseSDK):
     r"""Organization management operations"""
 
-    def check_exists(
+    def check_org_exists(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -105,7 +105,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def check_exists_async(
+    async def check_org_exists_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -198,7 +198,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_organization(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -331,7 +331,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_organization_async(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -464,14 +464,14 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_current_organization(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetCurrentOrganizationResponse:
+    ) -> models.Organization:
         r"""Get current organization
 
         Retrieve details about the authenticated user's organization.<br><br>
@@ -540,7 +540,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getCurrentOrganization",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -551,9 +551,7 @@ class Organizations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.GetCurrentOrganizationResponse, http_res
-            )
+            return unmarshal_json_response(models.Organization, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -567,14 +565,14 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_current_organization_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetCurrentOrganizationResponse:
+    ) -> models.Organization:
         r"""Get current organization
 
         Retrieve details about the authenticated user's organization.<br><br>
@@ -643,7 +641,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getCurrentOrganization",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -654,9 +652,7 @@ class Organizations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.GetCurrentOrganizationResponse, http_res
-            )
+            return unmarshal_json_response(models.Organization, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -670,7 +666,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_organization(
         self,
         *,
         registered_name: Optional[str] = None,
@@ -777,7 +773,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOrganization",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -802,7 +798,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_organization_async(
         self,
         *,
         registered_name: Optional[str] = None,
@@ -909,7 +905,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOrganization",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -934,7 +930,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_organization(
         self,
         *,
         confirm: models.Confirm,
@@ -1012,7 +1008,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganization",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:admin"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1037,7 +1033,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_organization_async(
         self,
         *,
         confirm: models.Confirm,
@@ -1115,7 +1111,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganization",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:admin"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1140,7 +1136,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def upload_logo(
+    def upload_organization_logo(
         self,
         *,
         logo: Union[models.Logo, models.LogoTypedDict],
@@ -1225,7 +1221,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadOrganizationLogo",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1252,7 +1248,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def upload_logo_async(
+    async def upload_organization_logo_async(
         self,
         *,
         logo: Union[models.Logo, models.LogoTypedDict],
@@ -1337,7 +1333,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadOrganizationLogo",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1364,14 +1360,14 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_logo(
+    def get_organization_logo(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetOrganizationLogoResponse:
+    ) -> Optional[models.GetOrganizationLogoResponse]:
         r"""Get organization logo
 
         Retrieve the organization's logo image or URL.<br><br>
@@ -1432,7 +1428,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOrganizationLogo",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1444,6 +1440,8 @@ class Organizations(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetOrganizationLogoResponse, http_res)
+        if utils.match_response(http_res, "204", "*"):
+            return None
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1457,14 +1455,14 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_logo_async(
+    async def get_organization_logo_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetOrganizationLogoResponse:
+    ) -> Optional[models.GetOrganizationLogoResponse]:
         r"""Get organization logo
 
         Retrieve the organization's logo image or URL.<br><br>
@@ -1525,7 +1523,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOrganizationLogo",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1537,6 +1535,8 @@ class Organizations(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetOrganizationLogoResponse, http_res)
+        if utils.match_response(http_res, "204", "*"):
+            return None
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1550,7 +1550,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_logo(
+    def delete_organization_logo(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1612,7 +1612,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganizationLogo",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:admin"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1639,7 +1639,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_logo_async(
+    async def delete_organization_logo_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1701,7 +1701,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOrganizationLogo",
-                oauth2_scopes=None,
+                oauth2_scopes=["org:admin"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1799,7 +1799,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOnboardingStatus",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1895,7 +1895,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOnboardingStatus",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2001,7 +2001,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOnboardingStatus",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2109,7 +2109,7 @@ class Organizations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOnboardingStatus",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
