@@ -9,7 +9,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
-from typing_extensions import deprecated
 
 
 class GetUserDisplayPictureAcceptEnum(str, Enum):
@@ -1464,9 +1463,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def update_email(
         self,
         *,
@@ -1479,7 +1475,6 @@ class Users(BaseSDK):
     ):
         r"""Update user email
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the email address of a user.
 
 
@@ -1565,9 +1560,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def update_email_async(
         self,
         *,
@@ -1580,7 +1572,6 @@ class Users(BaseSDK):
     ):
         r"""Update user email
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the email address of a user.
 
 
@@ -3430,9 +3421,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_users_by_ids(
         self,
         *,
@@ -3444,7 +3432,6 @@ class Users(BaseSDK):
     ) -> models.GetUsersByIdsResponse:
         r"""Get users by IDs
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve multiple users by their IDs in a single request.
 
 
@@ -3526,9 +3513,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_users_by_ids_async(
         self,
         *,
@@ -3540,7 +3524,6 @@ class Users(BaseSDK):
     ) -> models.GetUsersByIdsResponse:
         r"""Get users by IDs
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve multiple users by their IDs in a single request.
 
 
@@ -3622,9 +3605,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def update_full_name(
         self,
         *,
@@ -3637,7 +3617,6 @@ class Users(BaseSDK):
     ) -> models.UpdateFullNameResponse:
         r"""Update user full name
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the full name of a user.
 
 
@@ -3723,9 +3702,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def update_full_name_async(
         self,
         *,
@@ -3738,7 +3714,6 @@ class Users(BaseSDK):
     ) -> models.UpdateFullNameResponse:
         r"""Update user full name
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the full name of a user.
 
 
@@ -3824,9 +3799,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def update_first_name(
         self,
         *,
@@ -3839,7 +3811,6 @@ class Users(BaseSDK):
     ) -> models.UpdateFirstNameResponse:
         r"""Update user first name
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the first name of a user.
 
 
@@ -3925,9 +3896,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def update_first_name_async(
         self,
         *,
@@ -3940,7 +3908,6 @@ class Users(BaseSDK):
     ) -> models.UpdateFirstNameResponse:
         r"""Update user first name
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the first name of a user.
 
 
@@ -4026,9 +3993,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def update_last_name(
         self,
         *,
@@ -4041,7 +4005,6 @@ class Users(BaseSDK):
     ) -> models.UpdateLastNameResponse:
         r"""Update user last name
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the last name of a user.
 
 
@@ -4127,9 +4090,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def update_last_name_async(
         self,
         *,
@@ -4142,7 +4102,6 @@ class Users(BaseSDK):
     ) -> models.UpdateLastNameResponse:
         r"""Update user last name
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the last name of a user.
 
 
@@ -4228,9 +4187,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def update_designation(
         self,
         *,
@@ -4243,7 +4199,6 @@ class Users(BaseSDK):
     ) -> models.UpdateDesignationResponse:
         r"""Update user designation
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the designation/title of a user.
 
 
@@ -4329,9 +4284,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def update_designation_async(
         self,
         *,
@@ -4344,7 +4296,6 @@ class Users(BaseSDK):
     ) -> models.UpdateDesignationResponse:
         r"""Update user designation
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update the designation/title of a user.
 
 
@@ -4430,9 +4381,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def admin_check(
         self,
         *,
@@ -4444,7 +4392,6 @@ class Users(BaseSDK):
     ) -> models.AdminCheckResponse:
         r"""Check if user is admin
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
 
 
@@ -4523,9 +4470,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def admin_check_async(
         self,
         *,
@@ -4537,7 +4481,6 @@ class Users(BaseSDK):
     ) -> models.AdminCheckResponse:
         r"""Check if user is admin
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
 
 
@@ -4616,9 +4559,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_user_teams_via_users(
         self,
         *,
@@ -4629,7 +4569,6 @@ class Users(BaseSDK):
     ) -> models.GetUserTeamsViaUsersResponse:
         r"""Get user teams
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve teams associated with the authenticated user.
 
 
@@ -4704,9 +4643,6 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_user_teams_via_users_async(
         self,
         *,
@@ -4717,7 +4653,6 @@ class Users(BaseSDK):
     ) -> models.GetUserTeamsViaUsersResponse:
         r"""Get user teams
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve teams associated with the authenticated user.
 
 

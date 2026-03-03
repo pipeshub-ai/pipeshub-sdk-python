@@ -12,7 +12,7 @@ User management operations
 * [update_user](#update_user) - Update user
 * [delete_user](#delete_user) - Delete user
 * [get_user_email_by_id](#get_user_email_by_id) - Get user email by ID
-* [~~update_email~~](#update_email) - Update user email :warning: **Deprecated**
+* [update_email](#update_email) - Update user email
 * [upload_user_display_picture](#upload_user_display_picture) - Upload display picture
 * [get_user_display_picture](#get_user_display_picture) - Get display picture
 * [remove_user_display_picture](#remove_user_display_picture) - Remove display picture
@@ -21,13 +21,13 @@ User management operations
 * [list_users_graph](#list_users_graph) - List users (paginated with graph data)
 * [unblock_user](#unblock_user) - Unblock a user in organization
 * [get_all_users_with_groups](#get_all_users_with_groups) - Get all users with groups
-* [~~get_users_by_ids~~](#get_users_by_ids) - Get users by IDs :warning: **Deprecated**
-* [~~update_full_name~~](#update_full_name) - Update user full name :warning: **Deprecated**
-* [~~update_first_name~~](#update_first_name) - Update user first name :warning: **Deprecated**
-* [~~update_last_name~~](#update_last_name) - Update user last name :warning: **Deprecated**
-* [~~update_designation~~](#update_designation) - Update user designation :warning: **Deprecated**
-* [~~admin_check~~](#admin_check) - Check if user is admin :warning: **Deprecated**
-* [~~get_user_teams_via_users~~](#get_user_teams_via_users) - Get user teams :warning: **Deprecated**
+* [get_users_by_ids](#get_users_by_ids) - Get users by IDs
+* [update_full_name](#update_full_name) - Update user full name
+* [update_first_name](#update_first_name) - Update user first name
+* [update_last_name](#update_last_name) - Update user last name
+* [update_designation](#update_designation) - Update user designation
+* [admin_check](#admin_check) - Check if user is admin
+* [get_user_teams_via_users](#get_user_teams_via_users) - Get user teams
 
 ## get_all_users
 
@@ -441,13 +441,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~update_email~~
+## update_email
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Update the email address of a user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -980,13 +977,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_users_by_ids~~
+## get_users_by_ids
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve multiple users by their IDs in a single request.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -1026,13 +1020,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~update_full_name~~
+## update_full_name
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Update the full name of a user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -1073,13 +1064,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~update_first_name~~
+## update_first_name
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Update the first name of a user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -1120,13 +1108,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~update_last_name~~
+## update_last_name
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Update the last name of a user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -1167,13 +1152,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~update_designation~~
+## update_designation
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Update the designation/title of a user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -1214,13 +1196,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~admin_check~~
+## admin_check
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -1260,13 +1239,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_user_teams_via_users~~
+## get_user_teams_via_users
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve teams associated with the authenticated user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 

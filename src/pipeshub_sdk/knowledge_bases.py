@@ -7,7 +7,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Mapping, Optional, Union
-from typing_extensions import deprecated
 
 
 class KnowledgeBases(BaseSDK):
@@ -1257,9 +1256,6 @@ class KnowledgeBases(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def move_record(
         self,
         *,
@@ -1275,7 +1271,6 @@ class KnowledgeBases(BaseSDK):
     ) -> models.MoveRecordResponse:
         r"""Move record to another location
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Move a record from one location to another within a knowledge base.
 
 
@@ -1361,9 +1356,6 @@ class KnowledgeBases(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def move_record_async(
         self,
         *,
@@ -1379,7 +1371,6 @@ class KnowledgeBases(BaseSDK):
     ) -> models.MoveRecordResponse:
         r"""Move record to another location
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Move a record from one location to another within a knowledge base.
 
 

@@ -22,14 +22,21 @@ UpdateOAuthAppRequestAllowedGrantType = Literal[
 
 
 class UpdateOAuthAppRequestTypedDict(TypedDict):
-    r"""Request to update an OAuth app"""
+    r"""Request to update an OAuth app.
+    Redirect URIs are required when `authorization_code` grant type is enabled (either already set or being added).
+    Existing redirect URIs are preserved in the database even if `authorization_code` is removed from grant types.
+
+    """
 
     name: NotRequired[str]
     r"""App name"""
     description: NotRequired[str]
     r"""App description"""
     redirect_uris: NotRequired[List[str]]
-    r"""Allowed redirect URIs"""
+    r"""Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+    Preserved in the database even if `authorization_code` is removed from grant types.
+
+    """
     allowed_grant_types: NotRequired[List[UpdateOAuthAppRequestAllowedGrantType]]
     allowed_scopes: NotRequired[List[str]]
     homepage_url: NotRequired[Nullable[str]]
@@ -40,7 +47,11 @@ class UpdateOAuthAppRequestTypedDict(TypedDict):
 
 
 class UpdateOAuthAppRequest(BaseModel):
-    r"""Request to update an OAuth app"""
+    r"""Request to update an OAuth app.
+    Redirect URIs are required when `authorization_code` grant type is enabled (either already set or being added).
+    Existing redirect URIs are preserved in the database even if `authorization_code` is removed from grant types.
+
+    """
 
     name: Optional[str] = None
     r"""App name"""
@@ -51,7 +62,10 @@ class UpdateOAuthAppRequest(BaseModel):
     redirect_uris: Annotated[
         Optional[List[str]], pydantic.Field(alias="redirectUris")
     ] = None
-    r"""Allowed redirect URIs"""
+    r"""Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+    Preserved in the database even if `authorization_code` is removed from grant types.
+
+    """
 
     allowed_grant_types: Annotated[
         Optional[List[UpdateOAuthAppRequestAllowedGrantType]],

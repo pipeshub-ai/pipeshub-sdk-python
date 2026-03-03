@@ -7,7 +7,7 @@ SAML 2.0 Single Sign-On integration with enterprise Identity Providers
 ### Available Operations
 
 * [sign_in_via_saml](#sign_in_via_saml) - Initiate SAML sign-in flow
-* [~~saml_sign_in_callback~~](#saml_sign_in_callback) - SAML sign-in callback :warning: **Deprecated**
+* [saml_sign_in_callback](#saml_sign_in_callback) - SAML sign-in callback
 
 ## sign_in_via_saml
 
@@ -62,13 +62,10 @@ with Pipeshub() as pipeshub:
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~saml_sign_in_callback~~
+## saml_sign_in_callback
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Handle the SAML Identity Provider callback after user authentication. This endpoint receives the SAML assertion from the IdP.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 

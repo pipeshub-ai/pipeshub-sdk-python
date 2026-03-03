@@ -34,11 +34,11 @@ search index.
 * [schedule_crawling_job](#schedule_crawling_job) - Schedule a crawling job
 * [get_crawling_job_status](#get_crawling_job_status) - Get crawling job status
 * [remove_crawling_job](#remove_crawling_job) - Remove a crawling job
-* [~~get_all_crawling_job_status~~](#get_all_crawling_job_status) - Get all crawling job statuses :warning: **Deprecated**
-* [~~remove_all_crawling_job~~](#remove_all_crawling_job) - Remove all crawling jobs :warning: **Deprecated**
-* [~~pause_crawling_job~~](#pause_crawling_job) - Pause a crawling job :warning: **Deprecated**
-* [~~resume_crawling_job~~](#resume_crawling_job) - Resume a crawling job :warning: **Deprecated**
-* [~~get_queue_stats~~](#get_queue_stats) - Get queue statistics :warning: **Deprecated**
+* [get_all_crawling_job_status](#get_all_crawling_job_status) - Get all crawling job statuses
+* [remove_all_crawling_job](#remove_all_crawling_job) - Remove all crawling jobs
+* [pause_crawling_job](#pause_crawling_job) - Pause a crawling job
+* [resume_crawling_job](#resume_crawling_job) - Resume a crawling job
+* [get_queue_stats](#get_queue_stats) - Get queue statistics
 
 ## schedule_crawling_job
 
@@ -363,13 +363,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_all_crawling_job_status~~
+## get_all_crawling_job_status
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve the status of all scheduled crawling jobs across the organization.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -408,13 +405,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~remove_all_crawling_job~~
+## remove_all_crawling_job
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Remove all scheduled crawling jobs for the organization.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -453,13 +447,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~pause_crawling_job~~
+## pause_crawling_job
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Pause a running or scheduled crawling job for a specific connector.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -500,13 +491,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~resume_crawling_job~~
+## resume_crawling_job
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Resume a previously paused crawling job for a specific connector.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -547,13 +535,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_queue_stats~~
+## get_queue_stats
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve statistics for the crawling job queue including active, waiting, and completed job counts.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
