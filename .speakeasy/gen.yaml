@@ -1,8 +1,5 @@
 configVersion: 2.0.0
 generation:
-  devContainers:
-    enabled: true
-    schemaPath: .speakeasy/out.openapi.yaml
   sdkClassName: Pipeshub
   maintainOpenAPIOrder: true
   usageSnippets:
@@ -17,9 +14,10 @@ generation:
     securityFeb2025: true
     sharedErrorComponentsApr2025: true
     sharedNestedComponentsJan2026: true
+    nameOverrideFeb2026: true
   auth:
     oAuth2ClientCredentialsEnabled: true
-    oAuth2PasswordEnabled: true
+    oAuth2PasswordEnabled: false
     hoistGlobalSecurity: true
   inferSSEOverload: true
   sdkHooksConfigAccess: true
@@ -33,17 +31,21 @@ generation:
     generateNewTests: true
     skipResponseBodyAssertions: false
 python:
-  version: 0.0.3
+  version: 1.0.0
   additionalDependencies:
+    dependencies: {}
     dev: {}
+    devDependencies: {}
     main: {}
+    peerDependencies: {}
   allowedRedefinedBuiltins:
     - id
     - object
     - input
+    - dir
   asyncMode: both
   authors:
-    - Speakeasy
+    - Pipeshub
   baseErrorName: PipeshubError
   clientServerStatusCodesAsErrors: true
   constFieldCasing: normal
@@ -54,12 +56,12 @@ python:
   envVarPrefix: PIPESHUB
   fixFlags:
     asyncPaginationSep2025: true
+    conflictResistantModelImportsFeb2026: true
     responseRequiredSep2024: true
   flattenGlobalSecurity: true
   flattenRequests: true
   flatteningOrder: parameters-first
   forwardCompatibleEnumsByDefault: true
-  forwardCompatibleUnionsByDefault: tagged-only
   imports:
     option: openapi
     paths:
@@ -73,11 +75,11 @@ python:
   license: Apache-2.0
   maxMethodParams: 999
   methodArguments: infer-optional-args
-  moduleName: ""
+  moduleName: pipeshub_sdk
   multipartArrayFormat: standard
   outputModelSuffix: output
   packageManager: uv
-  packageName: pipeshub
+  packageName: pipeshub-sdk
   preApplyUnionDiscriminators: true
   pytestFilterWarnings: []
   pytestTimeout: 0
