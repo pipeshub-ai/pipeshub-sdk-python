@@ -12,7 +12,7 @@ Knowledge base management operations
 * [update_knowledge_base](#update_knowledge_base) - Update knowledge base
 * [delete_knowledge_base](#delete_knowledge_base) - Delete knowledge base
 * [reindex_failed_records](#reindex_failed_records) - Reindex failed records for connector
-* [~~move_record~~](#move_record) - Move record to another location :warning: **Deprecated**
+* [move_record](#move_record) - Move record to another location
 * [get_knowledge_hub_root_nodes](#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
 * [get_knowledge_hub_child_nodes](#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
@@ -333,13 +333,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~move_record~~
+## move_record
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Move a record from one location to another within a knowledge base.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage: moveToFolder
 

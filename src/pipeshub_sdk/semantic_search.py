@@ -7,7 +7,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
-from typing_extensions import deprecated
 
 
 class SemanticSearch(BaseSDK):
@@ -649,9 +648,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_search_by_id(
         self,
         *,
@@ -663,7 +659,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.SearchResult:
         r"""Get search by ID
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve a specific search result by its ID.
 
 
@@ -742,9 +737,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_search_by_id_async(
         self,
         *,
@@ -756,7 +748,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.SearchResult:
         r"""Get search by ID
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve a specific search result by its ID.
 
 
@@ -835,9 +826,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def delete_search_by_id(
         self,
         *,
@@ -849,7 +837,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.DeleteSearchByIDResponse:
         r"""Delete search by ID
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Delete a specific search result by its ID.
 
 
@@ -928,9 +915,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def delete_search_by_id_async(
         self,
         *,
@@ -942,7 +926,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.DeleteSearchByIDResponse:
         r"""Delete search by ID
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Delete a specific search result by its ID.
 
 
@@ -1021,9 +1004,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def share_search(
         self,
         *,
@@ -1036,7 +1016,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.ShareSearchResponse:
         r"""Share a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Share a specific search result, making it accessible to other users.
 
 
@@ -1122,9 +1101,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def share_search_async(
         self,
         *,
@@ -1137,7 +1113,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.ShareSearchResponse:
         r"""Share a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Share a specific search result, making it accessible to other users.
 
 
@@ -1223,9 +1198,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def unshare_search(
         self,
         *,
@@ -1238,7 +1210,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.UnshareSearchResponse:
         r"""Unshare a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Revoke sharing for a specific search result, making it private again.
 
 
@@ -1324,9 +1295,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def unshare_search_async(
         self,
         *,
@@ -1339,7 +1307,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.UnshareSearchResponse:
         r"""Unshare a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Revoke sharing for a specific search result, making it private again.
 
 
@@ -1425,9 +1392,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def archive_search(
         self,
         *,
@@ -1439,7 +1403,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.ArchiveSearchResponse:
         r"""Archive a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Archive a specific search result. Archived searches are hidden from the default search history view.
 
 
@@ -1518,9 +1481,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def archive_search_async(
         self,
         *,
@@ -1532,7 +1492,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.ArchiveSearchResponse:
         r"""Archive a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Archive a specific search result. Archived searches are hidden from the default search history view.
 
 
@@ -1611,9 +1570,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def unarchive_search(
         self,
         *,
@@ -1625,7 +1581,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.UnarchiveSearchResponse:
         r"""Unarchive a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Restore a previously archived search result back to the active search history.
 
 
@@ -1704,9 +1659,6 @@ class SemanticSearch(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def unarchive_search_async(
         self,
         *,
@@ -1718,7 +1670,6 @@ class SemanticSearch(BaseSDK):
     ) -> models.UnarchiveSearchResponse:
         r"""Unarchive a search
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Restore a previously archived search result back to the active search history.
 
 

@@ -9,12 +9,12 @@ Enterprise semantic search across all indexed knowledge with relevance scoring
 * [search](#search) - Perform semantic search
 * [search_history](#search_history) - Get search history
 * [delete_all_search_history](#delete_all_search_history) - Clear all search history
-* [~~get_search_by_id~~](#get_search_by_id) - Get search by ID :warning: **Deprecated**
-* [~~delete_search_by_id~~](#delete_search_by_id) - Delete search by ID :warning: **Deprecated**
-* [~~share_search~~](#share_search) - Share a search :warning: **Deprecated**
-* [~~unshare_search~~](#unshare_search) - Unshare a search :warning: **Deprecated**
-* [~~archive_search~~](#archive_search) - Archive a search :warning: **Deprecated**
-* [~~unarchive_search~~](#unarchive_search) - Unarchive a search :warning: **Deprecated**
+* [get_search_by_id](#get_search_by_id) - Get search by ID
+* [delete_search_by_id](#delete_search_by_id) - Delete search by ID
+* [share_search](#share_search) - Share a search
+* [unshare_search](#unshare_search) - Unshare a search
+* [archive_search](#archive_search) - Archive a search
+* [unarchive_search](#unarchive_search) - Unarchive a search
 
 ## search
 
@@ -207,13 +207,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_search_by_id~~
+## get_search_by_id
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve a specific search result by its ID.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -253,13 +250,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~delete_search_by_id~~
+## delete_search_by_id
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Delete a specific search result by its ID.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -299,13 +293,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~share_search~~
+## share_search
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Share a specific search result, making it accessible to other users.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -346,13 +337,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~unshare_search~~
+## unshare_search
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Revoke sharing for a specific search result, making it private again.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -393,13 +381,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~archive_search~~
+## archive_search
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Archive a specific search result. Archived searches are hidden from the default search history view.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -439,13 +424,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~unarchive_search~~
+## unarchive_search
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Restore a previously archived search result back to the active search history.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 

@@ -7,7 +7,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
-from typing_extensions import deprecated
 
 
 class Conversations(BaseSDK):
@@ -3195,9 +3194,6 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def unshare_conversation_by_id(
         self,
         *,
@@ -3211,7 +3207,6 @@ class Conversations(BaseSDK):
     ) -> models.UnshareConversationByIDResponse:
         r"""Unshare a conversation
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Revoke sharing for a conversation, making it private again.
 
 
@@ -3305,9 +3300,6 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def unshare_conversation_by_id_async(
         self,
         *,
@@ -3321,7 +3313,6 @@ class Conversations(BaseSDK):
     ) -> models.UnshareConversationByIDResponse:
         r"""Unshare a conversation
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Revoke sharing for a conversation, making it private again.
 
 

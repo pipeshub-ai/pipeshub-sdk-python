@@ -7,7 +7,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
-from typing_extensions import deprecated
 
 
 class Teams(BaseSDK):
@@ -1345,9 +1344,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_team_users(
         self,
         *,
@@ -1359,7 +1355,6 @@ class Teams(BaseSDK):
     ) -> models.GetTeamUsersResponse:
         r"""Get users in team
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve all users that belong to a specific team.
 
 
@@ -1438,9 +1433,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_team_users_async(
         self,
         *,
@@ -1452,7 +1444,6 @@ class Teams(BaseSDK):
     ) -> models.GetTeamUsersResponse:
         r"""Get users in team
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve all users that belong to a specific team.
 
 
@@ -1531,9 +1522,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def add_users_to_team(
         self,
         *,
@@ -1546,7 +1534,6 @@ class Teams(BaseSDK):
     ) -> models.AddUsersToTeamResponse:
         r"""Add users to team
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Add one or more users to a team.
 
 
@@ -1632,9 +1619,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def add_users_to_team_async(
         self,
         *,
@@ -1647,7 +1631,6 @@ class Teams(BaseSDK):
     ) -> models.AddUsersToTeamResponse:
         r"""Add users to team
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Add one or more users to a team.
 
 
@@ -1733,9 +1716,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def remove_user_from_team(
         self,
         *,
@@ -1748,7 +1728,6 @@ class Teams(BaseSDK):
     ) -> models.RemoveUserFromTeamResponse:
         r"""Remove user from team
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Remove a user from a team.
 
 
@@ -1834,9 +1813,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def remove_user_from_team_async(
         self,
         *,
@@ -1849,7 +1825,6 @@ class Teams(BaseSDK):
     ) -> models.RemoveUserFromTeamResponse:
         r"""Remove user from team
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Remove a user from a team.
 
 
@@ -1935,9 +1910,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def update_team_users_permissions(
         self,
         *,
@@ -1953,7 +1925,6 @@ class Teams(BaseSDK):
     ) -> models.UpdateTeamUsersPermissionsResponse:
         r"""Update team users permissions
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update permissions for users within a team.
 
 
@@ -2045,9 +2016,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def update_team_users_permissions_async(
         self,
         *,
@@ -2063,7 +2031,6 @@ class Teams(BaseSDK):
     ) -> models.UpdateTeamUsersPermissionsResponse:
         r"""Update team users permissions
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Update permissions for users within a team.
 
 
@@ -2155,9 +2122,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_user_created_teams(
         self,
         *,
@@ -2168,7 +2132,6 @@ class Teams(BaseSDK):
     ) -> models.GetUserCreatedTeamsResponse:
         r"""Get user created teams
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve teams created by the authenticated user.
 
 
@@ -2241,9 +2204,6 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_user_created_teams_async(
         self,
         *,
@@ -2254,7 +2214,6 @@ class Teams(BaseSDK):
     ) -> models.GetUserCreatedTeamsResponse:
         r"""Get user created teams
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve teams created by the authenticated user.
 
 

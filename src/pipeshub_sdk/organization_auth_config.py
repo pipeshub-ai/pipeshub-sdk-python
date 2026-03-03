@@ -7,7 +7,6 @@ from pipeshub_sdk.types import BaseModel, OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, List, Mapping, Optional, Union, cast
-from typing_extensions import deprecated
 
 
 class OrganizationAuthConfig(BaseSDK):
@@ -479,9 +478,6 @@ class OrganizationAuthConfig(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def set_up_auth_config(
         self,
         *,
@@ -495,7 +491,6 @@ class OrganizationAuthConfig(BaseSDK):
     ) -> models.SetUpAuthConfigResponse:
         r"""Set up auth configuration
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Set up or initialize the organization's authentication configuration.
 
 
@@ -577,9 +572,6 @@ class OrganizationAuthConfig(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def set_up_auth_config_async(
         self,
         *,
@@ -593,7 +585,6 @@ class OrganizationAuthConfig(BaseSDK):
     ) -> models.SetUpAuthConfigResponse:
         r"""Set up auth configuration
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Set up or initialize the organization's authentication configuration.
 
 

@@ -7,7 +7,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Mapping, Optional, Union
-from typing_extensions import deprecated
 
 
 class CrawlingJobs(BaseSDK):
@@ -805,9 +804,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_all_crawling_job_status(
         self,
         *,
@@ -818,7 +814,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.GetAllCrawlingJobStatusResponse:
         r"""Get all crawling job statuses
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve the status of all scheduled crawling jobs across the organization.
 
 
@@ -893,9 +888,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_all_crawling_job_status_async(
         self,
         *,
@@ -906,7 +898,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.GetAllCrawlingJobStatusResponse:
         r"""Get all crawling job statuses
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve the status of all scheduled crawling jobs across the organization.
 
 
@@ -981,9 +972,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def remove_all_crawling_job(
         self,
         *,
@@ -994,7 +982,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.RemoveAllCrawlingJobResponse:
         r"""Remove all crawling jobs
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Remove all scheduled crawling jobs for the organization.
 
 
@@ -1069,9 +1056,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def remove_all_crawling_job_async(
         self,
         *,
@@ -1082,7 +1066,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.RemoveAllCrawlingJobResponse:
         r"""Remove all crawling jobs
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Remove all scheduled crawling jobs for the organization.
 
 
@@ -1157,9 +1140,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def pause_crawling_job(
         self,
         *,
@@ -1172,7 +1152,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.PauseCrawlingJobResponse:
         r"""Pause a crawling job
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Pause a running or scheduled crawling job for a specific connector.
 
 
@@ -1253,9 +1232,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def pause_crawling_job_async(
         self,
         *,
@@ -1268,7 +1244,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.PauseCrawlingJobResponse:
         r"""Pause a crawling job
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Pause a running or scheduled crawling job for a specific connector.
 
 
@@ -1349,9 +1324,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def resume_crawling_job(
         self,
         *,
@@ -1364,7 +1336,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.ResumeCrawlingJobResponse:
         r"""Resume a crawling job
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Resume a previously paused crawling job for a specific connector.
 
 
@@ -1445,9 +1416,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def resume_crawling_job_async(
         self,
         *,
@@ -1460,7 +1428,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.ResumeCrawlingJobResponse:
         r"""Resume a crawling job
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Resume a previously paused crawling job for a specific connector.
 
 
@@ -1541,9 +1508,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_queue_stats(
         self,
         *,
@@ -1554,7 +1518,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.GetQueueStatsResponse:
         r"""Get queue statistics
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve statistics for the crawling job queue including active, waiting, and completed job counts.
 
 
@@ -1627,9 +1590,6 @@ class CrawlingJobs(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_queue_stats_async(
         self,
         *,
@@ -1640,7 +1600,6 @@ class CrawlingJobs(BaseSDK):
     ) -> models.GetQueueStatsResponse:
         r"""Get queue statistics
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve statistics for the crawling job queue including active, waiting, and completed job counts.
 
 

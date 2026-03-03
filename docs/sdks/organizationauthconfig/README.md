@@ -8,7 +8,7 @@ Admin configuration of authentication methods including MFA steps and allowed pr
 
 * [get_auth_methods](#get_auth_methods) - Get organization authentication methods
 * [update_auth_method](#update_auth_method) - Update organization authentication methods
-* [~~set_up_auth_config~~](#set_up_auth_config) - Set up auth configuration :warning: **Deprecated**
+* [set_up_auth_config](#set_up_auth_config) - Set up auth configuration
 
 ## get_auth_methods
 
@@ -160,13 +160,10 @@ with Pipeshub(
 | errors.AuthError            | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~set_up_auth_config~~
+## set_up_auth_config
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Set up or initialize the organization's authentication configuration.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 

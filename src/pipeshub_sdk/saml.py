@@ -6,7 +6,6 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import BaseModel, OptionalNullable, UNSET
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, Mapping, Optional, Union, cast
-from typing_extensions import deprecated
 
 
 class Saml(BaseSDK):
@@ -226,9 +225,6 @@ class Saml(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def saml_sign_in_callback(
         self,
         *,
@@ -245,7 +241,6 @@ class Saml(BaseSDK):
     ):
         r"""SAML sign-in callback
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Handle the SAML Identity Provider callback after user authentication. This endpoint receives the SAML assertion from the IdP.
 
 
@@ -337,9 +332,6 @@ class Saml(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def saml_sign_in_callback_async(
         self,
         *,
@@ -356,7 +348,6 @@ class Saml(BaseSDK):
     ):
         r"""SAML sign-in callback
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Handle the SAML Identity Provider callback after user authentication. This endpoint receives the SAML assertion from the IdP.
 
 

@@ -12,11 +12,11 @@ Team management operations
 * [update_team](#update_team) - Update team
 * [delete_team](#delete_team) - Delete team
 * [get_user_teams](#get_user_teams) - Get current user's teams
-* [~~get_team_users~~](#get_team_users) - Get users in team :warning: **Deprecated**
-* [~~add_users_to_team~~](#add_users_to_team) - Add users to team :warning: **Deprecated**
-* [~~remove_user_from_team~~](#remove_user_from_team) - Remove user from team :warning: **Deprecated**
-* [~~update_team_users_permissions~~](#update_team_users_permissions) - Update team users permissions :warning: **Deprecated**
-* [~~get_user_created_teams~~](#get_user_created_teams) - Get user created teams :warning: **Deprecated**
+* [get_team_users](#get_team_users) - Get users in team
+* [add_users_to_team](#add_users_to_team) - Add users to team
+* [remove_user_from_team](#remove_user_from_team) - Remove user from team
+* [update_team_users_permissions](#update_team_users_permissions) - Update team users permissions
+* [get_user_created_teams](#get_user_created_teams) - Get user created teams
 
 ## create_team
 
@@ -382,13 +382,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_team_users~~
+## get_team_users
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve all users that belong to a specific team.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -428,13 +425,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~add_users_to_team~~
+## add_users_to_team
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Add one or more users to a team.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -475,13 +469,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~remove_user_from_team~~
+## remove_user_from_team
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Remove a user from a team.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -522,13 +513,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~update_team_users_permissions~~
+## update_team_users_permissions
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Update permissions for users within a team.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -569,13 +557,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_user_created_teams~~
+## get_user_created_teams
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve teams created by the authenticated user.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 

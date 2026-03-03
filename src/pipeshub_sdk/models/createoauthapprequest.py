@@ -16,18 +16,25 @@ CreateOAuthAppRequestAllowedGrantType = Literal[
 
 
 class CreateOAuthAppRequestTypedDict(TypedDict):
-    r"""Request to create a new OAuth app"""
+    r"""Request to create a new OAuth app.
+    Redirect URIs are required only when `authorization_code` is included in `allowedGrantTypes`.
+    If `authorization_code` is not enabled, redirect URIs are optional and will be ignored.
+
+    """
 
     name: str
     r"""App name (displayed to users during authorization)"""
-    redirect_uris: List[str]
-    r"""Allowed redirect URIs (1-10 URIs)"""
     allowed_scopes: List[str]
     r"""Scopes the app can request"""
     description: NotRequired[str]
     r"""App description"""
+    redirect_uris: NotRequired[List[str]]
+    r"""Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+    Not needed for apps using only `client_credentials` grant type.
+
+    """
     allowed_grant_types: NotRequired[List[CreateOAuthAppRequestAllowedGrantType]]
-    r"""Allowed grant types. Defaults to all if not specified.
+    r"""Allowed grant types. Defaults to `[\"authorization_code\", \"refresh_token\"]` if not specified.
 
     """
     homepage_url: NotRequired[str]
@@ -49,13 +56,14 @@ class CreateOAuthAppRequestTypedDict(TypedDict):
 
 
 class CreateOAuthAppRequest(BaseModel):
-    r"""Request to create a new OAuth app"""
+    r"""Request to create a new OAuth app.
+    Redirect URIs are required only when `authorization_code` is included in `allowedGrantTypes`.
+    If `authorization_code` is not enabled, redirect URIs are optional and will be ignored.
+
+    """
 
     name: str
     r"""App name (displayed to users during authorization)"""
-
-    redirect_uris: Annotated[List[str], pydantic.Field(alias="redirectUris")]
-    r"""Allowed redirect URIs (1-10 URIs)"""
 
     allowed_scopes: Annotated[List[str], pydantic.Field(alias="allowedScopes")]
     r"""Scopes the app can request"""
@@ -63,11 +71,19 @@ class CreateOAuthAppRequest(BaseModel):
     description: Optional[str] = None
     r"""App description"""
 
+    redirect_uris: Annotated[
+        Optional[List[str]], pydantic.Field(alias="redirectUris")
+    ] = None
+    r"""Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+    Not needed for apps using only `client_credentials` grant type.
+
+    """
+
     allowed_grant_types: Annotated[
         Optional[List[CreateOAuthAppRequestAllowedGrantType]],
         pydantic.Field(alias="allowedGrantTypes"),
     ] = None
-    r"""Allowed grant types. Defaults to all if not specified.
+    r"""Allowed grant types. Defaults to `[\"authorization_code\", \"refresh_token\"]` if not specified.
 
     """
 
@@ -108,6 +124,7 @@ class CreateOAuthAppRequest(BaseModel):
         optional_fields = set(
             [
                 "description",
+                "redirectUris",
                 "allowedGrantTypes",
                 "homepageUrl",
                 "privacyPolicyUrl",

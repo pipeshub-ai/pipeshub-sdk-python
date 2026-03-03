@@ -274,25 +274,15 @@ with Pipeshub() as pipeshub:
 
 ### [ConfigurationManager](docs/sdks/configurationmanager/README.md)
 
-* [~~get_atlassian_oauth_config~~](docs/sdks/configurationmanager/README.md#get_atlassian_oauth_config) - Get Atlassian OAuth config :warning: **Deprecated**
-* [~~set_atlassian_oauth_config~~](docs/sdks/configurationmanager/README.md#set_atlassian_oauth_config) - Set Atlassian OAuth config :warning: **Deprecated**
-* [~~get_one_drive_credentials~~](docs/sdks/configurationmanager/README.md#get_one_drive_credentials) - Get OneDrive credentials :warning: **Deprecated**
-* [~~set_one_drive_credentials~~](docs/sdks/configurationmanager/README.md#set_one_drive_credentials) - Set OneDrive credentials :warning: **Deprecated**
-* [~~get_share_point_credentials~~](docs/sdks/configurationmanager/README.md#get_share_point_credentials) - Get SharePoint credentials :warning: **Deprecated**
-* [~~set_share_point_credentials~~](docs/sdks/configurationmanager/README.md#set_share_point_credentials) - Set SharePoint credentials :warning: **Deprecated**
-* [~~get_google_workspace_credentials~~](docs/sdks/configurationmanager/README.md#get_google_workspace_credentials) - Get Google Workspace credentials :warning: **Deprecated**
-* [~~create_google_workspace_credentials~~](docs/sdks/configurationmanager/README.md#create_google_workspace_credentials) - Upload Google Workspace credentials :warning: **Deprecated**
-* [~~get_google_workspace_oauth_config~~](docs/sdks/configurationmanager/README.md#get_google_workspace_oauth_config) - Get Google Workspace OAuth config :warning: **Deprecated**
-* [~~set_google_workspace_oauth_config~~](docs/sdks/configurationmanager/README.md#set_google_workspace_oauth_config) - Set Google Workspace OAuth config :warning: **Deprecated**
 * [get_slack_bot_configs](docs/sdks/configurationmanager/README.md#get_slack_bot_configs) - Get Slack bot configurations
 * [create_slack_bot_config](docs/sdks/configurationmanager/README.md#create_slack_bot_config) - Create Slack bot configuration
 * [update_slack_bot_config](docs/sdks/configurationmanager/README.md#update_slack_bot_config) - Update Slack bot configuration
 * [delete_slack_bot_config](docs/sdks/configurationmanager/README.md#delete_slack_bot_config) - Delete Slack bot configuration
-* [~~set_metrics_collection_push_interval~~](docs/sdks/configurationmanager/README.md#set_metrics_collection_push_interval) - Set metrics push interval :warning: **Deprecated**
-* [~~set_metrics_collection_remote_server~~](docs/sdks/configurationmanager/README.md#set_metrics_collection_remote_server) - Set metrics remote server URL :warning: **Deprecated**
-* [~~get_ai_models_config~~](docs/sdks/configurationmanager/README.md#get_ai_models_config) - Get AI models configuration :warning: **Deprecated**
-* [~~create_ai_models_config~~](docs/sdks/configurationmanager/README.md#create_ai_models_config) - Create AI models configuration :warning: **Deprecated**
-* [~~get_ai_models_providers~~](docs/sdks/configurationmanager/README.md#get_ai_models_providers) - Get AI model providers :warning: **Deprecated**
+* [set_metrics_collection_push_interval](docs/sdks/configurationmanager/README.md#set_metrics_collection_push_interval) - Set metrics push interval
+* [set_metrics_collection_remote_server](docs/sdks/configurationmanager/README.md#set_metrics_collection_remote_server) - Set metrics remote server URL
+* [get_ai_models_config](docs/sdks/configurationmanager/README.md#get_ai_models_config) - Get AI models configuration
+* [create_ai_models_config](docs/sdks/configurationmanager/README.md#create_ai_models_config) - Create AI models configuration
+* [get_ai_models_providers](docs/sdks/configurationmanager/README.md#get_ai_models_providers) - Get AI model providers
 
 ### [Connector](docs/sdks/connectorsdk/README.md)
 
@@ -357,33 +347,22 @@ with Pipeshub() as pipeshub:
 * [unarchive_conversation](docs/sdks/conversations/README.md#unarchive_conversation) - Unarchive conversation
 * [regenerate_answer](docs/sdks/conversations/README.md#regenerate_answer) - Regenerate AI response
 * [update_message_feedback](docs/sdks/conversations/README.md#update_message_feedback) - Submit feedback on AI response
-* [~~unshare_conversation_by_id~~](docs/sdks/conversations/README.md#unshare_conversation_by_id) - Unshare a conversation :warning: **Deprecated**
+* [unshare_conversation_by_id](docs/sdks/conversations/README.md#unshare_conversation_by_id) - Unshare a conversation
 
 ### [CrawlingJobs](docs/sdks/crawlingjobs/README.md)
 
 * [schedule_crawling_job](docs/sdks/crawlingjobs/README.md#schedule_crawling_job) - Schedule a crawling job
 * [get_crawling_job_status](docs/sdks/crawlingjobs/README.md#get_crawling_job_status) - Get crawling job status
 * [remove_crawling_job](docs/sdks/crawlingjobs/README.md#remove_crawling_job) - Remove a crawling job
-* [~~get_all_crawling_job_status~~](docs/sdks/crawlingjobs/README.md#get_all_crawling_job_status) - Get all crawling job statuses :warning: **Deprecated**
-* [~~remove_all_crawling_job~~](docs/sdks/crawlingjobs/README.md#remove_all_crawling_job) - Remove all crawling jobs :warning: **Deprecated**
-* [~~pause_crawling_job~~](docs/sdks/crawlingjobs/README.md#pause_crawling_job) - Pause a crawling job :warning: **Deprecated**
-* [~~resume_crawling_job~~](docs/sdks/crawlingjobs/README.md#resume_crawling_job) - Resume a crawling job :warning: **Deprecated**
-* [~~get_queue_stats~~](docs/sdks/crawlingjobs/README.md#get_queue_stats) - Get queue statistics :warning: **Deprecated**
+* [get_all_crawling_job_status](docs/sdks/crawlingjobs/README.md#get_all_crawling_job_status) - Get all crawling job statuses
+* [remove_all_crawling_job](docs/sdks/crawlingjobs/README.md#remove_all_crawling_job) - Remove all crawling jobs
+* [pause_crawling_job](docs/sdks/crawlingjobs/README.md#pause_crawling_job) - Pause a crawling job
+* [resume_crawling_job](docs/sdks/crawlingjobs/README.md#resume_crawling_job) - Resume a crawling job
+* [get_queue_stats](docs/sdks/crawlingjobs/README.md#get_queue_stats) - Get queue statistics
 
 ### [DocumentManagement](docs/sdks/documentmanagement/README.md)
 
 * [download_document](docs/sdks/documentmanagement/README.md#download_document) - Download document
-* [~~upload_document~~](docs/sdks/documentmanagement/README.md#upload_document) - Upload document :warning: **Deprecated**
-* [~~create_placeholder_document~~](docs/sdks/documentmanagement/README.md#create_placeholder_document) - Create placeholder document :warning: **Deprecated**
-* [~~get_document_by_id~~](docs/sdks/documentmanagement/README.md#get_document_by_id) - Get document by ID :warning: **Deprecated**
-* [~~delete_document_by_id~~](docs/sdks/documentmanagement/README.md#delete_document_by_id) - Delete document by ID :warning: **Deprecated**
-* [~~upload_next_version_document~~](docs/sdks/documentmanagement/README.md#upload_next_version_document) - Upload next version of document :warning: **Deprecated**
-* [~~roll_back_to_previous_version~~](docs/sdks/documentmanagement/README.md#roll_back_to_previous_version) - Roll back to previous version :warning: **Deprecated**
-* [~~get_document_buffer~~](docs/sdks/documentmanagement/README.md#get_document_buffer) - Get document buffer :warning: **Deprecated**
-* [~~create_document_buffer_multipart~~](docs/sdks/documentmanagement/README.md#create_document_buffer_multipart) - Create/update document buffer :warning: **Deprecated**
-* [~~create_document_buffer_raw~~](docs/sdks/documentmanagement/README.md#create_document_buffer_raw) - Create/update document buffer :warning: **Deprecated**
-* [~~upload_direct_document~~](docs/sdks/documentmanagement/README.md#upload_direct_document) - Direct upload document :warning: **Deprecated**
-* [~~document_diff_checker~~](docs/sdks/documentmanagement/README.md#document_diff_checker) - Check if document is modified :warning: **Deprecated**
 
 ### [Folders](docs/sdks/folders/README.md)
 
@@ -402,7 +381,7 @@ with Pipeshub() as pipeshub:
 * [update_knowledge_base](docs/sdks/knowledgebases/README.md#update_knowledge_base) - Update knowledge base
 * [delete_knowledge_base](docs/sdks/knowledgebases/README.md#delete_knowledge_base) - Delete knowledge base
 * [reindex_failed_records](docs/sdks/knowledgebases/README.md#reindex_failed_records) - Reindex failed records for connector
-* [~~move_record~~](docs/sdks/knowledgebases/README.md#move_record) - Move record to another location :warning: **Deprecated**
+* [move_record](docs/sdks/knowledgebases/README.md#move_record) - Move record to another location
 * [get_knowledge_hub_root_nodes](docs/sdks/knowledgebases/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
 * [get_knowledge_hub_child_nodes](docs/sdks/knowledgebases/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
@@ -461,7 +440,7 @@ with Pipeshub() as pipeshub:
 
 * [get_auth_methods](docs/sdks/organizationauthconfig/README.md#get_auth_methods) - Get organization authentication methods
 * [update_auth_method](docs/sdks/organizationauthconfig/README.md#update_auth_method) - Update organization authentication methods
-* [~~set_up_auth_config~~](docs/sdks/organizationauthconfig/README.md#set_up_auth_config) - Set up auth configuration :warning: **Deprecated**
+* [set_up_auth_config](docs/sdks/organizationauthconfig/README.md#set_up_auth_config) - Set up auth configuration
 
 ### [Organizations](docs/sdks/organizations/README.md)
 
@@ -511,19 +490,19 @@ with Pipeshub() as pipeshub:
 ### [Saml](docs/sdks/saml/README.md)
 
 * [sign_in_via_saml](docs/sdks/saml/README.md#sign_in_via_saml) - Initiate SAML sign-in flow
-* [~~saml_sign_in_callback~~](docs/sdks/saml/README.md#saml_sign_in_callback) - SAML sign-in callback :warning: **Deprecated**
+* [saml_sign_in_callback](docs/sdks/saml/README.md#saml_sign_in_callback) - SAML sign-in callback
 
 ### [SemanticSearch](docs/sdks/semanticsearch/README.md)
 
 * [search](docs/sdks/semanticsearch/README.md#search) - Perform semantic search
 * [search_history](docs/sdks/semanticsearch/README.md#search_history) - Get search history
 * [delete_all_search_history](docs/sdks/semanticsearch/README.md#delete_all_search_history) - Clear all search history
-* [~~get_search_by_id~~](docs/sdks/semanticsearch/README.md#get_search_by_id) - Get search by ID :warning: **Deprecated**
-* [~~delete_search_by_id~~](docs/sdks/semanticsearch/README.md#delete_search_by_id) - Delete search by ID :warning: **Deprecated**
-* [~~share_search~~](docs/sdks/semanticsearch/README.md#share_search) - Share a search :warning: **Deprecated**
-* [~~unshare_search~~](docs/sdks/semanticsearch/README.md#unshare_search) - Unshare a search :warning: **Deprecated**
-* [~~archive_search~~](docs/sdks/semanticsearch/README.md#archive_search) - Archive a search :warning: **Deprecated**
-* [~~unarchive_search~~](docs/sdks/semanticsearch/README.md#unarchive_search) - Unarchive a search :warning: **Deprecated**
+* [get_search_by_id](docs/sdks/semanticsearch/README.md#get_search_by_id) - Get search by ID
+* [delete_search_by_id](docs/sdks/semanticsearch/README.md#delete_search_by_id) - Delete search by ID
+* [share_search](docs/sdks/semanticsearch/README.md#share_search) - Share a search
+* [unshare_search](docs/sdks/semanticsearch/README.md#unshare_search) - Unshare a search
+* [archive_search](docs/sdks/semanticsearch/README.md#archive_search) - Archive a search
+* [unarchive_search](docs/sdks/semanticsearch/README.md#unarchive_search) - Unarchive a search
 
 ### [SMTPConfiguration](docs/sdks/smtpconfiguration/README.md)
 
@@ -542,11 +521,11 @@ with Pipeshub() as pipeshub:
 * [update_team](docs/sdks/teams/README.md#update_team) - Update team
 * [delete_team](docs/sdks/teams/README.md#delete_team) - Delete team
 * [get_user_teams](docs/sdks/teams/README.md#get_user_teams) - Get current user's teams
-* [~~get_team_users~~](docs/sdks/teams/README.md#get_team_users) - Get users in team :warning: **Deprecated**
-* [~~add_users_to_team~~](docs/sdks/teams/README.md#add_users_to_team) - Add users to team :warning: **Deprecated**
-* [~~remove_user_from_team~~](docs/sdks/teams/README.md#remove_user_from_team) - Remove user from team :warning: **Deprecated**
-* [~~update_team_users_permissions~~](docs/sdks/teams/README.md#update_team_users_permissions) - Update team users permissions :warning: **Deprecated**
-* [~~get_user_created_teams~~](docs/sdks/teams/README.md#get_user_created_teams) - Get user created teams :warning: **Deprecated**
+* [get_team_users](docs/sdks/teams/README.md#get_team_users) - Get users in team
+* [add_users_to_team](docs/sdks/teams/README.md#add_users_to_team) - Add users to team
+* [remove_user_from_team](docs/sdks/teams/README.md#remove_user_from_team) - Remove user from team
+* [update_team_users_permissions](docs/sdks/teams/README.md#update_team_users_permissions) - Update team users permissions
+* [get_user_created_teams](docs/sdks/teams/README.md#get_user_created_teams) - Get user created teams
 
 ### [ToolsetConfiguration](docs/sdks/toolsetconfiguration/README.md)
 
@@ -610,8 +589,8 @@ with Pipeshub() as pipeshub:
 * [add_users_to_group](docs/sdks/usergroups/README.md#add_users_to_group) - Add users to group
 * [remove_users_from_group](docs/sdks/usergroups/README.md#remove_users_from_group) - Remove users from group
 * [get_groups_for_user](docs/sdks/usergroups/README.md#get_groups_for_user) - Get groups for a user
-* [~~get_users_in_group~~](docs/sdks/usergroups/README.md#get_users_in_group) - Get users in group :warning: **Deprecated**
-* [~~get_group_statistics~~](docs/sdks/usergroups/README.md#get_group_statistics) - Get group statistics :warning: **Deprecated**
+* [get_users_in_group](docs/sdks/usergroups/README.md#get_users_in_group) - Get users in group
+* [get_group_statistics](docs/sdks/usergroups/README.md#get_group_statistics) - Get group statistics
 
 ### [Users](docs/sdks/users/README.md)
 
@@ -621,7 +600,7 @@ with Pipeshub() as pipeshub:
 * [update_user](docs/sdks/users/README.md#update_user) - Update user
 * [delete_user](docs/sdks/users/README.md#delete_user) - Delete user
 * [get_user_email_by_id](docs/sdks/users/README.md#get_user_email_by_id) - Get user email by ID
-* [~~update_email~~](docs/sdks/users/README.md#update_email) - Update user email :warning: **Deprecated**
+* [update_email](docs/sdks/users/README.md#update_email) - Update user email
 * [upload_user_display_picture](docs/sdks/users/README.md#upload_user_display_picture) - Upload display picture
 * [get_user_display_picture](docs/sdks/users/README.md#get_user_display_picture) - Get display picture
 * [remove_user_display_picture](docs/sdks/users/README.md#remove_user_display_picture) - Remove display picture
@@ -630,13 +609,13 @@ with Pipeshub() as pipeshub:
 * [list_users_graph](docs/sdks/users/README.md#list_users_graph) - List users (paginated with graph data)
 * [unblock_user](docs/sdks/users/README.md#unblock_user) - Unblock a user in organization
 * [get_all_users_with_groups](docs/sdks/users/README.md#get_all_users_with_groups) - Get all users with groups
-* [~~get_users_by_ids~~](docs/sdks/users/README.md#get_users_by_ids) - Get users by IDs :warning: **Deprecated**
-* [~~update_full_name~~](docs/sdks/users/README.md#update_full_name) - Update user full name :warning: **Deprecated**
-* [~~update_first_name~~](docs/sdks/users/README.md#update_first_name) - Update user first name :warning: **Deprecated**
-* [~~update_last_name~~](docs/sdks/users/README.md#update_last_name) - Update user last name :warning: **Deprecated**
-* [~~update_designation~~](docs/sdks/users/README.md#update_designation) - Update user designation :warning: **Deprecated**
-* [~~admin_check~~](docs/sdks/users/README.md#admin_check) - Check if user is admin :warning: **Deprecated**
-* [~~get_user_teams_via_users~~](docs/sdks/users/README.md#get_user_teams_via_users) - Get user teams :warning: **Deprecated**
+* [get_users_by_ids](docs/sdks/users/README.md#get_users_by_ids) - Get users by IDs
+* [update_full_name](docs/sdks/users/README.md#update_full_name) - Update user full name
+* [update_first_name](docs/sdks/users/README.md#update_first_name) - Update user first name
+* [update_last_name](docs/sdks/users/README.md#update_last_name) - Update user last name
+* [update_designation](docs/sdks/users/README.md#update_designation) - Update user designation
+* [admin_check](docs/sdks/users/README.md#admin_check) - Check if user is admin
+* [get_user_teams_via_users](docs/sdks/users/README.md#get_user_teams_via_users) - Get user teams
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -812,11 +791,11 @@ with Pipeshub() as pipeshub:
 
 
 **Inherit from [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`AuthError`](./src/pipeshub_sdk/errors/autherror.py): Authentication error response with details for debugging and user feedback.<br><br> <b>Common Error Codes:</b><br> <ul> <li><code>INVALID_CREDENTIALS</code> - Wrong password or OTP</li> <li><code>ACCOUNT_BLOCKED</code> - Account locked after 5 failed attempts</li> <li><code>SESSION_EXPIRED</code> - Session token has expired</li> <li><code>OTP_EXPIRED</code> - OTP code has expired (10 min validity)</li> <li><code>USER_NOT_FOUND</code> - Email not registered</li> <li><code>INVALID_TOKEN</code> - JWT token is invalid or malformed</li> <li><code>METHOD_NOT_ALLOWED</code> - Auth method not enabled for org</li> </ul>. Applicable to 7 of 291 methods.*
-* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 5 of 291 methods.*
-* [`ResetPasswordBadRequestError`](./src/pipeshub_sdk/errors/resetpasswordbadrequesterror.py): Invalid current password or weak new password. Status code `400`. Applicable to 1 of 291 methods.*
-* [`SamlSignInCallbackBadRequestError`](./src/pipeshub_sdk/errors/samlsignincallbackbadrequesterror.py): Invalid SAML response. Status code `400`. Applicable to 1 of 291 methods.*
-* [`UnauthorizedError`](./src/pipeshub_sdk/errors/unauthorizederror.py): SAML authentication failed. Status code `401`. Applicable to 1 of 291 methods.*
+* [`AuthError`](./src/pipeshub_sdk/errors/autherror.py): Authentication error response with details for debugging and user feedback.<br><br> <b>Common Error Codes:</b><br> <ul> <li><code>INVALID_CREDENTIALS</code> - Wrong password or OTP</li> <li><code>ACCOUNT_BLOCKED</code> - Account locked after 5 failed attempts</li> <li><code>SESSION_EXPIRED</code> - Session token has expired</li> <li><code>OTP_EXPIRED</code> - OTP code has expired (10 min validity)</li> <li><code>USER_NOT_FOUND</code> - Email not registered</li> <li><code>INVALID_TOKEN</code> - JWT token is invalid or malformed</li> <li><code>METHOD_NOT_ALLOWED</code> - Auth method not enabled for org</li> </ul>. Applicable to 7 of 270 methods.*
+* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 5 of 270 methods.*
+* [`ResetPasswordBadRequestError`](./src/pipeshub_sdk/errors/resetpasswordbadrequesterror.py): Invalid current password or weak new password. Status code `400`. Applicable to 1 of 270 methods.*
+* [`SamlSignInCallbackBadRequestError`](./src/pipeshub_sdk/errors/samlsignincallbackbadrequesterror.py): Invalid SAML response. Status code `400`. Applicable to 1 of 270 methods.*
+* [`UnauthorizedError`](./src/pipeshub_sdk/errors/unauthorizederror.py): SAML authentication failed. Status code `401`. Applicable to 1 of 270 methods.*
 * [`ResponseValidationError`](./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>

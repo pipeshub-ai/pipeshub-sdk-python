@@ -239,9 +239,9 @@ class OAuthApps(BaseSDK):
         self,
         *,
         name: str,
-        redirect_uris: List[str],
         allowed_scopes: List[str],
         description: Optional[str] = None,
+        redirect_uris: Optional[List[str]] = None,
         allowed_grant_types: Optional[
             List[models.CreateOAuthAppRequestAllowedGrantType]
         ] = None,
@@ -270,10 +270,12 @@ class OAuthApps(BaseSDK):
 
 
         :param name: App name (displayed to users during authorization)
-        :param redirect_uris: Allowed redirect URIs (1-10 URIs)
         :param allowed_scopes: Scopes the app can request
         :param description: App description
-        :param allowed_grant_types: Allowed grant types. Defaults to all if not specified.
+        :param redirect_uris: Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+            Not needed for apps using only `client_credentials` grant type.
+
+        :param allowed_grant_types: Allowed grant types. Defaults to `[\"authorization_code\", \"refresh_token\"]` if not specified.
 
         :param homepage_url: App homepage URL (shown during authorization)
         :param privacy_policy_url: Privacy policy URL
@@ -375,9 +377,9 @@ class OAuthApps(BaseSDK):
         self,
         *,
         name: str,
-        redirect_uris: List[str],
         allowed_scopes: List[str],
         description: Optional[str] = None,
+        redirect_uris: Optional[List[str]] = None,
         allowed_grant_types: Optional[
             List[models.CreateOAuthAppRequestAllowedGrantType]
         ] = None,
@@ -406,10 +408,12 @@ class OAuthApps(BaseSDK):
 
 
         :param name: App name (displayed to users during authorization)
-        :param redirect_uris: Allowed redirect URIs (1-10 URIs)
         :param allowed_scopes: Scopes the app can request
         :param description: App description
-        :param allowed_grant_types: Allowed grant types. Defaults to all if not specified.
+        :param redirect_uris: Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+            Not needed for apps using only `client_credentials` grant type.
+
+        :param allowed_grant_types: Allowed grant types. Defaults to `[\"authorization_code\", \"refresh_token\"]` if not specified.
 
         :param homepage_url: App homepage URL (shown during authorization)
         :param privacy_policy_url: Privacy policy URL
@@ -895,7 +899,9 @@ class OAuthApps(BaseSDK):
         :param app_id: OAuth app ID
         :param name: App name
         :param description: App description
-        :param redirect_uris: Allowed redirect URIs
+        :param redirect_uris: Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+            Preserved in the database even if `authorization_code` is removed from grant types.
+
         :param allowed_grant_types:
         :param allowed_scopes:
         :param homepage_url:
@@ -1030,7 +1036,9 @@ class OAuthApps(BaseSDK):
         :param app_id: OAuth app ID
         :param name: App name
         :param description: App description
-        :param redirect_uris: Allowed redirect URIs
+        :param redirect_uris: Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
+            Preserved in the database even if `authorization_code` is removed from grant types.
+
         :param allowed_grant_types:
         :param allowed_scopes:
         :param homepage_url:

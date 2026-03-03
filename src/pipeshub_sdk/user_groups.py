@@ -7,7 +7,6 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional
-from typing_extensions import deprecated
 
 
 class UserGroups(BaseSDK):
@@ -1665,9 +1664,6 @@ class UserGroups(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_users_in_group(
         self,
         *,
@@ -1679,7 +1675,6 @@ class UserGroups(BaseSDK):
     ) -> models.GetUsersInGroupResponse:
         r"""Get users in group
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve all users that belong to a specific user group.
 
 
@@ -1758,9 +1753,6 @@ class UserGroups(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_users_in_group_async(
         self,
         *,
@@ -1772,7 +1764,6 @@ class UserGroups(BaseSDK):
     ) -> models.GetUsersInGroupResponse:
         r"""Get users in group
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve all users that belong to a specific user group.
 
 
@@ -1851,9 +1842,6 @@ class UserGroups(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     def get_group_statistics(
         self,
         *,
@@ -1864,7 +1852,6 @@ class UserGroups(BaseSDK):
     ) -> models.GetGroupStatisticsResponse:
         r"""Get group statistics
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve statistics for all user groups including member counts.
 
 
@@ -1937,9 +1924,6 @@ class UserGroups(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    @deprecated(
-        "warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible."
-    )
     async def get_group_statistics_async(
         self,
         *,
@@ -1950,7 +1934,6 @@ class UserGroups(BaseSDK):
     ) -> models.GetGroupStatisticsResponse:
         r"""Get group statistics
 
-        <b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
         Retrieve statistics for all user groups including member counts.
 
 

@@ -14,8 +14,8 @@ User group management operations
 * [add_users_to_group](#add_users_to_group) - Add users to group
 * [remove_users_from_group](#remove_users_from_group) - Remove users from group
 * [get_groups_for_user](#get_groups_for_user) - Get groups for a user
-* [~~get_users_in_group~~](#get_users_in_group) - Get users in group :warning: **Deprecated**
-* [~~get_group_statistics~~](#get_group_statistics) - Get group statistics :warning: **Deprecated**
+* [get_users_in_group](#get_users_in_group) - Get users in group
+* [get_group_statistics](#get_group_statistics) - Get group statistics
 
 ## create_user_group
 
@@ -458,13 +458,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_users_in_group~~
+## get_users_in_group
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve all users that belong to a specific user group.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
@@ -504,13 +501,10 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_group_statistics~~
+## get_group_statistics
 
-<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
 Retrieve statistics for all user groups including member counts.
 
-
-> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
