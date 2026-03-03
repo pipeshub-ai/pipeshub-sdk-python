@@ -1,14 +1,12 @@
 <!-- Start SDK Example Usage [usage] -->
 ```python
 # Synchronous Example
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.user_account.init_auth(email="user@example.com")
+    res = pipeshub.user_account.init_auth(email="user@example.com")
 
     # Handle response
     print(res)
@@ -21,15 +19,13 @@ The same SDK client can also be used to make asynchronous requests by importing 
 ```python
 # Asynchronous Example
 import asyncio
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 async def main():
 
-    async with Pipeshub(
-        server_url="https://api.example.com",
-    ) as p_client:
+    async with Pipeshub() as pipeshub:
 
-        res = await p_client.user_account.init_auth_async(email="user@example.com")
+        res = await pipeshub.user_account.init_auth_async(email="user@example.com")
 
         # Handle response
         print(res)

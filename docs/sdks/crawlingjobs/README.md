@@ -2,17 +2,45 @@
 
 ## Overview
 
+Endpoints for scheduling, managing, and monitoring data crawling jobs for enterprise connectors.
+
+The Crawling Manager uses BullMQ (Redis-based queue) to schedule and execute crawling jobs that
+sync data from external connectors (Google Drive, OneDrive, Slack, Jira, etc.) into PipesHub's
+search index.
+
+**Key Features:**
+- Schedule recurring crawls (hourly, daily, weekly, monthly) or one-time crawls
+- Pause and resume crawling jobs without losing configuration
+- Priority-based job execution (1-10 scale)
+- Automatic retry with exponential backoff on failures
+- Per-connector job isolation and tracking
+
+**Access Control:**
+- Team-scoped connectors require admin privileges
+- Personal-scoped connectors can only be managed by the creator
+- All operations require valid JWT authentication
+
+**Schedule Types:**
+- `hourly`: Run every X hours at specified minute
+- `daily`: Run once per day at specified time
+- `weekly`: Run on specified days of the week
+- `monthly`: Run on specified day of the month
+- `custom`: Use cron expression for complex schedules
+- `once`: Run once at a specific future time
+
+
 ### Available Operations
 
-* [schedule](#schedule) - Schedule a crawling job
-* [get_status](#get_status) - Get crawling job status
-* [remove](#remove) - Remove a crawling job
-* [pause](#pause) - Pause a crawling job
-* [resume](#resume) - Resume a paused crawling job
-* [list_all_statuses](#list_all_statuses) - Get all crawling job statuses
-* [remove_all](#remove_all) - Remove all crawling jobs
+* [schedule_crawling_job](#schedule_crawling_job) - Schedule a crawling job
+* [get_crawling_job_status](#get_crawling_job_status) - Get crawling job status
+* [remove_crawling_job](#remove_crawling_job) - Remove a crawling job
+* [~~get_all_crawling_job_status~~](#get_all_crawling_job_status) - Get all crawling job statuses :warning: **Deprecated**
+* [~~remove_all_crawling_job~~](#remove_all_crawling_job) - Remove all crawling jobs :warning: **Deprecated**
+* [~~pause_crawling_job~~](#pause_crawling_job) - Pause a crawling job :warning: **Deprecated**
+* [~~resume_crawling_job~~](#resume_crawling_job) - Resume a crawling job :warning: **Deprecated**
+* [~~get_queue_stats~~](#get_queue_stats) - Get queue statistics :warning: **Deprecated**
 
-## schedule
+## schedule_crawling_job
 
 Schedule a new crawling job for a specific connector instance.<br><br>
 
@@ -58,15 +86,16 @@ to the specified schedule configuration.<br><br>
 <!-- UsageSnippet language="python" operationID="scheduleCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/schedule" example="customCron" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.schedule(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
+    res = pipeshub.crawling_jobs.schedule_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
         "schedule_type": "custom",
         "is_enabled": True,
         "timezone": "UTC",
@@ -83,15 +112,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="scheduleCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/schedule" example="dailySync" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.schedule(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
+    res = pipeshub.crawling_jobs.schedule_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
         "schedule_type": "daily",
         "is_enabled": True,
         "timezone": "UTC",
@@ -108,15 +138,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="scheduleCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/schedule" example="hourlySync" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.schedule(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
+    res = pipeshub.crawling_jobs.schedule_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
         "schedule_type": "hourly",
         "is_enabled": True,
         "timezone": "America/New_York",
@@ -133,16 +164,17 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="scheduleCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/schedule" example="oneTimeSync" -->
 ```python
 import os
-from pipeshub import Pipeshub
-from pipeshub.utils import parse_datetime
+from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.utils import parse_datetime
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.schedule(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
+    res = pipeshub.crawling_jobs.schedule_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
         "schedule_type": "once",
         "is_enabled": True,
         "timezone": "UTC",
@@ -158,15 +190,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="scheduleCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/schedule" example="weeklySync" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.schedule(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
+    res = pipeshub.crawling_jobs.schedule_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011", schedule_config={
         "schedule_type": "weekly",
         "is_enabled": True,
         "timezone": "Europe/London",
@@ -206,7 +239,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_status
+## get_crawling_job_status
 
 Retrieve the current status of a scheduled crawling job for a specific connector.<br><br>
 
@@ -233,15 +266,16 @@ Same as scheduling - team connectors require admin, personal connectors require 
 <!-- UsageSnippet language="python" operationID="getCrawlingJobStatus" method="get" path="/crawlingManager/{connector}/{connectorId}/schedule" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.get_status(connector="drive", connector_id="507f1f77bcf86cd799439011")
+    res = pipeshub.crawling_jobs.get_crawling_job_status(connector="drive", connector_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -266,7 +300,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## remove
+## remove_crawling_job
 
 Permanently remove a scheduled crawling job for a specific connector.<br><br>
 
@@ -295,15 +329,16 @@ removing repeatable job configurations and cleaning up job history.<br><br>
 <!-- UsageSnippet language="python" operationID="removeCrawlingJob" method="delete" path="/crawlingManager/{connector}/{connectorId}/remove" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.remove(connector="drive", connector_id="507f1f77bcf86cd799439011")
+    res = pipeshub.crawling_jobs.remove_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -328,166 +363,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## pause
+## ~~get_all_crawling_job_status~~
 
-Pause a running or scheduled crawling job without losing its configuration.<br><br>
-
-<b>Overview:</b><br>
-Pausing a job stores its complete configuration and removes it from the active queue.
-The job can be resumed later with <code>POST /crawlingManager/{connector}/{connectorId}/resume</code>,
-which will restore the exact same schedule configuration.<br><br>
-
-<b>How Pausing Works:</b><br>
-<ol>
-<li>Current job configuration is stored in memory</li>
-<li>Active/repeatable job is removed from BullMQ queue</li>
-<li>Job state changes to "paused"</li>
-<li>No new job executions will occur until resumed</li>
-</ol>
-
-<b>Use Cases:</b><br>
-<ul>
-<li>Temporarily stop crawling during maintenance</li>
-<li>Pause data sync while investigating issues</li>
-<li>Stop crawling for a connector being reconfigured</li>
-</ul>
-
-<b>Note:</b> If a job is currently active (processing), it will complete before pausing.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve the status of all scheduled crawling jobs across the organization.
 
 
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="pauseCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/pause" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.crawling_jobs.pause(connector="drive", connector_id="507f1f77bcf86cd799439011")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Connector type identifier                                           | drive                                                               |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Unique identifier of the connector instance                         | 507f1f77bcf86cd799439011                                            |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.PauseCrawlingJobResponse](../../models/pausecrawlingjobresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## resume
-
-Resume a previously paused crawling job using its stored configuration.<br><br>
-
-<b>Overview:</b><br>
-Restores a paused job to active state using the exact configuration it had when paused.
-A new job is created in BullMQ with the same schedule settings.<br><br>
-
-<b>How Resuming Works:</b><br>
-<ol>
-<li>Retrieve stored job configuration from pause state</li>
-<li>Create new scheduled job with same configuration</li>
-<li>Remove from paused jobs tracking</li>
-<li>Job will execute according to its original schedule</li>
-</ol>
-
-<b>Note:</b> The job will resume according to its schedule, not immediately execute
-(unless it's a one-time job that hasn't run yet).
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="resumeCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/resume" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.crawling_jobs.resume(connector="drive", connector_id="507f1f77bcf86cd799439011")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Connector type identifier                                           | drive                                                               |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Unique identifier of the connector instance                         | 507f1f77bcf86cd799439011                                            |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.ResumeCrawlingJobResponse](../../models/resumecrawlingjobresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## list_all_statuses
-
-Retrieve the status of all scheduled crawling jobs for the current organization.<br><br>
-
-<b>Overview:</b><br>
-Returns a list of all crawling jobs across all connectors for the authenticated user's
-organization. This includes active, waiting, paused, completed, and failed jobs.<br><br>
-
-<b>Response Details:</b><br>
-<ul>
-<li>Jobs are grouped by connector type</li>
-<li>Last 10 jobs per connector type are returned</li>
-<li>Includes both active queue jobs and paused jobs</li>
-</ul>
-
-<b>Use Cases:</b><br>
-<ul>
-<li>Dashboard overview of all crawling activities</li>
-<li>Monitoring job health across connectors</li>
-<li>Identifying failed or stuck jobs</li>
-</ul>
-
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="getAllCrawlingJobStatus" method="get" path="/crawlingManager/schedule/all" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.list_all_statuses()
+    res = pipeshub.crawling_jobs.get_all_crawling_job_status()
 
     # Handle response
     print(res)
@@ -510,40 +408,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## remove_all
+## ~~remove_all_crawling_job~~
 
-Remove all scheduled crawling jobs for the current organization.<br><br>
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Remove all scheduled crawling jobs for the organization.
 
-<b>Overview:</b><br>
-Bulk operation to remove all crawling jobs across all connectors for the organization.
-This is useful when decommissioning an organization or doing a complete reset.<br><br>
 
-<b>What Gets Removed:</b><br>
-<ul>
-<li>All active and waiting jobs</li>
-<li>All repeatable job configurations</li>
-<li>All paused jobs</li>
-<li>All job mappings for the organization</li>
-</ul>
-
-<b>Warning:</b> This operation cannot be undone. All job configurations will need
-to be recreated manually.
-
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="removeAllCrawlingJobs" method="delete" path="/crawlingManager/schedule/all" -->
+<!-- UsageSnippet language="python" operationID="removeAllCrawlingJob" method="delete" path="/crawlingManager/schedule/all" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.crawling_jobs.remove_all()
+    res = pipeshub.crawling_jobs.remove_all_crawling_job()
 
     # Handle response
     print(res)
@@ -558,7 +445,146 @@ with Pipeshub(
 
 ### Response
 
-**[models.RemoveAllCrawlingJobsResponse](../../models/removeallcrawlingjobsresponse.md)**
+**[models.RemoveAllCrawlingJobResponse](../../models/removeallcrawlingjobresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~pause_crawling_job~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Pause a running or scheduled crawling job for a specific connector.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="pauseCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/pause" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.crawling_jobs.pause_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `connector`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.PauseCrawlingJobResponse](../../models/pausecrawlingjobresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~resume_crawling_job~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Resume a previously paused crawling job for a specific connector.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="resumeCrawlingJob" method="post" path="/crawlingManager/{connector}/{connectorId}/resume" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.crawling_jobs.resume_crawling_job(connector="drive", connector_id="507f1f77bcf86cd799439011")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `connector`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.ResumeCrawlingJobResponse](../../models/resumecrawlingjobresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~get_queue_stats~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve statistics for the crawling job queue including active, waiting, and completed job counts.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getQueueStats" method="get" path="/crawlingManager/stats" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.crawling_jobs.get_queue_stats()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetQueueStatsResponse](../../models/getqueuestatsresponse.md)**
 
 ### Errors
 

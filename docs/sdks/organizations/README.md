@@ -6,18 +6,18 @@ Organization management operations
 
 ### Available Operations
 
-* [check_exists](#check_exists) - Check if organization exists
-* [create](#create) - Create organization
-* [get](#get) - Get current organization
-* [update](#update) - Update organization
-* [delete](#delete) - Delete organization
-* [upload_logo](#upload_logo) - Upload organization logo
-* [get_logo](#get_logo) - Get organization logo
-* [delete_logo](#delete_logo) - Delete organization logo
+* [check_org_exists](#check_org_exists) - Check if organization exists
+* [create_organization](#create_organization) - Create organization
+* [get_current_organization](#get_current_organization) - Get current organization
+* [update_organization](#update_organization) - Update organization
+* [delete_organization](#delete_organization) - Delete organization
+* [upload_organization_logo](#upload_organization_logo) - Upload organization logo
+* [get_organization_logo](#get_organization_logo) - Get organization logo
+* [delete_organization_logo](#delete_organization_logo) - Delete organization logo
 * [get_onboarding_status](#get_onboarding_status) - Get onboarding status
 * [update_onboarding_status](#update_onboarding_status) - Update onboarding status
 
-## check_exists
+## check_org_exists
 
 Check if any organization has been created in the system. This is typically the first API call made during initial setup.<br><br>
 <b>Overview:</b><br>
@@ -40,14 +40,12 @@ This public endpoint determines whether the system has been initialized with an 
 
 <!-- UsageSnippet language="python" operationID="checkOrgExists" method="get" path="/org/exists" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.organizations.check_exists()
+    res = pipeshub.organizations.check_org_exists()
 
     # Handle response
     print(res)
@@ -70,7 +68,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_organization
 
 Create a new organization and its first admin user. This is the initial setup endpoint for new PipesHub installations.<br><br>
 <b>Overview:</b><br>
@@ -108,14 +106,12 @@ This endpoint performs the complete initial setup of a PipesHub instance, includ
 
 <!-- UsageSnippet language="python" operationID="createOrganization" method="post" path="/org" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.organizations.create(account_type="business", contact_email="admin@acme.com", admin_full_name="John Smith", password="SecurePassword123!", short_name="Acme", registered_name="Acme Corporation Inc.")
+    res = pipeshub.organizations.create_organization(account_type="business", contact_email="admin@acme.com", admin_full_name="John Smith", password="SecurePassword123!", short_name="Acme", registered_name="Acme Corporation Inc.")
 
     # Handle response
     print(res)
@@ -144,7 +140,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_current_organization
 
 Retrieve details about the authenticated user's organization.<br><br>
 <b>Overview:</b><br>
@@ -173,15 +169,16 @@ All authenticated users can access this endpoint to view their organization's de
 <!-- UsageSnippet language="python" operationID="getCurrentOrganization" method="get" path="/org" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.get()
+    res = pipeshub.organizations.get_current_organization()
 
     # Handle response
     print(res)
@@ -196,7 +193,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetCurrentOrganizationResponse](../../models/getcurrentorganizationresponse.md)**
+**[models.Organization](../../models/organization.md)**
 
 ### Errors
 
@@ -204,7 +201,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_organization
 
 Update organization profile and settings information.<br><br>
 <b>Overview:</b><br>
@@ -241,15 +238,16 @@ This endpoint allows administrators to update the organization's profile informa
 <!-- UsageSnippet language="python" operationID="updateOrganization" method="put" path="/org" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.update(registered_name="Acme Corporation Inc.", short_name="Acme Corp", phone_number="+15551234567")
+    res = pipeshub.organizations.update_organization(registered_name="Acme Corporation Inc.", short_name="Acme Corp", phone_number="+15551234567")
 
     # Handle response
     print(res)
@@ -276,7 +274,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_organization
 
 Permanently delete an organization and all associated data.<br><br>
 <b>WARNING:</b> This action is <b>irreversible</b>.<br><br>
@@ -300,15 +298,16 @@ Permanently delete an organization and all associated data.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteOrganization" method="delete" path="/org" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.delete(confirm="DELETE")
+    res = pipeshub.organizations.delete_organization(confirm="DELETE")
 
     # Handle response
     print(res)
@@ -332,7 +331,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## upload_logo
+## upload_organization_logo
 
 Upload or update the organization's logo image.<br><br>
 <b>Supported Formats:</b><br>
@@ -360,15 +359,16 @@ Upload or update the organization's logo image.<br><br>
 <!-- UsageSnippet language="python" operationID="uploadOrganizationLogo" method="put" path="/org/logo" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.upload_logo(logo={
+    res = pipeshub.organizations.upload_organization_logo(logo={
         "file_name": "example.file",
         "content": open("example.file", "rb"),
     })
@@ -395,7 +395,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_logo
+## get_organization_logo
 
 Retrieve the organization's logo image or URL.<br><br>
 <b>Response Formats:</b><br>
@@ -416,15 +416,18 @@ Retrieve the organization's logo image or URL.<br><br>
 <!-- UsageSnippet language="python" operationID="getOrganizationLogo" method="get" path="/org/logo" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.get_logo()
+    res = pipeshub.organizations.get_organization_logo()
+
+    assert res is not None
 
     # Handle response
     print(res)
@@ -447,7 +450,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_logo
+## delete_organization_logo
 
 Remove the organization's custom logo.<br><br>
 <b>Behavior:</b><br>
@@ -462,15 +465,16 @@ Remove the organization's custom logo.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteOrganizationLogo" method="delete" path="/org/logo" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.delete_logo()
+    res = pipeshub.organizations.delete_organization_logo()
 
     # Handle response
     print(res)
@@ -517,15 +521,16 @@ Retrieve the organization's onboarding progress and status.<br><br>
 <!-- UsageSnippet language="python" operationID="getOnboardingStatus" method="get" path="/org/onboarding-status" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.get_onboarding_status()
+    res = pipeshub.organizations.get_onboarding_status()
 
     # Handle response
     print(res)
@@ -569,15 +574,16 @@ Update the organization's onboarding progress.<br><br>
 <!-- UsageSnippet language="python" operationID="updateOnboardingStatus" method="put" path="/org/onboarding-status" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.organizations.update_onboarding_status(step_id="invite_team", action="complete")
+    res = pipeshub.organizations.update_onboarding_status(step_id="invite_team", action="complete")
 
     # Handle response
     print(res)

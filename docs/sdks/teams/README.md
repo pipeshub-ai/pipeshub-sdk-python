@@ -6,19 +6,19 @@ Team management operations
 
 ### Available Operations
 
-* [create](#create) - Create a team
-* [list](#list) - List teams
-* [get_by_id](#get_by_id) - Get team by ID
-* [update](#update) - Update team
-* [delete](#delete) - Delete team
-* [get_members](#get_members) - Get team members
-* [add_users](#add_users) - Add users to team
-* [remove_users](#remove_users) - Remove users from team
-* [update_user_permissions](#update_user_permissions) - Update user role in team
-* [get_user](#get_user) - Get current user's teams
-* [list_created](#list_created) - Get teams created by current user
+* [create_team](#create_team) - Create a team
+* [list_teams](#list_teams) - List teams
+* [get_team_by_id](#get_team_by_id) - Get team by ID
+* [update_team](#update_team) - Update team
+* [delete_team](#delete_team) - Delete team
+* [get_user_teams](#get_user_teams) - Get current user's teams
+* [~~get_team_users~~](#get_team_users) - Get users in team :warning: **Deprecated**
+* [~~add_users_to_team~~](#add_users_to_team) - Add users to team :warning: **Deprecated**
+* [~~remove_user_from_team~~](#remove_user_from_team) - Remove user from team :warning: **Deprecated**
+* [~~update_team_users_permissions~~](#update_team_users_permissions) - Update team users permissions :warning: **Deprecated**
+* [~~get_user_created_teams~~](#get_user_created_teams) - Get user created teams :warning: **Deprecated**
 
-## create
+## create_team
 
 Create a new team within the organization for project collaboration and resource sharing.<br><br>
 <b>Overview:</b><br>
@@ -52,15 +52,16 @@ You can optionally add initial members with their roles during creation using th
 <!-- UsageSnippet language="python" operationID="createTeam" method="post" path="/teams" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.create(name="Engineering Team", description="Core engineering team for product development")
+    res = pipeshub.teams.create_team(name="Engineering Team", description="Core engineering team for product development")
 
     # Handle response
     print(res)
@@ -86,7 +87,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## list_teams
 
 Retrieve all teams in the organization with optional search and pagination.<br><br>
 <b>Overview:</b><br>
@@ -114,15 +115,16 @@ Results are sorted by name alphabetically by default.
 <!-- UsageSnippet language="python" operationID="listTeams" method="get" path="/teams" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.list(search="engineering", limit=10, page=1)
+    res = pipeshub.teams.list_teams(search="engineering", limit=10, page=1)
 
     # Handle response
     print(res)
@@ -148,7 +150,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_team_by_id
 
 Retrieve detailed information about a specific team.<br><br>
 <b>Overview:</b><br>
@@ -173,15 +175,16 @@ Returns complete team details including metadata, member list with roles, and re
 <!-- UsageSnippet language="python" operationID="getTeamById" method="get" path="/teams/{teamId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.get_by_id(team_id="507f1f77bcf86cd799439011")
+    res = pipeshub.teams.get_team_by_id(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -205,7 +208,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_team
 
 Update team metadata and settings.<br><br>
 <b>Overview:</b><br>
@@ -234,15 +237,16 @@ This endpoint allows updating team properties like name and description. Member 
 <!-- UsageSnippet language="python" operationID="updateTeam" method="put" path="/teams/{teamId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.update(team_id="507f1f77bcf86cd799439011", name="Core Engineering Team", description="Primary engineering team for product development")
+    res = pipeshub.teams.update_team(team_id="507f1f77bcf86cd799439011", name="Core Engineering Team", description="Primary engineering team for product development")
 
     # Handle response
     print(res)
@@ -268,7 +272,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_team
 
 Delete a team from the organization.<br><br>
 <b>Behavior:</b><br>
@@ -289,15 +293,16 @@ Delete a team from the organization.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteTeam" method="delete" path="/teams/{teamId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.delete(team_id="507f1f77bcf86cd799439011")
+    res = pipeshub.teams.delete_team(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -321,240 +326,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_members
-
-Retrieve all users that are members of a specific team.<br><br>
-<b>Response Details:</b><br>
-<ul>
-<li>Returns user profiles with their team role</li>
-<li>Supports pagination for large teams</li>
-<li>Excludes deleted or inactive users</li>
-</ul>
-<b>Team Roles:</b><br>
-<ul>
-<li><code>owner</code> - Full control over team settings and members</li>
-<li><code>admin</code> - Can manage members and most settings</li>
-<li><code>member</code> - Standard team member</li>
-<li><code>viewer</code> - Read-only access to team resources</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getTeamUsers" method="get" path="/teams/{teamId}/users" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.teams.get_members(team_id="507f1f77bcf86cd799439011", page=1, limit=20)
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | Unique identifier of the team                                       | 507f1f77bcf86cd799439011                                            |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Page number for pagination (1-based)                                |                                                                     |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Number of users per page                                            |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.GetTeamUsersResponse](../../models/getteamusersresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## add_users
-
-Add one or more users to a team with specified roles.<br><br>
-<b>Behavior:</b><br>
-<ul>
-<li>Users already in the team are skipped</li>
-<li>Default role is "member" if not specified</li>
-<li>Sends invitation notification to added users</li>
-</ul>
-<b>Validation:</b><br>
-<ul>
-<li>All user IDs must be valid and from the same organization</li>
-<li>Role must be one of the allowed values</li>
-<li>Only team owner/admin can add members</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="addUsersToTeam" method="post" path="/teams/{teamId}/users" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.teams.add_users(team_id="507f1f77bcf86cd799439011", users=[
-        {
-            "user_id": "507f1f77bcf86cd799439012",
-        },
-        {
-            "user_id": "507f1f77bcf86cd799439013",
-            "role": "admin",
-        },
-    ])
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                                                                 | Type                                                                                                                      | Required                                                                                                                  | Description                                                                                                               | Example                                                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `team_id`                                                                                                                 | *str*                                                                                                                     | :heavy_check_mark:                                                                                                        | Unique identifier of the team                                                                                             | 507f1f77bcf86cd799439011                                                                                                  |
-| `users`                                                                                                                   | List[[models.AddUsersToTeamUser](../../models/adduserstoteamuser.md)]                                                     | :heavy_check_mark:                                                                                                        | N/A                                                                                                                       | [<br/>{<br/>"userId": "507f1f77bcf86cd799439012",<br/>"role": "member"<br/>},<br/>{<br/>"userId": "507f1f77bcf86cd799439013",<br/>"role": "admin"<br/>}<br/>] |
-| `retries`                                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                          | :heavy_minus_sign:                                                                                                        | Configuration to override the default retry behavior of the client.                                                       |                                                                                                                           |
-
-### Response
-
-**[models.AddUsersToTeamResponse](../../models/adduserstoteamresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## remove_users
-
-Remove one or more users from a team.<br><br>
-<b>Behavior:</b><br>
-<ul>
-<li>Users not in the team are silently skipped</li>
-<li>Removed users lose access to team resources immediately</li>
-</ul>
-<b>Restrictions:</b><br>
-<ul>
-<li>Cannot remove the team owner</li>
-<li>Only team owner/admin can remove members</li>
-<li>Admins cannot remove other admins (only owner can)</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="removeUsersFromTeam" method="delete" path="/teams/{teamId}/users" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.teams.remove_users(team_id="507f1f77bcf86cd799439011", user_ids=[
-        "507f1f77bcf86cd799439012",
-    ])
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | Unique identifier of the team                                       | 507f1f77bcf86cd799439011                                            |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of user IDs to remove from the team                           | [<br/>"507f1f77bcf86cd799439012"<br/>]                              |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.RemoveUsersFromTeamResponse](../../models/removeusersfromteamresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## update_user_permissions
-
-Update a user's role/permissions within a team.<br><br>
-<b>Available Roles:</b><br>
-<ul>
-<li><code>owner</code> - Full control (only one per team, transferable)</li>
-<li><code>admin</code> - Can manage members and settings</li>
-<li><code>member</code> - Standard access</li>
-<li><code>viewer</code> - Read-only access</li>
-</ul>
-<b>Restrictions:</b><br>
-<ul>
-<li>Only team owner can promote to admin</li>
-<li>Only team owner can transfer ownership</li>
-<li>Admins can modify member/viewer roles</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="updateTeamUserPermissions" method="put" path="/teams/{teamId}/users/permissions" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.teams.update_user_permissions(team_id="507f1f77bcf86cd799439011", user_id="507f1f77bcf86cd799439012", role="admin")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           | Example                                                                               |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `team_id`                                                                             | *str*                                                                                 | :heavy_check_mark:                                                                    | Unique identifier of the team                                                         | 507f1f77bcf86cd799439011                                                              |
-| `user_id`                                                                             | *str*                                                                                 | :heavy_check_mark:                                                                    | ID of the user whose role to update                                                   | 507f1f77bcf86cd799439012                                                              |
-| `role`                                                                                | [models.UpdateTeamUserPermissionsRole](../../models/updateteamuserpermissionsrole.md) | :heavy_check_mark:                                                                    | New role to assign to the user                                                        | admin                                                                                 |
-| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |                                                                                       |
-
-### Response
-
-**[models.UpdateTeamUserPermissionsResponse](../../models/updateteamuserpermissionsresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_user
+## get_user_teams
 
 Retrieve all teams that the authenticated user is a member of.<br><br>
 <b>Response Details:</b><br>
@@ -576,15 +348,16 @@ Retrieve all teams that the authenticated user is a member of.<br><br>
 <!-- UsageSnippet language="python" operationID="getUserTeams" method="get" path="/teams/user/teams" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.get_user(page=1, limit=20)
+    res = pipeshub.teams.get_user_teams(page=1, limit=20)
 
     # Handle response
     print(res)
@@ -609,31 +382,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_created
+## ~~get_team_users~~
 
-Retrieve all teams that were created by the authenticated user.<br><br>
-<b>Response Details:</b><br>
-<ul>
-<li>Only includes teams where user is the original creator</li>
-<li>User may or may not still be the owner (ownership can be transferred)</li>
-<li>Useful for tracking team creation history</li>
-</ul>
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve all users that belong to a specific team.
 
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserCreatedTeams" method="get" path="/teams/user/teams/created" -->
+<!-- UsageSnippet language="python" operationID="getTeamUsers" method="get" path="/teams/{teamId}/users" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.teams.list_created(page=1, limit=20)
+    res = pipeshub.teams.get_team_users(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -644,8 +415,193 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Page number for pagination (1-based)                                |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Number of teams per page                                            |
+| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetTeamUsersResponse](../../models/getteamusersresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~add_users_to_team~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Add one or more users to a team.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="addUsersToTeam" method="post" path="/teams/{teamId}/users" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.teams.add_users_to_team(team_id="507f1f77bcf86cd799439011")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.AddUsersToTeamResponse](../../models/adduserstoteamresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~remove_user_from_team~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Remove a user from a team.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="removeUserFromTeam" method="delete" path="/teams/{teamId}/users" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.teams.remove_user_from_team(team_id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `user_id`                                                           | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.RemoveUserFromTeamResponse](../../models/removeuserfromteamresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~update_team_users_permissions~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Update permissions for users within a team.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateTeamUsersPermissions" method="put" path="/teams/{teamId}/users/permissions" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.teams.update_team_users_permissions(team_id="<id>", body={})
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                                                             | Type                                                                                                  | Required                                                                                              | Description                                                                                           |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `team_id`                                                                                             | *str*                                                                                                 | :heavy_check_mark:                                                                                    | N/A                                                                                                   |
+| `body`                                                                                                | [models.UpdateTeamUsersPermissionsRequestBody](../../models/updateteamuserspermissionsrequestbody.md) | :heavy_check_mark:                                                                                    | Request payload                                                                                       |
+| `retries`                                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                      | :heavy_minus_sign:                                                                                    | Configuration to override the default retry behavior of the client.                                   |
+
+### Response
+
+**[models.UpdateTeamUsersPermissionsResponse](../../models/updateteamuserspermissionsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~get_user_created_teams~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve teams created by the authenticated user.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getUserCreatedTeams" method="get" path="/teams/user/teams/created" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.teams.get_user_created_teams()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response

@@ -1,16 +1,35 @@
-# OauthProvider
+# OAuthProvider
 
 ## Overview
 
+PipesHub OAuth 2.0 Authorization Server implementing RFC 6749, RFC 7636 (PKCE), and OpenID Connect.
+
+**Supported Grant Types:**
+- `authorization_code` - Standard OAuth flow with PKCE support
+- `client_credentials` - Machine-to-machine authentication
+- `refresh_token` - Token refresh for long-lived access
+
+**Security Features:**
+- PKCE (Proof Key for Code Exchange) for public clients
+- State parameter for CSRF protection
+- Configurable token lifetimes
+- Token revocation and introspection
+
+**OpenID Connect:**
+- ID tokens with standard claims
+- UserInfo endpoint for profile data
+- Discovery endpoint for automatic configuration
+
+
 ### Available Operations
 
-* [authorize](#authorize) - Initiate OAuth authorization flow
-* [submit_consent](#submit_consent) - Submit authorization consent
-* [exchange_token](#exchange_token) - Exchange authorization code for tokens
-* [revoke](#revoke) - Revoke an access or refresh token
-* [introspect](#introspect) - Introspect a token
+* [oauth_authorize](#oauth_authorize) - Initiate OAuth authorization flow
+* [oauth_authorize_consent](#oauth_authorize_consent) - Submit authorization consent
+* [oauth_token](#oauth_token) - Exchange authorization code for tokens
+* [oauth_revoke](#oauth_revoke) - Revoke an access or refresh token
+* [oauth_introspect](#oauth_introspect) - Introspect a token
 
-## authorize
+## oauth_authorize
 
 OAuth 2.0 Authorization Endpoint (RFC 6749 Section 4.1.1).
 <br><br>
@@ -37,16 +56,14 @@ to authorize access to their account.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthAuthorize" method="get" path="/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="oauthAuthorize" method="get" path="/oauth2/authorize" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.oauth_provider.authorize(response_type="code", client_id="<id>", redirect_uri="https://coordinated-dime.biz/", scope="openid profile email read:records", state="Delaware")
+    res = pipeshub.o_auth_provider.oauth_authorize(response_type="code", client_id="<id>", redirect_uri="https://coordinated-dime.biz/", scope="openid profile email read:records", state="Delaware")
 
     # Handle response
     print(res)
@@ -78,7 +95,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## submit_consent
+## oauth_authorize_consent
 
 Submit user's consent decision for OAuth authorization.
 <br><br>
@@ -92,18 +109,19 @@ This endpoint generates an authorization code if consent is granted.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthAuthorizeConsent" method="post" path="/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="oauthAuthorizeConsent" method="post" path="/oauth2/authorize" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.oauth_provider.submit_consent(client_id="<id>", redirect_uri="https://excellent-license.com", scope="<value>", state="South Dakota", consent="denied")
+    res = pipeshub.o_auth_provider.oauth_authorize_consent(client_id="<id>", redirect_uri="https://excellent-license.com", scope="<value>", state="South Dakota", consent="denied")
 
     # Handle response
     print(res)
@@ -134,7 +152,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## exchange_token
+## oauth_token
 
 OAuth 2.0 Token Endpoint (RFC 6749 Section 4.1.3).
 <br><br>
@@ -157,16 +175,14 @@ verified against the stored code challenge.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthToken" method="post" path="/oauth/token" -->
+<!-- UsageSnippet language="python" operationID="oauthToken" method="post" path="/oauth2/token" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.oauth_provider.exchange_token(grant_type="client_credentials")
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -198,7 +214,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 400, 401                    | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## revoke
+## oauth_revoke
 
 OAuth 2.0 Token Revocation Endpoint (RFC 7009).
 <br><br>
@@ -216,16 +232,14 @@ Revoking a refresh token also invalidates associated access tokens.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthRevoke" method="post" path="/oauth/revoke" -->
+<!-- UsageSnippet language="python" operationID="oauthRevoke" method="post" path="/oauth2/revoke" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    p_client.oauth_provider.revoke(token="<value>", client_id="<id>")
+    pipeshub.o_auth_provider.oauth_revoke(token="<value>", client_id="<id>")
 
     # Use the SDK ...
 
@@ -248,7 +262,7 @@ with Pipeshub(
 | errors.OAuthErrorResponse   | 401                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## introspect
+## oauth_introspect
 
 OAuth 2.0 Token Introspection Endpoint (RFC 7662).
 <br><br>
@@ -266,16 +280,14 @@ Check if a token is active and retrieve its metadata.
 
 ### Example Usage: active
 
-<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/oauth/introspect" example="active" -->
+<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/oauth2/introspect" example="active" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.oauth_provider.introspect(token="<value>", client_id="<id>")
+    res = pipeshub.o_auth_provider.oauth_introspect(token="<value>", client_id="<id>")
 
     # Handle response
     print(res)
@@ -283,16 +295,14 @@ with Pipeshub(
 ```
 ### Example Usage: inactive
 
-<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/oauth/introspect" example="inactive" -->
+<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/oauth2/introspect" example="inactive" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.oauth_provider.introspect(token="<value>", client_id="<id>")
+    res = pipeshub.o_auth_provider.oauth_introspect(token="<value>", client_id="<id>")
 
     # Handle response
     print(res)

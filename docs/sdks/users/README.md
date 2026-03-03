@@ -6,30 +6,30 @@ User management operations
 
 ### Available Operations
 
-* [get_all](#get_all) - Get all users
-* [create](#create) - Create a new user
-* [get_by_id](#get_by_id) - Get user by ID
-* [update](#update) - Update user
-* [delete](#delete) - Delete user
-* [get_all_with_groups](#get_all_with_groups) - Get all users with their groups
-* [get_email](#get_email) - Get user email by ID
-* [get_by_ids](#get_by_ids) - Get users by IDs (bulk)
-* [exists_by_email](#exists_by_email) - Check if user exists by email
-* [get_internal](#get_internal) - Get user (internal service-to-service)
-* [update_full_name](#update_full_name) - Update user full name
-* [update_first_name](#update_first_name) - Update user first name
-* [update_last_name](#update_last_name) - Update user last name
-* [update_designation](#update_designation) - Update user designation
-* [check_admin_status](#check_admin_status) - Check if user is admin
-* [upload_display_picture](#upload_display_picture) - Upload display picture
-* [get_display_picture](#get_display_picture) - Get display picture
-* [remove_display_picture](#remove_display_picture) - Remove display picture
-* [bulk_invite](#bulk_invite) - Bulk invite users
-* [resend_invite](#resend_invite) - Resend user invite
-* [list_with_graph](#list_with_graph) - List users (paginated with graph data)
-* [get_teams](#get_teams) - Get current user's teams
+* [get_all_users](#get_all_users) - Get all users
+* [create_user](#create_user) - Create a new user
+* [get_user_by_id](#get_user_by_id) - Get user by ID
+* [update_user](#update_user) - Update user
+* [delete_user](#delete_user) - Delete user
+* [get_user_email_by_id](#get_user_email_by_id) - Get user email by ID
+* [~~update_email~~](#update_email) - Update user email :warning: **Deprecated**
+* [upload_user_display_picture](#upload_user_display_picture) - Upload display picture
+* [get_user_display_picture](#get_user_display_picture) - Get display picture
+* [remove_user_display_picture](#remove_user_display_picture) - Remove display picture
+* [bulk_invite_users](#bulk_invite_users) - Bulk invite users
+* [resend_user_invite](#resend_user_invite) - Resend user invite
+* [list_users_graph](#list_users_graph) - List users (paginated with graph data)
+* [unblock_user](#unblock_user) - Unblock a user in organization
+* [get_all_users_with_groups](#get_all_users_with_groups) - Get all users with groups
+* [~~get_users_by_ids~~](#get_users_by_ids) - Get users by IDs :warning: **Deprecated**
+* [~~update_full_name~~](#update_full_name) - Update user full name :warning: **Deprecated**
+* [~~update_first_name~~](#update_first_name) - Update user first name :warning: **Deprecated**
+* [~~update_last_name~~](#update_last_name) - Update user last name :warning: **Deprecated**
+* [~~update_designation~~](#update_designation) - Update user designation :warning: **Deprecated**
+* [~~admin_check~~](#admin_check) - Check if user is admin :warning: **Deprecated**
+* [~~get_user_teams_via_users~~](#get_user_teams_via_users) - Get user teams :warning: **Deprecated**
 
-## get_all
+## get_all_users
 
 Retrieve a paginated list of all users in the organization.<br><br>
 <b>Overview:</b><br>
@@ -60,15 +60,16 @@ This endpoint returns all active users in your organization. It's the primary en
 <!-- UsageSnippet language="python" operationID="getAllUsers" method="get" path="/users" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.get_all(page=1, limit=50)
+    res = pipeshub.users.get_all_users(page=1, limit=50)
 
     # Handle response
     print(res)
@@ -86,7 +87,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetAllUsersResponse](../../models/getallusersresponse.md)**
+**[List[models.User]](../../models/.md)**
 
 ### Errors
 
@@ -94,7 +95,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_user
 
 Create a new user account in the organization and optionally send an invitation email.<br><br>
 <b>Overview:</b><br>
@@ -130,15 +131,16 @@ Only organization administrators can create new users.
 <!-- UsageSnippet language="python" operationID="createUser" method="post" path="/users" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.create(full_name="John Smith", email="john.smith@company.com", mobile="+15551234567", designation="Software Engineer", send_invite=True)
+    res = pipeshub.users.create_user(full_name="John Smith", email="john.smith@company.com", mobile="+15551234567", designation="Software Engineer", send_invite=True)
 
     # Handle response
     print(res)
@@ -166,7 +168,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_user_by_id
 
 Retrieve detailed information about a specific user by their unique identifier.<br><br>
 <b>Overview:</b><br>
@@ -197,15 +199,16 @@ This endpoint returns the complete user profile for the specified user ID. Use t
 <!-- UsageSnippet language="python" operationID="getUserById" method="get" path="/users/{id}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.get_by_id(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.get_user_by_id(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -221,7 +224,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetUserByIDResponse](../../models/getuserbyidresponse.md)**
+**[models.User](../../models/user.md)**
 
 ### Errors
 
@@ -229,7 +232,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_user
 
 Update user profile information. Users can update their own profile, admins can update any user.<br><br>
 <b>Overview:</b><br>
@@ -269,15 +272,16 @@ This endpoint allows updating user profile fields. The scope of allowed updates 
 <!-- UsageSnippet language="python" operationID="updateUser" method="put" path="/users/{id}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.update(id="507f1f77bcf86cd799439011", full_name="John Smith", first_name="John", last_name="Smith", email="john.smith@company.com", mobile="+15551234567", designation="Senior Software Engineer")
+    res = pipeshub.users.update_user(id="507f1f77bcf86cd799439011", full_name="John Smith", first_name="John", last_name="Smith", email="john.smith@company.com", mobile="+15551234567", designation="Senior Software Engineer")
 
     # Handle response
     print(res)
@@ -308,7 +312,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_user
 
 Soft delete a user from the organization. The user account is deactivated but data is retained for audit purposes.<br><br>
 <b>Overview:</b><br>
@@ -344,15 +348,16 @@ Deleted users can be restored by organization admins within a configurable reten
 <!-- UsageSnippet language="python" operationID="deleteUser" method="delete" path="/users/{id}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.delete(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.delete_user(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -376,76 +381,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_all_with_groups
-
-Retrieve all users along with their group memberships in a single optimized query.<br><br>
-<b>Overview:</b><br>
-This endpoint returns users with their associated groups pre-loaded, eliminating the need for separate group lookup calls. Ideal for admin dashboards that need to display user permissions at a glance.<br><br>
-<b>Use Cases:</b><br>
-<ul>
-<li>Admin dashboards showing user-group matrix</li>
-<li>Permission auditing and compliance checks</li>
-<li>Bulk user management interfaces</li>
-<li>Access control visualization</li>
-</ul>
-<b>Response Data per User:</b><br>
-<ul>
-<li><code>_id</code>: User's unique identifier</li>
-<li><code>userId</code>: User's public-facing ID</li>
-<li><code>orgId</code>: Organization identifier</li>
-<li><code>fullName</code>: User's display name</li>
-<li><code>hasLoggedIn</code>: Whether user has ever logged in</li>
-<li><code>groups</code>: Array of group objects with name and type</li>
-</ul>
-<b>Group Types Returned:</b><br>
-<ul>
-<li><code>admin</code>: Administrative groups with elevated permissions</li>
-<li><code>standard</code>: Regular user groups</li>
-<li><code>everyone</code>: Default group containing all org users</li>
-<li><code>custom</code>: Custom groups created by admins</li>
-</ul>
-<b>Performance Notes:</b><br>
-Uses aggregation pipeline for efficient single-query retrieval. Cached results for improved performance on large organizations.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getAllUsersWithGroups" method="get" path="/users/fetch/with-groups" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.users.get_all_with_groups(include_deleted=False)
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `include_deleted`                                                   | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Include soft-deleted users (admin only)                             |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.GetAllUsersWithGroupsResponse](../../models/getalluserswithgroupsresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_email
+## get_user_email_by_id
 
 Retrieve the email address for a specific user. This is a dedicated endpoint for email lookup with proper access controls.<br><br>
 <b>Overview:</b><br>
@@ -472,15 +408,16 @@ Requires admin privileges. Regular users should use the main user endpoint which
 <!-- UsageSnippet language="python" operationID="getUserEmailById" method="get" path="/users/{id}/email" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.get_email(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.get_user_email_by_id(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -504,249 +441,31 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_ids
+## ~~update_email~~
 
-Retrieve multiple users by their IDs in a single optimized request. Ideal for efficiently fetching a specific set of users.<br><br>
-<b>Overview:</b><br>
-This bulk endpoint allows fetching multiple users in a single API call, reducing network overhead when you need to display information about several known users.<br><br>
-<b>Use Cases:</b><br>
-<ul>
-<li>Fetching user details for a list of team members</li>
-<li>Populating user cards in a dashboard</li>
-<li>Loading participants in a document or conversation</li>
-<li>Building user mention/autocomplete features</li>
-</ul>
-<b>Request Format:</b><br>
-<ul>
-<li>Send array of user IDs in request body</li>
-<li>Each ID must be valid 24-character MongoDB ObjectId</li>
-<li>Maximum 100 IDs per request (for performance)</li>
-<li>Duplicate IDs are automatically deduplicated</li>
-</ul>
-<b>Response Behavior:</b><br>
-<ul>
-<li>Returns array of found users</li>
-<li>Order matches order of requested IDs</li>
-<li>Non-existent or deleted users are silently omitted</li>
-<li>Partial results returned if some IDs are invalid</li>
-</ul>
-<b>Performance Notes:</b><br>
-Uses single database query with $in operator for optimal performance. Preferable to multiple individual user fetches.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Update the email address of a user.
 
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUsersByIds" method="post" path="/users/by-ids" -->
+<!-- UsageSnippet language="python" operationID="updateEmail" method="patch" path="/users/{id}/email" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.get_by_ids(user_ids=[
-        "507f1f77bcf86cd799439011",
-        "507f1f77bcf86cd799439012",
-    ])
+    pipeshub.users.update_email(id="<id>")
 
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of user IDs to retrieve                                       | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>] |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.GetUsersByIdsResponse](../../models/getusersbyidsresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## exists_by_email
-
-Check if a user account exists with the given email address. Used for pre-validation in registration and invitation flows.<br><br>
-<b>Overview:</b><br>
-This internal service endpoint validates email existence before creating accounts or sending invitations. It helps prevent duplicate accounts and validates recovery email addresses.<br><br>
-<b>Use Cases:</b><br>
-<ul>
-<li>Pre-flight check before user invitation</li>
-<li>Email validation during registration</li>
-<li>Account recovery flow validation</li>
-<li>Duplicate prevention checks</li>
-</ul>
-<b>Security Model:</b><br>
-<ul>
-<li>Requires scoped token with USER_LOOKUP privilege</li>
-<li>Not accessible with regular bearer tokens</li>
-<li>Typically called from internal services only</li>
-</ul>
-<b>Response Behavior:</b><br>
-<ul>
-<li>Returns matching users (including soft-deleted for recovery)</li>
-<li>Empty array if no match found</li>
-<li>Does not expose whether email exists to prevent enumeration</li>
-</ul>
-<b>Note:</b> May return soft-deleted users to support account recovery workflows.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="checkUserExistsByEmail" method="get" path="/users/email/exists" -->
-```python
-import os
-from pipeshub import Pipeshub, models
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
-
-    res = p_client.users.exists_by_email(security=models.CheckUserExistsByEmailSecurity(
-        scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
-    ), email="john.smith@company.com", include_deleted=True)
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             | Example                                                                                 |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `security`                                                                              | [models.CheckUserExistsByEmailSecurity](../../models/checkuserexistsbyemailsecurity.md) | :heavy_check_mark:                                                                      | N/A                                                                                     |                                                                                         |
-| `email`                                                                                 | *str*                                                                                   | :heavy_check_mark:                                                                      | Email address to check                                                                  | john.smith@company.com                                                                  |
-| `include_deleted`                                                                       | *Optional[bool]*                                                                        | :heavy_minus_sign:                                                                      | Whether to include soft-deleted users                                                   |                                                                                         |
-| `retries`                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                        | :heavy_minus_sign:                                                                      | Configuration to override the default retry behavior of the client.                     |                                                                                         |
-
-### Response
-
-**[models.CheckUserExistsByEmailResponse](../../models/checkuserexistsbyemailresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_internal
-
-Internal endpoint for service-to-service user lookup. Returns complete user data without privacy masking.<br><br>
-<b>Overview:</b><br>
-This internal endpoint provides full user data access for trusted backend services. Unlike public endpoints, it bypasses privacy controls and returns complete user information.<br><br>
-<b>Security Model:</b><br>
-<ul>
-<li>Requires scoped token with USER_LOOKUP privilege</li>
-<li>Not accessible via regular bearer tokens</li>
-<li>Intended for trusted internal services only</li>
-<li>All access is logged for audit purposes</li>
-</ul>
-<b>Intended Consumers:</b><br>
-<ul>
-<li>Email notification service</li>
-<li>Analytics and reporting services</li>
-<li>Audit logging service</li>
-<li>Integration sync services</li>
-</ul>
-<b>Data Returned:</b><br>
-Complete user object including fields that may be masked in public endpoints (email, phone, etc.).<br><br>
-<b>Warning:</b><br>
-This endpoint returns sensitive data. Ensure consuming services handle data according to privacy policies.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getInternalUser" method="get" path="/users/internal/{id}" -->
-```python
-import os
-from pipeshub import Pipeshub, models
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
-
-    res = p_client.users.get_internal(security=models.GetInternalUserSecurity(
-        scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
-    ), id="507f1f77bcf86cd799439011")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               | Example                                                                   |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `security`                                                                | [models.GetInternalUserSecurity](../../models/getinternalusersecurity.md) | :heavy_check_mark:                                                        | N/A                                                                       |                                                                           |
-| `id`                                                                      | *str*                                                                     | :heavy_check_mark:                                                        | User ID (24-character MongoDB ObjectId)                                   | 507f1f77bcf86cd799439011                                                  |
-| `retries`                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)          | :heavy_minus_sign:                                                        | Configuration to override the default retry behavior of the client.       |                                                                           |
-
-### Response
-
-**[models.GetInternalUserResponse](../../models/getinternaluserresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## update_full_name
-
-Update the full name of a user. This is a targeted update endpoint for changing only the display name without affecting other profile fields.<br><br>
-<b>Overview:</b><br>
-This endpoint updates a user's fullName field, which is their primary display name throughout the application. The firstName and lastName fields may also be updated based on name parsing logic.<br><br>
-<b>Authorization:</b><br>
-<ul>
-<li><b>Self-update:</b> Users can update their own full name</li>
-<li><b>Admin-update:</b> Admins can update any user's name</li>
-</ul>
-<b>Side Effects:</b><br>
-<ul>
-<li>Updates fullName field</li>
-<li>May parse and update firstName/lastName</li>
-<li>User update event published</li>
-<li>Cached user data invalidated</li>
-</ul>
-<b>Use Cases:</b><br>
-<ul>
-<li>User profile name change</li>
-<li>Name correction by admin</li>
-<li>Legal name update</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="updateUserFullName" method="patch" path="/users/{id}/fullname" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.users.update_full_name(id="<id>", full_name="Jim Denesik")
-
-    # Handle response
-    print(res)
+    # Use the SDK ...
 
 ```
 
@@ -755,242 +474,16 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `full_name`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `email`                                                             | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
-### Response
-
-**[models.User](../../models/user.md)**
-
 ### Errors
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_first_name
-
-Update only the first name of a user without affecting other profile fields.<br><br>
-<b>Overview:</b><br>
-This targeted endpoint updates just the firstName field. Useful when you need fine-grained control over name components rather than updating the full name.<br><br>
-<b>Authorization:</b><br>
-<ul>
-<li><b>Self-update:</b> Users can update their own first name</li>
-<li><b>Admin-update:</b> Admins can update any user's first name</li>
-</ul>
-<b>Note:</b> This does NOT automatically update the fullName field. Use <code>/users/{id}/fullname</code> if you need to update the complete display name.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="updateUserFirstName" method="patch" path="/users/{id}/firstName" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.users.update_first_name(id="507f1f77bcf86cd799439011", first_name="John")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | User ID (24-character MongoDB ObjectId)                             | 507f1f77bcf86cd799439011                                            |
-| `first_name`                                                        | *str*                                                               | :heavy_check_mark:                                                  | New first name                                                      | John                                                                |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.UpdateUserFirstNameResponse](../../models/updateuserfirstnameresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## update_last_name
-
-Update only the last name of a user without affecting other profile fields.<br><br>
-<b>Overview:</b><br>
-This targeted endpoint updates just the lastName field. Useful for fine-grained control over name components.<br><br>
-<b>Authorization:</b><br>
-<ul>
-<li><b>Self-update:</b> Users can update their own last name</li>
-<li><b>Admin-update:</b> Admins can update any user's last name</li>
-</ul>
-<b>Note:</b> This does NOT automatically update the fullName field. Use <code>/users/{id}/fullname</code> if you need to update the complete display name.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="updateUserLastName" method="patch" path="/users/{id}/lastName" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.users.update_last_name(id="507f1f77bcf86cd799439011", last_name="Smith")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | User ID (24-character MongoDB ObjectId)                             | 507f1f77bcf86cd799439011                                            |
-| `last_name`                                                         | *str*                                                               | :heavy_check_mark:                                                  | New last name                                                       | Smith                                                               |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.UpdateUserLastNameResponse](../../models/updateuserlastnameresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## update_designation
-
-Update the job title or designation of a user.<br><br>
-<b>Overview:</b><br>
-This endpoint updates the user's designation field, which typically represents their job title, role, or position within the organization.<br><br>
-<b>Authorization:</b><br>
-<ul>
-<li><b>Self-update:</b> Users can update their own designation</li>
-<li><b>Admin-update:</b> Admins can update any user's designation</li>
-</ul>
-<b>Common Values:</b><br>
-<ul>
-<li>Software Engineer</li>
-<li>Product Manager</li>
-<li>Team Lead</li>
-<li>Director of Engineering</li>
-</ul>
-<b>Display:</b><br>
-Designation is shown in user profiles, team views, and organizational charts.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="updateUserDesignation" method="patch" path="/users/{id}/designation" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.users.update_designation(id="507f1f77bcf86cd799439011", designation="Senior Software Engineer")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | User ID (24-character MongoDB ObjectId)                             | 507f1f77bcf86cd799439011                                            |
-| `designation`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Job title or designation                                            | Senior Software Engineer                                            |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.UpdateUserDesignationResponse](../../models/updateuserdesignationresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## check_admin_status
-
-Verify whether a specific user has administrative privileges in the organization.<br><br>
-<b>Overview:</b><br>
-This endpoint checks if the specified user belongs to an admin group and has elevated permissions. It's useful for authorization checks before performing admin-only operations.<br><br>
-<b>What Makes a User an Admin:</b><br>
-<ul>
-<li>Member of a group with type "admin"</li>
-<li>Has explicit admin role assignment</li>
-<li>Organization owner (always admin)</li>
-</ul>
-<b>Use Cases:</b><br>
-<ul>
-<li>UI permission checks before showing admin features</li>
-<li>Pre-flight authorization validation</li>
-<li>Access control for sensitive operations</li>
-</ul>
-<b>Response Codes:</b><br>
-<ul>
-<li><code>200</code>: User IS an admin</li>
-<li><code>403</code>: User is NOT an admin</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="checkUserIsAdmin" method="get" path="/users/{id}/adminCheck" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.users.check_admin_status(id="507f1f77bcf86cd799439011")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | User ID to check for admin privileges                               | 507f1f77bcf86cd799439011                                            |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.CheckUserIsAdminResponse](../../models/checkuserisadminresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## upload_display_picture
+## upload_user_display_picture
 
 Upload or update the display picture (avatar) for the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -1024,15 +517,16 @@ Users can only upload their own display picture. Admins cannot upload on behalf 
 <!-- UsageSnippet language="python" operationID="uploadUserDisplayPicture" method="put" path="/users/dp" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.upload_display_picture(file={
+    res = pipeshub.users.upload_user_display_picture(file={
         "file_name": "example.file",
         "content": open("example.file", "rb"),
     })
@@ -1059,7 +553,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_display_picture
+## get_user_display_picture
 
 Retrieve the current user's display picture image.<br><br>
 <b>Overview:</b><br>
@@ -1085,15 +579,16 @@ For signed URL access, use the user profile endpoint which returns a <code>displ
 <!-- UsageSnippet language="python" operationID="getUserDisplayPicture" method="get" path="/users/dp" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.get_display_picture()
+    res = pipeshub.users.get_user_display_picture()
 
     # Handle response
     print(res)
@@ -1116,7 +611,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## remove_display_picture
+## remove_user_display_picture
 
 Remove the current user's display picture and revert to default avatar.<br><br>
 <b>Overview:</b><br>
@@ -1137,15 +632,16 @@ This action is immediate and irreversible. To restore a picture, user must uploa
 <!-- UsageSnippet language="python" operationID="removeUserDisplayPicture" method="delete" path="/users/dp" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.remove_display_picture()
+    res = pipeshub.users.remove_user_display_picture()
 
     # Handle response
     print(res)
@@ -1168,7 +664,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## bulk_invite
+## bulk_invite_users
 
 Invite multiple users to the organization in a single operation. Ideal for onboarding entire teams at once.<br><br>
 <b>Overview:</b><br>
@@ -1204,15 +700,16 @@ Response includes count of successful invites and any failures with reasons.
 <!-- UsageSnippet language="python" operationID="bulkInviteUsers" method="post" path="/users/bulk/invite" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.bulk_invite(emails=[
+    res = pipeshub.users.bulk_invite_users(emails=[
         "user1@company.com",
         "user2@company.com",
     ], group_ids=[
@@ -1243,7 +740,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## resend_invite
+## resend_user_invite
 
 Resend the invitation email to a user who hasn't completed their account setup.<br><br>
 <b>Overview:</b><br>
@@ -1276,15 +773,16 @@ This endpoint resends the invitation email to a user who was previously invited 
 <!-- UsageSnippet language="python" operationID="resendUserInvite" method="post" path="/users/{id}/resend-invite" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.resend_invite(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.resend_user_invite(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -1308,7 +806,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_with_graph
+## list_users_graph
 
 Retrieve a paginated list of users with enhanced search capabilities using the graph service.<br><br>
 <b>Overview:</b><br>
@@ -1341,15 +839,16 @@ Use this endpoint when you need advanced search or are dealing with large user b
 <!-- UsageSnippet language="python" operationID="listUsersGraph" method="get" path="/users/graph/list" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.list_with_graph(page=1, limit=10, search="john", sort_by="fullName", sort_order="asc")
+    res = pipeshub.users.list_users_graph(page=1, limit=10, search="john", sort_by="fullName", sort_order="asc")
 
     # Handle response
     print(res)
@@ -1377,24 +876,88 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_teams
+## unblock_user
 
-Get teams that the current user belongs to
+Unblock a previously blocked user within the authenticated administrator's organization.<br><br>
+
+<b>Overview:</b><br>
+This endpoint updates the user's credential record by setting <code>isBlocked</code> to <code>false</code> 
+and resetting <code>wrongCredentialCount</code> to <code>0</code>.<br><br>
+
+<b>Authorization:</b><br>
+<ul>
+<li><b>Admin only:</b> Only organization administrators can unblock users</li>
+<li>Requires a valid Bearer token</li>
+</ul>
+
+<b>Validation & Conditions:</b><br>
+<ul>
+<li>User must belong to the same <code>orgId</code> as the authenticated admin</li>
+<li>User must currently be blocked (<code>isBlocked: true</code>)</li>
+<li>User must not be deleted (<code>isDeleted: false</code>)</li>
+</ul>
+
+<b>Note:</b> If the user is not blocked or does not exist in the organization, a 404 response is returned.
+
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getCurrentUserTeams" method="get" path="/users/teams/list" -->
+<!-- UsageSnippet language="python" operationID="unblockUser" method="put" path="/users/{id}/unblock" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.users.get_teams()
+    res = pipeshub.users.unblock_user(id="507f1f77bcf86cd799439011")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | User ID to unblock                                                  | 507f1f77bcf86cd799439011                                            |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.UnblockUserResponse](../../models/unblockuserresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## get_all_users_with_groups
+
+Retrieve all users in the organization along with their group memberships.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getAllUsersWithGroups" method="get" path="/users/fetch/with-groups" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.get_all_users_with_groups()
 
     # Handle response
     print(res)
@@ -1405,14 +968,336 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `search`                                                            | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[List[models.Team]](../../models/.md)**
+**[models.GetAllUsersWithGroupsResponse](../../models/getalluserswithgroupsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~get_users_by_ids~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve multiple users by their IDs in a single request.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getUsersByIds" method="post" path="/users/by-ids" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.get_users_by_ids()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `ids`                                                               | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetUsersByIdsResponse](../../models/getusersbyidsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~update_full_name~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Update the full name of a user.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateFullName" method="patch" path="/users/{id}/fullname" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.update_full_name(id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `full_name`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.UpdateFullNameResponse](../../models/updatefullnameresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~update_first_name~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Update the first name of a user.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateFirstName" method="patch" path="/users/{id}/firstName" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.update_first_name(id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `first_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.UpdateFirstNameResponse](../../models/updatefirstnameresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~update_last_name~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Update the last name of a user.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateLastName" method="patch" path="/users/{id}/lastName" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.update_last_name(id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `last_name`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.UpdateLastNameResponse](../../models/updatelastnameresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~update_designation~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Update the designation/title of a user.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateDesignation" method="patch" path="/users/{id}/designation" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.update_designation(id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `designation`                                                       | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.UpdateDesignationResponse](../../models/updatedesignationresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~admin_check~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="adminCheck" method="get" path="/users/{id}/adminCheck" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.admin_check(id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `id`                                                                | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.AdminCheckResponse](../../models/admincheckresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~get_user_teams_via_users~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve teams associated with the authenticated user.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getUserTeamsViaUsers" method="get" path="/users/teams/list" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.users.get_user_teams_via_users()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetUserTeamsViaUsersResponse](../../models/getuserteamsviausersresponse.md)**
 
 ### Errors
 

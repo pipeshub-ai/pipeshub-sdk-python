@@ -2,19 +2,21 @@
 
 ## Overview
 
+Enterprise semantic search across all indexed knowledge with relevance scoring
+
 ### Available Operations
 
-* [post](#post) - Perform semantic search
-* [history](#history) - Get search history
-* [delete_all_history](#delete_all_history) - Clear all search history
-* [get_by_id](#get_by_id) - Get search by ID
-* [delete](#delete) - Delete search
-* [share](#share) - Share search results
-* [unshare](#unshare) - Revoke search access
-* [archive](#archive) - Archive search
-* [unarchive](#unarchive) - Unarchive search
+* [search](#search) - Perform semantic search
+* [search_history](#search_history) - Get search history
+* [delete_all_search_history](#delete_all_search_history) - Clear all search history
+* [~~get_search_by_id~~](#get_search_by_id) - Get search by ID :warning: **Deprecated**
+* [~~delete_search_by_id~~](#delete_search_by_id) - Delete search by ID :warning: **Deprecated**
+* [~~share_search~~](#share_search) - Share a search :warning: **Deprecated**
+* [~~unshare_search~~](#unshare_search) - Unshare a search :warning: **Deprecated**
+* [~~archive_search~~](#archive_search) - Archive a search :warning: **Deprecated**
+* [~~unarchive_search~~](#unarchive_search) - Unarchive a search :warning: **Deprecated**
 
-## post
+## search
 
 Execute a semantic search across your organization's knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -50,15 +52,16 @@ All searches are saved and can be retrieved via <code>GET /search</code>.
 <!-- UsageSnippet language="python" operationID="search" method="post" path="/search" example="filtered" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.post(query="API documentation examples", filters={
+    res = pipeshub.semantic_search.search(query="API documentation examples", filters={
         "apps": [
             "drive",
         ],
@@ -73,15 +76,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="search" method="post" path="/search" example="simple" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.post(query="company vacation policy", limit=10)
+    res = pipeshub.semantic_search.search(query="company vacation policy", limit=10)
 
     # Handle response
     print(res)
@@ -110,7 +114,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## history
+## search_history
 
 Retrieve your search history with pagination.<br><br>
 <b>Overview:</b><br>
@@ -125,15 +129,16 @@ Use <code>page</code> and <code>limit</code> to navigate through results.
 <!-- UsageSnippet language="python" operationID="searchHistory" method="get" path="/search" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.history(limit=10, page=1)
+    res = pipeshub.semantic_search.search_history(limit=10, page=1)
 
     # Handle response
     print(res)
@@ -158,7 +163,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_all_history
+## delete_all_search_history
 
 Delete all search history for the authenticated user.<br><br>
 <b>Warning:</b><br>
@@ -170,15 +175,16 @@ This action cannot be undone. All saved searches will be permanently removed.
 <!-- UsageSnippet language="python" operationID="deleteAllSearchHistory" method="delete" path="/search" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.delete_all_history()
+    res = pipeshub.semantic_search.delete_all_search_history()
 
     # Handle response
     print(res)
@@ -201,28 +207,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## ~~get_search_by_id~~
 
-Retrieve a specific search result by its ID.<br><br>
-<b>Overview:</b><br>
-Returns the full search record including query, all results,
-and any sharing/archive status.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Retrieve a specific search result by its ID.
 
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="getSearchById" method="get" path="/search/{searchId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.get_by_id(search_id="<value>")
+    res = pipeshub.semantic_search.get_search_by_id(search_id="<value>")
 
     # Handle response
     print(res)
@@ -246,29 +253,32 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## ~~delete_search_by_id~~
 
-Delete a specific search from history.<br><br>
-<b>Overview:</b><br>
-Permanently removes the search record from your history.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Delete a specific search result by its ID.
 
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteSearch" method="delete" path="/search/{searchId}" -->
+<!-- UsageSnippet language="python" operationID="deleteSearchById" method="delete" path="/search/{searchId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    p_client.semantic_search.delete(search_id="<value>")
+    res = pipeshub.semantic_search.delete_search_by_id(search_id="<value>")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -276,8 +286,12 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.DeleteSearchByIDResponse](../../models/deletesearchbyidresponse.md)**
 
 ### Errors
 
@@ -285,30 +299,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## share
+## ~~share_search~~
 
-Share search results with other users.<br><br>
-<b>Overview:</b><br>
-Allows sharing a search and its results with colleagues.
-Useful for collaborative research or knowledge sharing.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Share a specific search result, making it accessible to other users.
 
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="shareSearch" method="patch" path="/search/{searchId}/share" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.share(search_id="<value>", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ], access_level="read")
+    res = pipeshub.semantic_search.share_search(search_id="<value>")
 
     # Handle response
     print(res)
@@ -317,16 +330,15 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                                                                                | Type                                                                                                                                     | Required                                                                                                                                 | Description                                                                                                                              | Example                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `search_id`                                                                                                                              | *str*                                                                                                                                    | :heavy_check_mark:                                                                                                                       | N/A                                                                                                                                      |                                                                                                                                          |
-| `user_ids`                                                                                                                               | List[*str*]                                                                                                                              | :heavy_check_mark:                                                                                                                       | IDs of users to share with                                                                                                               | [<br/>"507f1f77bcf86cd799439011"<br/>]                                                                                                   |
-| `access_level`                                                                                                                           | [Optional[models.ShareRequestAccessLevel]](../../models/sharerequestaccesslevel.md)                                                      | :heavy_minus_sign:                                                                                                                       | Permission level for shared users:<br/><ul><br/><li><code>read</code> - Can view only</li><br/><li><code>write</code> - Can add messages</li><br/></ul><br/> |                                                                                                                                          |
-| `retries`                                                                                                                                | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                         | :heavy_minus_sign:                                                                                                                       | Configuration to override the default retry behavior of the client.                                                                      |                                                                                                                                          |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.SearchResult](../../models/searchresult.md)**
+**[models.ShareSearchResponse](../../models/sharesearchresponse.md)**
 
 ### Errors
 
@@ -334,26 +346,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unshare
+## ~~unshare_search~~
 
-Remove sharing access from specified users.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Revoke sharing for a specific search result, making it private again.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="unshareSearch" method="patch" path="/search/{searchId}/unshare" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.unshare(search_id="<value>", user_ids=[
-        "<value 1>",
-    ])
+    res = pipeshub.semantic_search.unshare_search(search_id="<value>")
 
     # Handle response
     print(res)
@@ -364,13 +379,13 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.SearchResult](../../models/searchresult.md)**
+**[models.UnshareSearchResponse](../../models/unsharesearchresponse.md)**
 
 ### Errors
 
@@ -378,24 +393,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## archive
+## ~~archive_search~~
 
-Archive a search to hide it from the main history list.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Archive a specific search result. Archived searches are hidden from the default search history view.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="archiveSearch" method="patch" path="/search/{searchId}/archive" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.archive(search_id="<value>")
+    res = pipeshub.semantic_search.archive_search(search_id="<value>")
 
     # Handle response
     print(res)
@@ -406,12 +426,12 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.SearchResult](../../models/searchresult.md)**
+**[models.ArchiveSearchResponse](../../models/archivesearchresponse.md)**
 
 ### Errors
 
@@ -419,24 +439,29 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unarchive
+## ~~unarchive_search~~
 
-Restore an archived search to the active history list.
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Restore a previously archived search result back to the active search history.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
 
 ### Example Usage
 
 <!-- UsageSnippet language="python" operationID="unarchiveSearch" method="patch" path="/search/{searchId}/unarchive" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.semantic_search.unarchive(search_id="<value>")
+    res = pipeshub.semantic_search.unarchive_search(search_id="<value>")
 
     # Handle response
     print(res)
@@ -447,12 +472,12 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.SearchResult](../../models/searchresult.md)**
+**[models.UnarchiveSearchResponse](../../models/unarchivesearchresponse.md)**
 
 ### Errors
 

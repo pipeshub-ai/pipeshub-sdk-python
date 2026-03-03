@@ -2,13 +2,62 @@
 
 ## Overview
 
+Configure authentication, sync settings, and filters for connectors
+
 ### Available Operations
 
-* [update_config](#update_config) - Update connector configuration
-* [update_auth_config](#update_auth_config) - Update authentication configuration
-* [get_google_workspace_credentials](#get_google_workspace_credentials) - Get Google Workspace credentials status
+* [get_connector_config](#get_connector_config) - Get connector configuration
+* [update_connector_config](#update_connector_config) - Update connector configuration
+* [update_connector_auth_config](#update_connector_auth_config) - Update authentication configuration
+* [update_connector_filters_sync_config](#update_connector_filters_sync_config) - Update filters and sync configuration
 
-## update_config
+## get_connector_config
+
+Get the current configuration for a connector instance.<br><br>
+<b>Security:</b><br>
+Sensitive data (credentials, OAuth tokens) are redacted from the response.
+Only admins can see partial credential information.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getConnectorConfig" method="get" path="/connectors/{connectorId}/config" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.connector_configuration.get_connector_config(connector_id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetConnectorConfigResponse](../../models/getconnectorconfigresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## update_connector_config
 
 Update authentication, sync, and filter configuration.<br><br>
 <b>Prerequisites:</b><br>
@@ -24,15 +73,16 @@ are not modified.
 <!-- UsageSnippet language="python" operationID="updateConnectorConfig" method="put" path="/connectors/{connectorId}/config" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.connector_configuration.update_config(connector_id="<id>", auth={
+    res = pipeshub.connector_configuration.update_connector_config(connector_id="<id>", auth={
         "values": {
             "apiKey": "sk-xxxxx",
             "baseUrl": "https://api.example.com",
@@ -93,7 +143,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_auth_config
+## update_connector_auth_config
 
 Update only the authentication configuration.<br><br>
 <b>Use Case:</b><br>
@@ -109,15 +159,16 @@ requiring re-authentication for OAuth connectors.
 <!-- UsageSnippet language="python" operationID="updateConnectorAuthConfig" method="put" path="/connectors/{connectorId}/config/auth" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.connector_configuration.update_auth_config(connector_id="<id>", auth={
+    res = pipeshub.connector_configuration.update_connector_auth_config(connector_id="<id>", auth={
         "values": {
             "apiKey": "sk-xxxxx",
             "baseUrl": "https://api.example.com",
@@ -149,24 +200,56 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_google_workspace_credentials
+## update_connector_filters_sync_config
 
-Check if Google Workspace credentials are configured.
+Update filter selections and sync settings without touching auth.<br><br>
+<b>Use Case:</b><br>
+Use this to change what data is synced or adjust sync schedule
+without re-authenticating.
+
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getGoogleWorkspaceCredentials" method="get" path="/configurationManager/connectors/googleWorkspaceCredentials" -->
+<!-- UsageSnippet language="python" operationID="updateConnectorFiltersSyncConfig" method="put" path="/connectors/{connectorId}/config/filters-sync" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.connector_configuration.get_google_workspace_credentials()
+    res = pipeshub.connector_configuration.update_connector_filters_sync_config(connector_id="<id>", sync={
+        "scheduled_config": {
+            "cron_expression": "0 */6 * * *",
+            "timezone": "America/New_York",
+        },
+        "webhook_config": {
+            "events": [
+                "file.created",
+                "file.modified",
+                "file.deleted",
+            ],
+        },
+    }, filters={
+        "sync": {
+            "values": {
+                "folders": [
+                    "folder_id_1",
+                    "folder_id_2",
+                ],
+                "fileTypes": [
+                    "pdf",
+                    "docx",
+                    "xlsx",
+                ],
+                "includeShared": True,
+            },
+        },
+    })
 
     # Handle response
     print(res)
@@ -175,13 +258,17 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `connector_id`                                                                          | *str*                                                                                   | :heavy_check_mark:                                                                      | N/A                                                                                     |
+| `sync`                                                                                  | [Optional[models.ConnectorSyncConfig]](../../models/connectorsyncconfig.md)             | :heavy_minus_sign:                                                                      | Synchronization configuration for a connector instance                                  |
+| `filters`                                                                               | [Optional[models.ConnectorFiltersConfig]](../../models/connectorfiltersconfig.md)       | :heavy_minus_sign:                                                                      | Filter configuration to control what data is synced (sync filters and indexing filters) |
+| `base_url`                                                                              | *Optional[str]*                                                                         | :heavy_minus_sign:                                                                      | N/A                                                                                     |
+| `retries`                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                        | :heavy_minus_sign:                                                                      | Configuration to override the default retry behavior of the client.                     |
 
 ### Response
 
-**[models.GoogleWorkspaceCredentials](../../models/googleworkspacecredentials.md)**
+**[models.UpdateConnectorFiltersSyncConfigResponse](../../models/updateconnectorfilterssyncconfigresponse.md)**
 
 ### Errors
 

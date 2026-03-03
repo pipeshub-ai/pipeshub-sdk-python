@@ -2,17 +2,21 @@
 
 ## Overview
 
+Knowledge base management operations
+
 ### Available Operations
 
-* [create](#create) - Create a new knowledge base
-* [list](#list) - List all knowledge bases
-* [get](#get) - Get knowledge base by ID
-* [update](#update) - Update knowledge base
-* [delete](#delete) - Delete knowledge base
-* [get_root_nodes](#get_root_nodes) - Get knowledge hub root nodes
-* [get_child_nodes](#get_child_nodes) - Get knowledge hub child nodes
+* [create_knowledge_base](#create_knowledge_base) - Create a new knowledge base
+* [list_knowledge_bases](#list_knowledge_bases) - List all knowledge bases
+* [get_knowledge_base](#get_knowledge_base) - Get knowledge base by ID
+* [update_knowledge_base](#update_knowledge_base) - Update knowledge base
+* [delete_knowledge_base](#delete_knowledge_base) - Delete knowledge base
+* [reindex_failed_records](#reindex_failed_records) - Reindex failed records for connector
+* [~~move_record~~](#move_record) - Move record to another location :warning: **Deprecated**
+* [get_knowledge_hub_root_nodes](#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
+* [get_knowledge_hub_child_nodes](#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
-## create
+## create_knowledge_base
 
 Create a new knowledge base for organizing and managing documents within your organization.<br><br>
 <b>Overview:</b><br>
@@ -40,15 +44,16 @@ The user creating the KB automatically becomes the OWNER with full administrativ
 <!-- UsageSnippet language="python" operationID="createKnowledgeBase" method="post" path="/knowledgeBase" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.create(kb_name="Product Documentation")
+    res = pipeshub.knowledge_bases.create_knowledge_base(kb_name="Product Documentation")
 
     # Handle response
     print(res)
@@ -72,7 +77,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## list_knowledge_bases
 
 Retrieve a paginated list of all knowledge bases accessible to the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -98,15 +103,16 @@ Uses efficient pagination with limit/offset. For large result sets, use smaller 
 <!-- UsageSnippet language="python" operationID="listKnowledgeBases" method="get" path="/knowledgeBase" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.list(page=1, limit=20, permissions="OWNER,ORGANIZER,WRITER", sort_by="name", sort_order="asc")
+    res = pipeshub.knowledge_bases.list_knowledge_bases(page=1, limit=20, permissions="OWNER,ORGANIZER,WRITER", sort_by="name", sort_order="asc")
 
     # Handle response
     print(res)
@@ -135,7 +141,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_knowledge_base
 
 Retrieve detailed information about a specific knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -149,15 +155,16 @@ User must have at least READER permission to view KB details.
 <!-- UsageSnippet language="python" operationID="getKnowledgeBase" method="get" path="/knowledgeBase/{kbId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.get(kb_id="kb_550e8400-e29b-41d4-a716")
+    res = pipeshub.knowledge_bases.get_knowledge_base(kb_id="kb_550e8400-e29b-41d4-a716")
 
     # Handle response
     print(res)
@@ -181,7 +188,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_knowledge_base
 
 Update a knowledge base's name.<br><br>
 <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
@@ -197,15 +204,16 @@ Update a knowledge base's name.<br><br>
 <!-- UsageSnippet language="python" operationID="updateKnowledgeBase" method="put" path="/knowledgeBase/{kbId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.update(kb_id="<id>", kb_name="Updated Documentation Hub")
+    res = pipeshub.knowledge_bases.update_knowledge_base(kb_id="<id>", kb_name="Updated Documentation Hub")
 
     # Handle response
     print(res)
@@ -230,7 +238,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_knowledge_base
 
 Permanently delete a knowledge base and all its contents.<br><br>
 <b>Required Permission:</b> OWNER only<br><br>
@@ -249,15 +257,16 @@ Permanently delete a knowledge base and all its contents.<br><br>
 <!-- UsageSnippet language="python" operationID="deleteKnowledgeBase" method="delete" path="/knowledgeBase/{kbId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.delete(kb_id="<id>")
+    res = pipeshub.knowledge_bases.delete_knowledge_base(kb_id="<id>")
 
     # Handle response
     print(res)
@@ -281,7 +290,118 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_root_nodes
+## reindex_failed_records
+
+Trigger reindexing of records that previously failed to index for a specific connector.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="reindexFailedRecords" method="post" path="/knowledgeBase/reindex-failed/connector" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_bases.reindex_failed_records()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `connector_id`                                                      | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.ReindexFailedRecordsResponse](../../models/reindexfailedrecordsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~move_record~~
+
+<b>⚠️ Deprecated:</b> This endpoint is deprecated and will be removed in a future release.<br><br>
+Move a record from one location to another within a knowledge base.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage: moveToFolder
+
+<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToFolder" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_bases.move_record(kb_id="702f8ff0-0a01-4354-b592-eea268f40f25", record_id="<id>", body={})
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: moveToRoot
+
+<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToRoot" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_bases.move_record(kb_id="8bdbd4fc-ec2e-4e15-8a88-ae59a5b4bad2", record_id="<id>", body={})
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `kb_id`                                                               | *str*                                                                 | :heavy_check_mark:                                                    | N/A                                                                   |
+| `record_id`                                                           | *str*                                                                 | :heavy_check_mark:                                                    | N/A                                                                   |
+| `body`                                                                | [models.MoveRecordRequestBody](../../models/moverecordrequestbody.md) | :heavy_check_mark:                                                    | Request payload                                                       |
+| `retries`                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)      | :heavy_minus_sign:                                                    | Configuration to override the default retry behavior of the client.   |
+
+### Response
+
+**[models.MoveRecordResponse](../../models/moverecordresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## get_knowledge_hub_root_nodes
 
 Retrieve root-level nodes for unified knowledge hub browsing.<br><br>
 <b>Overview:</b><br>
@@ -299,15 +419,16 @@ Provides a unified view across all knowledge sources - KBs, connectors, and apps
 <!-- UsageSnippet language="python" operationID="getKnowledgeHubRootNodes" method="get" path="/knowledgeBase/knowledge-hub/nodes" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.get_root_nodes()
+    res = pipeshub.knowledge_bases.get_knowledge_hub_root_nodes()
 
     # Handle response
     print(res)
@@ -335,7 +456,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_child_nodes
+## get_knowledge_hub_child_nodes
 
 Retrieve child nodes under a specific parent in the knowledge hub tree.<br><br>
 <b>Navigation:</b><br>
@@ -347,15 +468,16 @@ Use this to drill down into KBs, folders, and connector hierarchies.
 <!-- UsageSnippet language="python" operationID="getKnowledgeHubChildNodes" method="get" path="/knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.knowledge_bases.get_child_nodes(parent_type="<value>", parent_id="<id>")
+    res = pipeshub.knowledge_bases.get_knowledge_hub_child_nodes(parent_type="<value>", parent_id="<id>")
 
     # Handle response
     print(res)

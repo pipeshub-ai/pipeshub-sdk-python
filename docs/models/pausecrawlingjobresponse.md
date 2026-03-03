@@ -1,12 +1,10 @@
 # PauseCrawlingJobResponse
 
-Crawling job paused successfully
+Crawling job paused
 
 
 ## Fields
 
-| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `success`                                                                  | *Optional[bool]*                                                           | :heavy_minus_sign:                                                         | N/A                                                                        | true                                                                       |
-| `message`                                                                  | *Optional[str]*                                                            | :heavy_minus_sign:                                                         | N/A                                                                        | Crawling job paused successfully                                           |
-| `data`                                                                     | [Optional[models.PauseCrawlingJobData]](../models/pausecrawlingjobdata.md) | :heavy_minus_sign:                                                         | N/A                                                                        |                                                                            |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `message`          | *Optional[str]*    | :heavy_minus_sign: | N/A                |

@@ -6,10 +6,11 @@ File upload operations
 
 ### Available Operations
 
-* [to_knowledge_base](#to_knowledge_base) - Upload files to knowledge base
-* [records_to_folder](#records_to_folder) - Upload files to folder
+* [upload_records_to_kb](#upload_records_to_kb) - Upload files to knowledge base
+* [upload_records_to_folder](#upload_records_to_folder) - Upload files to folder
+* [get_upload_limits](#get_upload_limits) - Get upload limits
 
-## to_knowledge_base
+## upload_records_to_kb
 
 Upload one or more files directly to a knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -33,15 +34,16 @@ Set <code>isVersioned: true</code> to enable version tracking for uploaded files
 <!-- UsageSnippet language="python" operationID="uploadRecordsToKB" method="post" path="/knowledgeBase/{kbId}/upload" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.upload.to_knowledge_base(kb_id="<id>", files=[
+    res = pipeshub.upload.upload_records_to_kb(kb_id="<id>", files=[
         {
             "file_name": "example.file",
             "content": open("example.file", "rb"),
@@ -74,7 +76,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## records_to_folder
+## upload_records_to_folder
 
 Upload files directly to a specific folder within a knowledge base.<br><br>
 <b>Same as KB upload</b> but files are placed in the specified folder instead of KB root.
@@ -85,15 +87,16 @@ Upload files directly to a specific folder within a knowledge base.<br><br>
 <!-- UsageSnippet language="python" operationID="uploadRecordsToFolder" method="post" path="/knowledgeBase/{kbId}/folder/{folderId}/upload" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.upload.records_to_folder(kb_id="<id>", folder_id="<id>", files=[
+    res = pipeshub.upload.upload_records_to_folder(kb_id="<id>", folder_id="<id>", files=[
         {
             "file_name": "example.file",
             "content": open("example.file", "rb"),
@@ -119,6 +122,50 @@ with Pipeshub(
 ### Response
 
 **[models.UploadResult](../../models/uploadresult.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## get_upload_limits
+
+Retrieve current upload constraints for the organization.<br><br>
+<b>Use Case:</b><br>
+Call this before uploads to validate file sizes on the client side and display appropriate limits to users.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getUploadLimits" method="get" path="/knowledgeBase/limits" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.upload.get_upload_limits()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetUploadLimitsResponse](../../models/getuploadlimitsresponse.md)**
 
 ### Errors
 

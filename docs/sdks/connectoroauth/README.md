@@ -2,66 +2,15 @@
 
 ## Overview
 
+OAuth 2.0 authorization flow for connectors requiring user consent
+
 ### Available Operations
 
-* [exchange_code_for_token](#exchange_code_for_token) - Exchange authorization code for tokens (legacy)
-* [get_authorization_url](#get_authorization_url) - Get OAuth authorization URL
-* [handle_callback](#handle_callback) - OAuth callback handler
+* [get_o_auth_authorization_url](#get_o_auth_authorization_url) - Get OAuth authorization URL
+* [handle_o_auth_callback](#handle_o_auth_callback) - OAuth callback handler
+* [~~get_token_from_code~~](#get_token_from_code) - Exchange Google authorization code for tokens :warning: **Deprecated**
 
-## exchange_code_for_token
-
-Exchange a Google Workspace authorization code for access and refresh tokens.<br><br>
-<b>Note:</b> This is a legacy endpoint specific to Google Workspace connectors.
-For new integrations, use the standard OAuth flow via
-<code>/connectors/{connectorId}/oauth/authorize</code> and the callback.<br><br>
-<b>Flow:</b><br>
-<ol>
-<li>User completes Google Workspace OAuth consent in the browser</li>
-<li>Browser receives authorization code</li>
-<li>Frontend sends the code to this endpoint</li>
-<li>Backend exchanges code for tokens and stores them</li>
-</ol>
-<b>Admin Only:</b> Requires admin privileges.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getTokenFromCode" method="post" path="/connectors/getTokenFromCode" -->
-```python
-import os
-from pipeshub import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
-
-    res = p_client.connector_o_auth.exchange_code_for_token(code="<value>")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `code`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Authorization code from Google OAuth consent flow                   |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.GetTokenFromCodeResponse](../../models/gettokenfromcoderesponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_authorization_url
+## get_o_auth_authorization_url
 
 Generate an OAuth authorization URL to start the OAuth flow.<br><br>
 <b>Flow:</b><br>
@@ -82,15 +31,16 @@ connector ID. This is validated in the callback.
 <!-- UsageSnippet language="python" operationID="getOAuthAuthorizationUrl" method="get" path="/connectors/{connectorId}/oauth/authorize" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.connector_o_auth.get_authorization_url(connector_id="<id>")
+    res = pipeshub.connector_o_auth.get_o_auth_authorization_url(connector_id="<id>")
 
     # Handle response
     print(res)
@@ -115,7 +65,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## handle_callback
+## handle_o_auth_callback
 
 Handle the OAuth callback from the identity provider.<br><br>
 <b>Note:</b><br>
@@ -133,14 +83,12 @@ user is redirected with error information.
 
 <!-- UsageSnippet language="python" operationID="handleOAuthCallback" method="get" path="/connectors/oauth/callback" -->
 ```python
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub
 
 
-with Pipeshub(
-    server_url="https://api.example.com",
-) as p_client:
+with Pipeshub() as pipeshub:
 
-    res = p_client.connector_o_auth.handle_callback()
+    res = pipeshub.connector_o_auth.handle_o_auth_callback()
 
     # Handle response
     print(res)
@@ -160,6 +108,66 @@ with Pipeshub(
 ### Response
 
 **[models.HandleOAuthCallbackResponse](../../models/handleoauthcallbackresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## ~~get_token_from_code~~
+
+<b>⚠️ Deprecated:</b> Legacy Google Workspace token exchange endpoint. Use the generic
+OAuth flow via <code>/connectors/{connectorId}/oauth/authorize</code> instead.<br><br>
+<b>Overview:</b><br>
+Exchanges a Google OAuth authorization code for access and refresh tokens,
+stores the credentials, and enables the Google Workspace connector.<br><br>
+<b>What Happens:</b><br>
+<ol>
+<li>Retrieves Google Workspace OAuth config (client ID/secret)</li>
+<li>Exchanges the authorization code for tokens via Google's token endpoint</li>
+<li>Verifies the ID token</li>
+<li>Stores access and refresh tokens in configuration manager</li>
+<li>Creates or enables the Google Workspace connector</li>
+<li>Publishes an AppEnabledEvent for the sync service</li>
+</ol>
+<b>Admin Only:</b><br>
+Requires organization admin privileges.
+
+
+> :warning: **DEPRECATED**: This will be removed in a future release, please migrate away from it as soon as possible.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getTokenFromCode" method="post" path="/connectors/getTokenFromCode" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.connector_o_auth.get_token_from_code(temp_code="<value>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `temp_code`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Google OAuth authorization code received from the consent flow      |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetTokenFromCodeResponse](../../models/gettokenfromcoderesponse.md)**
 
 ### Errors
 

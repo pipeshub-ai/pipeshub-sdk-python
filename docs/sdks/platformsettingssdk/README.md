@@ -2,15 +2,17 @@
 
 ## Overview
 
+Platform-wide settings including file upload limits, feature flags, and custom system prompts.
+
 ### Available Operations
 
-* [set](#set) - Update platform settings
-* [get](#get) - Get platform settings
+* [set_platform_settings](#set_platform_settings) - Update platform settings
+* [get_platform_settings](#get_platform_settings) - Get platform settings
 * [get_available_feature_flags](#get_available_feature_flags) - Get available feature flags
-* [set_custom_prompt](#set_custom_prompt) - Update custom system prompt
-* [get_custom_prompt](#get_custom_prompt) - Get custom system prompt
+* [set_custom_system_prompt](#set_custom_system_prompt) - Update custom system prompt
+* [get_custom_system_prompt](#get_custom_system_prompt) - Get custom system prompt
 
-## set
+## set_platform_settings
 
 Configure platform-wide settings including file upload limits and feature flags.
 
@@ -27,15 +29,16 @@ Configure platform-wide settings including file upload limits and feature flags.
 <!-- UsageSnippet language="python" operationID="setPlatformSettings" method="post" path="/configurationManager/platform/settings" example="default30MB" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    p_client.platform_settings.set(file_upload_max_size_bytes=31457280, feature_flags={
+    pipeshub.platform_settings.set_platform_settings(file_upload_max_size_bytes=31457280, feature_flags={
         "ENABLE_BETA_CONNECTORS": False,
     })
 
@@ -47,15 +50,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="setPlatformSettings" method="post" path="/configurationManager/platform/settings" example="enableBetaFeatures" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    p_client.platform_settings.set(file_upload_max_size_bytes=31457280, feature_flags={
+    pipeshub.platform_settings.set_platform_settings(file_upload_max_size_bytes=31457280, feature_flags={
         "ENABLE_BETA_CONNECTORS": True,
     })
 
@@ -67,15 +71,16 @@ with Pipeshub(
 <!-- UsageSnippet language="python" operationID="setPlatformSettings" method="post" path="/configurationManager/platform/settings" example="increased100MB" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    p_client.platform_settings.set(file_upload_max_size_bytes=104857600, feature_flags={
+    pipeshub.platform_settings.set_platform_settings(file_upload_max_size_bytes=104857600, feature_flags={
         "ENABLE_BETA_CONNECTORS": False,
     })
 
@@ -97,7 +102,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_platform_settings
 
 Retrieve current platform settings including file upload limits and feature flag states.
 
@@ -106,15 +111,16 @@ Retrieve current platform settings including file upload limits and feature flag
 <!-- UsageSnippet language="python" operationID="getPlatformSettings" method="get" path="/configurationManager/platform/settings" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.platform_settings.get()
+    res = pipeshub.platform_settings.get_platform_settings()
 
     # Handle response
     print(res)
@@ -146,15 +152,16 @@ List all available feature flags with their descriptions and default values.
 <!-- UsageSnippet language="python" operationID="getAvailableFeatureFlags" method="get" path="/configurationManager/platform/feature-flags/available" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.platform_settings.get_available_feature_flags()
+    res = pipeshub.platform_settings.get_available_feature_flags()
 
     # Handle response
     print(res)
@@ -177,7 +184,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## set_custom_prompt
+## set_custom_system_prompt
 
 Set a custom system prompt that will be used by AI models.
 
@@ -186,15 +193,16 @@ Set a custom system prompt that will be used by AI models.
 <!-- UsageSnippet language="python" operationID="setCustomSystemPrompt" method="put" path="/configurationManager/prompts/system" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    p_client.platform_settings.set_custom_prompt()
+    pipeshub.platform_settings.set_custom_system_prompt()
 
     # Use the SDK ...
 
@@ -213,7 +221,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_custom_prompt
+## get_custom_system_prompt
 
 Get custom system prompt.
 
@@ -222,15 +230,16 @@ Get custom system prompt.
 <!-- UsageSnippet language="python" operationID="getCustomSystemPrompt" method="get" path="/configurationManager/prompts/system" -->
 ```python
 import os
-from pipeshub import Pipeshub
+from pipeshub_sdk import Pipeshub, models
 
 
 with Pipeshub(
-    server_url="https://api.example.com",
-    bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-) as p_client:
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = p_client.platform_settings.get_custom_prompt()
+    res = pipeshub.platform_settings.get_custom_system_prompt()
 
     # Handle response
     print(res)
