@@ -385,6 +385,11 @@ with Pipeshub() as pipeshub:
 * [get_knowledge_hub_root_nodes](docs/sdks/knowledgebases/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
 * [get_knowledge_hub_child_nodes](docs/sdks/knowledgebases/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
+### [Mcp](docs/sdks/mcp/README.md)
+
+* [handle_mcp_request](docs/sdks/mcp/README.md#handle_mcp_request) - Handle MCP JSON-RPC request
+* [handle_mcp_streaming_request](docs/sdks/mcp/README.md#handle_mcp_streaming_request) - MCP SSE streaming endpoint
+
 ### [MetricsCollection](docs/sdks/metricscollection/README.md)
 
 * [get_metrics_collection](docs/sdks/metricscollection/README.md#get_metrics_collection) - Get metrics collection configuration
@@ -434,7 +439,9 @@ with Pipeshub() as pipeshub:
 
 * [oauth_user_info](docs/sdks/openidconnect/README.md#oauth_user_info) - Get authenticated user information
 * [openid_configuration](docs/sdks/openidconnect/README.md#openid_configuration) - OpenID Connect Discovery
+* [oauth_authorization_server_metadata](docs/sdks/openidconnect/README.md#oauth_authorization_server_metadata) - OAuth 2.0 Authorization Server Metadata
 * [jwks](docs/sdks/openidconnect/README.md#jwks) - JSON Web Key Set
+* [oauth_protected_resource](docs/sdks/openidconnect/README.md#oauth_protected_resource) - OAuth Protected Resource Metadata
 
 ### [OrganizationAuthConfig](docs/sdks/organizationauthconfig/README.md)
 
@@ -791,11 +798,11 @@ with Pipeshub() as pipeshub:
 
 
 **Inherit from [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`AuthError`](./src/pipeshub_sdk/errors/autherror.py): Authentication error response with details for debugging and user feedback.<br><br> <b>Common Error Codes:</b><br> <ul> <li><code>INVALID_CREDENTIALS</code> - Wrong password or OTP</li> <li><code>ACCOUNT_BLOCKED</code> - Account locked after 5 failed attempts</li> <li><code>SESSION_EXPIRED</code> - Session token has expired</li> <li><code>OTP_EXPIRED</code> - OTP code has expired (10 min validity)</li> <li><code>USER_NOT_FOUND</code> - Email not registered</li> <li><code>INVALID_TOKEN</code> - JWT token is invalid or malformed</li> <li><code>METHOD_NOT_ALLOWED</code> - Auth method not enabled for org</li> </ul>. Applicable to 7 of 270 methods.*
-* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 5 of 270 methods.*
-* [`ResetPasswordBadRequestError`](./src/pipeshub_sdk/errors/resetpasswordbadrequesterror.py): Invalid current password or weak new password. Status code `400`. Applicable to 1 of 270 methods.*
-* [`SamlSignInCallbackBadRequestError`](./src/pipeshub_sdk/errors/samlsignincallbackbadrequesterror.py): Invalid SAML response. Status code `400`. Applicable to 1 of 270 methods.*
-* [`UnauthorizedError`](./src/pipeshub_sdk/errors/unauthorizederror.py): SAML authentication failed. Status code `401`. Applicable to 1 of 270 methods.*
+* [`AuthError`](./src/pipeshub_sdk/errors/autherror.py): Authentication error response with details for debugging and user feedback.<br><br> <b>Common Error Codes:</b><br> <ul> <li><code>INVALID_CREDENTIALS</code> - Wrong password or OTP</li> <li><code>ACCOUNT_BLOCKED</code> - Account locked after 5 failed attempts</li> <li><code>SESSION_EXPIRED</code> - Session token has expired</li> <li><code>OTP_EXPIRED</code> - OTP code has expired (10 min validity)</li> <li><code>USER_NOT_FOUND</code> - Email not registered</li> <li><code>INVALID_TOKEN</code> - JWT token is invalid or malformed</li> <li><code>METHOD_NOT_ALLOWED</code> - Auth method not enabled for org</li> </ul>. Applicable to 7 of 274 methods.*
+* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 5 of 274 methods.*
+* [`ResetPasswordBadRequestError`](./src/pipeshub_sdk/errors/resetpasswordbadrequesterror.py): Invalid current password or weak new password. Status code `400`. Applicable to 1 of 274 methods.*
+* [`SamlSignInCallbackBadRequestError`](./src/pipeshub_sdk/errors/samlsignincallbackbadrequesterror.py): Invalid SAML response. Status code `400`. Applicable to 1 of 274 methods.*
+* [`UnauthorizedError`](./src/pipeshub_sdk/errors/unauthorizederror.py): SAML authentication failed. Status code `401`. Applicable to 1 of 274 methods.*
 * [`ResponseValidationError`](./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>
@@ -806,13 +813,20 @@ with Pipeshub() as pipeshub:
 <!-- Start Server Selection [server] -->
 ## Server Selection
 
-### Server Variables
+### Select Server by Index
 
-The default server `https://{instance_url}/api/v1` contains variables and is set to `https://https://app.pipeshub.com/api/v1` by default. To override default values, the following parameters are available when initializing the SDK client instance:
+You can override the default server globally by passing a server index to the `server_idx: int` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
 
-| Variable       | Parameter           | Default                      | Description                       |
-| -------------- | ------------------- | ---------------------------- | --------------------------------- |
-| `instance_url` | `instance_url: str` | `"https://app.pipeshub.com"` | Base server URL (without /api/v1) |
+| #   | Server                          | Variables      | Description                                       |
+| --- | ------------------------------- | -------------- | ------------------------------------------------- |
+| 0   | `https://{instance_url}/api/v1` | `instance_url` | Base API URL                                      |
+| 1   | `https://{instance_url}`        | `instance_url` | Root URL (used for MCP endpoints mounted at /mcp) |
+
+If the selected server has variables, you may override its default values through the additional parameters made available in the SDK constructor:
+
+| Variable       | Parameter           | Default                      | Description     |
+| -------------- | ------------------- | ---------------------------- | --------------- |
+| `instance_url` | `instance_url: str` | `"https://app.pipeshub.com"` | Base server URL |
 
 #### Example
 
@@ -834,13 +848,13 @@ with Pipeshub(
 
 ### Override Server URL Per-Client
 
-The default server can be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
+The default server can also be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
 ```python
 from pipeshub_sdk import Pipeshub
 
 
 with Pipeshub(
-    server_url="https://https://app.pipeshub.com/api/v1",
+    server_url="https://https://app.pipeshub.com",
 ) as pipeshub:
 
     res = pipeshub.user_account.init_auth(email="user@example.com")

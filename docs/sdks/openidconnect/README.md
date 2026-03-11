@@ -6,6 +6,8 @@ OpenID Connect 1.0 endpoints for identity federation and discovery.
 
 **Discovery:**
 - `/.well-known/openid-configuration` - Authorization server metadata
+- `/.well-known/oauth-authorization-server` - Authorization server metadata (RFC 8414)
+- `/.well-known/oauth-protected-resource/mcp` - Protected resource metadata (RFC 9728)
 - `/.well-known/jwks.json` - Public keys for token verification
 
 **UserInfo:**
@@ -21,7 +23,9 @@ OpenID Connect 1.0 endpoints for identity federation and discovery.
 
 * [oauth_user_info](#oauth_user_info) - Get authenticated user information
 * [openid_configuration](#openid_configuration) - OpenID Connect Discovery
+* [oauth_authorization_server_metadata](#oauth_authorization_server_metadata) - OAuth 2.0 Authorization Server Metadata
 * [jwks](#jwks) - JSON Web Key Set
+* [oauth_protected_resource](#oauth_protected_resource) - OAuth Protected Resource Metadata
 
 ## oauth_user_info
 
@@ -124,6 +128,50 @@ with Pipeshub() as pipeshub:
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
+## oauth_authorization_server_metadata
+
+OAuth 2.0 Authorization Server Metadata Endpoint (RFC 8414).
+<br><br>
+Returns the same metadata as the OpenID Connect Discovery endpoint
+but at the RFC 8414 standard path. MCP clients like Claude Code use
+this endpoint for discovery instead of openid-configuration.
+<br><br>
+<b>Note:</b> This endpoint does not require authentication.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="oauthAuthorizationServerMetadata" method="get" path="/.well-known/oauth-authorization-server" -->
+```python
+from pipeshub_sdk import Pipeshub
+
+
+with Pipeshub() as pipeshub:
+
+    res = pipeshub.open_id_connect.oauth_authorization_server_metadata()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| `server_url`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | An optional server URL to use.                                      |
+
+### Response
+
+**[models.OpenIDConfiguration](../../models/openidconfiguration.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
 ## jwks
 
 JSON Web Key Set Endpoint (RFC 7517).
@@ -167,6 +215,54 @@ with Pipeshub() as pipeshub:
 ### Response
 
 **[models.Jwks](../../models/jwks.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## oauth_protected_resource
+
+OAuth Protected Resource Metadata Endpoint (RFC 9728).
+<br><br>
+Returns metadata about the protected resource including the resource
+identifier, authorization servers, supported scopes, and bearer token methods.
+<br><br>
+<b>Use Cases:</b><br>
+- Discovering which authorization server to use for this resource<br>
+- Determining supported scopes and bearer token methods<br>
+- MCP client auto-configuration
+<br><br>
+<b>Note:</b> This endpoint does not require authentication.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="oauthProtectedResource" method="get" path="/.well-known/oauth-protected-resource/mcp" -->
+```python
+from pipeshub_sdk import Pipeshub
+
+
+with Pipeshub() as pipeshub:
+
+    res = pipeshub.open_id_connect.oauth_protected_resource()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| `server_url`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | An optional server URL to use.                                      |
+
+### Response
+
+**[models.OAuthProtectedResourceMetadata](../../models/oauthprotectedresourcemetadata.md)**
 
 ### Errors
 
