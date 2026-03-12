@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from pipeshub_sdk.document_management import DocumentManagement
     from pipeshub_sdk.folders import Folders
     from pipeshub_sdk.knowledge_bases import KnowledgeBases
+    from pipeshub_sdk.mcp import Mcp
     from pipeshub_sdk.metrics_collection import MetricsCollection
     from pipeshub_sdk.oauth_apps import OAuthApps
     from pipeshub_sdk.oauth_configuration import OAuthConfiguration
@@ -110,6 +111,8 @@ class Pipeshub(BaseSDK):
 
     **Discovery:**
     - `/.well-known/openid-configuration` - Authorization server metadata
+    - `/.well-known/oauth-authorization-server` - Authorization server metadata (RFC 8414)
+    - `/.well-known/oauth-protected-resource/mcp` - Protected resource metadata (RFC 9728)
     - `/.well-known/jwks.json` - Public keys for token verification
 
     **UserInfo:**
@@ -260,6 +263,23 @@ class Pipeshub(BaseSDK):
     - `once`: Run once at a specific future time
 
     """
+    mcp: "Mcp"
+    r"""Model Context Protocol (MCP) endpoints for AI tool integration.
+
+    PipesHub exposes a Streamable HTTP MCP server that allows MCP-compatible clients
+    (such as Claude Desktop, Cursor, or custom agents) to interact with PipesHub tools
+    including search, conversations, knowledge base management, and connector operations.
+
+    **Transport:** Streamable HTTP (JSON-RPC over HTTP)
+    **Base Path:** `/mcp` (not under `/api/v1`)
+
+    **Authentication:**
+    All MCP requests require a valid Bearer token or OAuth 2.0 access token.
+
+    **Stateless Mode:**
+    The server operates in stateless mode — each request creates an independent MCP session.
+
+    """
     _sub_sdk_map = {
         "user_account": ("pipeshub_sdk.user_account", "UserAccount"),
         "o_auth": ("pipeshub_sdk.oauth_sdk", "OAuthSDK"),
@@ -340,6 +360,7 @@ class Pipeshub(BaseSDK):
             "ConfigurationManager",
         ),
         "crawling_jobs": ("pipeshub_sdk.crawling_jobs", "CrawlingJobs"),
+        "mcp": ("pipeshub_sdk.mcp", "Mcp"),
     }
 
     def __init__(
@@ -394,6 +415,9 @@ class Pipeshub(BaseSDK):
             if url_params is not None:
                 server_url = utils.template_url(server_url, url_params)
         server_defaults: List[Dict[str, str]] = [
+            {
+                "instance_url": instance_url or "https://app.pipeshub.com",
+            },
             {
                 "instance_url": instance_url or "https://app.pipeshub.com",
             },
