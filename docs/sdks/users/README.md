@@ -969,7 +969,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetAllUsersWithGroupsResponse](../../models/getalluserswithgroupsresponse.md)**
+**[List[models.GetAllUsersWithGroupsResponse]](../../models/.md)**
 
 ### Errors
 

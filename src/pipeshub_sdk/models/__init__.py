@@ -571,8 +571,6 @@ if TYPE_CHECKING:
     )
     from .getallusersop import GetAllUsersRequest, GetAllUsersRequestTypedDict
     from .getalluserswithgroupsop import (
-        GetAllUsersWithGroupsData,
-        GetAllUsersWithGroupsDataTypedDict,
         GetAllUsersWithGroupsResponse,
         GetAllUsersWithGroupsResponseTypedDict,
     )
@@ -2371,8 +2369,6 @@ __all__ = [
     "GetAllRecordsSortOrder",
     "GetAllUsersRequest",
     "GetAllUsersRequestTypedDict",
-    "GetAllUsersWithGroupsData",
-    "GetAllUsersWithGroupsDataTypedDict",
     "GetAllUsersWithGroupsResponse",
     "GetAllUsersWithGroupsResponseTypedDict",
     "GetArchivedConversationsFilters",
@@ -3813,8 +3809,6 @@ _dynamic_imports: dict[str, str] = {
     "Origins": ".getallrecordsop",
     "GetAllUsersRequest": ".getallusersop",
     "GetAllUsersRequestTypedDict": ".getallusersop",
-    "GetAllUsersWithGroupsData": ".getalluserswithgroupsop",
-    "GetAllUsersWithGroupsDataTypedDict": ".getalluserswithgroupsop",
     "GetAllUsersWithGroupsResponse": ".getalluserswithgroupsop",
     "GetAllUsersWithGroupsResponseTypedDict": ".getalluserswithgroupsop",
     "GetArchivedConversationsFilters": ".getarchivedconversationsop",

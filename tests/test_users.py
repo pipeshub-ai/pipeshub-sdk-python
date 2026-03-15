@@ -61,10 +61,7 @@ def test_users_get_user_by_id():
 
         res = pipeshub.users.get_by_id(id="507f1f77bcf86cd799439011")
         assert res is not None
-        assert res == models.User(
-            org_id="<value>",
-            email="Darby_Considine37@gmail.com",
-        )
+        assert res == models.User()
 
 
 def test_users_update_user():
@@ -290,7 +287,9 @@ def test_users_get_all_users_with_groups():
 
         res = pipeshub.users.get_all_with_groups()
         assert res is not None
-        assert res == models.GetAllUsersWithGroupsResponse()
+        assert res == [
+            models.GetAllUsersWithGroupsResponse(),
+        ]
 
 
 def test_users_get_users_by_ids():

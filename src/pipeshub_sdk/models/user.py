@@ -14,14 +14,12 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class UserTypedDict(TypedDict):
     r"""User account in an organization"""
 
-    org_id: str
-    r"""Organization ID the user belongs to"""
-    email: str
-    r"""Email address (unique, lowercase)"""
     id: NotRequired[str]
     r"""Unique user identifier (MongoDB ObjectId)"""
     slug: NotRequired[str]
     r"""Unique slug for the user"""
+    org_id: NotRequired[str]
+    r"""Organization ID the user belongs to"""
     full_name: NotRequired[str]
     r"""Full name of the user"""
     first_name: NotRequired[str]
@@ -30,6 +28,8 @@ class UserTypedDict(TypedDict):
     r"""Last name"""
     middle_name: NotRequired[str]
     r"""Middle name"""
+    email: NotRequired[str]
+    r"""Email address (unique, lowercase)"""
     mobile: NotRequired[str]
     r"""Mobile number (10-15 digits with optional +)"""
     has_logged_in: NotRequired[bool]
@@ -54,17 +54,14 @@ class UserTypedDict(TypedDict):
 class User(BaseModel):
     r"""User account in an organization"""
 
-    org_id: Annotated[str, pydantic.Field(alias="orgId")]
-    r"""Organization ID the user belongs to"""
-
-    email: str
-    r"""Email address (unique, lowercase)"""
-
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
     r"""Unique user identifier (MongoDB ObjectId)"""
 
     slug: Optional[str] = None
     r"""Unique slug for the user"""
+
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
+    r"""Organization ID the user belongs to"""
 
     full_name: Annotated[Optional[str], pydantic.Field(alias="fullName")] = None
     r"""Full name of the user"""
@@ -77,6 +74,9 @@ class User(BaseModel):
 
     middle_name: Annotated[Optional[str], pydantic.Field(alias="middleName")] = None
     r"""Middle name"""
+
+    email: Optional[str] = None
+    r"""Email address (unique, lowercase)"""
 
     mobile: Optional[str] = None
     r"""Mobile number (10-15 digits with optional +)"""
@@ -117,10 +117,12 @@ class User(BaseModel):
             [
                 "_id",
                 "slug",
+                "orgId",
                 "fullName",
                 "firstName",
                 "lastName",
                 "middleName",
+                "email",
                 "mobile",
                 "hasLoggedIn",
                 "designation",
