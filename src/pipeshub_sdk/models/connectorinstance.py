@@ -16,13 +16,13 @@ from typing import Any, Dict, List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class DocumentationLinkTypedDict(TypedDict):
+class ConnectorInstanceDocumentationLinkTypedDict(TypedDict):
     title: NotRequired[str]
     url: NotRequired[str]
     type: NotRequired[str]
 
 
-class DocumentationLink(BaseModel):
+class ConnectorInstanceDocumentationLink(BaseModel):
     title: Optional[str] = None
 
     url: Optional[str] = None
@@ -53,7 +53,7 @@ class ConnectorInstanceConfigTypedDict(TypedDict):
     supports_realtime: NotRequired[bool]
     supports_sync: NotRequired[bool]
     supports_agent: NotRequired[bool]
-    documentation_links: NotRequired[List[DocumentationLinkTypedDict]]
+    documentation_links: NotRequired[List[ConnectorInstanceDocumentationLinkTypedDict]]
     hide_connector: NotRequired[bool]
     auth: NotRequired[Dict[str, Any]]
     r"""Authentication configuration including supported types, schemas, OAuth configs, and custom fields"""
@@ -81,7 +81,8 @@ class ConnectorInstanceConfig(BaseModel):
     )
 
     documentation_links: Annotated[
-        Optional[List[DocumentationLink]], pydantic.Field(alias="documentationLinks")
+        Optional[List[ConnectorInstanceDocumentationLink]],
+        pydantic.Field(alias="documentationLinks"),
     ] = None
 
     hide_connector: Annotated[Optional[bool], pydantic.Field(alias="hideConnector")] = (

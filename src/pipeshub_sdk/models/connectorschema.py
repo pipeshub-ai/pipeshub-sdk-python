@@ -9,40 +9,76 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class AuthSchemaTypedDict(TypedDict):
-    r"""JSON Schema for authentication fields"""
+class ConnectorSchemaDocumentationLinkTypedDict(TypedDict):
+    title: NotRequired[str]
+    url: NotRequired[str]
+    type: NotRequired[str]
 
 
-class AuthSchema(BaseModel):
-    r"""JSON Schema for authentication fields"""
+class ConnectorSchemaDocumentationLink(BaseModel):
+    title: Optional[str] = None
+
+    url: Optional[str] = None
+
+    type: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["title", "url", "type"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
-class SyncSchemaTypedDict(TypedDict):
-    r"""JSON Schema for sync configuration"""
+class ConnectorSchemaAuthTypedDict(TypedDict):
+    r"""Authentication schema configuration"""
 
 
-class SyncSchema(BaseModel):
-    r"""JSON Schema for sync configuration"""
+class ConnectorSchemaAuth(BaseModel):
+    r"""Authentication schema configuration"""
 
 
-class FilterSchemaTypedDict(TypedDict):
-    r"""JSON Schema for filter options"""
+class ConnectorSchemaSyncTypedDict(TypedDict):
+    r"""Sync schema configuration"""
 
 
-class FilterSchema(BaseModel):
-    r"""JSON Schema for filter options"""
+class ConnectorSchemaSync(BaseModel):
+    r"""Sync schema configuration"""
+
+
+class ConnectorSchemaFiltersTypedDict(TypedDict):
+    r"""Filter schema configuration"""
+
+
+class ConnectorSchemaFilters(BaseModel):
+    r"""Filter schema configuration"""
 
 
 class ConnectorSchemaTypedDict(TypedDict):
     r"""Schema definition for configuring a connector type"""
 
     connector_type: NotRequired[str]
-    auth_schema: NotRequired[AuthSchemaTypedDict]
-    r"""JSON Schema for authentication fields"""
-    sync_schema: NotRequired[SyncSchemaTypedDict]
-    r"""JSON Schema for sync configuration"""
-    filter_schema: NotRequired[FilterSchemaTypedDict]
-    r"""JSON Schema for filter options"""
+    icon_path: NotRequired[str]
+    supports_realtime: NotRequired[bool]
+    supports_sync: NotRequired[bool]
+    supports_agent: NotRequired[bool]
+    documentation_links: NotRequired[List[ConnectorSchemaDocumentationLinkTypedDict]]
+    hide_connector: NotRequired[bool]
+    auth: NotRequired[ConnectorSchemaAuthTypedDict]
+    r"""Authentication schema configuration"""
+    sync: NotRequired[ConnectorSchemaSyncTypedDict]
+    r"""Sync schema configuration"""
+    filters: NotRequired[ConnectorSchemaFiltersTypedDict]
+    r"""Filter schema configuration"""
     required_fields: NotRequired[List[str]]
     r"""Required field names"""
 
@@ -54,20 +90,37 @@ class ConnectorSchema(BaseModel):
         None
     )
 
-    auth_schema: Annotated[Optional[AuthSchema], pydantic.Field(alias="authSchema")] = (
-        None
-    )
-    r"""JSON Schema for authentication fields"""
+    icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
 
-    sync_schema: Annotated[Optional[SyncSchema], pydantic.Field(alias="syncSchema")] = (
-        None
-    )
-    r"""JSON Schema for sync configuration"""
-
-    filter_schema: Annotated[
-        Optional[FilterSchema], pydantic.Field(alias="filterSchema")
+    supports_realtime: Annotated[
+        Optional[bool], pydantic.Field(alias="supportsRealtime")
     ] = None
-    r"""JSON Schema for filter options"""
+
+    supports_sync: Annotated[Optional[bool], pydantic.Field(alias="supportsSync")] = (
+        None
+    )
+
+    supports_agent: Annotated[Optional[bool], pydantic.Field(alias="supportsAgent")] = (
+        None
+    )
+
+    documentation_links: Annotated[
+        Optional[List[ConnectorSchemaDocumentationLink]],
+        pydantic.Field(alias="documentationLinks"),
+    ] = None
+
+    hide_connector: Annotated[Optional[bool], pydantic.Field(alias="hideConnector")] = (
+        None
+    )
+
+    auth: Optional[ConnectorSchemaAuth] = None
+    r"""Authentication schema configuration"""
+
+    sync: Optional[ConnectorSchemaSync] = None
+    r"""Sync schema configuration"""
+
+    filters: Optional[ConnectorSchemaFilters] = None
+    r"""Filter schema configuration"""
 
     required_fields: Annotated[
         Optional[List[str]], pydantic.Field(alias="requiredFields")
@@ -79,9 +132,15 @@ class ConnectorSchema(BaseModel):
         optional_fields = set(
             [
                 "connectorType",
-                "authSchema",
-                "syncSchema",
-                "filterSchema",
+                "iconPath",
+                "supportsRealtime",
+                "supportsSync",
+                "supportsAgent",
+                "documentationLinks",
+                "hideConnector",
+                "auth",
+                "sync",
+                "filters",
                 "requiredFields",
             ]
         )

@@ -19,13 +19,7 @@ def test_connectorregistry_get_connector_registry():
         assert res is not None
         assert res == models.GetConnectorRegistryResponse(
             connectors=[
-                models.ConnectorType(
-                    connector_type="google-drive",
-                    display_name="Google Drive",
-                    supported_scopes=[
-                        "team",
-                    ],
-                ),
+                models.ConnectorInstance(),
             ],
         )
 

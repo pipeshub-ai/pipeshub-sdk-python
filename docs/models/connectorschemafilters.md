@@ -1,6 +1,6 @@
-# FilterSchema
+# ConnectorSchemaFilters
 
-JSON Schema for filter options
+Filter schema configuration
 
 
 ## Fields

@@ -1,4 +1,4 @@
-# Auth
+# ConnectorConfigAuth
 
 Authentication configuration
 

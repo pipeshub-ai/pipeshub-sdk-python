@@ -54,7 +54,7 @@ class AuthValues(BaseModel):
         return m
 
 
-class AuthTypedDict(TypedDict):
+class ConnectorConfigAuthTypedDict(TypedDict):
     r"""Authentication configuration"""
 
     oauth_instance_name: NotRequired[str]
@@ -70,7 +70,7 @@ class AuthTypedDict(TypedDict):
     r"""Auth field values (varies per connector)"""
 
 
-class Auth(BaseModel):
+class ConnectorConfigAuth(BaseModel):
     r"""Authentication configuration"""
 
     oauth_instance_name: Annotated[
@@ -460,7 +460,7 @@ class ConnectorConfigTypedDict(TypedDict):
     </ul>
 
     """
-    auth: NotRequired[AuthTypedDict]
+    auth: NotRequired[ConnectorConfigAuthTypedDict]
     r"""Authentication configuration"""
     sync: NotRequired[ConnectorConfigSyncTypedDict]
     r"""Sync configuration"""
@@ -515,7 +515,7 @@ class ConnectorConfig(BaseModel):
 
     """
 
-    auth: Optional[Auth] = None
+    auth: Optional[ConnectorConfigAuth] = None
     r"""Authentication configuration"""
 
     sync: Optional[ConnectorConfigSync] = None
@@ -591,7 +591,7 @@ try:
 except NameError:
     pass
 try:
-    Auth.model_rebuild()
+    ConnectorConfigAuth.model_rebuild()
 except NameError:
     pass
 try:

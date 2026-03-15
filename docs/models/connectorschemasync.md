@@ -1,6 +1,6 @@
-# AuthSchema
+# ConnectorSchemaSync
 
-JSON Schema for authentication fields
+Sync schema configuration
 
 
 ## Fields
