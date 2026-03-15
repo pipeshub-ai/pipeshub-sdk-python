@@ -5,6 +5,6 @@ Request payload
 
 ## Fields
 
-| Field              | Type               | Required           | Description        |
-| ------------------ | ------------------ | ------------------ | ------------------ |
-| `last_name`        | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| Field              | Type               | Required           | Description        | Example            |
+| ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| `last_name`        | *str*              | :heavy_check_mark: | N/A                | Doe                |

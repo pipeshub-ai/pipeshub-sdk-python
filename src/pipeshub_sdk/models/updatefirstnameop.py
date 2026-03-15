@@ -13,29 +13,13 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class UpdateFirstNameRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    first_name: NotRequired[str]
+    first_name: str
 
 
 class UpdateFirstNameRequestBody(BaseModel):
     r"""Request payload"""
 
-    first_name: Annotated[Optional[str], pydantic.Field(alias="firstName")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["firstName"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    first_name: Annotated[str, pydantic.Field(alias="firstName")]
 
 
 class UpdateFirstNameRequestTypedDict(TypedDict):

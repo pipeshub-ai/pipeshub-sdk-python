@@ -302,7 +302,11 @@ def test_users_get_users_by_ids():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_by_ids()
+        res = pipeshub.users.get_by_ids(
+            user_ids=[
+                "507f1f77bcf86cd799439011",
+            ]
+        )
         assert res is not None
         assert res == models.GetUsersByIdsResponse()
 
@@ -317,7 +321,7 @@ def test_users_update_full_name():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.update_full_name(id="<id>")
+        res = pipeshub.users.update_full_name(id="<id>", full_name="John Doe")
         assert res is not None
         assert res == models.UpdateFullNameResponse()
 
@@ -332,7 +336,7 @@ def test_users_update_first_name():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.update_first_name(id="<id>")
+        res = pipeshub.users.update_first_name(id="<id>", first_name="John")
         assert res is not None
         assert res == models.UpdateFirstNameResponse()
 
@@ -347,7 +351,7 @@ def test_users_update_last_name():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.update_last_name(id="<id>")
+        res = pipeshub.users.update_last_name(id="<id>", last_name="Doe")
         assert res is not None
         assert res == models.UpdateLastNameResponse()
 
@@ -362,7 +366,9 @@ def test_users_update_designation():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.update_designation(id="<id>")
+        res = pipeshub.users.update_designation(
+            id="<id>", designation="Senior Engineer"
+        )
         assert res is not None
         assert res == models.UpdateDesignationResponse()
 

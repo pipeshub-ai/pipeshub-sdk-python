@@ -3425,7 +3425,7 @@ class Users(BaseSDK):
     def get_by_ids(
         self,
         *,
-        ids: Optional[List[str]] = None,
+        user_ids: List[str],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3436,7 +3436,7 @@ class Users(BaseSDK):
         Retrieve multiple users by their IDs in a single request.
 
 
-        :param ids:
+        :param user_ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3453,7 +3453,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.GetUsersByIdsRequest(
-            ids=ids,
+            user_ids=user_ids,
         )
 
         req = self._build_request(
@@ -3517,7 +3517,7 @@ class Users(BaseSDK):
     async def get_by_ids_async(
         self,
         *,
-        ids: Optional[List[str]] = None,
+        user_ids: List[str],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3528,7 +3528,7 @@ class Users(BaseSDK):
         Retrieve multiple users by their IDs in a single request.
 
 
-        :param ids:
+        :param user_ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3545,7 +3545,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.GetUsersByIdsRequest(
-            ids=ids,
+            user_ids=user_ids,
         )
 
         req = self._build_request_async(
@@ -3610,7 +3610,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        full_name: Optional[str] = None,
+        full_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3707,7 +3707,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        full_name: Optional[str] = None,
+        full_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3804,7 +3804,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        first_name: Optional[str] = None,
+        first_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3901,7 +3901,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        first_name: Optional[str] = None,
+        first_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3998,7 +3998,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        last_name: Optional[str] = None,
+        last_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4095,7 +4095,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        last_name: Optional[str] = None,
+        last_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4192,7 +4192,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        designation: Optional[str] = None,
+        designation: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4289,7 +4289,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        designation: Optional[str] = None,
+        designation: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
