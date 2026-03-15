@@ -17,7 +17,56 @@ def test_aimodelsconfiguration_get_ai_models_config():
 
         res = pipeshub.ai_models_configuration.get()
         assert res is not None
-        assert res == models.GetAIModelsConfigResponse()
+        assert res == models.GetAIModelsConfigResponse(
+            ocr=[
+                models.AIModelConfiguration(
+                    provider="openai",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            embedding=[
+                models.AIModelConfiguration(
+                    provider="openai",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            slm=[
+                models.AIModelConfiguration(
+                    provider="openai",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            llm=[
+                models.AIModelConfiguration(
+                    provider="openai",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            reasoning=[
+                models.AIModelConfiguration(
+                    provider="openai",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            multi_modal=[
+                models.AIModelConfiguration(
+                    provider="openai",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+        )
 
 
 def test_aimodelsconfiguration_create_ai_models_config():
