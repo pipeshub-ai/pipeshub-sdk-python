@@ -24,7 +24,7 @@ class UpdateAgentTemplateRequestBodyTypedDict(TypedDict):
     name: NotRequired[str]
     description: NotRequired[str]
     category: NotRequired[str]
-    default_system_prompt: NotRequired[str]
+    system_prompt: NotRequired[str]
     recommended_tools: NotRequired[List[str]]
     config_schema: NotRequired[UpdateAgentTemplateConfigSchemaTypedDict]
     is_public: NotRequired[bool]
@@ -39,9 +39,7 @@ class UpdateAgentTemplateRequestBody(BaseModel):
 
     category: Optional[str] = None
 
-    default_system_prompt: Annotated[
-        Optional[str], pydantic.Field(alias="defaultSystemPrompt")
-    ] = None
+    system_prompt: Annotated[Optional[str], pydantic.Field(alias="systemPrompt")] = None
 
     recommended_tools: Annotated[
         Optional[List[str]], pydantic.Field(alias="recommendedTools")
@@ -60,7 +58,7 @@ class UpdateAgentTemplateRequestBody(BaseModel):
                 "name",
                 "description",
                 "category",
-                "defaultSystemPrompt",
+                "systemPrompt",
                 "recommendedTools",
                 "configSchema",
                 "isPublic",
@@ -98,6 +96,37 @@ class UpdateAgentTemplateRequest(BaseModel):
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
     r"""Request body for Update agent template"""
+
+
+class UpdateAgentTemplateResponseTypedDict(TypedDict):
+    r"""Template updated"""
+
+    status: NotRequired[str]
+    message: NotRequired[str]
+
+
+class UpdateAgentTemplateResponse(BaseModel):
+    r"""Template updated"""
+
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 try:

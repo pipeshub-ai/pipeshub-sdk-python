@@ -113,9 +113,9 @@ def test_agents_update_agent():
 
         res = pipeshub.agents.update(agent_key="<value>")
         assert res is not None
-        assert res == models.Agent(
-            agent_key="customer-support-agent",
-            name="Customer Support Assistant",
+        assert res == models.UpdateAgentResponse(
+            status="success",
+            message="Agent updated successfully",
         )
 
 

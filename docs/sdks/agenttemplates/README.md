@@ -53,7 +53,7 @@ with Pipeshub(
 
 ### Response
 
-**[List[models.AgentTemplate]](../../models/.md)**
+**[models.ListAgentTemplatesResponse](../../models/listagenttemplatesresponse.md)**
 
 ### Errors
 
@@ -89,7 +89,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_templates.create(name="Customer Support Agent", category="Support", is_public=False)
+    res = pipeshub.agent_templates.create(name="Customer Support Agent", description="A template for customer support agents", system_prompt="You are a helpful customer support assistant.", category="Support", is_public=False)
 
     # Handle response
     print(res)
@@ -101,9 +101,9 @@ with Pipeshub(
 | Parameter                                                                                           | Type                                                                                                | Required                                                                                            | Description                                                                                         | Example                                                                                             |
 | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `name`                                                                                              | *str*                                                                                               | :heavy_check_mark:                                                                                  | Template name                                                                                       | Customer Support Agent                                                                              |
-| `description`                                                                                       | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | What agents from this template do                                                                   |                                                                                                     |
+| `description`                                                                                       | *str*                                                                                               | :heavy_check_mark:                                                                                  | What agents from this template do                                                                   | A template for customer support agents                                                              |
+| `system_prompt`                                                                                     | *str*                                                                                               | :heavy_check_mark:                                                                                  | System instructions for the template                                                                | You are a helpful customer support assistant.                                                       |
 | `category`                                                                                          | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | Template category                                                                                   | Support                                                                                             |
-| `default_system_prompt`                                                                             | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | Default system instructions                                                                         |                                                                                                     |
 | `recommended_tools`                                                                                 | List[*str*]                                                                                         | :heavy_minus_sign:                                                                                  | Suggested tool keys                                                                                 |                                                                                                     |
 | `config_schema`                                                                                     | [Optional[models.CreateAgentTemplateConfigSchema]](../../models/createagenttemplateconfigschema.md) | :heavy_minus_sign:                                                                                  | JSON Schema for customization                                                                       |                                                                                                     |
 | `is_public`                                                                                         | *Optional[bool]*                                                                                    | :heavy_minus_sign:                                                                                  | Make template available organization-wide                                                           |                                                                                                     |
@@ -111,7 +111,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentTemplate](../../models/agenttemplate.md)**
+**[models.CreateAgentTemplateResponse](../../models/createagenttemplateresponse.md)**
 
 ### Errors
 
@@ -153,7 +153,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentTemplate](../../models/agenttemplate.md)**
+**[models.GetAgentTemplateResponse](../../models/getagenttemplateresponse.md)**
 
 ### Errors
 
@@ -197,7 +197,7 @@ with Pipeshub(
 | `name`                                                                                              | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
 | `description`                                                                                       | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
 | `category`                                                                                          | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
-| `default_system_prompt`                                                                             | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
+| `system_prompt`                                                                                     | *Optional[str]*                                                                                     | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
 | `recommended_tools`                                                                                 | List[*str*]                                                                                         | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
 | `config_schema`                                                                                     | [Optional[models.UpdateAgentTemplateConfigSchema]](../../models/updateagenttemplateconfigschema.md) | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
 | `is_public`                                                                                         | *Optional[bool]*                                                                                    | :heavy_minus_sign:                                                                                  | N/A                                                                                                 |
@@ -205,7 +205,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentTemplate](../../models/agenttemplate.md)**
+**[models.UpdateAgentTemplateResponse](../../models/updateagenttemplateresponse.md)**
 
 ### Errors
 

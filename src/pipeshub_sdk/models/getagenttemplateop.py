@@ -2,10 +2,13 @@
 # @generated-id: 8f4872ef818c
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
+from .agenttemplate import AgentTemplate, AgentTemplateTypedDict
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetAgentTemplateRequestTypedDict(TypedDict):
@@ -20,3 +23,45 @@ class GetAgentTemplateRequest(BaseModel):
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
     r"""Template identifier"""
+
+
+class GetAgentTemplateResponseTypedDict(TypedDict):
+    r"""Template details"""
+
+    status: NotRequired[str]
+    message: NotRequired[str]
+    template: NotRequired[AgentTemplateTypedDict]
+    r"""Reusable template for creating agents. Templates define the base
+    configuration that can be customized when creating an agent instance.
+
+    """
+
+
+class GetAgentTemplateResponse(BaseModel):
+    r"""Template details"""
+
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    template: Optional[AgentTemplate] = None
+    r"""Reusable template for creating agents. Templates define the base
+    configuration that can be customized when creating an agent instance.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message", "template"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

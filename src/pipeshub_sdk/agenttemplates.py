@@ -18,7 +18,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.AgentTemplate]:
+    ) -> models.ListAgentTemplatesResponse:
         r"""List agent templates
 
         Retrieve all available agent templates.<br><br>
@@ -88,7 +88,7 @@ class AgentTemplates(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.AgentTemplate], http_res)
+            return unmarshal_json_response(models.ListAgentTemplatesResponse, http_res)
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -109,7 +109,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.AgentTemplate]:
+    ) -> models.ListAgentTemplatesResponse:
         r"""List agent templates
 
         Retrieve all available agent templates.<br><br>
@@ -179,7 +179,7 @@ class AgentTemplates(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.AgentTemplate], http_res)
+            return unmarshal_json_response(models.ListAgentTemplatesResponse, http_res)
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -197,9 +197,9 @@ class AgentTemplates(BaseSDK):
         self,
         *,
         name: str,
-        description: Optional[str] = None,
+        description: str,
+        system_prompt: str,
         category: Optional[str] = None,
-        default_system_prompt: Optional[str] = None,
         recommended_tools: Optional[List[str]] = None,
         config_schema: Optional[
             Union[
@@ -212,7 +212,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AgentTemplate:
+    ) -> models.CreateAgentTemplateResponse:
         r"""Create agent template
 
         Create a new reusable agent template.<br><br>
@@ -229,8 +229,8 @@ class AgentTemplates(BaseSDK):
 
         :param name: Template name
         :param description: What agents from this template do
+        :param system_prompt: System instructions for the template
         :param category: Template category
-        :param default_system_prompt: Default system instructions
         :param recommended_tools: Suggested tool keys
         :param config_schema: JSON Schema for customization
         :param is_public: Make template available organization-wide
@@ -253,7 +253,7 @@ class AgentTemplates(BaseSDK):
             name=name,
             description=description,
             category=category,
-            default_system_prompt=default_system_prompt,
+            system_prompt=system_prompt,
             recommended_tools=recommended_tools,
             config_schema=utils.get_pydantic_model(
                 config_schema, Optional[models.CreateAgentTemplateConfigSchema]
@@ -304,8 +304,8 @@ class AgentTemplates(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.AgentTemplate, http_res)
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.CreateAgentTemplateResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -323,9 +323,9 @@ class AgentTemplates(BaseSDK):
         self,
         *,
         name: str,
-        description: Optional[str] = None,
+        description: str,
+        system_prompt: str,
         category: Optional[str] = None,
-        default_system_prompt: Optional[str] = None,
         recommended_tools: Optional[List[str]] = None,
         config_schema: Optional[
             Union[
@@ -338,7 +338,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AgentTemplate:
+    ) -> models.CreateAgentTemplateResponse:
         r"""Create agent template
 
         Create a new reusable agent template.<br><br>
@@ -355,8 +355,8 @@ class AgentTemplates(BaseSDK):
 
         :param name: Template name
         :param description: What agents from this template do
+        :param system_prompt: System instructions for the template
         :param category: Template category
-        :param default_system_prompt: Default system instructions
         :param recommended_tools: Suggested tool keys
         :param config_schema: JSON Schema for customization
         :param is_public: Make template available organization-wide
@@ -379,7 +379,7 @@ class AgentTemplates(BaseSDK):
             name=name,
             description=description,
             category=category,
-            default_system_prompt=default_system_prompt,
+            system_prompt=system_prompt,
             recommended_tools=recommended_tools,
             config_schema=utils.get_pydantic_model(
                 config_schema, Optional[models.CreateAgentTemplateConfigSchema]
@@ -430,8 +430,8 @@ class AgentTemplates(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.AgentTemplate, http_res)
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.CreateAgentTemplateResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -453,7 +453,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AgentTemplate:
+    ) -> models.GetAgentTemplateResponse:
         r"""Get agent template
 
         Retrieve a specific agent template by ID.
@@ -519,7 +519,7 @@ class AgentTemplates(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AgentTemplate, http_res)
+            return unmarshal_json_response(models.GetAgentTemplateResponse, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -541,7 +541,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AgentTemplate:
+    ) -> models.GetAgentTemplateResponse:
         r"""Get agent template
 
         Retrieve a specific agent template by ID.
@@ -607,7 +607,7 @@ class AgentTemplates(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AgentTemplate, http_res)
+            return unmarshal_json_response(models.GetAgentTemplateResponse, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -628,7 +628,7 @@ class AgentTemplates(BaseSDK):
         name: Optional[str] = None,
         description: Optional[str] = None,
         category: Optional[str] = None,
-        default_system_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
         recommended_tools: Optional[List[str]] = None,
         config_schema: Optional[
             Union[
@@ -641,7 +641,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AgentTemplate:
+    ) -> models.UpdateAgentTemplateResponse:
         r"""Update agent template
 
         Update an existing agent template.<br><br>
@@ -653,7 +653,7 @@ class AgentTemplates(BaseSDK):
         :param name:
         :param description:
         :param category:
-        :param default_system_prompt:
+        :param system_prompt:
         :param recommended_tools:
         :param config_schema:
         :param is_public:
@@ -678,7 +678,7 @@ class AgentTemplates(BaseSDK):
                 name=name,
                 description=description,
                 category=category,
-                default_system_prompt=default_system_prompt,
+                system_prompt=system_prompt,
                 recommended_tools=recommended_tools,
                 config_schema=utils.get_pydantic_model(
                     config_schema, Optional[models.UpdateAgentTemplateConfigSchema]
@@ -735,7 +735,7 @@ class AgentTemplates(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AgentTemplate, http_res)
+            return unmarshal_json_response(models.UpdateAgentTemplateResponse, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -756,7 +756,7 @@ class AgentTemplates(BaseSDK):
         name: Optional[str] = None,
         description: Optional[str] = None,
         category: Optional[str] = None,
-        default_system_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
         recommended_tools: Optional[List[str]] = None,
         config_schema: Optional[
             Union[
@@ -769,7 +769,7 @@ class AgentTemplates(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AgentTemplate:
+    ) -> models.UpdateAgentTemplateResponse:
         r"""Update agent template
 
         Update an existing agent template.<br><br>
@@ -781,7 +781,7 @@ class AgentTemplates(BaseSDK):
         :param name:
         :param description:
         :param category:
-        :param default_system_prompt:
+        :param system_prompt:
         :param recommended_tools:
         :param config_schema:
         :param is_public:
@@ -806,7 +806,7 @@ class AgentTemplates(BaseSDK):
                 name=name,
                 description=description,
                 category=category,
-                default_system_prompt=default_system_prompt,
+                system_prompt=system_prompt,
                 recommended_tools=recommended_tools,
                 config_schema=utils.get_pydantic_model(
                     config_schema, Optional[models.UpdateAgentTemplateConfigSchema]
@@ -863,7 +863,7 @@ class AgentTemplates(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AgentTemplate, http_res)
+            return unmarshal_json_response(models.UpdateAgentTemplateResponse, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

@@ -17,12 +17,16 @@ def test_agenttemplates_list_agent_templates():
 
         res = pipeshub.agent_templates.list()
         assert res is not None
-        assert res == [
-            models.AgentTemplate(
-                name="Technical Support Template",
-                category="Customer Service",
-            ),
-        ]
+        assert res == models.ListAgentTemplatesResponse(
+            status="success",
+            message="Agent templates retrieved successfully",
+            templates=[
+                models.AgentTemplate(
+                    name="Technical Support Template",
+                    category="Customer Service",
+                ),
+            ],
+        )
 
 
 def test_agenttemplates_create_agent_template():
@@ -36,12 +40,20 @@ def test_agenttemplates_create_agent_template():
         assert pipeshub is not None
 
         res = pipeshub.agent_templates.create(
-            name="Customer Support Agent", category="Support", is_public=False
+            name="Customer Support Agent",
+            description="A template for customer support agents",
+            system_prompt="You are a helpful customer support assistant.",
+            category="Support",
+            is_public=False,
         )
         assert res is not None
-        assert res == models.AgentTemplate(
-            name="Technical Support Template",
-            category="Customer Service",
+        assert res == models.CreateAgentTemplateResponse(
+            status="success",
+            message="Agent template created successfully",
+            template=models.AgentTemplate(
+                name="Technical Support Template",
+                category="Customer Service",
+            ),
         )
 
 
@@ -57,9 +69,13 @@ def test_agenttemplates_get_agent_template():
 
         res = pipeshub.agent_templates.get_template(template_id="<id>")
         assert res is not None
-        assert res == models.AgentTemplate(
-            name="Technical Support Template",
-            category="Customer Service",
+        assert res == models.GetAgentTemplateResponse(
+            status="success",
+            message="Agent template retrieved successfully",
+            template=models.AgentTemplate(
+                name="Technical Support Template",
+                category="Customer Service",
+            ),
         )
 
 
@@ -75,7 +91,7 @@ def test_agenttemplates_update_agent_template():
 
         res = pipeshub.agent_templates.update(template_id="<id>")
         assert res is not None
-        assert res == models.AgentTemplate(
-            name="Technical Support Template",
-            category="Customer Service",
+        assert res == models.UpdateAgentTemplateResponse(
+            status="success",
+            message="Agent template updated successfully",
         )

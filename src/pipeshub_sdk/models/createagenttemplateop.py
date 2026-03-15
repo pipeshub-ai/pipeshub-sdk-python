@@ -2,6 +2,7 @@
 # @generated-id: 44723f9cb321
 
 from __future__ import annotations
+from .agenttemplate import AgentTemplate, AgentTemplateTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
@@ -22,12 +23,12 @@ class CreateAgentTemplateRequestTypedDict(TypedDict):
 
     name: str
     r"""Template name"""
-    description: NotRequired[str]
+    description: str
     r"""What agents from this template do"""
+    system_prompt: str
+    r"""System instructions for the template"""
     category: NotRequired[str]
     r"""Template category"""
-    default_system_prompt: NotRequired[str]
-    r"""Default system instructions"""
     recommended_tools: NotRequired[List[str]]
     r"""Suggested tool keys"""
     config_schema: NotRequired[CreateAgentTemplateConfigSchemaTypedDict]
@@ -42,16 +43,14 @@ class CreateAgentTemplateRequest(BaseModel):
     name: str
     r"""Template name"""
 
-    description: Optional[str] = None
+    description: str
     r"""What agents from this template do"""
+
+    system_prompt: Annotated[str, pydantic.Field(alias="systemPrompt")]
+    r"""System instructions for the template"""
 
     category: Optional[str] = None
     r"""Template category"""
-
-    default_system_prompt: Annotated[
-        Optional[str], pydantic.Field(alias="defaultSystemPrompt")
-    ] = None
-    r"""Default system instructions"""
 
     recommended_tools: Annotated[
         Optional[List[str]], pydantic.Field(alias="recommendedTools")
@@ -69,15 +68,50 @@ class CreateAgentTemplateRequest(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            [
-                "description",
-                "category",
-                "defaultSystemPrompt",
-                "recommendedTools",
-                "configSchema",
-                "isPublic",
-            ]
+            ["category", "recommendedTools", "configSchema", "isPublic"]
         )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class CreateAgentTemplateResponseTypedDict(TypedDict):
+    r"""Template created"""
+
+    status: NotRequired[str]
+    message: NotRequired[str]
+    template: NotRequired[AgentTemplateTypedDict]
+    r"""Reusable template for creating agents. Templates define the base
+    configuration that can be customized when creating an agent instance.
+
+    """
+
+
+class CreateAgentTemplateResponse(BaseModel):
+    r"""Template created"""
+
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    template: Optional[AgentTemplate] = None
+    r"""Reusable template for creating agents. Templates define the base
+    configuration that can be customized when creating an agent instance.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message", "template"])
         serialized = handler(self)
         m = {}
 

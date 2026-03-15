@@ -279,7 +279,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Agent](../../models/agent.md)**
+**[models.UpdateAgentResponse](../../models/updateagentresponse.md)**
 
 ### Errors
 
