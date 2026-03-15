@@ -371,6 +371,8 @@ if TYPE_CHECKING:
         CreateRootFolderRequestTypedDict,
     )
     from .createslackbotconfigop import (
+        CreateSlackBotConfigConfig,
+        CreateSlackBotConfigConfigTypedDict,
         CreateSlackBotConfigRequest,
         CreateSlackBotConfigRequestTypedDict,
         CreateSlackBotConfigResponse,
@@ -2254,6 +2256,8 @@ __all__ = [
     "CreateRootFolderRequestBody",
     "CreateRootFolderRequestBodyTypedDict",
     "CreateRootFolderRequestTypedDict",
+    "CreateSlackBotConfigConfig",
+    "CreateSlackBotConfigConfigTypedDict",
     "CreateSlackBotConfigRequest",
     "CreateSlackBotConfigRequestTypedDict",
     "CreateSlackBotConfigResponse",
@@ -3753,6 +3757,8 @@ _dynamic_imports: dict[str, str] = {
     "CreateRootFolderRequestBody": ".createrootfolderop",
     "CreateRootFolderRequestBodyTypedDict": ".createrootfolderop",
     "CreateRootFolderRequestTypedDict": ".createrootfolderop",
+    "CreateSlackBotConfigConfig": ".createslackbotconfigop",
+    "CreateSlackBotConfigConfigTypedDict": ".createslackbotconfigop",
     "CreateSlackBotConfigRequest": ".createslackbotconfigop",
     "CreateSlackBotConfigRequestTypedDict": ".createslackbotconfigop",
     "CreateSlackBotConfigResponse": ".createslackbotconfigop",

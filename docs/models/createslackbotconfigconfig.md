@@ -1,4 +1,4 @@
-# GetSlackBotConfigsConfig
+# CreateSlackBotConfigConfig
 
 
 ## Fields

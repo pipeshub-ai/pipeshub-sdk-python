@@ -36,7 +36,9 @@ def test_configuration_manager_create_slack_bot_config():
             signing_secret="abc123signingsecret",
         )
         assert res is not None
-        assert res == models.CreateSlackBotConfigResponse()
+        assert res == models.CreateSlackBotConfigResponse(
+            status="success",
+        )
 
 
 def test_configuration_manager_update_slack_bot_config():
