@@ -292,14 +292,14 @@ with Pipeshub(
 
 ## get_root_nodes
 
-Retrieve root-level nodes for unified knowledge hub browsing.<br><br>
+Retrieve root-level nodes (Apps) or search across all nodes for unified knowledge hub browsing.<br><br>
 <b>Overview:</b><br>
-Provides a unified view across all knowledge sources - KBs, connectors, and apps. Use for building file browser UIs.<br><br>
+Provides a unified view across all knowledge sources - Collections, connectors, and apps. Use for building file browser UIs.<br><br>
 <b>Node Types:</b><br>
 <ul>
-<li><b>KB:</b> Knowledge bases</li>
-<li><b>CONNECTOR:</b> External connector instances</li>
-<li><b>APP:</b> Connected applications</li>
+<li><b>Collection:</b> Local collections (formerly Knowledge Bases)</li>
+<li><b>Connector:</b> External connector instances</li>
+<li><b>App:</b> Connected applications</li>
 </ul>
 
 
@@ -317,7 +317,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.get_root_nodes()
+    res = pipeshub.knowledge_bases.get_root_nodes(only_containers=False, page=1, limit=50, sort_by="updatedAt", sort_order="desc", flattened=False)
 
     # Handle response
     print(res)
@@ -326,18 +326,29 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `view`                                                              | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | View mode                                                           |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `node_types`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Filter by node types (comma-separated)                              |
-| `q`                                                                 | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Search query                                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                               | Type                                                                                                    | Required                                                                                                | Description                                                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `only_containers`                                                                                       | *Optional[bool]*                                                                                        | :heavy_minus_sign:                                                                                      | Only return nodes with children (for sidebar)                                                           |
+| `page`                                                                                                  | *Optional[int]*                                                                                         | :heavy_minus_sign:                                                                                      | Page number (1-indexed)                                                                                 |
+| `limit`                                                                                                 | *Optional[int]*                                                                                         | :heavy_minus_sign:                                                                                      | Items per page                                                                                          |
+| `sort_by`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Sort field (name, createdAt, updatedAt, size, type)                                                     |
+| `sort_order`                                                                                            | [Optional[models.GetKnowledgeHubRootNodesSortOrder]](../../models/getknowledgehubrootnodessortorder.md) | :heavy_minus_sign:                                                                                      | Sort order (asc or desc)                                                                                |
+| `q`                                                                                                     | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Full-text search query                                                                                  |
+| `node_types`                                                                                            | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Filter by node types (comma-separated)                                                                  |
+| `record_types`                                                                                          | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated record types                                                                            |
+| `origins`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated origins (COLLECTION, CONNECTOR)                                                         |
+| `connector_ids`                                                                                         | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated connector instance IDs                                                                  |
+| `indexing_status`                                                                                       | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated indexing statuses                                                                       |
+| `created_at`                                                                                            | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Created date range (gte:timestamp,lte:timestamp)                                                        |
+| `updated_at`                                                                                            | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Updated date range (gte:timestamp,lte:timestamp)                                                        |
+| `size`                                                                                                  | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Size range (gte:bytes,lte:bytes)                                                                        |
+| `flattened`                                                                                             | *Optional[bool]*                                                                                        | :heavy_minus_sign:                                                                                      | Return flattened view with all nested children                                                          |
+| `include`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated includes (breadcrumbs, counts, availableFilters, permissions)                           |
+| `retries`                                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                        | :heavy_minus_sign:                                                                                      | Configuration to override the default retry behavior of the client.                                     |
 
 ### Response
 
-**[models.GetKnowledgeHubRootNodesResponse](../../models/getknowledgehubrootnodesresponse.md)**
+**[models.KnowledgeHubNodesResponse](../../models/knowledgehubnodesresponse.md)**
 
 ### Errors
 
@@ -347,9 +358,10 @@ with Pipeshub(
 
 ## get_child_nodes
 
-Retrieve child nodes under a specific parent in the knowledge hub tree.<br><br>
+Get children of a specific node. Retrieve child nodes under a specific parent in the knowledge hub tree.<br><br>
 <b>Navigation:</b><br>
-Use this to drill down into KBs, folders, and connector hierarchies.
+Use this to drill down into collections, folders, and connector hierarchies.<br><br>
+parent_type must be one of: app, recordGroup, folder, record.
 
 
 ### Example Usage
@@ -366,7 +378,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.get_child_nodes(parent_type="<value>", parent_id="<id>")
+    res = pipeshub.knowledge_bases.get_child_nodes(parent_type="recordGroup", parent_id="<id>", only_containers=False, page=1, limit=50, sort_by="updatedAt", sort_order="desc", flattened=False)
 
     # Handle response
     print(res)
@@ -375,18 +387,31 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `parent_type`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Type of parent node (KB, FOLDER, CONNECTOR, APP)                    |
-| `parent_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | ID of parent node                                                   |
-| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `q`                                                                 | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Search query                                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                 | Type                                                                                                      | Required                                                                                                  | Description                                                                                               |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `parent_type`                                                                                             | [models.ParentType](../../models/parenttype.md)                                                           | :heavy_check_mark:                                                                                        | Type of parent node (app, recordGroup, folder, record)                                                    |
+| `parent_id`                                                                                               | *str*                                                                                                     | :heavy_check_mark:                                                                                        | ID of parent node (UUID or knowledgeBase_<orgId> for Collection app)                                      |
+| `only_containers`                                                                                         | *Optional[bool]*                                                                                          | :heavy_minus_sign:                                                                                        | Only return nodes with children (for sidebar)                                                             |
+| `page`                                                                                                    | *Optional[int]*                                                                                           | :heavy_minus_sign:                                                                                        | Page number (1-indexed)                                                                                   |
+| `limit`                                                                                                   | *Optional[int]*                                                                                           | :heavy_minus_sign:                                                                                        | Items per page                                                                                            |
+| `sort_by`                                                                                                 | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Sort field (name, createdAt, updatedAt, size, type)                                                       |
+| `sort_order`                                                                                              | [Optional[models.GetKnowledgeHubChildNodesSortOrder]](../../models/getknowledgehubchildnodessortorder.md) | :heavy_minus_sign:                                                                                        | Sort order (asc or desc)                                                                                  |
+| `q`                                                                                                       | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Full-text search query                                                                                    |
+| `node_types`                                                                                              | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Filter by node types (comma-separated)                                                                    |
+| `record_types`                                                                                            | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated record types                                                                              |
+| `origins`                                                                                                 | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated origins (COLLECTION, CONNECTOR)                                                           |
+| `connector_ids`                                                                                           | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated connector instance IDs                                                                    |
+| `indexing_status`                                                                                         | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated indexing statuses                                                                         |
+| `created_at`                                                                                              | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Created date range (gte:timestamp,lte:timestamp)                                                          |
+| `updated_at`                                                                                              | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Updated date range (gte:timestamp,lte:timestamp)                                                          |
+| `size`                                                                                                    | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Size range (gte:bytes,lte:bytes)                                                                          |
+| `flattened`                                                                                               | *Optional[bool]*                                                                                          | :heavy_minus_sign:                                                                                        | Return flattened view with all nested children                                                            |
+| `include`                                                                                                 | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated includes (breadcrumbs, counts, availableFilters, permissions)                             |
+| `retries`                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                          | :heavy_minus_sign:                                                                                        | Configuration to override the default retry behavior of the client.                                       |
 
 ### Response
 
-**[models.GetKnowledgeHubChildNodesResponse](../../models/getknowledgehubchildnodesresponse.md)**
+**[models.KnowledgeHubNodesResponse](../../models/knowledgehubnodesresponse.md)**
 
 ### Errors
 

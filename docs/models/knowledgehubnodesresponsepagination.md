@@ -1,4 +1,4 @@
-# GetKnowledgeHubRootNodesPagination
+# KnowledgeHubNodesResponsePagination
 
 
 ## Fields

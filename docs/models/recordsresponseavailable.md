@@ -1,6 +1,6 @@
-# Applied
+# RecordsResponseAvailable
 
-Currently applied filters
+Available filter options with counts
 
 
 ## Fields

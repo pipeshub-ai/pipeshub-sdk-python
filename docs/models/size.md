@@ -1,4 +1,4 @@
-# GetKnowledgeHubRootNodesFilters
+# Size
 
 
 ## Fields

@@ -54,7 +54,7 @@ with Pipeshub(
 
 ### Response
 
-**[List[models.Agent]](../../models/.md)**
+**[models.ListAgentsResponse](../../models/listagentsresponse.md)**
 
 ### Errors
 

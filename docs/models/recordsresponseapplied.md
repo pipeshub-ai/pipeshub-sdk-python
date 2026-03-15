@@ -1,4 +1,6 @@
-# GetKnowledgeHubRootNodesPermissions
+# RecordsResponseApplied
+
+Currently applied filters
 
 
 ## Fields

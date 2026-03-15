@@ -1,4 +1,4 @@
-# Pagination
+# OAuthAppListResponsePagination
 
 
 ## Fields

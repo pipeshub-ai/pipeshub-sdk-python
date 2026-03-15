@@ -1,0 +1,9 @@
+# KnowledgeHubNodesResponseFilters
+
+
+## Fields
+
+| Field                                                                                                          | Type                                                                                                           | Required                                                                                                       | Description                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `applied`                                                                                                      | [Optional[models.KnowledgeHubNodesResponseApplied]](../models/knowledgehubnodesresponseapplied.md)             | :heavy_minus_sign:                                                                                             | N/A                                                                                                            |
+| `available`                                                                                                    | [OptionalNullable[models.KnowledgeHubNodesResponseAvailable]](../models/knowledgehubnodesresponseavailable.md) | :heavy_minus_sign:                                                                                             | N/A                                                                                                            |
