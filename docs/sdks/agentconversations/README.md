@@ -374,8 +374,10 @@ with Pipeshub(
 
     res = pipeshub.agent_conversations.regenerate_response(agent_key="<value>", conversation_id="<value>", message_id="<value>")
 
-    # Handle response
-    print(res)
+    with res as event_stream:
+        for event in event_stream:
+            # handle event
+            print(event, flush=True)
 
 ```
 
@@ -393,7 +395,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentConversation](../../models/agentconversation.md)**
+**[Union[eventstreaming.EventStream[models.SSEEvent], eventstreaming.EventStreamAsync[models.SSEEvent]]](../../models/.md)**
 
 ### Errors
 

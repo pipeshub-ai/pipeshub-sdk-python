@@ -2,6 +2,7 @@
 # @generated-id: a50b4c6e3fc8
 
 from pipeshub_sdk import Pipeshub, models
+import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -92,18 +93,8 @@ def test_agentconversations_add_agent_message():
         assert res == models.AgentConversation()
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step regenerateAgentAnswer.test referencing operation regenerateAgentAnswer is not currently supported`]"
+)
 def test_agentconversations_regenerate_agent_answer():
-    test_http_client = create_test_http_client("regenerateAgentAnswer")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agent_conversations.regenerate_response(
-            agent_key="<value>", conversation_id="<value>", message_id="<value>"
-        )
-        assert res is not None
-        assert res == models.AgentConversation()
+    pass
