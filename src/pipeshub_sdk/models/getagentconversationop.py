@@ -2,10 +2,13 @@
 # @generated-id: 081818273a44
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
+from .agentconversation import AgentConversation, AgentConversationTypedDict
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Any, Dict, Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetAgentConversationRequestTypedDict(TypedDict):
@@ -25,3 +28,49 @@ class GetAgentConversationRequest(BaseModel):
         pydantic.Field(alias="conversationId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+
+
+class GetAgentConversationResponseTypedDict(TypedDict):
+    r"""Agent conversation details"""
+
+    conversation: NotRequired[AgentConversationTypedDict]
+    r"""A conversation with a specific AI agent. Similar to regular conversations
+    but tied to an agent's configuration and capabilities.
+
+    """
+    filters: NotRequired[Dict[str, Any]]
+    r"""Applied and available filters"""
+    meta: NotRequired[Dict[str, Any]]
+    r"""Request metadata"""
+
+
+class GetAgentConversationResponse(BaseModel):
+    r"""Agent conversation details"""
+
+    conversation: Optional[AgentConversation] = None
+    r"""A conversation with a specific AI agent. Similar to regular conversations
+    but tied to an agent's configuration and capabilities.
+
+    """
+
+    filters: Optional[Dict[str, Any]] = None
+    r"""Applied and available filters"""
+
+    meta: Optional[Dict[str, Any]] = None
+    r"""Request metadata"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["conversation", "filters", "meta"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from .addagentmessageop import (
         AddAgentMessageRequest,
         AddAgentMessageRequestTypedDict,
+        AddAgentMessageResponse,
+        AddAgentMessageResponseTypedDict,
     )
     from .addaimodelproviderrequest import (
         AddAIModelProviderRequest,
@@ -239,6 +241,8 @@ if TYPE_CHECKING:
     from .createagentconversationop import (
         CreateAgentConversationRequest,
         CreateAgentConversationRequestTypedDict,
+        CreateAgentConversationResponse,
+        CreateAgentConversationResponseTypedDict,
     )
     from .createagentop import (
         CreateAgentFilters,
@@ -531,6 +535,8 @@ if TYPE_CHECKING:
     from .getagentconversationop import (
         GetAgentConversationRequest,
         GetAgentConversationRequestTypedDict,
+        GetAgentConversationResponse,
+        GetAgentConversationResponseTypedDict,
     )
     from .getagentop import (
         GetAgentRequest,
@@ -1980,6 +1986,8 @@ __all__ = [
     "AddAIModelProviderRequestTypedDict",
     "AddAgentMessageRequest",
     "AddAgentMessageRequestTypedDict",
+    "AddAgentMessageResponse",
+    "AddAgentMessageResponseTypedDict",
     "AddMessageRequest",
     "AddMessageRequestRequest",
     "AddMessageRequestRequestTypedDict",
@@ -2134,6 +2142,8 @@ __all__ = [
     "CreateAIModelsConfigResponseTypedDict",
     "CreateAgentConversationRequest",
     "CreateAgentConversationRequestTypedDict",
+    "CreateAgentConversationResponse",
+    "CreateAgentConversationResponseTypedDict",
     "CreateAgentFilters",
     "CreateAgentFiltersTypedDict",
     "CreateAgentKnowledge",
@@ -2353,6 +2363,8 @@ __all__ = [
     "GetAIModelsProvidersResponseTypedDict",
     "GetAgentConversationRequest",
     "GetAgentConversationRequestTypedDict",
+    "GetAgentConversationResponse",
+    "GetAgentConversationResponseTypedDict",
     "GetAgentPermissionsAccessLevel",
     "GetAgentPermissionsRequest",
     "GetAgentPermissionsRequestTypedDict",
@@ -3403,6 +3415,8 @@ _dynamic_imports: dict[str, str] = {
     "ActivateOAuthAppRequestTypedDict": ".activateoauthappop",
     "AddAgentMessageRequest": ".addagentmessageop",
     "AddAgentMessageRequestTypedDict": ".addagentmessageop",
+    "AddAgentMessageResponse": ".addagentmessageop",
+    "AddAgentMessageResponseTypedDict": ".addagentmessageop",
     "AddAIModelProviderRequest": ".addaimodelproviderrequest",
     "AddAIModelProviderRequestConfiguration": ".addaimodelproviderrequest",
     "AddAIModelProviderRequestConfigurationTypedDict": ".addaimodelproviderrequest",
@@ -3583,6 +3597,8 @@ _dynamic_imports: dict[str, str] = {
     "CrawlingJobDataTypedDict": ".crawlingjobdata",
     "CreateAgentConversationRequest": ".createagentconversationop",
     "CreateAgentConversationRequestTypedDict": ".createagentconversationop",
+    "CreateAgentConversationResponse": ".createagentconversationop",
+    "CreateAgentConversationResponseTypedDict": ".createagentconversationop",
     "CreateAgentFilters": ".createagentop",
     "CreateAgentFiltersTypedDict": ".createagentop",
     "CreateAgentKnowledge": ".createagentop",
@@ -3790,6 +3806,8 @@ _dynamic_imports: dict[str, str] = {
     "GenericOAuthConfigTypedDict": ".genericoauthconfig",
     "GetAgentConversationRequest": ".getagentconversationop",
     "GetAgentConversationRequestTypedDict": ".getagentconversationop",
+    "GetAgentConversationResponse": ".getagentconversationop",
+    "GetAgentConversationResponseTypedDict": ".getagentconversationop",
     "GetAgentRequest": ".getagentop",
     "GetAgentRequestTypedDict": ".getagentop",
     "GetAgentResponse": ".getagentop",

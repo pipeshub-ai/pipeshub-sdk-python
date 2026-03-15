@@ -111,7 +111,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentConversation](../../models/agentconversation.md)**
+**[models.CreateAgentConversationResponse](../../models/createagentconversationresponse.md)**
 
 ### Errors
 
@@ -215,7 +215,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentConversation](../../models/agentconversation.md)**
+**[models.GetAgentConversationResponse](../../models/getagentconversationresponse.md)**
 
 ### Errors
 
@@ -305,7 +305,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AgentConversation](../../models/agentconversation.md)**
+**[models.AddAgentMessageResponse](../../models/addagentmessageresponse.md)**
 
 ### Errors
 

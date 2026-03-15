@@ -59,7 +59,7 @@ def test_agentconversations_create_agent_conversation():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.AgentConversation()
+        assert res == models.CreateAgentConversationResponse()
 
 
 def test_agentconversations_get_agent_conversation():
@@ -76,7 +76,7 @@ def test_agentconversations_get_agent_conversation():
             agent_key="<value>", conversation_id="<value>"
         )
         assert res is not None
-        assert res == models.AgentConversation()
+        assert res == models.GetAgentConversationResponse()
 
 
 def test_agentconversations_add_agent_message():
@@ -100,7 +100,7 @@ def test_agentconversations_add_agent_message():
             },
         )
         assert res is not None
-        assert res == models.AgentConversation()
+        assert res == models.AddAgentMessageResponse()
 
 
 @pytest.mark.skip(

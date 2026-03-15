@@ -2,14 +2,17 @@
 # @generated-id: 3618e5cab373
 
 from __future__ import annotations
+from .agentconversation import AgentConversation, AgentConversationTypedDict
 from .createconversationrequest import (
     CreateConversationRequest,
     CreateConversationRequestTypedDict,
 )
-from pipeshub_sdk.types import BaseModel
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Any, Dict, Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class CreateAgentConversationRequestTypedDict(TypedDict):
@@ -30,3 +33,44 @@ class CreateAgentConversationRequest(BaseModel):
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
     r"""Request payload"""
+
+
+class CreateAgentConversationResponseTypedDict(TypedDict):
+    r"""Agent conversation created"""
+
+    conversation: NotRequired[AgentConversationTypedDict]
+    r"""A conversation with a specific AI agent. Similar to regular conversations
+    but tied to an agent's configuration and capabilities.
+
+    """
+    meta: NotRequired[Dict[str, Any]]
+    r"""Request metadata"""
+
+
+class CreateAgentConversationResponse(BaseModel):
+    r"""Agent conversation created"""
+
+    conversation: Optional[AgentConversation] = None
+    r"""A conversation with a specific AI agent. Similar to regular conversations
+    but tied to an agent's configuration and capabilities.
+
+    """
+
+    meta: Optional[Dict[str, Any]] = None
+    r"""Request metadata"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["conversation", "meta"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
