@@ -17,8 +17,8 @@ class PermissionsSDK(BaseSDK):
         self,
         *,
         kb_id: str,
+        user_ids: List[str],
         role: models.CreateKBPermissionRole,
-        user_ids: Optional[List[str]] = None,
         team_ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -43,8 +43,8 @@ class PermissionsSDK(BaseSDK):
 
 
         :param kb_id:
+        :param user_ids: User IDs to grant permission (at least one of userIds or teamIds required)
         :param role: Permission role to grant
-        :param user_ids: User IDs to grant permission
         :param team_ids: Team IDs to grant permission
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -132,8 +132,8 @@ class PermissionsSDK(BaseSDK):
         self,
         *,
         kb_id: str,
+        user_ids: List[str],
         role: models.CreateKBPermissionRole,
-        user_ids: Optional[List[str]] = None,
         team_ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -158,8 +158,8 @@ class PermissionsSDK(BaseSDK):
 
 
         :param kb_id:
+        :param user_ids: User IDs to grant permission (at least one of userIds or teamIds required)
         :param role: Permission role to grant
-        :param user_ids: User IDs to grant permission
         :param team_ids: Team IDs to grant permission
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method

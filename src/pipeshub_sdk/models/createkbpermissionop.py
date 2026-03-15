@@ -24,10 +24,10 @@ r"""Permission role to grant"""
 class CreateKBPermissionRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
+    user_ids: List[str]
+    r"""User IDs to grant permission (at least one of userIds or teamIds required)"""
     role: CreateKBPermissionRole
     r"""Permission role to grant"""
-    user_ids: NotRequired[List[str]]
-    r"""User IDs to grant permission"""
     team_ids: NotRequired[List[str]]
     r"""Team IDs to grant permission"""
 
@@ -35,18 +35,18 @@ class CreateKBPermissionRequestBodyTypedDict(TypedDict):
 class CreateKBPermissionRequestBody(BaseModel):
     r"""Request payload"""
 
+    user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
+    r"""User IDs to grant permission (at least one of userIds or teamIds required)"""
+
     role: CreateKBPermissionRole
     r"""Permission role to grant"""
-
-    user_ids: Annotated[Optional[List[str]], pydantic.Field(alias="userIds")] = None
-    r"""User IDs to grant permission"""
 
     team_ids: Annotated[Optional[List[str]], pydantic.Field(alias="teamIds")] = None
     r"""Team IDs to grant permission"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userIds", "teamIds"])
+        optional_fields = set(["teamIds"])
         serialized = handler(self)
         m = {}
 

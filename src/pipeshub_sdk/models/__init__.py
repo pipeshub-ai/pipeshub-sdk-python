@@ -1588,6 +1588,8 @@ if TYPE_CHECKING:
     from .streamrecordbufferop import (
         StreamRecordBufferRequest,
         StreamRecordBufferRequestTypedDict,
+        StreamRecordBufferResponse,
+        StreamRecordBufferResponseTypedDict,
     )
     from .suspendoauthappop import (
         SuspendOAuthAppRequest,
@@ -3116,6 +3118,8 @@ __all__ = [
     "StreamAgentMessageRequestTypedDict",
     "StreamRecordBufferRequest",
     "StreamRecordBufferRequestTypedDict",
+    "StreamRecordBufferResponse",
+    "StreamRecordBufferResponseTypedDict",
     "Summary",
     "SummaryTypedDict",
     "SuspendOAuthAppRequest",
@@ -4567,6 +4571,8 @@ _dynamic_imports: dict[str, str] = {
     "StreamAgentMessageRequestTypedDict": ".streamagentmessageop",
     "StreamRecordBufferRequest": ".streamrecordbufferop",
     "StreamRecordBufferRequestTypedDict": ".streamrecordbufferop",
+    "StreamRecordBufferResponse": ".streamrecordbufferop",
+    "StreamRecordBufferResponseTypedDict": ".streamrecordbufferop",
     "SuspendOAuthAppRequest": ".suspendoauthappop",
     "SuspendOAuthAppRequestTypedDict": ".suspendoauthappop",
     "Team": ".team",

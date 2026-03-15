@@ -7,4 +7,4 @@ URL configuration for frontend or connector
 
 | Field                   | Type                    | Required                | Description             | Example                 |
 | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- |
-| `url`                   | *str*                   | :heavy_check_mark:      | Public URL              | https://app.example.com |
+| `url`                   | *Optional[str]*         | :heavy_minus_sign:      | Public URL              | https://app.example.com |

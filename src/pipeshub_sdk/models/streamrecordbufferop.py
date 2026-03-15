@@ -2,12 +2,13 @@
 # @generated-id: 9a364a626ae3
 
 from __future__ import annotations
+import httpx
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import Optional, Union
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
 class StreamRecordBufferRequestTypedDict(TypedDict):
@@ -47,3 +48,19 @@ class StreamRecordBufferRequest(BaseModel):
                     m[k] = val
 
         return m
+
+
+StreamRecordBufferResponseTypedDict = TypeAliasType(
+    "StreamRecordBufferResponseTypedDict",
+    Union[
+        httpx.Response, httpx.Response, httpx.Response, httpx.Response, httpx.Response
+    ],
+)
+
+
+StreamRecordBufferResponse = TypeAliasType(
+    "StreamRecordBufferResponse",
+    Union[
+        httpx.Response, httpx.Response, httpx.Response, httpx.Response, httpx.Response
+    ],
+)

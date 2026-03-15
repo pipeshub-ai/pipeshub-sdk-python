@@ -2,13 +2,21 @@
 # @generated-id: 8d3e77052811
 
 from .basesdk import BaseSDK
-import httpx
+from enum import Enum
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Mapping, Optional, Union
+
+
+class StreamAcceptEnum(str, Enum):
+    APPLICATION_OCTET_STREAM = "application/octet-stream"
+    APPLICATION_PDF = "application/pdf"
+    APPLICATION_WILDCARD_ = "application/*"
+    TEXT_WILDCARD_ = "text/*"
+    IMAGE_WILDCARD_ = "image/*"
 
 
 class Records(BaseSDK):
@@ -1438,8 +1446,9 @@ class Records(BaseSDK):
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
+        accept_header_override: Optional[StreamAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> httpx.Response:
+    ) -> models.StreamRecordBufferResponse:
         r"""Stream record content
 
         Stream the binary content of a record's file.<br><br>
@@ -1460,6 +1469,7 @@ class Records(BaseSDK):
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param accept_header_override: Override the default accept header for this method
         :param http_headers: Additional headers to set or replace on requests.
         """
         base_url = None
@@ -1487,7 +1497,9 @@ class Records(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="application/octet-stream",
+            accept_header_value=accept_header_override.value
+            if accept_header_override is not None
+            else "application/octet-stream;q=1, application/pdf;q=0.8, application/*;q=0.6, text/*;q=0.4, image/*;q=0",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
@@ -1520,6 +1532,14 @@ class Records(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/octet-stream"):
             return http_res
+        if utils.match_response(http_res, "200", "application/pdf"):
+            return http_res
+        if utils.match_response(http_res, "200", "image/*"):
+            return http_res
+        if utils.match_response(http_res, "200", "text/*"):
+            return http_res
+        if utils.match_response(http_res, "200", "application/*"):
+            return http_res
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1544,8 +1564,9 @@ class Records(BaseSDK):
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
+        accept_header_override: Optional[StreamAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> httpx.Response:
+    ) -> models.StreamRecordBufferResponse:
         r"""Stream record content
 
         Stream the binary content of a record's file.<br><br>
@@ -1566,6 +1587,7 @@ class Records(BaseSDK):
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param accept_header_override: Override the default accept header for this method
         :param http_headers: Additional headers to set or replace on requests.
         """
         base_url = None
@@ -1593,7 +1615,9 @@ class Records(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="application/octet-stream",
+            accept_header_value=accept_header_override.value
+            if accept_header_override is not None
+            else "application/octet-stream;q=1, application/pdf;q=0.8, application/*;q=0.6, text/*;q=0.4, image/*;q=0",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
@@ -1625,6 +1649,14 @@ class Records(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/octet-stream"):
+            return http_res
+        if utils.match_response(http_res, "200", "application/pdf"):
+            return http_res
+        if utils.match_response(http_res, "200", "image/*"):
+            return http_res
+        if utils.match_response(http_res, "200", "text/*"):
+            return http_res
+        if utils.match_response(http_res, "200", "application/*"):
             return http_res
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)

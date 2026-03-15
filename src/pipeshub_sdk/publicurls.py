@@ -14,7 +14,7 @@ class PublicUrls(BaseSDK):
     def set(
         self,
         *,
-        url: str,
+        url: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -105,7 +105,7 @@ class PublicUrls(BaseSDK):
     async def set_async(
         self,
         *,
-        url: str,
+        url: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -358,7 +358,7 @@ class PublicUrls(BaseSDK):
     def set_connector(
         self,
         *,
-        url: str,
+        url: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -449,7 +449,7 @@ class PublicUrls(BaseSDK):
     async def set_connector_async(
         self,
         *,
-        url: str,
+        url: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
