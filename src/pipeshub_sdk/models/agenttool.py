@@ -47,14 +47,6 @@ class Parameter(BaseModel):
         return m
 
 
-class ReturnsTypedDict(TypedDict):
-    r"""Tool return value schema"""
-
-
-class Returns(BaseModel):
-    r"""Tool return value schema"""
-
-
 class ExampleTypedDict(TypedDict):
     pass
 
@@ -76,8 +68,8 @@ class AgentToolTypedDict(TypedDict):
     r"""What the tool does"""
     parameters: NotRequired[List[ParameterTypedDict]]
     r"""Tool input parameters"""
-    returns: NotRequired[Nullable[ReturnsTypedDict]]
-    r"""Tool return value schema"""
+    returns: NotRequired[Nullable[str]]
+    r"""Tool return value description"""
     examples: NotRequired[List[ExampleTypedDict]]
     r"""Usage examples"""
     tags: NotRequired[List[str]]
@@ -102,8 +94,8 @@ class AgentTool(BaseModel):
     parameters: Optional[List[Parameter]] = None
     r"""Tool input parameters"""
 
-    returns: OptionalNullable[Returns] = UNSET
-    r"""Tool return value schema"""
+    returns: OptionalNullable[str] = UNSET
+    r"""Tool return value description"""
 
     examples: Optional[List[Example]] = None
     r"""Usage examples"""

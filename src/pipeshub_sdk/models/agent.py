@@ -12,8 +12,8 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional, Union
-from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
+from typing import List, Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ModelTypedDict(TypedDict):
@@ -54,12 +54,6 @@ class Model(BaseModel):
                     m[k] = val
 
         return m
-
-
-ModelUnionTypedDict = TypeAliasType("ModelUnionTypedDict", Union[ModelTypedDict, str])
-
-
-ModelUnion = TypeAliasType("ModelUnion", Union[Model, str])
 
 
 class ModelConfigTypedDict(TypedDict):
@@ -141,7 +135,7 @@ class AgentTypedDict(TypedDict):
     r"""List of tool keys the agent can use"""
     knowledge_bases: NotRequired[List[str]]
     r"""Knowledge bases the agent has access to"""
-    models: NotRequired[List[ModelUnionTypedDict]]
+    models: NotRequired[List[ModelTypedDict]]
     r"""Model configuration entries"""
     model_config_: NotRequired[ModelConfigTypedDict]
     r"""AI model configuration"""
@@ -227,7 +221,7 @@ class Agent(BaseModel):
     ] = None
     r"""Knowledge bases the agent has access to"""
 
-    models: Optional[List[ModelUnion]] = None
+    models: Optional[List[Model]] = None
     r"""Model configuration entries"""
 
     model_config_: Annotated[
