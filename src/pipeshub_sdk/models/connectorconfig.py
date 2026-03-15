@@ -254,9 +254,37 @@ class ConnectorConfigSync(BaseModel):
 class SyncValuesTypedDict(TypedDict):
     r"""Sync filter values"""
 
+    file_types: NotRequired[List[str]]
+    folders: NotRequired[List[str]]
+    include_shared: NotRequired[bool]
+
 
 class SyncValues(BaseModel):
     r"""Sync filter values"""
+
+    file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
+
+    folders: Optional[List[str]] = None
+
+    include_shared: Annotated[Optional[bool], pydantic.Field(alias="includeShared")] = (
+        None
+    )
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fileTypes", "folders", "includeShared"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class FiltersSyncTypedDict(TypedDict):
@@ -290,11 +318,30 @@ class FiltersSync(BaseModel):
 
 
 class ConnectorConfigFolderTypedDict(TypedDict):
-    pass
+    id: NotRequired[str]
+    name: NotRequired[str]
 
 
 class ConnectorConfigFolder(BaseModel):
-    pass
+    id: Optional[str] = None
+
+    name: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["id", "name"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class FiltersValuesTypedDict(TypedDict):
@@ -557,6 +604,10 @@ except NameError:
     pass
 try:
     ConnectorConfigSync.model_rebuild()
+except NameError:
+    pass
+try:
+    SyncValues.model_rebuild()
 except NameError:
     pass
 try:
