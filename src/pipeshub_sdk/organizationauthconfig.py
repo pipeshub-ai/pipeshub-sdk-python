@@ -14,7 +14,7 @@ class OrganizationAuthConfig(BaseSDK):
     def update_method(
         self,
         *,
-        auth_methods: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
+        auth_method: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -63,7 +63,7 @@ class OrganizationAuthConfig(BaseSDK):
         <b>Admin Access Required:</b> Only organization admins can update auth configuration.
 
 
-        :param auth_methods: List of authentication steps in order
+        :param auth_method: Authentication steps configuration
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -79,8 +79,8 @@ class OrganizationAuthConfig(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.AuthConfig(
-            auth_methods=utils.get_pydantic_model(auth_methods, List[models.AuthStep]),
+        request = models.UpdateAuthMethodRequest(
+            auth_method=utils.get_pydantic_model(auth_method, List[models.AuthStep]),
         )
 
         req = self._build_request(
@@ -97,7 +97,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.AuthConfig
+                request, False, False, "json", models.UpdateAuthMethodRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -116,7 +116,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAuthMethod",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -148,7 +148,7 @@ class OrganizationAuthConfig(BaseSDK):
     async def update_method_async(
         self,
         *,
-        auth_methods: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
+        auth_method: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -197,7 +197,7 @@ class OrganizationAuthConfig(BaseSDK):
         <b>Admin Access Required:</b> Only organization admins can update auth configuration.
 
 
-        :param auth_methods: List of authentication steps in order
+        :param auth_method: Authentication steps configuration
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -213,8 +213,8 @@ class OrganizationAuthConfig(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.AuthConfig(
-            auth_methods=utils.get_pydantic_model(auth_methods, List[models.AuthStep]),
+        request = models.UpdateAuthMethodRequest(
+            auth_method=utils.get_pydantic_model(auth_method, List[models.AuthStep]),
         )
 
         req = self._build_request_async(
@@ -231,7 +231,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.AuthConfig
+                request, False, False, "json", models.UpdateAuthMethodRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -250,7 +250,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAuthMethod",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

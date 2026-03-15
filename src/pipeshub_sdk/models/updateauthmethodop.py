@@ -10,6 +10,20 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+class UpdateAuthMethodRequestTypedDict(TypedDict):
+    r"""Request payload"""
+
+    auth_method: List[AuthStepTypedDict]
+    r"""Authentication steps configuration"""
+
+
+class UpdateAuthMethodRequest(BaseModel):
+    r"""Request payload"""
+
+    auth_method: Annotated[List[AuthStep], pydantic.Field(alias="authMethod")]
+    r"""Authentication steps configuration"""
+
+
 class UpdateAuthMethodResponseTypedDict(TypedDict):
     r"""Authentication methods updated successfully"""
 
@@ -36,7 +50,7 @@ class UpdateAuthMethodResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -45,6 +59,10 @@ class UpdateAuthMethodResponse(BaseModel):
         return m
 
 
+try:
+    UpdateAuthMethodRequest.model_rebuild()
+except NameError:
+    pass
 try:
     UpdateAuthMethodResponse.model_rebuild()
 except NameError:

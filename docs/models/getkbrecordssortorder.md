@@ -1,9 +1,14 @@
 # GetKBRecordsSortOrder
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetKBRecordsSortOrder
+value: GetKBRecordsSortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

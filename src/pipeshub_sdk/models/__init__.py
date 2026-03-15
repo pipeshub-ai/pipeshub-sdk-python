@@ -1700,6 +1700,8 @@ if TYPE_CHECKING:
         UpdateAIModelProviderRequestTypedDict,
     )
     from .updateauthmethodop import (
+        UpdateAuthMethodRequest,
+        UpdateAuthMethodRequestTypedDict,
         UpdateAuthMethodResponse,
         UpdateAuthMethodResponseTypedDict,
     )
@@ -3206,6 +3208,8 @@ __all__ = [
     "UpdateAgentToolTypedDict",
     "UpdateAgentToolset",
     "UpdateAgentToolsetTypedDict",
+    "UpdateAuthMethodRequest",
+    "UpdateAuthMethodRequestTypedDict",
     "UpdateAuthMethodResponse",
     "UpdateAuthMethodResponseTypedDict",
     "UpdateConnectorAuthConfigRequest",
@@ -4644,6 +4648,8 @@ _dynamic_imports: dict[str, str] = {
     "UpdateAIModelProviderRequestConfiguration": ".updateaimodelproviderrequest",
     "UpdateAIModelProviderRequestConfigurationTypedDict": ".updateaimodelproviderrequest",
     "UpdateAIModelProviderRequestTypedDict": ".updateaimodelproviderrequest",
+    "UpdateAuthMethodRequest": ".updateauthmethodop",
+    "UpdateAuthMethodRequestTypedDict": ".updateauthmethodop",
     "UpdateAuthMethodResponse": ".updateauthmethodop",
     "UpdateAuthMethodResponseTypedDict": ".updateauthmethodop",
     "UpdateConnectorAuthConfigRequest": ".updateconnectorauthconfigop",

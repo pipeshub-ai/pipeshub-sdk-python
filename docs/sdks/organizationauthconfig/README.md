@@ -63,12 +63,15 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.organization_auth_config.update_method(auth_methods=[
+    res = pipeshub.organization_auth_config.update_method(auth_method=[
         {
-            "order": 195644,
+            "order": 1,
             "allowed_methods": [
                 {
-                    "type": "samlSso",
+                    "type": "password",
+                },
+                {
+                    "type": "google",
                 },
             ],
         },
@@ -81,10 +84,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `auth_methods`                                                      | List[[models.AuthStep](../../models/authstep.md)]                   | :heavy_check_mark:                                                  | List of authentication steps in order                               |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                              | Type                                                                                   | Required                                                                               | Description                                                                            | Example                                                                                |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `auth_method`                                                                          | List[[models.AuthStep](../../models/authstep.md)]                                      | :heavy_check_mark:                                                                     | Authentication steps configuration                                                     | [<br/>{<br/>"order": 1,<br/>"allowedMethods": [<br/>{<br/>"type": "password"<br/>},<br/>{<br/>"type": "google"<br/>}<br/>]<br/>}<br/>] |
+| `retries`                                                                              | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                       | :heavy_minus_sign:                                                                     | Configuration to override the default retry behavior of the client.                    |                                                                                        |
 
 ### Response
 
