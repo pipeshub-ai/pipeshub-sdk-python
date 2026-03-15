@@ -357,7 +357,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -487,7 +487,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1333,7 +1333,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserEmailById",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1439,7 +1439,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserEmailById",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1756,7 +1756,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1883,7 +1883,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1989,7 +1989,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2097,7 +2097,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2196,7 +2196,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="removeUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2291,7 +2291,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="removeUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2653,7 +2653,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="resendUserInvite",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2765,7 +2765,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="resendUserInvite",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3121,7 +3121,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="unblockUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3229,7 +3229,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="unblockUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

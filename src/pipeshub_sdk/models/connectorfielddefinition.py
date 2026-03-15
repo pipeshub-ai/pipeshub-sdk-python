@@ -16,19 +16,57 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ConnectorFieldDefinitionOptionTypedDict(TypedDict):
-    pass
+    id: NotRequired[str]
+    label: NotRequired[str]
 
 
 class ConnectorFieldDefinitionOption(BaseModel):
-    pass
+    id: Optional[str] = None
+
+    label: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["id", "label"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ValidationTypedDict(TypedDict):
-    pass
+    min_length: NotRequired[int]
+    max_length: NotRequired[int]
 
 
 class Validation(BaseModel):
-    pass
+    min_length: Annotated[Optional[int], pydantic.Field(alias="minLength")] = None
+
+    max_length: Annotated[Optional[int], pydantic.Field(alias="maxLength")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["minLength", "maxLength"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorFieldDefinitionTypedDict(TypedDict):
@@ -121,7 +159,7 @@ class ConnectorFieldDefinition(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -138,6 +176,10 @@ class ConnectorFieldDefinition(BaseModel):
         return m
 
 
+try:
+    Validation.model_rebuild()
+except NameError:
+    pass
 try:
     ConnectorFieldDefinition.model_rebuild()
 except NameError:

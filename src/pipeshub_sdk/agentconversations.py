@@ -571,7 +571,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -705,7 +704,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1415,7 +1413,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1535,7 +1532,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1659,7 +1655,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1783,7 +1778,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
