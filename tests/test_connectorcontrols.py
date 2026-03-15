@@ -17,22 +17,4 @@ def test_connectorcontrols_toggle_connector():
 
         res = pipeshub.connector_controls.toggle(connector_id="<id>", type_="sync")
         assert res is not None
-        assert res == models.ToggleConnectorResponse(
-            message="Sync enabled successfully",
-            connector=models.ConnectorInstance(
-                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
-                name="Nextcloud",
-                type="Nextcloud",
-                app_group="Cloud Storage",
-                supported_auth_types=[
-                    "BASIC_AUTH",
-                ],
-                app_categories=[
-                    "Storage",
-                    "Collaboration",
-                ],
-                icon_path="/assets/icons/connectors/nextcloud.svg",
-                scope="team",
-                auth_type="BASIC_AUTH",
-            ),
-        )
+        assert res == models.ToggleConnectorResponse()

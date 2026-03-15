@@ -2,7 +2,6 @@
 # @generated-id: 57333ca3baea
 
 from __future__ import annotations
-from .connectorinstance import ConnectorInstance, ConnectorInstanceTypedDict
 from .connectortogglerequest import (
     ConnectorToggleRequest,
     ConnectorToggleRequestTypedDict,
@@ -40,11 +39,6 @@ class ToggleConnectorResponseTypedDict(TypedDict):
 
     success: NotRequired[bool]
     message: NotRequired[str]
-    connector: NotRequired[ConnectorInstanceTypedDict]
-    r"""A configured connector instance. Represents an active or configured
-    connection to an external service.
-
-    """
 
 
 class ToggleConnectorResponse(BaseModel):
@@ -54,15 +48,9 @@ class ToggleConnectorResponse(BaseModel):
 
     message: Optional[str] = None
 
-    connector: Optional[ConnectorInstance] = None
-    r"""A configured connector instance. Represents an active or configured
-    connection to an external service.
-
-    """
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "message", "connector"])
+        optional_fields = set(["success", "message"])
         serialized = handler(self)
         m = {}
 
