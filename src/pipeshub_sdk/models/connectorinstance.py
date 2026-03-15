@@ -142,6 +142,8 @@ class ConnectorInstanceTypedDict(TypedDict):
 
     key: NotRequired[str]
     r"""Unique instance identifier"""
+    connector_id: NotRequired[str]
+    r"""Connector instance ID (Python backend format)"""
     name: NotRequired[str]
     r"""Connector display name"""
     type: NotRequired[str]
@@ -204,6 +206,9 @@ class ConnectorInstance(BaseModel):
 
     key: Annotated[Optional[str], pydantic.Field(alias="_key")] = None
     r"""Unique instance identifier"""
+
+    connector_id: Optional[str] = None
+    r"""Connector instance ID (Python backend format)"""
 
     name: Optional[str] = None
     r"""Connector display name"""
@@ -309,6 +314,7 @@ class ConnectorInstance(BaseModel):
         optional_fields = set(
             [
                 "_key",
+                "connector_id",
                 "name",
                 "type",
                 "appGroup",
