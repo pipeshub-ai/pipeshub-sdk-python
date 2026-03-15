@@ -18,11 +18,40 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AuthValuesTypedDict(TypedDict):
-    r"""Auth field values"""
+    r"""Auth field values (varies per connector)"""
+
+    api_key: NotRequired[str]
+    base_url: NotRequired[str]
+    username: NotRequired[str]
+    password: NotRequired[str]
 
 
 class AuthValues(BaseModel):
-    r"""Auth field values"""
+    r"""Auth field values (varies per connector)"""
+
+    api_key: Annotated[Optional[str], pydantic.Field(alias="apiKey")] = None
+
+    base_url: Annotated[Optional[str], pydantic.Field(alias="baseUrl")] = None
+
+    username: Optional[str] = None
+
+    password: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["apiKey", "baseUrl", "username", "password"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class AuthTypedDict(TypedDict):
@@ -38,7 +67,7 @@ class AuthTypedDict(TypedDict):
     redirect_uri: NotRequired[str]
     connector_scope: NotRequired[str]
     values: NotRequired[AuthValuesTypedDict]
-    r"""Auth field values"""
+    r"""Auth field values (varies per connector)"""
 
 
 class Auth(BaseModel):
@@ -71,7 +100,7 @@ class Auth(BaseModel):
     ] = None
 
     values: Optional[AuthValues] = None
-    r"""Auth field values"""
+    r"""Auth field values (varies per connector)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -106,17 +135,73 @@ class Auth(BaseModel):
 class ConnectorConfigScheduledConfigTypedDict(TypedDict):
     r"""Scheduled sync configuration"""
 
+    interval_minutes: NotRequired[int]
+    cron_expression: NotRequired[str]
+    timezone: NotRequired[str]
+
 
 class ConnectorConfigScheduledConfig(BaseModel):
     r"""Scheduled sync configuration"""
+
+    interval_minutes: Annotated[
+        Optional[int], pydantic.Field(alias="intervalMinutes")
+    ] = None
+
+    cron_expression: Annotated[
+        Optional[str], pydantic.Field(alias="cronExpression")
+    ] = None
+
+    timezone: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["intervalMinutes", "cronExpression", "timezone"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorConfigWebhookConfigTypedDict(TypedDict):
     r"""Webhook configuration"""
 
+    events: NotRequired[List[str]]
+    supported: NotRequired[bool]
+    webhook_url: NotRequired[str]
+
 
 class ConnectorConfigWebhookConfig(BaseModel):
     r"""Webhook configuration"""
+
+    events: Optional[List[str]] = None
+
+    supported: Optional[bool] = None
+
+    webhook_url: Annotated[Optional[str], pydantic.Field(alias="webhookUrl")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["events", "supported", "webhookUrl"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorConfigSyncTypedDict(TypedDict):
@@ -166,20 +251,86 @@ class ConnectorConfigSync(BaseModel):
         return m
 
 
+class SyncValuesTypedDict(TypedDict):
+    r"""Sync filter values"""
+
+
+class SyncValues(BaseModel):
+    r"""Sync filter values"""
+
+
 class FiltersSyncTypedDict(TypedDict):
     r"""Sync filter configuration"""
+
+    values: NotRequired[SyncValuesTypedDict]
+    r"""Sync filter values"""
 
 
 class FiltersSync(BaseModel):
     r"""Sync filter configuration"""
 
+    values: Optional[SyncValues] = None
+    r"""Sync filter values"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["values"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ConnectorConfigFolderTypedDict(TypedDict):
+    pass
+
+
+class ConnectorConfigFolder(BaseModel):
+    pass
+
 
 class FiltersValuesTypedDict(TypedDict):
-    r"""Filter values"""
+    r"""Filter values (varies per connector)"""
+
+    file_types: NotRequired[List[str]]
+    folders: NotRequired[List[ConnectorConfigFolderTypedDict]]
+    modified_after: NotRequired[str]
 
 
 class FiltersValues(BaseModel):
-    r"""Filter values"""
+    r"""Filter values (varies per connector)"""
+
+    file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
+
+    folders: Optional[List[ConnectorConfigFolder]] = None
+
+    modified_after: Annotated[Optional[str], pydantic.Field(alias="modifiedAfter")] = (
+        None
+    )
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fileTypes", "folders", "modifiedAfter"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorConfigFiltersTypedDict(TypedDict):
@@ -188,7 +339,7 @@ class ConnectorConfigFiltersTypedDict(TypedDict):
     sync: NotRequired[FiltersSyncTypedDict]
     r"""Sync filter configuration"""
     values: NotRequired[FiltersValuesTypedDict]
-    r"""Filter values"""
+    r"""Filter values (varies per connector)"""
 
 
 class ConnectorConfigFilters(BaseModel):
@@ -198,7 +349,7 @@ class ConnectorConfigFilters(BaseModel):
     r"""Sync filter configuration"""
 
     values: Optional[FiltersValues] = None
-    r"""Filter values"""
+    r"""Filter values (varies per connector)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -389,11 +540,27 @@ class ConnectorConfig(BaseModel):
 
 
 try:
+    AuthValues.model_rebuild()
+except NameError:
+    pass
+try:
     Auth.model_rebuild()
 except NameError:
     pass
 try:
+    ConnectorConfigScheduledConfig.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorConfigWebhookConfig.model_rebuild()
+except NameError:
+    pass
+try:
     ConnectorConfigSync.model_rebuild()
+except NameError:
+    pass
+try:
+    FiltersValues.model_rebuild()
 except NameError:
     pass
 try:
