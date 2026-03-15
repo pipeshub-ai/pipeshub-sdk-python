@@ -1,14 +1,12 @@
-# GetConversationByIDAccessLevel
-
-Current user's access level
+# GetConversationByIDSharedWithAccessLevel
 
 ## Example Usage
 
 ```python
-from pipeshub_sdk.models import GetConversationByIDAccessLevel
+from pipeshub_sdk.models import GetConversationByIDSharedWithAccessLevel
 
 # Open enum: unrecognized values are captured as UnrecognizedStr
-value: GetConversationByIDAccessLevel = "read"
+value: GetConversationByIDSharedWithAccessLevel = "read"
 ```
 
 

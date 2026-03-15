@@ -8,7 +8,7 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -319,14 +319,6 @@ class GetKBRecordsPagination(BaseModel):
         return m
 
 
-class GetKBRecordsFiltersTypedDict(TypedDict):
-    r"""Applied and available filters"""
-
-
-class GetKBRecordsFilters(BaseModel):
-    r"""Applied and available filters"""
-
-
 class GetKBRecordsResponseTypedDict(TypedDict):
     r"""Successful operation"""
 
@@ -341,7 +333,7 @@ class GetKBRecordsResponseTypedDict(TypedDict):
     pagination_mode: NotRequired[str]
     user_permission: NotRequired[GetKBRecordsUserPermissionTypedDict]
     pagination: NotRequired[GetKBRecordsPaginationTypedDict]
-    filters: NotRequired[GetKBRecordsFiltersTypedDict]
+    filters: NotRequired[Dict[str, Any]]
     r"""Applied and available filters"""
 
 
@@ -376,7 +368,7 @@ class GetKBRecordsResponse(BaseModel):
 
     pagination: Optional[GetKBRecordsPagination] = None
 
-    filters: Optional[GetKBRecordsFilters] = None
+    filters: Optional[Dict[str, Any]] = None
     r"""Applied and available filters"""
 
     @model_serializer(mode="wrap")

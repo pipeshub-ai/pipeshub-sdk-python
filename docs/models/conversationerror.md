@@ -1,6 +1,4 @@
-# GetKBChildrenFilters
-
-Applied and available filters
+# ConversationError
 
 
 ## Fields

@@ -140,7 +140,7 @@ class GetConversationByIDModelInfo(BaseModel):
         return m
 
 
-GetConversationByIDAccessLevel = Union[
+GetConversationByIDSharedWithAccessLevel = Union[
     Literal[
         "read",
         "write",
@@ -151,14 +151,15 @@ GetConversationByIDAccessLevel = Union[
 
 class GetConversationByIDSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
-    access_level: NotRequired[GetConversationByIDAccessLevel]
+    access_level: NotRequired[GetConversationByIDSharedWithAccessLevel]
 
 
 class GetConversationByIDSharedWith(BaseModel):
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
     access_level: Annotated[
-        Optional[GetConversationByIDAccessLevel], pydantic.Field(alias="accessLevel")
+        Optional[GetConversationByIDSharedWithAccessLevel],
+        pydantic.Field(alias="accessLevel"),
     ] = None
 
     @model_serializer(mode="wrap")
@@ -176,6 +177,24 @@ class GetConversationByIDSharedWith(BaseModel):
                     m[k] = val
 
         return m
+
+
+class GetConversationByIDConversationErrorTypedDict(TypedDict):
+    pass
+
+
+class GetConversationByIDConversationError(BaseModel):
+    pass
+
+
+GetConversationByIDAccessLevel = Union[
+    Literal[
+        "read",
+        "write",
+    ],
+    UnrecognizedStr,
+]
+r"""Current user's access level"""
 
 
 class GetConversationByIDPaginationTypedDict(TypedDict):
@@ -258,6 +277,20 @@ class GetConversationByIDResponseTypedDict(TypedDict):
     r"""Whether this conversation is archived"""
     archived_by: NotRequired[str]
     r"""User who archived this conversation"""
+    agent_key: NotRequired[str]
+    r"""Agent key if this is an agent conversation"""
+    is_deleted: NotRequired[bool]
+    r"""Whether this conversation is soft-deleted"""
+    conversation_source: NotRequired[str]
+    r"""Source of the conversation (e.g., agent_chat, search)"""
+    conversation_errors: NotRequired[
+        List[GetConversationByIDConversationErrorTypedDict]
+    ]
+    r"""Errors encountered during conversation"""
+    is_owner: NotRequired[bool]
+    r"""Whether the current user owns this conversation"""
+    access_level: NotRequired[GetConversationByIDAccessLevel]
+    r"""Current user's access level"""
     last_activity_at: NotRequired[int]
     r"""Unix timestamp of last activity"""
     created_at: NotRequired[datetime]
@@ -329,6 +362,31 @@ class GetConversationByIDResponse(BaseModel):
     archived_by: Annotated[Optional[str], pydantic.Field(alias="archivedBy")] = None
     r"""User who archived this conversation"""
 
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""Agent key if this is an agent conversation"""
+
+    is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = False
+    r"""Whether this conversation is soft-deleted"""
+
+    conversation_source: Annotated[
+        Optional[str], pydantic.Field(alias="conversationSource")
+    ] = None
+    r"""Source of the conversation (e.g., agent_chat, search)"""
+
+    conversation_errors: Annotated[
+        Optional[List[GetConversationByIDConversationError]],
+        pydantic.Field(alias="conversationErrors"),
+    ] = None
+    r"""Errors encountered during conversation"""
+
+    is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
+    r"""Whether the current user owns this conversation"""
+
+    access_level: Annotated[
+        Optional[GetConversationByIDAccessLevel], pydantic.Field(alias="accessLevel")
+    ] = None
+    r"""Current user's access level"""
+
     last_activity_at: Annotated[
         Optional[int], pydantic.Field(alias="lastActivityAt")
     ] = None
@@ -358,6 +416,12 @@ class GetConversationByIDResponse(BaseModel):
                 "sharedWith",
                 "isArchived",
                 "archivedBy",
+                "agentKey",
+                "isDeleted",
+                "conversationSource",
+                "conversationErrors",
+                "isOwner",
+                "accessLevel",
                 "lastActivityAt",
                 "createdAt",
                 "updatedAt",

@@ -68,7 +68,7 @@ class ModelInfo(BaseModel):
         return m
 
 
-ConversationAccessLevel = Union[
+ConversationSharedWithAccessLevel = Union[
     Literal[
         "read",
         "write",
@@ -79,14 +79,14 @@ ConversationAccessLevel = Union[
 
 class ConversationSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
-    access_level: NotRequired[ConversationAccessLevel]
+    access_level: NotRequired[ConversationSharedWithAccessLevel]
 
 
 class ConversationSharedWith(BaseModel):
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
     access_level: Annotated[
-        Optional[ConversationAccessLevel], pydantic.Field(alias="accessLevel")
+        Optional[ConversationSharedWithAccessLevel], pydantic.Field(alias="accessLevel")
     ] = None
 
     @model_serializer(mode="wrap")
@@ -104,6 +104,24 @@ class ConversationSharedWith(BaseModel):
                     m[k] = val
 
         return m
+
+
+class ConversationErrorTypedDict(TypedDict):
+    pass
+
+
+class ConversationError(BaseModel):
+    pass
+
+
+ConversationAccessLevel = Union[
+    Literal[
+        "read",
+        "write",
+    ],
+    UnrecognizedStr,
+]
+r"""Current user's access level"""
 
 
 class ConversationTypedDict(TypedDict):
@@ -151,6 +169,18 @@ class ConversationTypedDict(TypedDict):
     r"""Whether this conversation is archived"""
     archived_by: NotRequired[str]
     r"""User who archived this conversation"""
+    agent_key: NotRequired[str]
+    r"""Agent key if this is an agent conversation"""
+    is_deleted: NotRequired[bool]
+    r"""Whether this conversation is soft-deleted"""
+    conversation_source: NotRequired[str]
+    r"""Source of the conversation (e.g., agent_chat, search)"""
+    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
+    r"""Errors encountered during conversation"""
+    is_owner: NotRequired[bool]
+    r"""Whether the current user owns this conversation"""
+    access_level: NotRequired[ConversationAccessLevel]
+    r"""Current user's access level"""
     last_activity_at: NotRequired[int]
     r"""Unix timestamp of last activity"""
     created_at: NotRequired[datetime]
@@ -218,6 +248,30 @@ class Conversation(BaseModel):
     archived_by: Annotated[Optional[str], pydantic.Field(alias="archivedBy")] = None
     r"""User who archived this conversation"""
 
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""Agent key if this is an agent conversation"""
+
+    is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = False
+    r"""Whether this conversation is soft-deleted"""
+
+    conversation_source: Annotated[
+        Optional[str], pydantic.Field(alias="conversationSource")
+    ] = None
+    r"""Source of the conversation (e.g., agent_chat, search)"""
+
+    conversation_errors: Annotated[
+        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
+    ] = None
+    r"""Errors encountered during conversation"""
+
+    is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
+    r"""Whether the current user owns this conversation"""
+
+    access_level: Annotated[
+        Optional[ConversationAccessLevel], pydantic.Field(alias="accessLevel")
+    ] = None
+    r"""Current user's access level"""
+
     last_activity_at: Annotated[
         Optional[int], pydantic.Field(alias="lastActivityAt")
     ] = None
@@ -245,6 +299,12 @@ class Conversation(BaseModel):
                 "sharedWith",
                 "isArchived",
                 "archivedBy",
+                "agentKey",
+                "isDeleted",
+                "conversationSource",
+                "conversationErrors",
+                "isOwner",
+                "accessLevel",
                 "lastActivityAt",
                 "createdAt",
                 "updatedAt",

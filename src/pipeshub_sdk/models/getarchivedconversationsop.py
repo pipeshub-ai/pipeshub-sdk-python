@@ -7,7 +7,7 @@ from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -50,14 +50,6 @@ class GetArchivedConversationsPagination(BaseModel):
                     m[k] = val
 
         return m
-
-
-class GetArchivedConversationsFiltersTypedDict(TypedDict):
-    r"""Applied and available filters"""
-
-
-class GetArchivedConversationsFilters(BaseModel):
-    r"""Applied and available filters"""
 
 
 class SummaryTypedDict(TypedDict):
@@ -121,7 +113,7 @@ class GetArchivedConversationsResponseTypedDict(TypedDict):
 
     conversations: NotRequired[List[ConversationTypedDict]]
     pagination: NotRequired[GetArchivedConversationsPaginationTypedDict]
-    filters: NotRequired[GetArchivedConversationsFiltersTypedDict]
+    filters: NotRequired[Dict[str, Any]]
     r"""Applied and available filters"""
     summary: NotRequired[SummaryTypedDict]
     meta: NotRequired[GetArchivedConversationsMetaTypedDict]
@@ -134,7 +126,7 @@ class GetArchivedConversationsResponse(BaseModel):
 
     pagination: Optional[GetArchivedConversationsPagination] = None
 
-    filters: Optional[GetArchivedConversationsFilters] = None
+    filters: Optional[Dict[str, Any]] = None
     r"""Applied and available filters"""
 
     summary: Optional[Summary] = None

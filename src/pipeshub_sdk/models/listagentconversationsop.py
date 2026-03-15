@@ -8,7 +8,7 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -67,14 +67,6 @@ class ListAgentConversationsPagination(BaseModel):
         return m
 
 
-class ListAgentConversationsFiltersTypedDict(TypedDict):
-    r"""Applied and available filters"""
-
-
-class ListAgentConversationsFilters(BaseModel):
-    r"""Applied and available filters"""
-
-
 class ListAgentConversationsMetaTypedDict(TypedDict):
     request_id: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -111,7 +103,7 @@ class ListAgentConversationsResponseTypedDict(TypedDict):
     conversations: NotRequired[List[ConversationTypedDict]]
     shared_with_me_conversations: NotRequired[List[ConversationTypedDict]]
     pagination: NotRequired[ListAgentConversationsPaginationTypedDict]
-    filters: NotRequired[ListAgentConversationsFiltersTypedDict]
+    filters: NotRequired[Dict[str, Any]]
     r"""Applied and available filters"""
     meta: NotRequired[ListAgentConversationsMetaTypedDict]
 
@@ -127,7 +119,7 @@ class ListAgentConversationsResponse(BaseModel):
 
     pagination: Optional[ListAgentConversationsPagination] = None
 
-    filters: Optional[ListAgentConversationsFilters] = None
+    filters: Optional[Dict[str, Any]] = None
     r"""Applied and available filters"""
 
     meta: Optional[ListAgentConversationsMeta] = None

@@ -1,6 +1,4 @@
-# GetKBRecordsFilters
-
-Applied and available filters
+# GetConversationByIDConversationError
 
 
 ## Fields

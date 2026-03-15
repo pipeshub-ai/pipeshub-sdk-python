@@ -1,5 +1,7 @@
 # ConversationAccessLevel
 
+Current user's access level
+
 ## Example Usage
 
 ```python
