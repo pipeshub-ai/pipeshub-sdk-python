@@ -4,7 +4,13 @@
 from __future__ import annotations
 from .connectorauthtype import ConnectorAuthType
 from .connectorscope import ConnectorScope
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+)
 import pydantic
 from pydantic import model_serializer
 from typing import Optional
@@ -12,67 +18,43 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AuthTypedDict(TypedDict):
-    r"""Authentication configuration (sensitive data redacted)"""
+    r"""Authentication configuration"""
 
 
 class Auth(BaseModel):
-    r"""Authentication configuration (sensitive data redacted)"""
+    r"""Authentication configuration"""
 
 
 class ConnectorConfigSyncTypedDict(TypedDict):
-    r"""Sync configuration (schedule, options)"""
+    r"""Sync configuration"""
 
 
 class ConnectorConfigSync(BaseModel):
-    r"""Sync configuration (schedule, options)"""
+    r"""Sync configuration"""
 
 
 class ConnectorConfigFiltersTypedDict(TypedDict):
-    r"""Filter selections for data scope"""
+    r"""Filter configuration"""
 
 
 class ConnectorConfigFilters(BaseModel):
-    r"""Filter selections for data scope"""
+    r"""Filter configuration"""
 
 
-class ConnectorConfigConfigTypedDict(TypedDict):
-    r"""Configuration sections"""
-
-    auth: NotRequired[AuthTypedDict]
-    r"""Authentication configuration (sensitive data redacted)"""
-    sync: NotRequired[ConnectorConfigSyncTypedDict]
-    r"""Sync configuration (schedule, options)"""
-    filters: NotRequired[ConnectorConfigFiltersTypedDict]
-    r"""Filter selections for data scope"""
+class ConnectorConfigCredentialsTypedDict(TypedDict):
+    r"""Credential details"""
 
 
-class ConnectorConfigConfig(BaseModel):
-    r"""Configuration sections"""
+class ConnectorConfigCredentials(BaseModel):
+    r"""Credential details"""
 
-    auth: Optional[Auth] = None
-    r"""Authentication configuration (sensitive data redacted)"""
 
-    sync: Optional[ConnectorConfigSync] = None
-    r"""Sync configuration (schedule, options)"""
+class ConnectorConfigOauthTypedDict(TypedDict):
+    r"""OAuth configuration"""
 
-    filters: Optional[ConnectorConfigFilters] = None
-    r"""Filter selections for data scope"""
 
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["auth", "sync", "filters"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+class ConnectorConfigOauth(BaseModel):
+    r"""OAuth configuration"""
 
 
 class ConnectorConfigTypedDict(TypedDict):
@@ -91,6 +73,7 @@ class ConnectorConfigTypedDict(TypedDict):
     <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
     <li><code>API_TOKEN</code> - API key or token authentication</li>
     <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
+    <li><code>BASIC_AUTH</code> - Basic authentication (username/password)</li>
     <li><code>NONE</code> - No authentication required</li>
     </ul>
 
@@ -103,8 +86,16 @@ class ConnectorConfigTypedDict(TypedDict):
     </ul>
 
     """
-    config: NotRequired[ConnectorConfigConfigTypedDict]
-    r"""Configuration sections"""
+    auth: NotRequired[AuthTypedDict]
+    r"""Authentication configuration"""
+    sync: NotRequired[ConnectorConfigSyncTypedDict]
+    r"""Sync configuration"""
+    filters: NotRequired[ConnectorConfigFiltersTypedDict]
+    r"""Filter configuration"""
+    credentials: NotRequired[Nullable[ConnectorConfigCredentialsTypedDict]]
+    r"""Credential details"""
+    oauth: NotRequired[Nullable[ConnectorConfigOauthTypedDict]]
+    r"""OAuth configuration"""
     base_url: NotRequired[str]
     r"""Base URL for self-hosted instances"""
     is_active: NotRequired[bool]
@@ -135,6 +126,7 @@ class ConnectorConfig(BaseModel):
     <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
     <li><code>API_TOKEN</code> - API key or token authentication</li>
     <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
+    <li><code>BASIC_AUTH</code> - Basic authentication (username/password)</li>
     <li><code>NONE</code> - No authentication required</li>
     </ul>
 
@@ -149,8 +141,20 @@ class ConnectorConfig(BaseModel):
 
     """
 
-    config: Optional[ConnectorConfigConfig] = None
-    r"""Configuration sections"""
+    auth: Optional[Auth] = None
+    r"""Authentication configuration"""
+
+    sync: Optional[ConnectorConfigSync] = None
+    r"""Sync configuration"""
+
+    filters: Optional[ConnectorConfigFilters] = None
+    r"""Filter configuration"""
+
+    credentials: OptionalNullable[ConnectorConfigCredentials] = UNSET
+    r"""Credential details"""
+
+    oauth: OptionalNullable[ConnectorConfigOauth] = UNSET
+    r"""OAuth configuration"""
 
     base_url: Annotated[Optional[str], pydantic.Field(alias="baseUrl")] = None
     r"""Base URL for self-hosted instances"""
@@ -174,22 +178,35 @@ class ConnectorConfig(BaseModel):
                 "instanceName",
                 "authType",
                 "scope",
-                "config",
+                "auth",
+                "sync",
+                "filters",
+                "credentials",
+                "oauth",
                 "baseUrl",
                 "isActive",
                 "isConfigured",
                 "isAuthenticated",
             ]
         )
+        nullable_fields = set(["credentials", "oauth"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
                     m[k] = val
 
         return m

@@ -97,7 +97,7 @@ class Azuread(BaseModel):
         return m
 
 
-class OauthTypedDict(TypedDict):
+class AuthProvidersOauthTypedDict(TypedDict):
     provider_name: NotRequired[str]
     r"""Custom OAuth provider name"""
     client_id: NotRequired[str]
@@ -106,7 +106,7 @@ class OauthTypedDict(TypedDict):
     r"""OAuth authorization URL"""
 
 
-class Oauth(BaseModel):
+class AuthProvidersOauth(BaseModel):
     provider_name: Annotated[Optional[str], pydantic.Field(alias="providerName")] = None
     r"""Custom OAuth provider name"""
 
@@ -141,7 +141,7 @@ class AuthProvidersTypedDict(TypedDict):
     google: NotRequired[GoogleTypedDict]
     microsoft: NotRequired[MicrosoftTypedDict]
     azuread: NotRequired[AzureadTypedDict]
-    oauth: NotRequired[OauthTypedDict]
+    oauth: NotRequired[AuthProvidersOauthTypedDict]
 
 
 class AuthProviders(BaseModel):
@@ -153,7 +153,7 @@ class AuthProviders(BaseModel):
 
     azuread: Optional[Azuread] = None
 
-    oauth: Optional[Oauth] = None
+    oauth: Optional[AuthProvidersOauth] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -185,6 +185,6 @@ try:
 except NameError:
     pass
 try:
-    Oauth.model_rebuild()
+    AuthProvidersOauth.model_rebuild()
 except NameError:
     pass

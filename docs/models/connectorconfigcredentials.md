@@ -1,6 +1,6 @@
-# ConnectorConfigSync
+# ConnectorConfigCredentials
 
-Sync configuration
+Credential details
 
 
 ## Fields

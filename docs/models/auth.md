@@ -1,6 +1,6 @@
 # Auth
 
-Authentication configuration (sensitive data redacted)
+Authentication configuration
 
 
 ## Fields

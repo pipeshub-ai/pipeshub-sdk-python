@@ -1,6 +1,6 @@
 # ConnectorConfigFilters
 
-Filter selections for data scope
+Filter configuration
 
 
 ## Fields

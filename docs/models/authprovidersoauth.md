@@ -1,4 +1,4 @@
-# Oauth
+# AuthProvidersOauth
 
 
 ## Fields

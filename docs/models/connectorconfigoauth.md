@@ -1,6 +1,6 @@
-# ConnectorConfigSync
+# ConnectorConfigOauth
 
-Sync configuration
+OAuth configuration
 
 
 ## Fields
