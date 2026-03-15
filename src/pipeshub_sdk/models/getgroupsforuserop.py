@@ -2,13 +2,10 @@
 # @generated-id: 5a14d1b653ee
 
 from __future__ import annotations
-from .usergroup import UserGroup, UserGroupTypedDict
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 
 class GetGroupsForUserRequestTypedDict(TypedDict):
@@ -23,34 +20,3 @@ class GetGroupsForUserRequest(BaseModel):
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
     r"""Unique identifier of the user"""
-
-
-class GetGroupsForUserResponseTypedDict(TypedDict):
-    r"""User's groups retrieved successfully"""
-
-    success: NotRequired[bool]
-    data: NotRequired[List[UserGroupTypedDict]]
-
-
-class GetGroupsForUserResponse(BaseModel):
-    r"""User's groups retrieved successfully"""
-
-    success: Optional[bool] = None
-
-    data: Optional[List[UserGroup]] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["success", "data"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m

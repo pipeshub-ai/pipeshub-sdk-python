@@ -12,20 +12,20 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class AddUsersToGroupRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    group_id: str
-    r"""ID of the group to add users to"""
+    group_ids: List[str]
+    r"""Array of group IDs to add users to"""
     user_ids: List[str]
-    r"""Array of user IDs to add to the group"""
+    r"""Array of user IDs to add to the groups"""
 
 
 class AddUsersToGroupRequest(BaseModel):
     r"""Request payload"""
 
-    group_id: Annotated[str, pydantic.Field(alias="groupId")]
-    r"""ID of the group to add users to"""
+    group_ids: Annotated[List[str], pydantic.Field(alias="groupIds")]
+    r"""Array of group IDs to add users to"""
 
     user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
-    r"""Array of user IDs to add to the group"""
+    r"""Array of user IDs to add to the groups"""
 
 
 class AddUsersToGroupResponseTypedDict(TypedDict):

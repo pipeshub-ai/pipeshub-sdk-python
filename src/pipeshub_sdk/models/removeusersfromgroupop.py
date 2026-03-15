@@ -12,20 +12,20 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class RemoveUsersFromGroupRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    group_id: str
-    r"""ID of the group to remove users from"""
+    group_ids: List[str]
+    r"""Array of group IDs to remove users from"""
     user_ids: List[str]
-    r"""Array of user IDs to remove from the group"""
+    r"""Array of user IDs to remove from the groups"""
 
 
 class RemoveUsersFromGroupRequest(BaseModel):
     r"""Request payload"""
 
-    group_id: Annotated[str, pydantic.Field(alias="groupId")]
-    r"""ID of the group to remove users from"""
+    group_ids: Annotated[List[str], pydantic.Field(alias="groupIds")]
+    r"""Array of group IDs to remove users from"""
 
     user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
-    r"""Array of user IDs to remove from the group"""
+    r"""Array of user IDs to remove from the groups"""
 
 
 class RemoveUsersFromGroupResponseTypedDict(TypedDict):

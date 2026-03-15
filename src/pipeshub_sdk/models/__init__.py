@@ -677,12 +677,8 @@ if TYPE_CHECKING:
     from .getgroupsforuserop import (
         GetGroupsForUserRequest,
         GetGroupsForUserRequestTypedDict,
-        GetGroupsForUserResponse,
-        GetGroupsForUserResponseTypedDict,
     )
     from .getgroupstatisticsop import (
-        GetGroupStatisticsData,
-        GetGroupStatisticsDataTypedDict,
         GetGroupStatisticsResponse,
         GetGroupStatisticsResponseTypedDict,
     )
@@ -2446,14 +2442,10 @@ __all__ = [
     "GetFolderContentsRequest",
     "GetFolderContentsRequestTypedDict",
     "GetFolderContentsSortOrder",
-    "GetGroupStatisticsData",
-    "GetGroupStatisticsDataTypedDict",
     "GetGroupStatisticsResponse",
     "GetGroupStatisticsResponseTypedDict",
     "GetGroupsForUserRequest",
     "GetGroupsForUserRequestTypedDict",
-    "GetGroupsForUserResponse",
-    "GetGroupsForUserResponseTypedDict",
     "GetInstanceOAuthAuthorizationURLRequest",
     "GetInstanceOAuthAuthorizationURLRequestTypedDict",
     "GetInstanceOAuthAuthorizationURLResponse",
@@ -3896,10 +3888,6 @@ _dynamic_imports: dict[str, str] = {
     "GetFolderContentsSortOrder": ".getfoldercontentsop",
     "GetGroupsForUserRequest": ".getgroupsforuserop",
     "GetGroupsForUserRequestTypedDict": ".getgroupsforuserop",
-    "GetGroupsForUserResponse": ".getgroupsforuserop",
-    "GetGroupsForUserResponseTypedDict": ".getgroupsforuserop",
-    "GetGroupStatisticsData": ".getgroupstatisticsop",
-    "GetGroupStatisticsDataTypedDict": ".getgroupstatisticsop",
     "GetGroupStatisticsResponse": ".getgroupstatisticsop",
     "GetGroupStatisticsResponseTypedDict": ".getgroupstatisticsop",
     "GetInstanceOAuthAuthorizationURLRequest": ".getinstanceoauthauthorizationurlop",

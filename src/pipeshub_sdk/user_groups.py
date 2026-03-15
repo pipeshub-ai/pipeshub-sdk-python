@@ -629,7 +629,7 @@ class UserGroups(BaseSDK):
         self,
         *,
         group_id: str,
-        name: Optional[str] = None,
+        name: str,
         description: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -735,7 +735,7 @@ class UserGroups(BaseSDK):
         self,
         *,
         group_id: str,
-        name: Optional[str] = None,
+        name: str,
         description: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1040,7 +1040,7 @@ class UserGroups(BaseSDK):
     def add_users_to_group(
         self,
         *,
-        group_id: str,
+        group_ids: List[str],
         user_ids: List[str],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1064,8 +1064,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
-        :param group_id: ID of the group to add users to
-        :param user_ids: Array of user IDs to add to the group
+        :param group_ids: Array of group IDs to add users to
+        :param user_ids: Array of user IDs to add to the groups
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1082,7 +1082,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.AddUsersToGroupRequest(
-            group_id=group_id,
+            group_ids=group_ids,
             user_ids=user_ids,
         )
 
@@ -1147,7 +1147,7 @@ class UserGroups(BaseSDK):
     async def add_users_to_group_async(
         self,
         *,
-        group_id: str,
+        group_ids: List[str],
         user_ids: List[str],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1171,8 +1171,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
-        :param group_id: ID of the group to add users to
-        :param user_ids: Array of user IDs to add to the group
+        :param group_ids: Array of group IDs to add users to
+        :param user_ids: Array of user IDs to add to the groups
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1189,7 +1189,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.AddUsersToGroupRequest(
-            group_id=group_id,
+            group_ids=group_ids,
             user_ids=user_ids,
         )
 
@@ -1254,7 +1254,7 @@ class UserGroups(BaseSDK):
     def remove_users_from_group(
         self,
         *,
-        group_id: str,
+        group_ids: List[str],
         user_ids: List[str],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1276,8 +1276,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
-        :param group_id: ID of the group to remove users from
-        :param user_ids: Array of user IDs to remove from the group
+        :param group_ids: Array of group IDs to remove users from
+        :param user_ids: Array of user IDs to remove from the groups
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1294,7 +1294,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.RemoveUsersFromGroupRequest(
-            group_id=group_id,
+            group_ids=group_ids,
             user_ids=user_ids,
         )
 
@@ -1361,7 +1361,7 @@ class UserGroups(BaseSDK):
     async def remove_users_from_group_async(
         self,
         *,
-        group_id: str,
+        group_ids: List[str],
         user_ids: List[str],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1383,8 +1383,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
-        :param group_id: ID of the group to remove users from
-        :param user_ids: Array of user IDs to remove from the group
+        :param group_ids: Array of group IDs to remove users from
+        :param user_ids: Array of user IDs to remove from the groups
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1401,7 +1401,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.RemoveUsersFromGroupRequest(
-            group_id=group_id,
+            group_ids=group_ids,
             user_ids=user_ids,
         )
 
@@ -1473,7 +1473,7 @@ class UserGroups(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetGroupsForUserResponse:
+    ) -> List[models.UserGroup]:
         r"""Get groups for a user
 
         Retrieve all user groups that a specific user belongs to.<br><br>
@@ -1551,7 +1551,7 @@ class UserGroups(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetGroupsForUserResponse, http_res)
+            return unmarshal_json_response(List[models.UserGroup], http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1573,7 +1573,7 @@ class UserGroups(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetGroupsForUserResponse:
+    ) -> List[models.UserGroup]:
         r"""Get groups for a user
 
         Retrieve all user groups that a specific user belongs to.<br><br>
@@ -1651,7 +1651,7 @@ class UserGroups(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetGroupsForUserResponse, http_res)
+            return unmarshal_json_response(List[models.UserGroup], http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1850,7 +1850,7 @@ class UserGroups(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetGroupStatisticsResponse:
+    ) -> List[models.GetGroupStatisticsResponse]:
         r"""Get group statistics
 
         Retrieve statistics for all user groups including member counts.
@@ -1911,7 +1911,9 @@ class UserGroups(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetGroupStatisticsResponse, http_res)
+            return unmarshal_json_response(
+                List[models.GetGroupStatisticsResponse], http_res
+            )
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1932,7 +1934,7 @@ class UserGroups(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetGroupStatisticsResponse:
+    ) -> List[models.GetGroupStatisticsResponse]:
         r"""Get group statistics
 
         Retrieve statistics for all user groups including member counts.
@@ -1993,7 +1995,9 @@ class UserGroups(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetGroupStatisticsResponse, http_res)
+            return unmarshal_json_response(
+                List[models.GetGroupStatisticsResponse], http_res
+            )
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

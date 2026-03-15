@@ -13,7 +13,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class UpdateUserGroupRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    name: NotRequired[str]
+    name: str
     r"""New display name for the group"""
     description: NotRequired[str]
     r"""Updated description"""
@@ -22,7 +22,7 @@ class UpdateUserGroupRequestBodyTypedDict(TypedDict):
 class UpdateUserGroupRequestBody(BaseModel):
     r"""Request payload"""
 
-    name: Optional[str] = None
+    name: str
     r"""New display name for the group"""
 
     description: Optional[str] = None
@@ -30,7 +30,7 @@ class UpdateUserGroupRequestBody(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["name", "description"])
+        optional_fields = set(["description"])
         serialized = handler(self)
         m = {}
 

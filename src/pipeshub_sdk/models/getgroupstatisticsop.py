@@ -3,36 +3,34 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import NotRequired, TypedDict
-
-
-class GetGroupStatisticsDataTypedDict(TypedDict):
-    pass
-
-
-class GetGroupStatisticsData(BaseModel):
-    pass
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetGroupStatisticsResponseTypedDict(TypedDict):
-    r"""Group statistics retrieved successfully"""
-
-    success: NotRequired[bool]
-    data: NotRequired[List[GetGroupStatisticsDataTypedDict]]
+    id: NotRequired[str]
+    name: NotRequired[str]
+    type: NotRequired[str]
+    total_members: NotRequired[int]
+    avg_users: NotRequired[int]
 
 
 class GetGroupStatisticsResponse(BaseModel):
-    r"""Group statistics retrieved successfully"""
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
 
-    success: Optional[bool] = None
+    name: Optional[str] = None
 
-    data: Optional[List[GetGroupStatisticsData]] = None
+    type: Optional[str] = None
+
+    total_members: Annotated[Optional[int], pydantic.Field(alias="totalMembers")] = None
+
+    avg_users: Annotated[Optional[int], pydantic.Field(alias="avgUsers")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "data"])
+        optional_fields = set(["_id", "name", "type", "totalMembers", "avgUsers"])
         serialized = handler(self)
         m = {}
 
@@ -45,3 +43,9 @@ class GetGroupStatisticsResponse(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    GetGroupStatisticsResponse.model_rebuild()
+except NameError:
+    pass

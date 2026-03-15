@@ -221,7 +221,7 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `group_id`                                                          | *str*                                                               | :heavy_check_mark:                                                  | Unique identifier of the user group to update                       | 507f1f77bcf86cd799439011                                            |
-| `name`                                                              | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | New display name for the group                                      | Engineering Team - Updated                                          |
+| `name`                                                              | *str*                                                               | :heavy_check_mark:                                                  | New display name for the group                                      | Engineering Team - Updated                                          |
 | `description`                                                       | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Updated description                                                 | All engineering and DevOps members                                  |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
@@ -320,7 +320,9 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.user_groups.add_users_to_group(group_id="507f1f77bcf86cd799439011", user_ids=[
+    res = pipeshub.user_groups.add_users_to_group(group_ids=[
+        "507f1f77bcf86cd799439011",
+    ], user_ids=[
         "507f1f77bcf86cd799439012",
         "507f1f77bcf86cd799439013",
     ])
@@ -334,8 +336,8 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `group_id`                                                          | *str*                                                               | :heavy_check_mark:                                                  | ID of the group to add users to                                     | 507f1f77bcf86cd799439011                                            |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of user IDs to add to the group                               | [<br/>"507f1f77bcf86cd799439012",<br/>"507f1f77bcf86cd799439013"<br/>] |
+| `group_ids`                                                         | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of group IDs to add users to                                  | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of user IDs to add to the groups                              | [<br/>"507f1f77bcf86cd799439012"<br/>]                              |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
@@ -377,7 +379,9 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.user_groups.remove_users_from_group(group_id="507f1f77bcf86cd799439011", user_ids=[
+    res = pipeshub.user_groups.remove_users_from_group(group_ids=[
+        "507f1f77bcf86cd799439011",
+    ], user_ids=[
         "507f1f77bcf86cd799439012",
     ])
 
@@ -390,8 +394,8 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `group_id`                                                          | *str*                                                               | :heavy_check_mark:                                                  | ID of the group to remove users from                                | 507f1f77bcf86cd799439011                                            |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of user IDs to remove from the group                          | [<br/>"507f1f77bcf86cd799439012"<br/>]                              |
+| `group_ids`                                                         | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of group IDs to remove users from                             | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | Array of user IDs to remove from the groups                         | [<br/>"507f1f77bcf86cd799439012"<br/>]                              |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
@@ -450,7 +454,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetGroupsForUserResponse](../../models/getgroupsforuserresponse.md)**
+**[List[models.UserGroup]](../../models/.md)**
 
 ### Errors
 
@@ -535,7 +539,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetGroupStatisticsResponse](../../models/getgroupstatisticsresponse.md)**
+**[List[models.GetGroupStatisticsResponse]](../../models/.md)**
 
 ### Errors
 

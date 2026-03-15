@@ -1,11 +1,12 @@
 # GetGroupStatisticsResponse
 
-Group statistics retrieved successfully
-
 
 ## Fields
 
-| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `success`                                                                  | *Optional[bool]*                                                           | :heavy_minus_sign:                                                         | N/A                                                                        |
-| `data`                                                                     | List[[models.GetGroupStatisticsData](../models/getgroupstatisticsdata.md)] | :heavy_minus_sign:                                                         | N/A                                                                        |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `id`               | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| `name`             | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| `type`             | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| `total_members`    | *Optional[int]*    | :heavy_minus_sign: | N/A                |
+| `avg_users`        | *Optional[int]*    | :heavy_minus_sign: | N/A                |
