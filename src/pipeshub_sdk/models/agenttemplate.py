@@ -2,12 +2,27 @@
 # @generated-id: 8e8a3b5126a4
 
 from __future__ import annotations
-from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+class AgentTemplateModelTypedDict(TypedDict):
+    pass
+
+
+class AgentTemplateModel(BaseModel):
+    pass
+
+
+class MemoryTypedDict(TypedDict):
+    r"""Memory configuration"""
+
+
+class Memory(BaseModel):
+    r"""Memory configuration"""
 
 
 class ConfigSchemaTypedDict(TypedDict):
@@ -24,6 +39,12 @@ class AgentTemplateTypedDict(TypedDict):
 
     """
 
+    id: NotRequired[str]
+    r"""Full document ID (collection/key)"""
+    key: NotRequired[str]
+    r"""Unique document key"""
+    rev: NotRequired[str]
+    r"""Document revision (ArangoDB)"""
     template_id: NotRequired[str]
     r"""Unique template identifier"""
     name: NotRequired[str]
@@ -32,16 +53,60 @@ class AgentTemplateTypedDict(TypedDict):
     r"""What agents from this template are designed for"""
     category: NotRequired[str]
     r"""Template category for organization"""
-    default_system_prompt: NotRequired[str]
-    r"""Default system prompt for agents"""
+    system_prompt: NotRequired[str]
+    r"""System prompt for agents"""
+    start_message: NotRequired[str]
+    r"""Initial greeting shown when conversation starts"""
+    tools: NotRequired[List[str]]
+    r"""Tool keys for this template"""
+    models: NotRequired[List[AgentTemplateModelTypedDict]]
+    r"""Model configuration entries"""
+    memory: NotRequired[MemoryTypedDict]
+    r"""Memory configuration"""
+    tags: NotRequired[List[str]]
+    r"""Tags for categorization"""
     recommended_tools: NotRequired[List[str]]
     r"""Suggested tools for this template"""
     config_schema: NotRequired[ConfigSchemaTypedDict]
     r"""JSON Schema for template customization options"""
     is_public: NotRequired[bool]
     r"""Whether template is available organization-wide"""
+    is_active: NotRequired[bool]
+    r"""Whether the template is active"""
+    is_deleted: NotRequired[bool]
+    r"""Soft delete flag"""
+    org_id: NotRequired[str]
+    r"""Organization ID"""
     created_by: NotRequired[str]
-    created_at: NotRequired[datetime]
+    r"""User key who created the template"""
+    updated_by_user_id: NotRequired[str]
+    r"""User key who last updated the template"""
+    created_at_timestamp: NotRequired[int]
+    r"""Creation timestamp in milliseconds"""
+    updated_at_timestamp: NotRequired[int]
+    r"""Last update timestamp in milliseconds"""
+    can_view: NotRequired[bool]
+    r"""Whether current user can view this template"""
+    can_share: NotRequired[bool]
+    r"""Whether current user can share this template"""
+    can_edit: NotRequired[bool]
+    r"""Whether current user can edit this template"""
+    can_delete: NotRequired[bool]
+    r"""Whether current user can delete this template"""
+    user_role: NotRequired[str]
+    r"""Current user's role on this template"""
+    access_type: NotRequired[str]
+    r"""How the user has access"""
+    permission_id: NotRequired[str]
+    r"""Permission edge ID"""
+    permission_from: NotRequired[str]
+    r"""Permission source node"""
+    permission_to: NotRequired[str]
+    r"""Permission target node"""
+    permission_created_at: NotRequired[int]
+    r"""Permission creation timestamp"""
+    permission_updated_at: NotRequired[int]
+    r"""Permission update timestamp"""
 
 
 class AgentTemplate(BaseModel):
@@ -49,6 +114,15 @@ class AgentTemplate(BaseModel):
     configuration that can be customized when creating an agent instance.
 
     """
+
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Full document ID (collection/key)"""
+
+    key: Annotated[Optional[str], pydantic.Field(alias="_key")] = None
+    r"""Unique document key"""
+
+    rev: Annotated[Optional[str], pydantic.Field(alias="_rev")] = None
+    r"""Document revision (ArangoDB)"""
 
     template_id: Annotated[Optional[str], pydantic.Field(alias="templateId")] = None
     r"""Unique template identifier"""
@@ -62,10 +136,23 @@ class AgentTemplate(BaseModel):
     category: Optional[str] = None
     r"""Template category for organization"""
 
-    default_system_prompt: Annotated[
-        Optional[str], pydantic.Field(alias="defaultSystemPrompt")
-    ] = None
-    r"""Default system prompt for agents"""
+    system_prompt: Annotated[Optional[str], pydantic.Field(alias="systemPrompt")] = None
+    r"""System prompt for agents"""
+
+    start_message: Annotated[Optional[str], pydantic.Field(alias="startMessage")] = None
+    r"""Initial greeting shown when conversation starts"""
+
+    tools: Optional[List[str]] = None
+    r"""Tool keys for this template"""
+
+    models: Optional[List[AgentTemplateModel]] = None
+    r"""Model configuration entries"""
+
+    memory: Optional[Memory] = None
+    r"""Memory configuration"""
+
+    tags: Optional[List[str]] = None
+    r"""Tags for categorization"""
 
     recommended_tools: Annotated[
         Optional[List[str]], pydantic.Field(alias="recommendedTools")
@@ -80,24 +167,104 @@ class AgentTemplate(BaseModel):
     is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
     r"""Whether template is available organization-wide"""
 
-    created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
+    is_active: Annotated[Optional[bool], pydantic.Field(alias="isActive")] = None
+    r"""Whether the template is active"""
 
-    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+    is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = None
+    r"""Soft delete flag"""
+
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
+    r"""Organization ID"""
+
+    created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
+    r"""User key who created the template"""
+
+    updated_by_user_id: Annotated[
+        Optional[str], pydantic.Field(alias="updatedByUserId")
+    ] = None
+    r"""User key who last updated the template"""
+
+    created_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="createdAtTimestamp")
+    ] = None
+    r"""Creation timestamp in milliseconds"""
+
+    updated_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="updatedAtTimestamp")
+    ] = None
+    r"""Last update timestamp in milliseconds"""
+
+    can_view: Optional[bool] = None
+    r"""Whether current user can view this template"""
+
+    can_share: Optional[bool] = None
+    r"""Whether current user can share this template"""
+
+    can_edit: Optional[bool] = None
+    r"""Whether current user can edit this template"""
+
+    can_delete: Optional[bool] = None
+    r"""Whether current user can delete this template"""
+
+    user_role: Optional[str] = None
+    r"""Current user's role on this template"""
+
+    access_type: Optional[str] = None
+    r"""How the user has access"""
+
+    permission_id: Optional[str] = None
+    r"""Permission edge ID"""
+
+    permission_from: Optional[str] = None
+    r"""Permission source node"""
+
+    permission_to: Optional[str] = None
+    r"""Permission target node"""
+
+    permission_created_at: Optional[int] = None
+    r"""Permission creation timestamp"""
+
+    permission_updated_at: Optional[int] = None
+    r"""Permission update timestamp"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
             [
+                "_id",
+                "_key",
+                "_rev",
                 "templateId",
                 "name",
                 "description",
                 "category",
-                "defaultSystemPrompt",
+                "systemPrompt",
+                "startMessage",
+                "tools",
+                "models",
+                "memory",
+                "tags",
                 "recommendedTools",
                 "configSchema",
                 "isPublic",
+                "isActive",
+                "isDeleted",
+                "orgId",
                 "createdBy",
-                "createdAt",
+                "updatedByUserId",
+                "createdAtTimestamp",
+                "updatedAtTimestamp",
+                "can_view",
+                "can_share",
+                "can_edit",
+                "can_delete",
+                "user_role",
+                "access_type",
+                "permission_id",
+                "permission_from",
+                "permission_to",
+                "permission_created_at",
+                "permission_updated_at",
             ]
         )
         serialized = handler(self)

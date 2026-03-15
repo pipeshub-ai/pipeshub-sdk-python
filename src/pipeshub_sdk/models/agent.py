@@ -16,7 +16,7 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class ModelTypedDict(TypedDict):
+class AgentModelTypedDict(TypedDict):
     model_key: NotRequired[str]
     model_name: NotRequired[str]
     model_friendly_name: NotRequired[str]
@@ -28,7 +28,7 @@ class ModelTypedDict(TypedDict):
     r"""Type of model (e.g., llm, slm, reasoning)"""
 
 
-class Model(BaseModel):
+class AgentModel(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
@@ -157,7 +157,7 @@ class AgentTypedDict(TypedDict):
     r"""List of tool keys the agent can use"""
     knowledge_bases: NotRequired[List[str]]
     r"""Knowledge bases the agent has access to"""
-    models: NotRequired[List[ModelTypedDict]]
+    models: NotRequired[List[AgentModelTypedDict]]
     r"""Model configuration entries"""
     model_config_: NotRequired[ModelConfigTypedDict]
     r"""AI model configuration"""
@@ -243,7 +243,7 @@ class Agent(BaseModel):
     ] = None
     r"""Knowledge bases the agent has access to"""
 
-    models: Optional[List[Model]] = None
+    models: Optional[List[AgentModel]] = None
     r"""Model configuration entries"""
 
     model_config_: Annotated[
@@ -380,7 +380,7 @@ class Agent(BaseModel):
 
 
 try:
-    Model.model_rebuild()
+    AgentModel.model_rebuild()
 except NameError:
     pass
 try:
