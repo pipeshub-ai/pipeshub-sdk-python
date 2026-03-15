@@ -12,24 +12,15 @@ Current state of the job in the queue:<br>
 </ul>
 
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import State
-
-# Open enum: unrecognized values are captured as UnrecognizedStr
-value: State = "waiting"
-```
-
 
 ## Values
 
-This is an open enum. Unrecognized values will not fail type checks.
-
-- `"waiting"`
-- `"active"`
-- `"completed"`
-- `"failed"`
-- `"delayed"`
-- `"paused"`
-- `"stuck"`
+| Name        | Value       |
+| ----------- | ----------- |
+| `WAITING`   | waiting     |
+| `ACTIVE`    | active      |
+| `COMPLETED` | completed   |
+| `FAILED`    | failed      |
+| `DELAYED`   | delayed     |
+| `PAUSED`    | paused      |
+| `STUCK`     | stuck       |

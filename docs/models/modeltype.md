@@ -2,19 +2,14 @@
 
 Type of AI model
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import ModelType
-value: ModelType = "llm"
-```
-
 
 ## Values
 
-- `"llm"`
-- `"embedding"`
-- `"ocr"`
-- `"slm"`
-- `"reasoning"`
-- `"multiModal"`
+| Name          | Value         |
+| ------------- | ------------- |
+| `LLM`         | llm           |
+| `EMBEDDING`   | embedding     |
+| `OCR`         | ocr           |
+| `SLM`         | slm           |
+| `REASONING`   | reasoning     |
+| `MULTI_MODAL` | multiModal    |
