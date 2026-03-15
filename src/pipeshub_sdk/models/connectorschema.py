@@ -39,44 +39,180 @@ class ConnectorSchemaDocumentationLink(BaseModel):
         return m
 
 
-class SchemasOAUTHTypedDict(TypedDict):
+class OAUTHFieldTypedDict(TypedDict):
     pass
 
 
+class OAUTHField(BaseModel):
+    pass
+
+
+class SchemasOAUTHTypedDict(TypedDict):
+    fields: NotRequired[List[OAUTHFieldTypedDict]]
+    redirect_uri: NotRequired[str]
+    display_redirect_uri: NotRequired[bool]
+
+
 class SchemasOAUTH(BaseModel):
+    fields: Optional[List[OAUTHField]] = None
+
+    redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
+
+    display_redirect_uri: Annotated[
+        Optional[bool], pydantic.Field(alias="displayRedirectUri")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields", "redirectUri", "displayRedirectUri"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class BASICAUTHFieldTypedDict(TypedDict):
+    pass
+
+
+class BASICAUTHField(BaseModel):
     pass
 
 
 class BasicAuthTypedDict(TypedDict):
-    pass
+    fields: NotRequired[List[BASICAUTHFieldTypedDict]]
 
 
 class BasicAuth(BaseModel):
+    fields: Optional[List[BASICAUTHField]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class APITOKENFieldTypedDict(TypedDict):
+    pass
+
+
+class APITOKENField(BaseModel):
     pass
 
 
 class APITokenTypedDict(TypedDict):
-    pass
+    fields: NotRequired[List[APITOKENFieldTypedDict]]
 
 
 class APIToken(BaseModel):
+    fields: Optional[List[APITOKENField]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class OAUTHADMINCONSENTFieldTypedDict(TypedDict):
+    pass
+
+
+class OAUTHADMINCONSENTField(BaseModel):
     pass
 
 
 class SchemasOAUTHADMINCONSENTTypedDict(TypedDict):
-    pass
+    fields: NotRequired[List[OAUTHADMINCONSENTFieldTypedDict]]
+    redirect_uri: NotRequired[str]
+    display_redirect_uri: NotRequired[bool]
 
 
 class SchemasOAUTHADMINCONSENT(BaseModel):
+    fields: Optional[List[OAUTHADMINCONSENTField]] = None
+
+    redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
+
+    display_redirect_uri: Annotated[
+        Optional[bool], pydantic.Field(alias="displayRedirectUri")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields", "redirectUri", "displayRedirectUri"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class USERNAMEPASSWORDFieldTypedDict(TypedDict):
+    pass
+
+
+class USERNAMEPASSWORDField(BaseModel):
     pass
 
 
 class UsernamePasswordTypedDict(TypedDict):
-    pass
+    fields: NotRequired[List[USERNAMEPASSWORDFieldTypedDict]]
 
 
 class UsernamePassword(BaseModel):
-    pass
+    fields: Optional[List[USERNAMEPASSWORDField]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class SchemasTypedDict(TypedDict):
@@ -517,12 +653,40 @@ class ConnectorSchemaSync(BaseModel):
         return m
 
 
+class SyncFieldTypedDict(TypedDict):
+    pass
+
+
+class SyncField(BaseModel):
+    pass
+
+
 class SyncSchemaTypedDict(TypedDict):
     r"""Filter field definitions"""
+
+    fields: NotRequired[List[SyncFieldTypedDict]]
 
 
 class SyncSchema(BaseModel):
     r"""Filter field definitions"""
+
+    fields: Optional[List[SyncField]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorSchemaFiltersSyncValuesTypedDict(TypedDict):
@@ -566,12 +730,40 @@ class ConnectorSchemaFiltersSync(BaseModel):
         return m
 
 
+class IndexingFieldTypedDict(TypedDict):
+    pass
+
+
+class IndexingField(BaseModel):
+    pass
+
+
 class IndexingSchemaTypedDict(TypedDict):
     r"""Filter field definitions"""
+
+    fields: NotRequired[List[IndexingFieldTypedDict]]
 
 
 class IndexingSchema(BaseModel):
     r"""Filter field definitions"""
+
+    fields: Optional[List[IndexingField]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fields"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class IndexingValuesTypedDict(TypedDict):
@@ -745,6 +937,14 @@ class ConnectorSchema(BaseModel):
         return m
 
 
+try:
+    SchemasOAUTH.model_rebuild()
+except NameError:
+    pass
+try:
+    SchemasOAUTHADMINCONSENT.model_rebuild()
+except NameError:
+    pass
 try:
     Schemas.model_rebuild()
 except NameError:
