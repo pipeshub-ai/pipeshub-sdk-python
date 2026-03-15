@@ -53,11 +53,15 @@ def test_agents_create_agent():
             share_with_org=False,
         )
         assert res is not None
-        assert res == models.Agent(
-            agent_key="customer-support-agent",
-            name="Customer Support Assistant",
-            user_role="OWNER",
-            access_type="INDIVIDUAL",
+        assert res == models.CreateAgentResponse(
+            status="success",
+            message="Agent created successfully",
+            agent=models.Agent(
+                agent_key="customer-support-agent",
+                name="Customer Support Assistant",
+                user_role="OWNER",
+                access_type="INDIVIDUAL",
+            ),
         )
 
 
@@ -74,10 +78,7 @@ def test_agents_list_agent_tools():
         res = pipeshub.agents.get_tools()
         assert res is not None
         assert res == [
-            models.AgentTool(
-                key="web-search",
-                name="Web Search",
-            ),
+            models.AgentTool(),
         ]
 
 
@@ -135,7 +136,10 @@ def test_agents_get_agent_permissions():
 
         res = pipeshub.agents.get_permissions(agent_key="<value>")
         assert res is not None
-        assert res == models.GetAgentPermissionsResponse()
+        assert res == models.GetAgentPermissionsResponse(
+            status="success",
+            message="Agent permissions retrieved successfully",
+        )
 
 
 def test_agents_share_agent():
@@ -176,4 +180,6 @@ def test_agents_unshare_agent():
 
         res = pipeshub.agents.unshare(agent_key="<value>")
         assert res is not None
-        assert res == models.UnshareAgentResponse()
+        assert res == models.UnshareAgentResponse(
+            status="success",
+        )

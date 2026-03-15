@@ -12,8 +12,54 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import List, Optional, Union
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
+
+
+class ModelTypedDict(TypedDict):
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    model_friendly_name: NotRequired[str]
+    provider: NotRequired[str]
+    is_reasoning: NotRequired[bool]
+
+
+class Model(BaseModel):
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
+    provider: Optional[str] = None
+
+    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["modelKey", "modelName", "modelFriendlyName", "provider", "isReasoning"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+ModelUnionTypedDict = TypeAliasType("ModelUnionTypedDict", Union[ModelTypedDict, str])
+
+
+ModelUnion = TypeAliasType("ModelUnion", Union[Model, str])
 
 
 class ModelConfigTypedDict(TypedDict):
@@ -50,6 +96,22 @@ class ModelConfig(BaseModel):
         return m
 
 
+class KnowledgeTypedDict(TypedDict):
+    pass
+
+
+class Knowledge(BaseModel):
+    pass
+
+
+class ToolsetTypedDict(TypedDict):
+    pass
+
+
+class Toolset(BaseModel):
+    pass
+
+
 class AgentTypedDict(TypedDict):
     r"""A custom AI agent with specialized capabilities, tools, and knowledge scope.
     Agents can be configured for specific use cases like customer support,
@@ -79,7 +141,7 @@ class AgentTypedDict(TypedDict):
     r"""List of tool keys the agent can use"""
     knowledge_bases: NotRequired[List[str]]
     r"""Knowledge bases the agent has access to"""
-    models: NotRequired[List[str]]
+    models: NotRequired[List[ModelUnionTypedDict]]
     r"""Model configuration entries"""
     model_config_: NotRequired[ModelConfigTypedDict]
     r"""AI model configuration"""
@@ -87,6 +149,10 @@ class AgentTypedDict(TypedDict):
     r"""Tags for categorization"""
     is_public: NotRequired[bool]
     r"""Whether agent is available to all org users"""
+    knowledge: NotRequired[List[KnowledgeTypedDict]]
+    r"""Knowledge sources connected to the agent"""
+    toolsets: NotRequired[List[ToolsetTypedDict]]
+    r"""Toolsets attached to the agent"""
     is_active: NotRequired[bool]
     r"""Whether the agent is active"""
     is_deleted: NotRequired[bool]
@@ -161,7 +227,7 @@ class Agent(BaseModel):
     ] = None
     r"""Knowledge bases the agent has access to"""
 
-    models: Optional[List[str]] = None
+    models: Optional[List[ModelUnion]] = None
     r"""Model configuration entries"""
 
     model_config_: Annotated[
@@ -174,6 +240,12 @@ class Agent(BaseModel):
 
     is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
     r"""Whether agent is available to all org users"""
+
+    knowledge: Optional[List[Knowledge]] = None
+    r"""Knowledge sources connected to the agent"""
+
+    toolsets: Optional[List[Toolset]] = None
+    r"""Toolsets attached to the agent"""
 
     is_active: Annotated[Optional[bool], pydantic.Field(alias="isActive")] = None
     r"""Whether the agent is active"""
@@ -248,6 +320,8 @@ class Agent(BaseModel):
                 "modelConfig",
                 "tags",
                 "isPublic",
+                "knowledge",
+                "toolsets",
                 "isActive",
                 "isDeleted",
                 "shareWithOrg",
@@ -289,6 +363,10 @@ class Agent(BaseModel):
         return m
 
 
+try:
+    Model.model_rebuild()
+except NameError:
+    pass
 try:
     ModelConfig.model_rebuild()
 except NameError:

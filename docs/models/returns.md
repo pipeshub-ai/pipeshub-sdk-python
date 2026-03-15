@@ -1,6 +1,6 @@
-# InputSchema
+# Returns
 
-JSON Schema for tool inputs
+Tool return value schema
 
 
 ## Fields

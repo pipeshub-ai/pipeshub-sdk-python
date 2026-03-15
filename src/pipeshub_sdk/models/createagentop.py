@@ -2,6 +2,7 @@
 # @generated-id: 55e27edbc32c
 
 from __future__ import annotations
+from .agent import Agent, AgentTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -243,6 +244,64 @@ class CreateAgentRequest(BaseModel):
             ]
         )
         nullable_fields = set(["instructions"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
+
+class CreateAgentResponseTypedDict(TypedDict):
+    r"""Agent created"""
+
+    status: NotRequired[str]
+    message: NotRequired[str]
+    agent: NotRequired[AgentTypedDict]
+    r"""A custom AI agent with specialized capabilities, tools, and knowledge scope.
+    Agents can be configured for specific use cases like customer support,
+    code review, or domain-specific Q&A.
+
+    """
+    warnings: NotRequired[Nullable[List[str]]]
+    r"""Warnings from agent creation (e.g., failed toolset connections)"""
+
+
+class CreateAgentResponse(BaseModel):
+    r"""Agent created"""
+
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    agent: Optional[Agent] = None
+    r"""A custom AI agent with specialized capabilities, tools, and knowledge scope.
+    Agents can be configured for specific use cases like customer support,
+    code review, or domain-specific Q&A.
+
+    """
+
+    warnings: OptionalNullable[List[str]] = UNSET
+    r"""Warnings from agent creation (e.g., failed toolset connections)"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message", "agent", "warnings"])
+        nullable_fields = set(["warnings"])
         serialized = handler(self)
         m = {}
 

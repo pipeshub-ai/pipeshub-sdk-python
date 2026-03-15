@@ -2,61 +2,37 @@
 # @generated-id: e6721a888f8d
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-import pydantic
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+)
 from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import List, Optional
+from typing_extensions import NotRequired, TypedDict
 
 
-class InputSchemaTypedDict(TypedDict):
-    r"""JSON Schema for tool inputs"""
-
-
-class InputSchema(BaseModel):
-    r"""JSON Schema for tool inputs"""
-
-
-class AgentToolTypedDict(TypedDict):
-    r"""A tool that agents can use to perform actions"""
-
-    key: NotRequired[str]
-    r"""Unique tool identifier"""
+class ParameterTypedDict(TypedDict):
     name: NotRequired[str]
-    r"""Display name"""
+    type: NotRequired[str]
     description: NotRequired[str]
-    r"""What the tool does"""
-    input_schema: NotRequired[InputSchemaTypedDict]
-    r"""JSON Schema for tool inputs"""
-    is_enabled: NotRequired[bool]
-    r"""Whether tool is currently available"""
+    required: NotRequired[bool]
 
 
-class AgentTool(BaseModel):
-    r"""A tool that agents can use to perform actions"""
-
-    key: Optional[str] = None
-    r"""Unique tool identifier"""
-
+class Parameter(BaseModel):
     name: Optional[str] = None
-    r"""Display name"""
+
+    type: Optional[str] = None
 
     description: Optional[str] = None
-    r"""What the tool does"""
 
-    input_schema: Annotated[
-        Optional[InputSchema], pydantic.Field(alias="inputSchema")
-    ] = None
-    r"""JSON Schema for tool inputs"""
-
-    is_enabled: Annotated[Optional[bool], pydantic.Field(alias="isEnabled")] = None
-    r"""Whether tool is currently available"""
+    required: Optional[bool] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            ["key", "name", "description", "inputSchema", "isEnabled"]
-        )
+        optional_fields = set(["name", "type", "description", "required"])
         serialized = handler(self)
         m = {}
 
@@ -71,7 +47,102 @@ class AgentTool(BaseModel):
         return m
 
 
-try:
-    AgentTool.model_rebuild()
-except NameError:
+class ReturnsTypedDict(TypedDict):
+    r"""Tool return value schema"""
+
+
+class Returns(BaseModel):
+    r"""Tool return value schema"""
+
+
+class ExampleTypedDict(TypedDict):
     pass
+
+
+class Example(BaseModel):
+    pass
+
+
+class AgentToolTypedDict(TypedDict):
+    r"""A tool that agents can use to perform actions"""
+
+    app_name: NotRequired[str]
+    r"""Application/service the tool belongs to"""
+    tool_name: NotRequired[str]
+    r"""Name of the specific tool"""
+    full_name: NotRequired[str]
+    r"""Fully qualified tool name (app_name.tool_name)"""
+    description: NotRequired[str]
+    r"""What the tool does"""
+    parameters: NotRequired[List[ParameterTypedDict]]
+    r"""Tool input parameters"""
+    returns: NotRequired[Nullable[ReturnsTypedDict]]
+    r"""Tool return value schema"""
+    examples: NotRequired[List[ExampleTypedDict]]
+    r"""Usage examples"""
+    tags: NotRequired[List[str]]
+    r"""Tags for categorization"""
+
+
+class AgentTool(BaseModel):
+    r"""A tool that agents can use to perform actions"""
+
+    app_name: Optional[str] = None
+    r"""Application/service the tool belongs to"""
+
+    tool_name: Optional[str] = None
+    r"""Name of the specific tool"""
+
+    full_name: Optional[str] = None
+    r"""Fully qualified tool name (app_name.tool_name)"""
+
+    description: Optional[str] = None
+    r"""What the tool does"""
+
+    parameters: Optional[List[Parameter]] = None
+    r"""Tool input parameters"""
+
+    returns: OptionalNullable[Returns] = UNSET
+    r"""Tool return value schema"""
+
+    examples: Optional[List[Example]] = None
+    r"""Usage examples"""
+
+    tags: Optional[List[str]] = None
+    r"""Tags for categorization"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "app_name",
+                "tool_name",
+                "full_name",
+                "description",
+                "parameters",
+                "returns",
+                "examples",
+                "tags",
+            ]
+        )
+        nullable_fields = set(["returns"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m

@@ -2,11 +2,11 @@
 # @generated-id: 521092e51cd8
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Literal, Optional, Union
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -22,31 +22,30 @@ class GetAgentPermissionsRequest(BaseModel):
     ]
 
 
-GetAgentPermissionsAccessLevel = Union[
-    Literal[
-        "read",
-        "use",
-        "edit",
-    ],
-    UnrecognizedStr,
-]
+class GetAgentPermissionsPermissionTypedDict(TypedDict):
+    id: NotRequired[str]
+    name: NotRequired[str]
+    role: NotRequired[str]
+    type: NotRequired[str]
+    created_at_timestamp: NotRequired[int]
 
 
-class GetAgentPermissionsSharedWithTypedDict(TypedDict):
-    user_id: NotRequired[str]
-    access_level: NotRequired[GetAgentPermissionsAccessLevel]
+class GetAgentPermissionsPermission(BaseModel):
+    id: Optional[str] = None
 
+    name: Optional[str] = None
 
-class GetAgentPermissionsSharedWith(BaseModel):
-    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+    role: Optional[str] = None
 
-    access_level: Annotated[
-        Optional[GetAgentPermissionsAccessLevel], pydantic.Field(alias="accessLevel")
+    type: Optional[str] = None
+
+    created_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="createdAtTimestamp")
     ] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["id", "name", "role", "type", "createdAtTimestamp"])
         serialized = handler(self)
         m = {}
 
@@ -64,23 +63,23 @@ class GetAgentPermissionsSharedWith(BaseModel):
 class GetAgentPermissionsResponseTypedDict(TypedDict):
     r"""Permission configuration"""
 
-    is_public: NotRequired[bool]
-    shared_with: NotRequired[List[GetAgentPermissionsSharedWithTypedDict]]
+    status: NotRequired[str]
+    message: NotRequired[str]
+    permissions: NotRequired[List[GetAgentPermissionsPermissionTypedDict]]
 
 
 class GetAgentPermissionsResponse(BaseModel):
     r"""Permission configuration"""
 
-    is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
+    status: Optional[str] = None
 
-    shared_with: Annotated[
-        Optional[List[GetAgentPermissionsSharedWith]],
-        pydantic.Field(alias="sharedWith"),
-    ] = None
+    message: Optional[str] = None
+
+    permissions: Optional[List[GetAgentPermissionsPermission]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["isPublic", "sharedWith"])
+        optional_fields = set(["status", "message", "permissions"])
         serialized = handler(self)
         m = {}
 
@@ -96,10 +95,6 @@ class GetAgentPermissionsResponse(BaseModel):
 
 
 try:
-    GetAgentPermissionsSharedWith.model_rebuild()
-except NameError:
-    pass
-try:
-    GetAgentPermissionsResponse.model_rebuild()
+    GetAgentPermissionsPermission.model_rebuild()
 except NameError:
     pass
