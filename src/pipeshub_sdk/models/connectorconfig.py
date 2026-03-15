@@ -11,11 +11,11 @@ from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class ConnectorConfigAuthTypedDict(TypedDict):
+class AuthTypedDict(TypedDict):
     r"""Authentication configuration (sensitive data redacted)"""
 
 
-class ConnectorConfigAuth(BaseModel):
+class Auth(BaseModel):
     r"""Authentication configuration (sensitive data redacted)"""
 
 
@@ -38,7 +38,7 @@ class ConnectorConfigFilters(BaseModel):
 class ConnectorConfigConfigTypedDict(TypedDict):
     r"""Configuration sections"""
 
-    auth: NotRequired[ConnectorConfigAuthTypedDict]
+    auth: NotRequired[AuthTypedDict]
     r"""Authentication configuration (sensitive data redacted)"""
     sync: NotRequired[ConnectorConfigSyncTypedDict]
     r"""Sync configuration (schedule, options)"""
@@ -49,7 +49,7 @@ class ConnectorConfigConfigTypedDict(TypedDict):
 class ConnectorConfigConfig(BaseModel):
     r"""Configuration sections"""
 
-    auth: Optional[ConnectorConfigAuth] = None
+    auth: Optional[Auth] = None
     r"""Authentication configuration (sensitive data redacted)"""
 
     sync: Optional[ConnectorConfigSync] = None

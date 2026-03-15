@@ -72,12 +72,12 @@ class ListConfiguredConnectorsRequest(BaseModel):
         return m
 
 
-class ScopeCountsTypedDict(TypedDict):
+class ListConfiguredConnectorsScopeCountsTypedDict(TypedDict):
     personal: NotRequired[int]
     team: NotRequired[int]
 
 
-class ScopeCounts(BaseModel):
+class ListConfiguredConnectorsScopeCounts(BaseModel):
     personal: Optional[int] = None
 
     team: Optional[int] = None
@@ -103,7 +103,7 @@ class ListConfiguredConnectorsConnectorsTypedDict(TypedDict):
     connectors: NotRequired[List[ConnectorInstanceTypedDict]]
     pagination: NotRequired[ConnectorPaginationTypedDict]
     r"""Pagination information for connector lists"""
-    scope_counts: NotRequired[ScopeCountsTypedDict]
+    scope_counts: NotRequired[ListConfiguredConnectorsScopeCountsTypedDict]
 
 
 class ListConfiguredConnectorsConnectors(BaseModel):
@@ -113,7 +113,8 @@ class ListConfiguredConnectorsConnectors(BaseModel):
     r"""Pagination information for connector lists"""
 
     scope_counts: Annotated[
-        Optional[ScopeCounts], pydantic.Field(alias="scopeCounts")
+        Optional[ListConfiguredConnectorsScopeCounts],
+        pydantic.Field(alias="scopeCounts"),
     ] = None
 
     @model_serializer(mode="wrap")

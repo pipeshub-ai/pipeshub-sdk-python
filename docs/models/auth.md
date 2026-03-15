@@ -1,4 +1,4 @@
-# ConnectorConfigAuth
+# Auth
 
 Authentication configuration (sensitive data redacted)
 

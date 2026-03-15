@@ -1,4 +1,4 @@
-# ScopeCounts
+# ListConnectorInstancesScopeCounts
 
 
 ## Fields

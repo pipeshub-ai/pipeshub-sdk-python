@@ -12,7 +12,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -46,30 +46,6 @@ class DocumentationLink(BaseModel):
         return m
 
 
-class ConnectorInstanceAuthTypedDict(TypedDict):
-    r"""Authentication configuration"""
-
-
-class ConnectorInstanceAuth(BaseModel):
-    r"""Authentication configuration"""
-
-
-class ConnectorInstanceSyncTypedDict(TypedDict):
-    r"""Sync configuration"""
-
-
-class ConnectorInstanceSync(BaseModel):
-    r"""Sync configuration"""
-
-
-class ConnectorInstanceFiltersTypedDict(TypedDict):
-    r"""Filter configuration for sync and indexing"""
-
-
-class ConnectorInstanceFilters(BaseModel):
-    r"""Filter configuration for sync and indexing"""
-
-
 class ConnectorInstanceConfigTypedDict(TypedDict):
     r"""Full connector configuration including auth, sync, and filter settings"""
 
@@ -79,11 +55,11 @@ class ConnectorInstanceConfigTypedDict(TypedDict):
     supports_agent: NotRequired[bool]
     documentation_links: NotRequired[List[DocumentationLinkTypedDict]]
     hide_connector: NotRequired[bool]
-    auth: NotRequired[ConnectorInstanceAuthTypedDict]
-    r"""Authentication configuration"""
-    sync: NotRequired[ConnectorInstanceSyncTypedDict]
-    r"""Sync configuration"""
-    filters: NotRequired[ConnectorInstanceFiltersTypedDict]
+    auth: NotRequired[Dict[str, Any]]
+    r"""Authentication configuration including supported types, schemas, OAuth configs, and custom fields"""
+    sync: NotRequired[Dict[str, Any]]
+    r"""Sync configuration including strategies, webhook, scheduled, and realtime configs"""
+    filters: NotRequired[Dict[str, Any]]
     r"""Filter configuration for sync and indexing"""
 
 
@@ -112,13 +88,13 @@ class ConnectorInstanceConfig(BaseModel):
         None
     )
 
-    auth: Optional[ConnectorInstanceAuth] = None
-    r"""Authentication configuration"""
+    auth: Optional[Dict[str, Any]] = None
+    r"""Authentication configuration including supported types, schemas, OAuth configs, and custom fields"""
 
-    sync: Optional[ConnectorInstanceSync] = None
-    r"""Sync configuration"""
+    sync: Optional[Dict[str, Any]] = None
+    r"""Sync configuration including strategies, webhook, scheduled, and realtime configs"""
 
-    filters: Optional[ConnectorInstanceFilters] = None
+    filters: Optional[Dict[str, Any]] = None
     r"""Filter configuration for sync and indexing"""
 
     @model_serializer(mode="wrap")
