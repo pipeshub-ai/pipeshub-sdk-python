@@ -4,14 +4,15 @@
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 from pydantic import model_serializer
-from typing import Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 from typing_extensions import NotRequired, TypedDict
 
 
 Event = Union[
     Literal[
         "connected",
-        "chunk",
+        "status",
+        "answer_chunk",
         "citation",
         "complete",
         "error",
@@ -20,12 +21,73 @@ Event = Union[
 ]
 
 
+class CitationTypedDict(TypedDict):
+    pass
+
+
+class Citation(BaseModel):
+    pass
+
+
+class SSEEventDataTypedDict(TypedDict):
+    r"""Event payload"""
+
+    message: NotRequired[str]
+    r"""Status or connection message"""
+    status: NotRequired[str]
+    r"""Current processing status"""
+    chunk: NotRequired[str]
+    r"""Partial response text (for answer_chunk events)"""
+    accumulated: NotRequired[str]
+    r"""Full accumulated response text so far (for answer_chunk events)"""
+    citations: NotRequired[List[CitationTypedDict]]
+    r"""Citation references (for answer_chunk events)"""
+
+
+class SSEEventData(BaseModel):
+    r"""Event payload"""
+
+    message: Optional[str] = None
+    r"""Status or connection message"""
+
+    status: Optional[str] = None
+    r"""Current processing status"""
+
+    chunk: Optional[str] = None
+    r"""Partial response text (for answer_chunk events)"""
+
+    accumulated: Optional[str] = None
+    r"""Full accumulated response text so far (for answer_chunk events)"""
+
+    citations: Optional[List[Citation]] = None
+    r"""Citation references (for answer_chunk events)"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["message", "status", "chunk", "accumulated", "citations"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class SSEEventTypedDict(TypedDict):
     r"""Server-Sent Event structure for streaming responses.<br><br>
     <b>Event Types:</b>
     <ul>
     <li><code>connected</code> - Initial connection established</li>
-    <li><code>chunk</code> - Partial response content</li>
+    <li><code>status</code> - Status update (e.g. planning, generating)</li>
+    <li><code>answer_chunk</code> - Partial response content</li>
     <li><code>citation</code> - Citation reference</li>
     <li><code>complete</code> - Final response with all data</li>
     <li><code>error</code> - Error occurred during streaming</li>
@@ -34,8 +96,8 @@ class SSEEventTypedDict(TypedDict):
     """
 
     event: NotRequired[Event]
-    data: NotRequired[str]
-    r"""JSON-encoded event payload"""
+    data: NotRequired[SSEEventDataTypedDict]
+    r"""Event payload"""
 
 
 class SSEEvent(BaseModel):
@@ -43,7 +105,8 @@ class SSEEvent(BaseModel):
     <b>Event Types:</b>
     <ul>
     <li><code>connected</code> - Initial connection established</li>
-    <li><code>chunk</code> - Partial response content</li>
+    <li><code>status</code> - Status update (e.g. planning, generating)</li>
+    <li><code>answer_chunk</code> - Partial response content</li>
     <li><code>citation</code> - Citation reference</li>
     <li><code>complete</code> - Final response with all data</li>
     <li><code>error</code> - Error occurred during streaming</li>
@@ -53,8 +116,8 @@ class SSEEvent(BaseModel):
 
     event: Optional[Event] = None
 
-    data: Optional[str] = None
-    r"""JSON-encoded event payload"""
+    data: Optional[SSEEventData] = None
+    r"""Event payload"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

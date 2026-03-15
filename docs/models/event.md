@@ -15,7 +15,8 @@ value: Event = "connected"
 This is an open enum. Unrecognized values will not fail type checks.
 
 - `"connected"`
-- `"chunk"`
+- `"status"`
+- `"answer_chunk"`
 - `"citation"`
 - `"complete"`
 - `"error"`

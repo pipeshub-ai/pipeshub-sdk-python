@@ -46,7 +46,7 @@ class ByRecordType(BaseModel):
     pass
 
 
-class DataTypedDict(TypedDict):
+class ConnectorStatsDataTypedDict(TypedDict):
     org_id: NotRequired[str]
     connector_id: NotRequired[str]
     origin: NotRequired[str]
@@ -54,7 +54,7 @@ class DataTypedDict(TypedDict):
     by_record_type: NotRequired[List[ByRecordTypeTypedDict]]
 
 
-class Data(BaseModel):
+class ConnectorStatsData(BaseModel):
     org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
 
     connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
@@ -90,7 +90,7 @@ class ConnectorStatsTypedDict(TypedDict):
     r"""Statistics for a connector's records"""
 
     success: NotRequired[bool]
-    data: NotRequired[DataTypedDict]
+    data: NotRequired[ConnectorStatsDataTypedDict]
 
 
 class ConnectorStats(BaseModel):
@@ -98,7 +98,7 @@ class ConnectorStats(BaseModel):
 
     success: Optional[bool] = None
 
-    data: Optional[Data] = None
+    data: Optional[ConnectorStatsData] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -122,6 +122,6 @@ try:
 except NameError:
     pass
 try:
-    Data.model_rebuild()
+    ConnectorStatsData.model_rebuild()
 except NameError:
     pass
