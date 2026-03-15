@@ -6,16 +6,11 @@ OAuth grant type:
 - `refresh_token`: Get new access token using refresh token
 
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import GrantType
-value: GrantType = "authorization_code"
-```
-
 
 ## Values
 
-- `"authorization_code"`
-- `"client_credentials"`
-- `"refresh_token"`
+| Name                 | Value                |
+| -------------------- | -------------------- |
+| `AUTHORIZATION_CODE` | authorization_code   |
+| `CLIENT_CREDENTIALS` | client_credentials   |
+| `REFRESH_TOKEN`      | refresh_token        |

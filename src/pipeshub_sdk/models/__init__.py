@@ -88,7 +88,6 @@ if TYPE_CHECKING:
         AIModelProviderResponseStatus,
         AIModelProviderResponseTypedDict,
     )
-    from .apptype import AppType
     from .archiveconversationop import (
         ArchiveConversationRequest,
         ArchiveConversationRequestTypedDict,
@@ -281,6 +280,8 @@ if TYPE_CHECKING:
         CreateKBPermissionResponse,
         CreateKBPermissionResponseTypedDict,
         CreateKBPermissionRole,
+        Details,
+        DetailsTypedDict,
         PermissionResult,
         PermissionResultTypedDict,
     )
@@ -2016,7 +2017,6 @@ __all__ = [
     "AgentTool",
     "AgentToolTypedDict",
     "AgentTypedDict",
-    "AppType",
     "ArchiveConversationRequest",
     "ArchiveConversationRequestTypedDict",
     "ArchiveSearchRequest",
@@ -2300,6 +2300,8 @@ __all__ = [
     "DeletedUserTypedDict",
     "Department",
     "DepartmentTypedDict",
+    "Details",
+    "DetailsTypedDict",
     "DownloadDocumentRequest",
     "DownloadDocumentRequestTypedDict",
     "DownloadDocumentResponse",
@@ -3463,7 +3465,6 @@ _dynamic_imports: dict[str, str] = {
     "AIModelProviderResponse": ".aimodelproviderresponse",
     "AIModelProviderResponseStatus": ".aimodelproviderresponse",
     "AIModelProviderResponseTypedDict": ".aimodelproviderresponse",
-    "AppType": ".apptype",
     "ArchiveConversationRequest": ".archiveconversationop",
     "ArchiveConversationRequestTypedDict": ".archiveconversationop",
     "ArchiveSearchRequest": ".archivesearchop",
@@ -3618,6 +3619,8 @@ _dynamic_imports: dict[str, str] = {
     "CreateKBPermissionResponse": ".createkbpermissionop",
     "CreateKBPermissionResponseTypedDict": ".createkbpermissionop",
     "CreateKBPermissionRole": ".createkbpermissionop",
+    "Details": ".createkbpermissionop",
+    "DetailsTypedDict": ".createkbpermissionop",
     "PermissionResult": ".createkbpermissionop",
     "PermissionResultTypedDict": ".createkbpermissionop",
     "CreateKnowledgeBaseRequest": ".createknowledgebaseop",

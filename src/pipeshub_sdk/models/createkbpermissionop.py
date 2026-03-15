@@ -52,7 +52,7 @@ class CreateKBPermissionRequestBody(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -81,25 +81,58 @@ class CreateKBPermissionRequest(BaseModel):
     r"""Request payload"""
 
 
+class DetailsTypedDict(TypedDict):
+    pass
+
+
+class Details(BaseModel):
+    pass
+
+
 class PermissionResultTypedDict(TypedDict):
+    success: NotRequired[bool]
     granted_count: NotRequired[int]
-    updated_count: NotRequired[int]
+    granted_users: NotRequired[List[str]]
+    granted_teams: NotRequired[List[str]]
+    role: NotRequired[str]
+    details: NotRequired[DetailsTypedDict]
 
 
 class PermissionResult(BaseModel):
+    success: Optional[bool] = None
+
     granted_count: Annotated[Optional[int], pydantic.Field(alias="grantedCount")] = None
 
-    updated_count: Annotated[Optional[int], pydantic.Field(alias="updatedCount")] = None
+    granted_users: Annotated[
+        Optional[List[str]], pydantic.Field(alias="grantedUsers")
+    ] = None
+
+    granted_teams: Annotated[
+        Optional[List[str]], pydantic.Field(alias="grantedTeams")
+    ] = None
+
+    role: Optional[str] = None
+
+    details: Optional[Details] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["grantedCount", "updatedCount"])
+        optional_fields = set(
+            [
+                "success",
+                "grantedCount",
+                "grantedUsers",
+                "grantedTeams",
+                "role",
+                "details",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -132,7 +165,7 @@ class CreateKBPermissionResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

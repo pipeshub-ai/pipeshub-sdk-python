@@ -2,20 +2,15 @@
 
 Authentication method to use
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import Method
-value: Method = "samlSso"
-```
-
 
 ## Values
 
-- `"samlSso"`
-- `"otp"`
-- `"password"`
-- `"google"`
-- `"microsoft"`
-- `"azureAd"`
-- `"oauth"`
+| Name        | Value       |
+| ----------- | ----------- |
+| `SAML_SSO`  | samlSso     |
+| `OTP`       | otp         |
+| `PASSWORD`  | password    |
+| `GOOGLE`    | google      |
+| `MICROSOFT` | microsoft   |
+| `AZURE_AD`  | azureAd     |
+| `OAUTH`     | oauth       |

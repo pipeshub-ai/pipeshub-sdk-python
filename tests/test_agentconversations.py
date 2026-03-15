@@ -49,6 +49,11 @@ def test_agentconversations_create_agent_conversation():
                 "507f1f77bcf86cd799439011",
                 "507f1f77bcf86cd799439012",
             ],
+            filters={
+                "apps": [
+                    "550e8400-e29b-41d4-a716-446655440000",
+                ],
+            },
             model_key="gpt-4-turbo",
             model_name="GPT-4 Turbo",
             chat_mode="balanced",
@@ -88,6 +93,11 @@ def test_agentconversations_add_agent_message():
             agent_key="<value>",
             conversation_id="<value>",
             query="Can you elaborate on the revenue trends?",
+            filters={
+                "apps": [
+                    "550e8400-e29b-41d4-a716-446655440000",
+                ],
+            },
         )
         assert res is not None
         assert res == models.AgentConversation()

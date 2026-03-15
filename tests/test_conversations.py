@@ -22,6 +22,11 @@ def test_conversations_create_conversation_simple():
                 "507f1f77bcf86cd799439011",
                 "507f1f77bcf86cd799439012",
             ],
+            filters={
+                "apps": [
+                    "550e8400-e29b-41d4-a716-446655440000",
+                ],
+            },
             model_key="gpt-4-turbo",
             model_name="GPT-4 Turbo",
             chat_mode="balanced",
@@ -79,6 +84,11 @@ def test_conversations_create_conversation():
                 "507f1f77bcf86cd799439011",
                 "507f1f77bcf86cd799439012",
             ],
+            filters={
+                "apps": [
+                    "550e8400-e29b-41d4-a716-446655440000",
+                ],
+            },
             model_key="gpt-4-turbo",
             model_name="GPT-4 Turbo",
             chat_mode="balanced",
@@ -187,7 +197,13 @@ def test_conversations_add_message():
         assert pipeshub is not None
 
         res = pipeshub.conversations.add_message(
-            conversation_id="<value>", query="Can you elaborate on the revenue trends?"
+            conversation_id="<value>",
+            query="Can you elaborate on the revenue trends?",
+            filters={
+                "apps": [
+                    "550e8400-e29b-41d4-a716-446655440000",
+                ],
+            },
         )
         assert res is not None
         assert res == models.Conversation(

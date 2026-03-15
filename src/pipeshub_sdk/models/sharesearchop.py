@@ -13,29 +13,13 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class ShareSearchRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    user_ids: NotRequired[List[str]]
+    user_ids: List[str]
 
 
 class ShareSearchRequestBody(BaseModel):
     r"""Request payload"""
 
-    user_ids: Annotated[Optional[List[str]], pydantic.Field(alias="userIds")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["userIds"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
 
 
 class ShareSearchRequestTypedDict(TypedDict):
@@ -79,7 +63,7 @@ class ShareSearchResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

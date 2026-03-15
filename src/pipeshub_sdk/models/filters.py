@@ -2,7 +2,6 @@
 # @generated-id: d19c571fa25d
 
 from __future__ import annotations
-from .apptype import AppType
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pydantic import model_serializer
 from typing import List, Optional
@@ -10,15 +9,15 @@ from typing_extensions import NotRequired, TypedDict
 
 
 class FiltersTypedDict(TypedDict):
-    apps: NotRequired[List[AppType]]
-    r"""Filter by application types"""
+    apps: NotRequired[List[str]]
+    r"""Filter by connector instance IDs or knowledge base collection IDs"""
     kb: NotRequired[List[str]]
     r"""Filter by knowledge base IDs"""
 
 
 class Filters(BaseModel):
-    apps: Optional[List[AppType]] = None
-    r"""Filter by application types"""
+    apps: Optional[List[str]] = None
+    r"""Filter by connector instance IDs or knowledge base collection IDs"""
 
     kb: Optional[List[str]] = None
     r"""Filter by knowledge base IDs"""
@@ -31,7 +30,7 @@ class Filters(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

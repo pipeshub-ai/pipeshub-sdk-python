@@ -84,7 +84,11 @@ with Pipeshub(
     res = pipeshub.agent_conversations.create(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], filters={
+        "apps": [
+            "550e8400-e29b-41d4-a716-446655440000",
+        ],
+    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
 
     # Handle response
     print(res)
@@ -139,7 +143,11 @@ with Pipeshub(
     res = pipeshub.agent_conversations.stream(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], filters={
+        "apps": [
+            "550e8400-e29b-41d4-a716-446655440000",
+        ],
+    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
 
     with res as event_stream:
         for event in event_stream:
@@ -271,7 +279,11 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.add_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?")
+    res = pipeshub.agent_conversations.add_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
+        "apps": [
+            "550e8400-e29b-41d4-a716-446655440000",
+        ],
+    })
 
     # Handle response
     print(res)
@@ -319,7 +331,11 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.stream_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?")
+    res = pipeshub.agent_conversations.stream_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
+        "apps": [
+            "550e8400-e29b-41d4-a716-446655440000",
+        ],
+    })
 
     with res as event_stream:
         for event in event_stream:
@@ -372,7 +388,11 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.regenerate_response(agent_key="<value>", conversation_id="<value>", message_id="<value>")
+    res = pipeshub.agent_conversations.regenerate_response(agent_key="<value>", conversation_id="<value>", message_id="<value>", filters={
+        "apps": [
+            "550e8400-e29b-41d4-a716-446655440000",
+        ],
+    })
 
     with res as event_stream:
         for event in event_stream:
