@@ -20,13 +20,13 @@ FilterOptionsType = Union[
 r"""Filter input type"""
 
 
-class OptionTypedDict(TypedDict):
+class FilterOptionsOptionTypedDict(TypedDict):
     id: NotRequired[str]
     value: NotRequired[str]
     label: NotRequired[str]
 
 
-class Option(BaseModel):
+class FilterOptionsOption(BaseModel):
     id: Optional[str] = None
 
     value: Optional[str] = None
@@ -57,7 +57,7 @@ class FilterTypedDict(TypedDict):
     r"""Display label"""
     type: NotRequired[FilterOptionsType]
     r"""Filter input type"""
-    options: NotRequired[List[OptionTypedDict]]
+    options: NotRequired[List[FilterOptionsOptionTypedDict]]
     dynamic: NotRequired[bool]
     r"""Whether options are loaded dynamically"""
 
@@ -72,7 +72,7 @@ class Filter(BaseModel):
     type: Optional[FilterOptionsType] = None
     r"""Filter input type"""
 
-    options: Optional[List[Option]] = None
+    options: Optional[List[FilterOptionsOption]] = None
 
     dynamic: Optional[bool] = None
     r"""Whether options are loaded dynamically"""

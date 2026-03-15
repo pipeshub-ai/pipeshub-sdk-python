@@ -1,4 +1,4 @@
-# IndexingField
+# ConnectorFieldDefinitionOption
 
 
 ## Fields

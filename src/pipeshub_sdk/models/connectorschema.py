@@ -2,6 +2,10 @@
 # @generated-id: 2f387c31d7cd
 
 from __future__ import annotations
+from .connectorfielddefinition import (
+    ConnectorFieldDefinition,
+    ConnectorFieldDefinitionTypedDict,
+)
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
@@ -39,22 +43,14 @@ class ConnectorSchemaDocumentationLink(BaseModel):
         return m
 
 
-class OAUTHFieldTypedDict(TypedDict):
-    pass
-
-
-class OAUTHField(BaseModel):
-    pass
-
-
 class SchemasOAUTHTypedDict(TypedDict):
-    fields: NotRequired[List[OAUTHFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
     redirect_uri: NotRequired[str]
     display_redirect_uri: NotRequired[bool]
 
 
 class SchemasOAUTH(BaseModel):
-    fields: Optional[List[OAUTHField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
 
@@ -79,20 +75,12 @@ class SchemasOAUTH(BaseModel):
         return m
 
 
-class BASICAUTHFieldTypedDict(TypedDict):
-    pass
-
-
-class BASICAUTHField(BaseModel):
-    pass
-
-
 class BasicAuthTypedDict(TypedDict):
-    fields: NotRequired[List[BASICAUTHFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
 
 
 class BasicAuth(BaseModel):
-    fields: Optional[List[BASICAUTHField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -109,22 +97,14 @@ class BasicAuth(BaseModel):
                     m[k] = val
 
         return m
-
-
-class APITOKENFieldTypedDict(TypedDict):
-    pass
-
-
-class APITOKENField(BaseModel):
-    pass
 
 
 class APITokenTypedDict(TypedDict):
-    fields: NotRequired[List[APITOKENFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
 
 
 class APIToken(BaseModel):
-    fields: Optional[List[APITOKENField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -143,22 +123,14 @@ class APIToken(BaseModel):
         return m
 
 
-class OAUTHADMINCONSENTFieldTypedDict(TypedDict):
-    pass
-
-
-class OAUTHADMINCONSENTField(BaseModel):
-    pass
-
-
 class SchemasOAUTHADMINCONSENTTypedDict(TypedDict):
-    fields: NotRequired[List[OAUTHADMINCONSENTFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
     redirect_uri: NotRequired[str]
     display_redirect_uri: NotRequired[bool]
 
 
 class SchemasOAUTHADMINCONSENT(BaseModel):
-    fields: Optional[List[OAUTHADMINCONSENTField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
 
@@ -183,20 +155,12 @@ class SchemasOAUTHADMINCONSENT(BaseModel):
         return m
 
 
-class USERNAMEPASSWORDFieldTypedDict(TypedDict):
-    pass
-
-
-class USERNAMEPASSWORDField(BaseModel):
-    pass
-
-
 class UsernamePasswordTypedDict(TypedDict):
-    fields: NotRequired[List[USERNAMEPASSWORDFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
 
 
 class UsernamePassword(BaseModel):
-    fields: Optional[List[USERNAMEPASSWORDField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -653,24 +617,16 @@ class ConnectorSchemaSync(BaseModel):
         return m
 
 
-class SyncFieldTypedDict(TypedDict):
-    pass
-
-
-class SyncField(BaseModel):
-    pass
-
-
 class SyncSchemaTypedDict(TypedDict):
     r"""Filter field definitions"""
 
-    fields: NotRequired[List[SyncFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
 
 
 class SyncSchema(BaseModel):
     r"""Filter field definitions"""
 
-    fields: Optional[List[SyncField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -730,24 +686,16 @@ class ConnectorSchemaFiltersSync(BaseModel):
         return m
 
 
-class IndexingFieldTypedDict(TypedDict):
-    pass
-
-
-class IndexingField(BaseModel):
-    pass
-
-
 class IndexingSchemaTypedDict(TypedDict):
     r"""Filter field definitions"""
 
-    fields: NotRequired[List[IndexingFieldTypedDict]]
+    fields: NotRequired[List[ConnectorFieldDefinitionTypedDict]]
 
 
 class IndexingSchema(BaseModel):
     r"""Filter field definitions"""
 
-    fields: Optional[List[IndexingField]] = None
+    fields: Optional[List[ConnectorFieldDefinition]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
