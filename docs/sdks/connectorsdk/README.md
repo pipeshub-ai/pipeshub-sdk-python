@@ -33,19 +33,25 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.connector.reindex_record(record_id="<id>", depth=-1)
+    res = pipeshub.connector.reindex_record(record_id="rec-abc123", depth=0, force=False)
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Processing depth (-1 for unlimited)                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 | rec-abc123                                                          |
+| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Processing depth (-1 for unlimited, 0 for only this record)         |                                                                     |
+| `force`                                                             | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Force reindexing even if already indexed                            |                                                                     |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.ReindexRecordResponse](../../models/reindexrecordresponse.md)**
 
 ### Errors
 
@@ -74,19 +80,25 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.connector.reindex_record_group(record_group_id="<id>", depth=-1)
+    res = pipeshub.connector.reindex_record_group(record_group_id="grp-abc123", depth=0, force=False)
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_group_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Folder ID or KB ID                                                  |
-| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_group_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Folder ID or KB ID                                                  | grp-abc123                                                          |
+| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Processing depth (-1 for unlimited, 0 for direct records only)      |                                                                     |
+| `force`                                                             | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Force reindexing even if already indexed                            |                                                                     |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.ReindexRecordGroupResponse](../../models/reindexrecordgroupresponse.md)**
 
 ### Errors
 

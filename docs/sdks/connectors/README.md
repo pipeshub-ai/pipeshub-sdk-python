@@ -28,9 +28,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.connectors.resync(connector_name="GOOGLE_DRIVE", connector_id="<id>")
+    res = pipeshub.connectors.resync(connector_name="GOOGLE_DRIVE", connector_id="<id>", full_sync=False)
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -39,8 +40,13 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `connector_name`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Connector type name                                                 | GOOGLE_DRIVE                                                        |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               |                                                                     |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               | conn-abc123                                                         |
+| `full_sync`                                                         | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Whether to perform a full sync                                      |                                                                     |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.ResyncConnectorResponse](../../models/resyncconnectorresponse.md)**
 
 ### Errors
 

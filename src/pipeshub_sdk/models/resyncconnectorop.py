@@ -2,9 +2,11 @@
 # @generated-id: 28b672570aed
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ResyncConnectorRequestTypedDict(TypedDict):
@@ -14,6 +16,8 @@ class ResyncConnectorRequestTypedDict(TypedDict):
     r"""Connector type name"""
     connector_id: str
     r"""Connector instance ID"""
+    full_sync: NotRequired[bool]
+    r"""Whether to perform a full sync"""
 
 
 class ResyncConnectorRequest(BaseModel):
@@ -25,8 +29,74 @@ class ResyncConnectorRequest(BaseModel):
     connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
     r"""Connector instance ID"""
 
+    full_sync: Annotated[Optional[bool], pydantic.Field(alias="fullSync")] = False
+    r"""Whether to perform a full sync"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["fullSync"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ResyncConnectorResyncConnectorResponseTypedDict(TypedDict):
+    r"""Resync operation result"""
+
+
+class ResyncConnectorResyncConnectorResponse(BaseModel):
+    r"""Resync operation result"""
+
+
+class ResyncConnectorResponseTypedDict(TypedDict):
+    r"""Resync initiated"""
+
+    resync_connector_response: NotRequired[
+        ResyncConnectorResyncConnectorResponseTypedDict
+    ]
+    r"""Resync operation result"""
+
+
+class ResyncConnectorResponse(BaseModel):
+    r"""Resync initiated"""
+
+    resync_connector_response: Annotated[
+        Optional[ResyncConnectorResyncConnectorResponse],
+        pydantic.Field(alias="resyncConnectorResponse"),
+    ] = None
+    r"""Resync operation result"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["resyncConnectorResponse"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
 
 try:
     ResyncConnectorRequest.model_rebuild()
+except NameError:
+    pass
+try:
+    ResyncConnectorResponse.model_rebuild()
 except NameError:
     pass

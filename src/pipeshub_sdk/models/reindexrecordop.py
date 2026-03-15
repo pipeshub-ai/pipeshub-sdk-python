@@ -14,18 +14,23 @@ class ReindexRecordRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
     depth: NotRequired[int]
-    r"""Processing depth (-1 for unlimited)"""
+    r"""Processing depth (-1 for unlimited, 0 for only this record)"""
+    force: NotRequired[bool]
+    r"""Force reindexing even if already indexed"""
 
 
 class ReindexRecordRequestBody(BaseModel):
     r"""Request payload"""
 
-    depth: Optional[int] = -1
-    r"""Processing depth (-1 for unlimited)"""
+    depth: Optional[int] = 0
+    r"""Processing depth (-1 for unlimited, 0 for only this record)"""
+
+    force: Optional[bool] = False
+    r"""Force reindexing even if already indexed"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["depth"])
+        optional_fields = set(["depth", "force"])
         serialized = handler(self)
         m = {}
 
@@ -74,3 +79,71 @@ class ReindexRecordRequest(BaseModel):
                     m[k] = val
 
         return m
+
+
+class ReindexRecordResponseTypedDict(TypedDict):
+    r"""Reindexing triggered successfully"""
+
+    success: NotRequired[bool]
+    message: NotRequired[str]
+    record_id: NotRequired[str]
+    record_name: NotRequired[str]
+    connector: NotRequired[str]
+    event_published: NotRequired[bool]
+    user_role: NotRequired[str]
+    depth: NotRequired[int]
+
+
+class ReindexRecordResponse(BaseModel):
+    r"""Reindexing triggered successfully"""
+
+    success: Optional[bool] = None
+
+    message: Optional[str] = None
+
+    record_id: Annotated[Optional[str], pydantic.Field(alias="recordId")] = None
+
+    record_name: Annotated[Optional[str], pydantic.Field(alias="recordName")] = None
+
+    connector: Optional[str] = None
+
+    event_published: Annotated[
+        Optional[bool], pydantic.Field(alias="eventPublished")
+    ] = None
+
+    user_role: Annotated[Optional[str], pydantic.Field(alias="userRole")] = None
+
+    depth: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "success",
+                "message",
+                "recordId",
+                "recordName",
+                "connector",
+                "eventPublished",
+                "userRole",
+                "depth",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    ReindexRecordResponse.model_rebuild()
+except NameError:
+    pass

@@ -17,12 +17,13 @@ class ConnectorSDK(BaseSDK):
         self,
         *,
         record_id: str,
-        depth: Optional[int] = -1,
+        depth: Optional[int] = 0,
+        force: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.ReindexRecordResponse:
         r"""Reindex single record
 
         Trigger reindexing for a specific record.<br><br>
@@ -33,7 +34,8 @@ class ConnectorSDK(BaseSDK):
 
 
         :param record_id:
-        :param depth: Processing depth (-1 for unlimited)
+        :param depth: Processing depth (-1 for unlimited, 0 for only this record)
+        :param force: Force reindexing even if already indexed
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -53,6 +55,7 @@ class ConnectorSDK(BaseSDK):
             record_id=record_id,
             body=models.ReindexRecordRequestBody(
                 depth=depth,
+                force=force,
             ),
         )
 
@@ -66,7 +69,7 @@ class ConnectorSDK(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -103,8 +106,8 @@ class ConnectorSDK(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ReindexRecordResponse, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -122,12 +125,13 @@ class ConnectorSDK(BaseSDK):
         self,
         *,
         record_id: str,
-        depth: Optional[int] = -1,
+        depth: Optional[int] = 0,
+        force: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.ReindexRecordResponse:
         r"""Reindex single record
 
         Trigger reindexing for a specific record.<br><br>
@@ -138,7 +142,8 @@ class ConnectorSDK(BaseSDK):
 
 
         :param record_id:
-        :param depth: Processing depth (-1 for unlimited)
+        :param depth: Processing depth (-1 for unlimited, 0 for only this record)
+        :param force: Force reindexing even if already indexed
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -158,6 +163,7 @@ class ConnectorSDK(BaseSDK):
             record_id=record_id,
             body=models.ReindexRecordRequestBody(
                 depth=depth,
+                force=force,
             ),
         )
 
@@ -171,7 +177,7 @@ class ConnectorSDK(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -208,8 +214,8 @@ class ConnectorSDK(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ReindexRecordResponse, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -227,12 +233,13 @@ class ConnectorSDK(BaseSDK):
         self,
         *,
         record_group_id: str,
-        depth: Optional[int] = -1,
+        depth: Optional[int] = 0,
+        force: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.ReindexRecordGroupResponse:
         r"""Reindex record group
 
         Trigger reindexing for all records in a folder or knowledge base.<br><br>
@@ -241,7 +248,8 @@ class ConnectorSDK(BaseSDK):
 
 
         :param record_group_id: Folder ID or KB ID
-        :param depth:
+        :param depth: Processing depth (-1 for unlimited, 0 for direct records only)
+        :param force: Force reindexing even if already indexed
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -261,6 +269,7 @@ class ConnectorSDK(BaseSDK):
             record_group_id=record_group_id,
             body=models.ReindexRecordGroupRequestBody(
                 depth=depth,
+                force=force,
             ),
         )
 
@@ -274,7 +283,7 @@ class ConnectorSDK(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -311,8 +320,8 @@ class ConnectorSDK(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ReindexRecordGroupResponse, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -330,12 +339,13 @@ class ConnectorSDK(BaseSDK):
         self,
         *,
         record_group_id: str,
-        depth: Optional[int] = -1,
+        depth: Optional[int] = 0,
+        force: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.ReindexRecordGroupResponse:
         r"""Reindex record group
 
         Trigger reindexing for all records in a folder or knowledge base.<br><br>
@@ -344,7 +354,8 @@ class ConnectorSDK(BaseSDK):
 
 
         :param record_group_id: Folder ID or KB ID
-        :param depth:
+        :param depth: Processing depth (-1 for unlimited, 0 for direct records only)
+        :param force: Force reindexing even if already indexed
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -364,6 +375,7 @@ class ConnectorSDK(BaseSDK):
             record_group_id=record_group_id,
             body=models.ReindexRecordGroupRequestBody(
                 depth=depth,
+                force=force,
             ),
         )
 
@@ -377,7 +389,7 @@ class ConnectorSDK(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -414,8 +426,8 @@ class ConnectorSDK(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ReindexRecordGroupResponse, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

@@ -18,3 +18,41 @@ def test_connector_sdk_get_connector_stats():
         res = pipeshub.connector.get_stats(connector_id="<id>")
         assert res is not None
         assert res == models.ConnectorStats()
+
+
+def test_connector_sdk_reindex_record():
+    test_http_client = create_test_http_client("reindexRecord")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.connector.reindex_record(record_id="<id>", depth=0, force=False)
+        assert res is not None
+        assert res == models.ReindexRecordResponse(
+            success=True,
+            message="Reindex initiated for record rec-abc123",
+        )
+
+
+def test_connector_sdk_reindex_record_group():
+    test_http_client = create_test_http_client("reindexRecordGroup")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.connector.reindex_record_group(
+            record_group_id="<id>", depth=0, force=False
+        )
+        assert res is not None
+        assert res == models.ReindexRecordGroupResponse(
+            success=True,
+            message="Reindex initiated for record group grp-abc123 with depth 0",
+        )

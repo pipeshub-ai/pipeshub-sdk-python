@@ -14,16 +14,23 @@ class ReindexRecordGroupRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
     depth: NotRequired[int]
+    r"""Processing depth (-1 for unlimited, 0 for direct records only)"""
+    force: NotRequired[bool]
+    r"""Force reindexing even if already indexed"""
 
 
 class ReindexRecordGroupRequestBody(BaseModel):
     r"""Request payload"""
 
-    depth: Optional[int] = -1
+    depth: Optional[int] = 0
+    r"""Processing depth (-1 for unlimited, 0 for direct records only)"""
+
+    force: Optional[bool] = False
+    r"""Force reindexing even if already indexed"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["depth"])
+        optional_fields = set(["depth", "force"])
         serialized = handler(self)
         m = {}
 
@@ -74,3 +81,65 @@ class ReindexRecordGroupRequest(BaseModel):
                     m[k] = val
 
         return m
+
+
+class ReindexRecordGroupResponseTypedDict(TypedDict):
+    r"""Reindexing triggered for all records in group"""
+
+    success: NotRequired[bool]
+    message: NotRequired[str]
+    record_group_id: NotRequired[str]
+    depth: NotRequired[int]
+    connector: NotRequired[str]
+    event_published: NotRequired[bool]
+
+
+class ReindexRecordGroupResponse(BaseModel):
+    r"""Reindexing triggered for all records in group"""
+
+    success: Optional[bool] = None
+
+    message: Optional[str] = None
+
+    record_group_id: Annotated[Optional[str], pydantic.Field(alias="recordGroupId")] = (
+        None
+    )
+
+    depth: Optional[int] = None
+
+    connector: Optional[str] = None
+
+    event_published: Annotated[
+        Optional[bool], pydantic.Field(alias="eventPublished")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "success",
+                "message",
+                "recordGroupId",
+                "depth",
+                "connector",
+                "eventPublished",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    ReindexRecordGroupResponse.model_rebuild()
+except NameError:
+    pass
