@@ -1,4 +1,4 @@
-# FiltersSyncValues
+# ConnectorConfigSyncValues
 
 Sync filter values
 

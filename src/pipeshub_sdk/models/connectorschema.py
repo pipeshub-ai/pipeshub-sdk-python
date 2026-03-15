@@ -39,20 +39,148 @@ class ConnectorSchemaDocumentationLink(BaseModel):
         return m
 
 
+class SchemasOAUTHTypedDict(TypedDict):
+    pass
+
+
+class SchemasOAUTH(BaseModel):
+    pass
+
+
+class BasicAuthTypedDict(TypedDict):
+    pass
+
+
+class BasicAuth(BaseModel):
+    pass
+
+
+class APITokenTypedDict(TypedDict):
+    pass
+
+
+class APIToken(BaseModel):
+    pass
+
+
+class SchemasOAUTHADMINCONSENTTypedDict(TypedDict):
+    pass
+
+
+class SchemasOAUTHADMINCONSENT(BaseModel):
+    pass
+
+
+class UsernamePasswordTypedDict(TypedDict):
+    pass
+
+
+class UsernamePassword(BaseModel):
+    pass
+
+
 class SchemasTypedDict(TypedDict):
-    r"""Auth schemas keyed by auth type"""
+    r"""Auth schemas keyed by auth type (e.g., OAUTH, BASIC_AUTH)"""
+
+    oauth: NotRequired[SchemasOAUTHTypedDict]
+    basic_auth: NotRequired[BasicAuthTypedDict]
+    api_token: NotRequired[APITokenTypedDict]
+    oauth_admin_consent: NotRequired[SchemasOAUTHADMINCONSENTTypedDict]
+    username_password: NotRequired[UsernamePasswordTypedDict]
 
 
 class Schemas(BaseModel):
-    r"""Auth schemas keyed by auth type"""
+    r"""Auth schemas keyed by auth type (e.g., OAUTH, BASIC_AUTH)"""
+
+    oauth: Annotated[Optional[SchemasOAUTH], pydantic.Field(alias="OAUTH")] = None
+
+    basic_auth: Annotated[Optional[BasicAuth], pydantic.Field(alias="BASIC_AUTH")] = (
+        None
+    )
+
+    api_token: Annotated[Optional[APIToken], pydantic.Field(alias="API_TOKEN")] = None
+
+    oauth_admin_consent: Annotated[
+        Optional[SchemasOAUTHADMINCONSENT], pydantic.Field(alias="OAUTH_ADMIN_CONSENT")
+    ] = None
+
+    username_password: Annotated[
+        Optional[UsernamePassword], pydantic.Field(alias="USERNAME_PASSWORD")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "OAUTH",
+                "BASIC_AUTH",
+                "API_TOKEN",
+                "OAUTH_ADMIN_CONSENT",
+                "USERNAME_PASSWORD",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class OAUTHConfigsOAUTHTypedDict(TypedDict):
+    pass
+
+
+class OAUTHConfigsOAUTH(BaseModel):
+    pass
+
+
+class OAUTHConfigsOAUTHADMINCONSENTTypedDict(TypedDict):
+    pass
+
+
+class OAUTHConfigsOAUTHADMINCONSENT(BaseModel):
+    pass
 
 
 class OauthConfigsTypedDict(TypedDict):
     r"""OAuth configurations keyed by auth type"""
 
+    oauth: NotRequired[OAUTHConfigsOAUTHTypedDict]
+    oauth_admin_consent: NotRequired[OAUTHConfigsOAUTHADMINCONSENTTypedDict]
+
 
 class OauthConfigs(BaseModel):
     r"""OAuth configurations keyed by auth type"""
+
+    oauth: Annotated[Optional[OAUTHConfigsOAUTH], pydantic.Field(alias="OAUTH")] = None
+
+    oauth_admin_consent: Annotated[
+        Optional[OAUTHConfigsOAUTHADMINCONSENT],
+        pydantic.Field(alias="OAUTH_ADMIN_CONSENT"),
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["OAUTH", "OAUTH_ADMIN_CONSENT"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorSchemaAuthValuesTypedDict(TypedDict):
@@ -92,7 +220,7 @@ class ConnectorSchemaAuthTypedDict(TypedDict):
 
     supported_auth_types: NotRequired[List[str]]
     schemas: NotRequired[SchemasTypedDict]
-    r"""Auth schemas keyed by auth type"""
+    r"""Auth schemas keyed by auth type (e.g., OAUTH, BASIC_AUTH)"""
     oauth_configs: NotRequired[OauthConfigsTypedDict]
     r"""OAuth configurations keyed by auth type"""
     values: NotRequired[ConnectorSchemaAuthValuesTypedDict]
@@ -109,7 +237,7 @@ class ConnectorSchemaAuth(BaseModel):
     ] = None
 
     schemas: Optional[Schemas] = None
-    r"""Auth schemas keyed by auth type"""
+    r"""Auth schemas keyed by auth type (e.g., OAUTH, BASIC_AUTH)"""
 
     oauth_configs: Annotated[
         Optional[OauthConfigs], pydantic.Field(alias="oauthConfigs")
@@ -158,27 +286,136 @@ class ConnectorSchemaAuth(BaseModel):
 
 
 class ConnectorSchemaWebhookConfigTypedDict(TypedDict):
-    pass
+    supported: NotRequired[bool]
+    webhook_url: NotRequired[str]
+    events: NotRequired[List[str]]
+    verification_token: NotRequired[str]
+    secret_key: NotRequired[str]
 
 
 class ConnectorSchemaWebhookConfig(BaseModel):
-    pass
+    supported: Optional[bool] = None
+
+    webhook_url: Annotated[Optional[str], pydantic.Field(alias="webhookUrl")] = None
+
+    events: Optional[List[str]] = None
+
+    verification_token: Annotated[
+        Optional[str], pydantic.Field(alias="verificationToken")
+    ] = None
+
+    secret_key: Annotated[Optional[str], pydantic.Field(alias="secretKey")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["supported", "webhookUrl", "events", "verificationToken", "secretKey"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorSchemaScheduledConfigTypedDict(TypedDict):
-    pass
+    interval_minutes: NotRequired[int]
+    cron_expression: NotRequired[str]
+    timezone: NotRequired[str]
+    start_time: NotRequired[int]
+    next_time: NotRequired[int]
+    end_time: NotRequired[int]
+    max_repetitions: NotRequired[int]
+    repetition_count: NotRequired[int]
 
 
 class ConnectorSchemaScheduledConfig(BaseModel):
-    pass
+    interval_minutes: Annotated[
+        Optional[int], pydantic.Field(alias="intervalMinutes")
+    ] = None
+
+    cron_expression: Annotated[
+        Optional[str], pydantic.Field(alias="cronExpression")
+    ] = None
+
+    timezone: Optional[str] = None
+
+    start_time: Annotated[Optional[int], pydantic.Field(alias="startTime")] = None
+
+    next_time: Annotated[Optional[int], pydantic.Field(alias="nextTime")] = None
+
+    end_time: Annotated[Optional[int], pydantic.Field(alias="endTime")] = None
+
+    max_repetitions: Annotated[
+        Optional[int], pydantic.Field(alias="maxRepetitions")
+    ] = None
+
+    repetition_count: Annotated[
+        Optional[int], pydantic.Field(alias="repetitionCount")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "intervalMinutes",
+                "cronExpression",
+                "timezone",
+                "startTime",
+                "nextTime",
+                "endTime",
+                "maxRepetitions",
+                "repetitionCount",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class RealtimeConfigTypedDict(TypedDict):
-    pass
+    supported: NotRequired[bool]
+    connection_type: NotRequired[str]
 
 
 class RealtimeConfig(BaseModel):
-    pass
+    supported: Optional[bool] = None
+
+    connection_type: Annotated[
+        Optional[str], pydantic.Field(alias="connectionType")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["supported", "connectionType"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class SyncCustomFieldTypedDict(TypedDict):
@@ -280,20 +517,102 @@ class ConnectorSchemaSync(BaseModel):
         return m
 
 
+class SyncSchemaTypedDict(TypedDict):
+    r"""Filter field definitions"""
+
+
+class SyncSchema(BaseModel):
+    r"""Filter field definitions"""
+
+
+class ConnectorSchemaFiltersSyncValuesTypedDict(TypedDict):
+    pass
+
+
+class ConnectorSchemaFiltersSyncValues(BaseModel):
+    pass
+
+
 class ConnectorSchemaFiltersSyncTypedDict(TypedDict):
     r"""Sync filter schema"""
+
+    schema_: NotRequired[SyncSchemaTypedDict]
+    r"""Filter field definitions"""
+    values: NotRequired[ConnectorSchemaFiltersSyncValuesTypedDict]
 
 
 class ConnectorSchemaFiltersSync(BaseModel):
     r"""Sync filter schema"""
 
+    schema_: Annotated[Optional[SyncSchema], pydantic.Field(alias="schema")] = None
+    r"""Filter field definitions"""
+
+    values: Optional[ConnectorSchemaFiltersSyncValues] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["schema", "values"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class IndexingSchemaTypedDict(TypedDict):
+    r"""Filter field definitions"""
+
+
+class IndexingSchema(BaseModel):
+    r"""Filter field definitions"""
+
+
+class IndexingValuesTypedDict(TypedDict):
+    pass
+
+
+class IndexingValues(BaseModel):
+    pass
+
 
 class ConnectorSchemaIndexingTypedDict(TypedDict):
     r"""Indexing filter schema"""
 
+    schema_: NotRequired[IndexingSchemaTypedDict]
+    r"""Filter field definitions"""
+    values: NotRequired[IndexingValuesTypedDict]
+
 
 class ConnectorSchemaIndexing(BaseModel):
     r"""Indexing filter schema"""
+
+    schema_: Annotated[Optional[IndexingSchema], pydantic.Field(alias="schema")] = None
+    r"""Filter field definitions"""
+
+    values: Optional[IndexingValues] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["schema", "values"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorSchemaFiltersTypedDict(TypedDict):
@@ -427,11 +746,39 @@ class ConnectorSchema(BaseModel):
 
 
 try:
+    Schemas.model_rebuild()
+except NameError:
+    pass
+try:
+    OauthConfigs.model_rebuild()
+except NameError:
+    pass
+try:
     ConnectorSchemaAuth.model_rebuild()
 except NameError:
     pass
 try:
+    ConnectorSchemaWebhookConfig.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorSchemaScheduledConfig.model_rebuild()
+except NameError:
+    pass
+try:
+    RealtimeConfig.model_rebuild()
+except NameError:
+    pass
+try:
     ConnectorSchemaSync.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorSchemaFiltersSync.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorSchemaIndexing.model_rebuild()
 except NameError:
     pass
 try:

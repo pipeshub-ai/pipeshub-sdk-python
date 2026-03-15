@@ -251,7 +251,7 @@ class ConnectorConfigSync(BaseModel):
         return m
 
 
-class FiltersSyncValuesTypedDict(TypedDict):
+class ConnectorConfigSyncValuesTypedDict(TypedDict):
     r"""Sync filter values"""
 
     file_types: NotRequired[List[str]]
@@ -259,7 +259,7 @@ class FiltersSyncValuesTypedDict(TypedDict):
     include_shared: NotRequired[bool]
 
 
-class FiltersSyncValues(BaseModel):
+class ConnectorConfigSyncValues(BaseModel):
     r"""Sync filter values"""
 
     file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
@@ -290,14 +290,14 @@ class FiltersSyncValues(BaseModel):
 class ConnectorConfigFiltersSyncTypedDict(TypedDict):
     r"""Sync filter configuration"""
 
-    values: NotRequired[FiltersSyncValuesTypedDict]
+    values: NotRequired[ConnectorConfigSyncValuesTypedDict]
     r"""Sync filter values"""
 
 
 class ConnectorConfigFiltersSync(BaseModel):
     r"""Sync filter configuration"""
 
-    values: Optional[FiltersSyncValues] = None
+    values: Optional[ConnectorConfigSyncValues] = None
     r"""Sync filter values"""
 
     @model_serializer(mode="wrap")
@@ -344,7 +344,7 @@ class ConnectorConfigFolder(BaseModel):
         return m
 
 
-class FiltersValuesTypedDict(TypedDict):
+class ConnectorConfigFiltersValuesTypedDict(TypedDict):
     r"""Filter values (varies per connector)"""
 
     file_types: NotRequired[List[str]]
@@ -352,7 +352,7 @@ class FiltersValuesTypedDict(TypedDict):
     modified_after: NotRequired[str]
 
 
-class FiltersValues(BaseModel):
+class ConnectorConfigFiltersValues(BaseModel):
     r"""Filter values (varies per connector)"""
 
     file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
@@ -385,7 +385,7 @@ class ConnectorConfigFiltersTypedDict(TypedDict):
 
     sync: NotRequired[ConnectorConfigFiltersSyncTypedDict]
     r"""Sync filter configuration"""
-    values: NotRequired[FiltersValuesTypedDict]
+    values: NotRequired[ConnectorConfigFiltersValuesTypedDict]
     r"""Filter values (varies per connector)"""
 
 
@@ -395,7 +395,7 @@ class ConnectorConfigFilters(BaseModel):
     sync: Optional[ConnectorConfigFiltersSync] = None
     r"""Sync filter configuration"""
 
-    values: Optional[FiltersValues] = None
+    values: Optional[ConnectorConfigFiltersValues] = None
     r"""Filter values (varies per connector)"""
 
     @model_serializer(mode="wrap")
@@ -607,11 +607,11 @@ try:
 except NameError:
     pass
 try:
-    FiltersSyncValues.model_rebuild()
+    ConnectorConfigSyncValues.model_rebuild()
 except NameError:
     pass
 try:
-    FiltersValues.model_rebuild()
+    ConnectorConfigFiltersValues.model_rebuild()
 except NameError:
     pass
 try:

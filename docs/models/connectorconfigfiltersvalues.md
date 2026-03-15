@@ -1,4 +1,4 @@
-# FiltersValues
+# ConnectorConfigFiltersValues
 
 Filter values (varies per connector)
 
