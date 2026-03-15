@@ -24,16 +24,23 @@ class GetAgentPermissionsRequest(BaseModel):
 
 class GetAgentPermissionsPermissionTypedDict(TypedDict):
     id: NotRequired[str]
+    user_id: NotRequired[str]
     name: NotRequired[str]
+    email: NotRequired[str]
     role: NotRequired[str]
     type: NotRequired[str]
     created_at_timestamp: NotRequired[int]
+    updated_at_timestamp: NotRequired[int]
 
 
 class GetAgentPermissionsPermission(BaseModel):
     id: Optional[str] = None
 
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+
     name: Optional[str] = None
+
+    email: Optional[str] = None
 
     role: Optional[str] = None
 
@@ -43,9 +50,24 @@ class GetAgentPermissionsPermission(BaseModel):
         Optional[int], pydantic.Field(alias="createdAtTimestamp")
     ] = None
 
+    updated_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="updatedAtTimestamp")
+    ] = None
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["id", "name", "role", "type", "createdAtTimestamp"])
+        optional_fields = set(
+            [
+                "id",
+                "userId",
+                "name",
+                "email",
+                "role",
+                "type",
+                "createdAtTimestamp",
+                "updatedAtTimestamp",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

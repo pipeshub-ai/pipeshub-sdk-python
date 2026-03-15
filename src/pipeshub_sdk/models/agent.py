@@ -22,6 +22,10 @@ class ModelTypedDict(TypedDict):
     model_friendly_name: NotRequired[str]
     provider: NotRequired[str]
     is_reasoning: NotRequired[bool]
+    is_multimodal: NotRequired[bool]
+    is_default: NotRequired[bool]
+    model_type: NotRequired[str]
+    r"""Type of model (e.g., llm, slm, reasoning)"""
 
 
 class Model(BaseModel):
@@ -37,10 +41,28 @@ class Model(BaseModel):
 
     is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
 
+    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
+        None
+    )
+
+    is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
+
+    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
+    r"""Type of model (e.g., llm, slm, reasoning)"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["modelKey", "modelName", "modelFriendlyName", "provider", "isReasoning"]
+            [
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "provider",
+                "isReasoning",
+                "isMultimodal",
+                "isDefault",
+                "modelType",
+            ]
         )
         serialized = handler(self)
         m = {}
