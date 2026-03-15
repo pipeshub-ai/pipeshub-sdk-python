@@ -51,8 +51,8 @@ def test_oauthapps_create_o_auth_app():
             refresh_token_lifetime=604800,
         )
         assert res is not None
-        assert res == models.OAuthAppWithSecret(
-            client_secret="<value>",
+        assert res == models.CreateOAuthAppResponse(
+            message="OAuth app created successfully",
         )
 
 
@@ -177,9 +177,7 @@ def test_oauthapps_list_o_auth_app_tokens():
 
         res = pipeshub.oauth_apps.list_tokens(app_id="<id>")
         assert res is not None
-        assert res == [
-            models.OAuthTokenListItem(),
-        ]
+        assert res == models.ListOAuthAppTokensResponse()
 
 
 def test_oauthapps_revoke_all_o_auth_app_tokens():

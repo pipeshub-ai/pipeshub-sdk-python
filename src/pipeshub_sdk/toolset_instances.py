@@ -92,7 +92,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url_ or "",
                 operation_id="createToolset",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -196,7 +196,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url_ or "",
                 operation_id="createToolset",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -278,7 +278,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listConfiguredToolsets",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -362,7 +362,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listConfiguredToolsets",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -452,7 +452,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="checkToolsetStatus",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -540,7 +540,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="checkToolsetStatus",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -630,7 +630,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reauthenticateToolset",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -722,7 +722,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reauthenticateToolset",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -805,7 +805,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getMyToolsets",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -886,7 +886,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getMyToolsets",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -967,7 +967,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getToolsetInstances",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1048,7 +1048,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getToolsetInstances",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1157,7 +1157,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url_ or "",
                 operation_id="createToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1266,7 +1266,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url_ or "",
                 operation_id="createToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1352,7 +1352,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1438,7 +1438,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1530,7 +1530,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1622,7 +1622,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1708,7 +1708,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1794,7 +1794,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1886,7 +1886,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="authenticateToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1978,7 +1978,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="authenticateToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2064,7 +2064,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="removeToolsetCredentials",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2150,7 +2150,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="removeToolsetCredentials",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2236,7 +2236,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reauthenticateToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2322,7 +2322,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="reauthenticateToolsetInstance",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2408,7 +2408,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getToolsetInstanceStatus",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2494,7 +2494,7 @@ class ToolsetInstances(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getToolsetInstanceStatus",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

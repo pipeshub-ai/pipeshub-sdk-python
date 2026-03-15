@@ -90,7 +90,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthApps",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -194,7 +194,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthApps",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -239,7 +239,7 @@ class OauthApps(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.OAuthAppWithSecret:
+    ) -> models.CreateOAuthAppResponse:
         r"""Create OAuth app
 
         Create a new OAuth app for the organization.
@@ -332,7 +332,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -343,7 +343,7 @@ class OauthApps(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.OAuthAppWithSecret, http_res)
+            return unmarshal_json_response(models.CreateOAuthAppResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "429", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -377,7 +377,7 @@ class OauthApps(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.OAuthAppWithSecret:
+    ) -> models.CreateOAuthAppResponse:
         r"""Create OAuth app
 
         Create a new OAuth app for the organization.
@@ -470,7 +470,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -481,7 +481,7 @@ class OauthApps(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.OAuthAppWithSecret, http_res)
+            return unmarshal_json_response(models.CreateOAuthAppResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "429", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -555,7 +555,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthScopes",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -640,7 +640,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthScopes",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -731,7 +731,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -822,7 +822,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -957,7 +957,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1094,7 +1094,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1192,7 +1192,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1288,7 +1288,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1386,7 +1386,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="regenerateOAuthAppSecret",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1484,7 +1484,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="regenerateOAuthAppSecret",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1580,7 +1580,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="suspendOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1676,7 +1676,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="suspendOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1769,7 +1769,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="activateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1862,7 +1862,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="activateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1895,7 +1895,7 @@ class OauthApps(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.OAuthTokenListItem]:
+    ) -> models.ListOAuthAppTokensResponse:
         r"""List app tokens
 
         List all active tokens issued to an OAuth app.
@@ -1955,7 +1955,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1966,7 +1966,7 @@ class OauthApps(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.OAuthTokenListItem], http_res)
+            return unmarshal_json_response(models.ListOAuthAppTokensResponse, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "429", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1988,7 +1988,7 @@ class OauthApps(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.OAuthTokenListItem]:
+    ) -> models.ListOAuthAppTokensResponse:
         r"""List app tokens
 
         List all active tokens issued to an OAuth app.
@@ -2048,7 +2048,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2059,7 +2059,7 @@ class OauthApps(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.OAuthTokenListItem], http_res)
+            return unmarshal_json_response(models.ListOAuthAppTokensResponse, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "429", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2143,7 +2143,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="revokeAllOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2240,7 +2240,7 @@ class OauthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="revokeAllOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

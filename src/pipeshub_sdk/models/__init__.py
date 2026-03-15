@@ -288,6 +288,10 @@ if TYPE_CHECKING:
         CreateKnowledgeBaseRequest,
         CreateKnowledgeBaseRequestTypedDict,
     )
+    from .createoauthappop import (
+        CreateOAuthAppResponse,
+        CreateOAuthAppResponseTypedDict,
+    )
     from .createoauthapprequest import (
         CreateOAuthAppRequest,
         CreateOAuthAppRequestAllowedGrantType,
@@ -1109,6 +1113,8 @@ if TYPE_CHECKING:
     from .listoauthapptokensop import (
         ListOAuthAppTokensRequest,
         ListOAuthAppTokensRequestTypedDict,
+        ListOAuthAppTokensResponse,
+        ListOAuthAppTokensResponseTypedDict,
     )
     from .listoauthconfigsbytypeop import (
         ListOAuthConfigsByTypeRequest,
@@ -2158,6 +2164,8 @@ __all__ = [
     "CreateOAuthAppRequest",
     "CreateOAuthAppRequestAllowedGrantType",
     "CreateOAuthAppRequestTypedDict",
+    "CreateOAuthAppResponse",
+    "CreateOAuthAppResponseTypedDict",
     "CreateOAuthConfigRequest",
     "CreateOAuthConfigRequestConfig",
     "CreateOAuthConfigRequestConfigTypedDict",
@@ -2741,6 +2749,8 @@ __all__ = [
     "ListKnowledgeBasesSortOrder",
     "ListOAuthAppTokensRequest",
     "ListOAuthAppTokensRequestTypedDict",
+    "ListOAuthAppTokensResponse",
+    "ListOAuthAppTokensResponseTypedDict",
     "ListOAuthAppsRequest",
     "ListOAuthAppsRequestTypedDict",
     "ListOAuthAppsStatus",
@@ -3604,6 +3614,8 @@ _dynamic_imports: dict[str, str] = {
     "PermissionResultTypedDict": ".createkbpermissionop",
     "CreateKnowledgeBaseRequest": ".createknowledgebaseop",
     "CreateKnowledgeBaseRequestTypedDict": ".createknowledgebaseop",
+    "CreateOAuthAppResponse": ".createoauthappop",
+    "CreateOAuthAppResponseTypedDict": ".createoauthappop",
     "CreateOAuthAppRequest": ".createoauthapprequest",
     "CreateOAuthAppRequestAllowedGrantType": ".createoauthapprequest",
     "CreateOAuthAppRequestTypedDict": ".createoauthapprequest",
@@ -4212,6 +4224,8 @@ _dynamic_imports: dict[str, str] = {
     "ListOAuthAppsStatus": ".listoauthappsop",
     "ListOAuthAppTokensRequest": ".listoauthapptokensop",
     "ListOAuthAppTokensRequestTypedDict": ".listoauthapptokensop",
+    "ListOAuthAppTokensResponse": ".listoauthapptokensop",
+    "ListOAuthAppTokensResponseTypedDict": ".listoauthapptokensop",
     "ListOAuthConfigsByTypeRequest": ".listoauthconfigsbytypeop",
     "ListOAuthConfigsByTypeRequestTypedDict": ".listoauthconfigsbytypeop",
     "ListOAuthConfigsByTypeResponse": ".listoauthconfigsbytypeop",
