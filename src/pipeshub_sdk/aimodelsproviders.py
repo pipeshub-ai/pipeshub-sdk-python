@@ -371,7 +371,7 @@ class AiModelsProviders(BaseSDK):
         self,
         *,
         model_type: models.ModelType,
-        provider: str,
+        provider: models.Provider,
         configuration: Union[
             models.AddAIModelProviderRequestConfiguration,
             models.AddAIModelProviderRequestConfigurationTypedDict,
@@ -390,7 +390,7 @@ class AiModelsProviders(BaseSDK):
         Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
         :param model_type: Type of AI model
-        :param provider: Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)
+        :param provider: Provider name
         :param configuration: Provider-specific configuration
         :param is_multimodal: Whether the model supports multimodal inputs
         :param is_reasoning: Whether this is a reasoning model
@@ -485,7 +485,7 @@ class AiModelsProviders(BaseSDK):
         self,
         *,
         model_type: models.ModelType,
-        provider: str,
+        provider: models.Provider,
         configuration: Union[
             models.AddAIModelProviderRequestConfiguration,
             models.AddAIModelProviderRequestConfigurationTypedDict,
@@ -504,7 +504,7 @@ class AiModelsProviders(BaseSDK):
         Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
         :param model_type: Type of AI model
-        :param provider: Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)
+        :param provider: Provider name
         :param configuration: Provider-specific configuration
         :param is_multimodal: Whether the model supports multimodal inputs
         :param is_reasoning: Whether this is a reasoning model

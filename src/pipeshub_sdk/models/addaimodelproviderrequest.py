@@ -12,8 +12,31 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+Provider = Literal[
+    "anthropic",
+    "bedrock",
+    "azureAI",
+    "azureOpenAI",
+    "cohere",
+    "deepseek",
+    "fireworks",
+    "google",
+    "groq",
+    "huggingFace",
+    "mistral",
+    "ollama",
+    "openAI",
+    "openRouter",
+    "togetherAI",
+    "voyageAI",
+    "azureDI",
+    "ocrmypdf",
+]
+r"""Provider name"""
 
 
 class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
@@ -105,8 +128,8 @@ class AddAIModelProviderRequestTypedDict(TypedDict):
 
     model_type: ModelType
     r"""Type of AI model"""
-    provider: str
-    r"""Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)"""
+    provider: Provider
+    r"""Provider name"""
     configuration: AddAIModelProviderRequestConfigurationTypedDict
     r"""Provider-specific configuration"""
     is_multimodal: NotRequired[bool]
@@ -125,8 +148,8 @@ class AddAIModelProviderRequest(BaseModel):
     model_type: Annotated[ModelType, pydantic.Field(alias="modelType")]
     r"""Type of AI model"""
 
-    provider: str
-    r"""Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)"""
+    provider: Provider
+    r"""Provider name"""
 
     configuration: AddAIModelProviderRequestConfiguration
     r"""Provider-specific configuration"""

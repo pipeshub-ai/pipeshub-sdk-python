@@ -21,6 +21,7 @@ if TYPE_CHECKING:
         AddAIModelProviderRequestConfiguration,
         AddAIModelProviderRequestConfigurationTypedDict,
         AddAIModelProviderRequestTypedDict,
+        Provider,
     )
     from .addmessageop import (
         AddMessageRequestRequest,
@@ -592,6 +593,8 @@ if TYPE_CHECKING:
     from .getaimodelsprovidersop import (
         GetAIModelsProvidersResponse,
         GetAIModelsProvidersResponseTypedDict,
+        Models,
+        ModelsTypedDict,
     )
     from .getallconversationsop import (
         GetAllConversationsMeta,
@@ -2871,6 +2874,8 @@ __all__ = [
     "ModelConfig",
     "ModelConfigTypedDict",
     "ModelType",
+    "Models",
+    "ModelsTypedDict",
     "MonthlyScheduleConfig",
     "MonthlyScheduleConfigTypedDict",
     "MoveRecordRequest",
@@ -2976,6 +2981,7 @@ __all__ = [
     "ProgressTypedDict",
     "ProgressUnion",
     "ProgressUnionTypedDict",
+    "Provider",
     "Ratings",
     "RatingsTypedDict",
     "ReauthenticateToolsetInstanceRequest",
@@ -3476,6 +3482,7 @@ _dynamic_imports: dict[str, str] = {
     "AddAIModelProviderRequestConfiguration": ".addaimodelproviderrequest",
     "AddAIModelProviderRequestConfigurationTypedDict": ".addaimodelproviderrequest",
     "AddAIModelProviderRequestTypedDict": ".addaimodelproviderrequest",
+    "Provider": ".addaimodelproviderrequest",
     "AddMessageRequestRequest": ".addmessageop",
     "AddMessageRequestRequestTypedDict": ".addmessageop",
     "AddMessageRequest": ".addmessagerequest",
@@ -3903,6 +3910,8 @@ _dynamic_imports: dict[str, str] = {
     "GetAIModelsConfigResponseTypedDict": ".getaimodelsconfigop",
     "GetAIModelsProvidersResponse": ".getaimodelsprovidersop",
     "GetAIModelsProvidersResponseTypedDict": ".getaimodelsprovidersop",
+    "Models": ".getaimodelsprovidersop",
+    "ModelsTypedDict": ".getaimodelsprovidersop",
     "GetAllConversationsMeta": ".getallconversationsop",
     "GetAllConversationsMetaTypedDict": ".getallconversationsop",
     "GetAllConversationsPagination": ".getallconversationsop",

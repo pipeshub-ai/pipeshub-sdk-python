@@ -47,7 +47,7 @@ def test_aimodelsproviders_add_ai_model_provider():
 
         res = pipeshub.ai_models_providers.add(
             model_type="embedding",
-            provider="openai",
+            provider="cohere",
             configuration={
                 "model": "gpt-4",
             },
@@ -71,4 +71,63 @@ def test_aimodelsproviders_get_ai_models_providers():
 
         res = pipeshub.ai_models_providers.list()
         assert res is not None
-        assert res == models.GetAIModelsProvidersResponse()
+        assert res == models.GetAIModelsProvidersResponse(
+            status="success",
+            message="AI models retrieved successfully",
+            models=models.Models(
+                ocr=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openai",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                embedding=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openai",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                slm=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openai",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                llm=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openai",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                reasoning=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openai",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                multi_modal=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openai",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+            ),
+        )
