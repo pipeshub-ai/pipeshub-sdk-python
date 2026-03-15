@@ -40,7 +40,17 @@ def test_agents_create_agent():
         assert pipeshub is not None
 
         res = pipeshub.agents.create(
-            name="Product Support Agent", is_public=False, share_with_org=False
+            name="Product Support Agent",
+            models=[
+                {
+                    "model_key": "gpt-4o",
+                    "model_name": "GPT-4o",
+                    "provider": "openai",
+                    "is_reasoning": False,
+                },
+            ],
+            is_public=False,
+            share_with_org=False,
         )
         assert res is not None
         assert res == models.Agent(

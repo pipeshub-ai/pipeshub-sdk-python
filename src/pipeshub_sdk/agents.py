@@ -187,16 +187,14 @@ class Agents(BaseSDK):
         self,
         *,
         name: str,
+        models: Union[
+            List[models_.CreateAgentModelUnion],
+            List[models_.CreateAgentModelUnionTypedDict],
+        ],
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         start_message: Optional[str] = None,
         instructions: OptionalNullable[str] = UNSET,
-        models: Optional[
-            Union[
-                List[models_.CreateAgentModelUnion],
-                List[models_.CreateAgentModelUnionTypedDict],
-            ]
-        ] = None,
         toolsets: Optional[
             Union[
                 List[models_.CreateAgentToolset],
@@ -239,11 +237,11 @@ class Agents(BaseSDK):
 
 
         :param name: Agent display name
+        :param models: Agent model configuration entries
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
         :param start_message: Initial greeting shown when conversation starts
         :param instructions: Additional agent execution instructions
-        :param models: Agent model configuration entries
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param is_public: Make agent available to all org users
@@ -270,7 +268,7 @@ class Agents(BaseSDK):
             start_message=start_message,
             instructions=instructions,
             models=utils.get_pydantic_model(
-                models, Optional[List[models_.CreateAgentModelUnion]]
+                models, List[models_.CreateAgentModelUnion]
             ),
             toolsets=utils.get_pydantic_model(
                 toolsets, Optional[List[models_.CreateAgentToolset]]
@@ -344,16 +342,14 @@ class Agents(BaseSDK):
         self,
         *,
         name: str,
+        models: Union[
+            List[models_.CreateAgentModelUnion],
+            List[models_.CreateAgentModelUnionTypedDict],
+        ],
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         start_message: Optional[str] = None,
         instructions: OptionalNullable[str] = UNSET,
-        models: Optional[
-            Union[
-                List[models_.CreateAgentModelUnion],
-                List[models_.CreateAgentModelUnionTypedDict],
-            ]
-        ] = None,
         toolsets: Optional[
             Union[
                 List[models_.CreateAgentToolset],
@@ -396,11 +392,11 @@ class Agents(BaseSDK):
 
 
         :param name: Agent display name
+        :param models: Agent model configuration entries
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
         :param start_message: Initial greeting shown when conversation starts
         :param instructions: Additional agent execution instructions
-        :param models: Agent model configuration entries
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param is_public: Make agent available to all org users
@@ -427,7 +423,7 @@ class Agents(BaseSDK):
             start_message=start_message,
             instructions=instructions,
             models=utils.get_pydantic_model(
-                models, Optional[List[models_.CreateAgentModelUnion]]
+                models, List[models_.CreateAgentModelUnion]
             ),
             toolsets=utils.get_pydantic_model(
                 toolsets, Optional[List[models_.CreateAgentToolset]]

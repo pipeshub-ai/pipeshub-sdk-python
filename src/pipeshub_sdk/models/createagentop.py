@@ -39,7 +39,7 @@ class CreateAgentModel(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -79,7 +79,7 @@ class CreateAgentTool(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -124,7 +124,7 @@ class CreateAgentToolset(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -159,7 +159,7 @@ class CreateAgentKnowledge(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -173,6 +173,8 @@ class CreateAgentRequestTypedDict(TypedDict):
 
     name: str
     r"""Agent display name"""
+    models: List[CreateAgentModelUnionTypedDict]
+    r"""Agent model configuration entries"""
     description: NotRequired[str]
     r"""What the agent does"""
     system_prompt: NotRequired[str]
@@ -181,8 +183,6 @@ class CreateAgentRequestTypedDict(TypedDict):
     r"""Initial greeting shown when conversation starts"""
     instructions: NotRequired[Nullable[str]]
     r"""Additional agent execution instructions"""
-    models: NotRequired[List[CreateAgentModelUnionTypedDict]]
-    r"""Agent model configuration entries"""
     toolsets: NotRequired[List[CreateAgentToolsetTypedDict]]
     r"""Toolsets attached to the agent (instance-aware)"""
     knowledge: NotRequired[List[CreateAgentKnowledgeTypedDict]]
@@ -199,6 +199,9 @@ class CreateAgentRequest(BaseModel):
     name: str
     r"""Agent display name"""
 
+    models: List[CreateAgentModelUnion]
+    r"""Agent model configuration entries"""
+
     description: Optional[str] = None
     r"""What the agent does"""
 
@@ -210,9 +213,6 @@ class CreateAgentRequest(BaseModel):
 
     instructions: OptionalNullable[str] = UNSET
     r"""Additional agent execution instructions"""
-
-    models: Optional[List[CreateAgentModelUnion]] = None
-    r"""Agent model configuration entries"""
 
     toolsets: Optional[List[CreateAgentToolset]] = None
     r"""Toolsets attached to the agent (instance-aware)"""
@@ -236,7 +236,6 @@ class CreateAgentRequest(BaseModel):
                 "systemPrompt",
                 "startMessage",
                 "instructions",
-                "models",
                 "toolsets",
                 "knowledge",
                 "isPublic",
@@ -249,7 +248,7 @@ class CreateAgentRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
