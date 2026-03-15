@@ -2,18 +2,85 @@
 # @generated-id: 5df9faf582d0
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from .aimodelconfiguration import AIModelConfiguration, AIModelConfigurationTypedDict
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+)
+import pydantic
 from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import NotRequired, TypedDict
+from typing import List, Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class CreateAIModelsConfigRequestTypedDict(TypedDict):
-    r"""Request payload"""
+    r"""AI models configuration. At least one model type array must contain entries."""
+
+    ocr: NotRequired[List[AIModelConfigurationTypedDict]]
+    embedding: NotRequired[List[AIModelConfigurationTypedDict]]
+    llm: NotRequired[List[AIModelConfigurationTypedDict]]
+    slm: NotRequired[List[AIModelConfigurationTypedDict]]
+    reasoning: NotRequired[List[AIModelConfigurationTypedDict]]
+    multi_modal: NotRequired[List[AIModelConfigurationTypedDict]]
+    custom_system_prompt: NotRequired[Nullable[str]]
 
 
 class CreateAIModelsConfigRequest(BaseModel):
-    r"""Request payload"""
+    r"""AI models configuration. At least one model type array must contain entries."""
+
+    ocr: Optional[List[AIModelConfiguration]] = None
+
+    embedding: Optional[List[AIModelConfiguration]] = None
+
+    llm: Optional[List[AIModelConfiguration]] = None
+
+    slm: Optional[List[AIModelConfiguration]] = None
+
+    reasoning: Optional[List[AIModelConfiguration]] = None
+
+    multi_modal: Annotated[
+        Optional[List[AIModelConfiguration]], pydantic.Field(alias="multiModal")
+    ] = None
+
+    custom_system_prompt: OptionalNullable[str] = UNSET
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "ocr",
+                "embedding",
+                "llm",
+                "slm",
+                "reasoning",
+                "multiModal",
+                "custom_system_prompt",
+            ]
+        )
+        nullable_fields = set(["custom_system_prompt"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
 
 
 class CreateAIModelsConfigResponseTypedDict(TypedDict):
@@ -42,3 +109,9 @@ class CreateAIModelsConfigResponse(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    CreateAIModelsConfigRequest.model_rebuild()
+except NameError:
+    pass

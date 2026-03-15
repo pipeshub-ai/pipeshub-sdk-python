@@ -4,10 +4,10 @@
 from .basesdk import BaseSDK
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import BaseModel, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional, Union, cast
+from typing import List, Mapping, Optional, Union
 
 
 class AiModelsConfiguration(BaseSDK):
@@ -178,10 +178,43 @@ class AiModelsConfiguration(BaseSDK):
     def create(
         self,
         *,
-        request: Union[
-            models.CreateAIModelsConfigRequest,
-            models.CreateAIModelsConfigRequestTypedDict,
-        ],
+        ocr: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        embedding: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        llm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        slm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        reasoning: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        multi_modal: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        custom_system_prompt: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -192,7 +225,13 @@ class AiModelsConfiguration(BaseSDK):
         Create or initialize AI models configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param ocr:
+        :param embedding:
+        :param llm:
+        :param slm:
+        :param reasoning:
+        :param multi_modal:
+        :param custom_system_prompt:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -208,9 +247,27 @@ class AiModelsConfiguration(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateAIModelsConfigRequest)
-        request = cast(models.CreateAIModelsConfigRequest, request)
+        request = models.CreateAIModelsConfigRequest(
+            ocr=utils.get_pydantic_model(
+                ocr, Optional[List[models.AIModelConfiguration]]
+            ),
+            embedding=utils.get_pydantic_model(
+                embedding, Optional[List[models.AIModelConfiguration]]
+            ),
+            llm=utils.get_pydantic_model(
+                llm, Optional[List[models.AIModelConfiguration]]
+            ),
+            slm=utils.get_pydantic_model(
+                slm, Optional[List[models.AIModelConfiguration]]
+            ),
+            reasoning=utils.get_pydantic_model(
+                reasoning, Optional[List[models.AIModelConfiguration]]
+            ),
+            multi_modal=utils.get_pydantic_model(
+                multi_modal, Optional[List[models.AIModelConfiguration]]
+            ),
+            custom_system_prompt=custom_system_prompt,
+        )
 
         req = self._build_request(
             method="POST",
@@ -275,10 +332,43 @@ class AiModelsConfiguration(BaseSDK):
     async def create_async(
         self,
         *,
-        request: Union[
-            models.CreateAIModelsConfigRequest,
-            models.CreateAIModelsConfigRequestTypedDict,
-        ],
+        ocr: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        embedding: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        llm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        slm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        reasoning: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        multi_modal: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        custom_system_prompt: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -289,7 +379,13 @@ class AiModelsConfiguration(BaseSDK):
         Create or initialize AI models configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param ocr:
+        :param embedding:
+        :param llm:
+        :param slm:
+        :param reasoning:
+        :param multi_modal:
+        :param custom_system_prompt:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -305,9 +401,27 @@ class AiModelsConfiguration(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateAIModelsConfigRequest)
-        request = cast(models.CreateAIModelsConfigRequest, request)
+        request = models.CreateAIModelsConfigRequest(
+            ocr=utils.get_pydantic_model(
+                ocr, Optional[List[models.AIModelConfiguration]]
+            ),
+            embedding=utils.get_pydantic_model(
+                embedding, Optional[List[models.AIModelConfiguration]]
+            ),
+            llm=utils.get_pydantic_model(
+                llm, Optional[List[models.AIModelConfiguration]]
+            ),
+            slm=utils.get_pydantic_model(
+                slm, Optional[List[models.AIModelConfiguration]]
+            ),
+            reasoning=utils.get_pydantic_model(
+                reasoning, Optional[List[models.AIModelConfiguration]]
+            ),
+            multi_modal=utils.get_pydantic_model(
+                multi_modal, Optional[List[models.AIModelConfiguration]]
+            ),
+            custom_system_prompt=custom_system_prompt,
+        )
 
         req = self._build_request_async(
             method="POST",

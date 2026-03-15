@@ -30,6 +30,57 @@ def test_aimodelsconfiguration_create_ai_models_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.ai_models_configuration.create(request={})
+        res = pipeshub.ai_models_configuration.create(
+            ocr=[
+                {
+                    "provider": "openai",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            embedding=[
+                {
+                    "provider": "openai",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            llm=[
+                {
+                    "provider": "openai",
+                    "configuration": {
+                        "model": "gpt-4o",
+                        "api_key": "sk-example",
+                    },
+                    "is_default": True,
+                },
+            ],
+            slm=[
+                {
+                    "provider": "openai",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            reasoning=[
+                {
+                    "provider": "openai",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            multi_modal=[
+                {
+                    "provider": "openai",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+        )
         assert res is not None
         assert res == models.CreateAIModelsConfigResponse()

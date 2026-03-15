@@ -3,17 +3,55 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
 from typing import Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class CreateSlackBotConfigRequestTypedDict(TypedDict):
     r"""Request payload"""
 
+    name: str
+    r"""Slack Bot display name"""
+    bot_token: str
+    r"""Slack Bot OAuth token"""
+    signing_secret: str
+    r"""Slack app signing secret"""
+    agent_id: NotRequired[str]
+    r"""Optional agent ID to link to this bot"""
+
 
 class CreateSlackBotConfigRequest(BaseModel):
     r"""Request payload"""
+
+    name: str
+    r"""Slack Bot display name"""
+
+    bot_token: Annotated[str, pydantic.Field(alias="botToken")]
+    r"""Slack Bot OAuth token"""
+
+    signing_secret: Annotated[str, pydantic.Field(alias="signingSecret")]
+    r"""Slack app signing secret"""
+
+    agent_id: Annotated[Optional[str], pydantic.Field(alias="agentId")] = None
+    r"""Optional agent ID to link to this bot"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["agentId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class CreateSlackBotConfigResponseTypedDict(TypedDict):
@@ -42,3 +80,9 @@ class CreateSlackBotConfigResponse(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    CreateSlackBotConfigRequest.model_rebuild()
+except NameError:
+    pass

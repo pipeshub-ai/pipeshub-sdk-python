@@ -70,7 +70,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.create_slack_bot_config(request={})
+    res = pipeshub.configuration_manager.create_slack_bot_config(name="PipesHub Bot", bot_token="xoxb-example-token", signing_secret="abc123signingsecret")
 
     # Handle response
     print(res)
@@ -79,10 +79,13 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
-| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `request`                                                                         | [models.CreateSlackBotConfigRequest](../../models/createslackbotconfigrequest.md) | :heavy_check_mark:                                                                | The request object to use for the request.                                        |
-| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `name`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot display name                                              | PipesHub Bot                                                        |
+| `bot_token`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot OAuth token                                               | xoxb-example-token                                                  |
+| `signing_secret`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Slack app signing secret                                            | abc123signingsecret                                                 |
+| `agent_id`                                                          | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Optional agent ID to link to this bot                               |                                                                     |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
 
@@ -113,7 +116,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.update_slack_bot_config(config_id="<id>", body={})
+    res = pipeshub.configuration_manager.update_slack_bot_config(config_id="<id>", name="PipesHub Bot", bot_token="xoxb-example-token", signing_secret="abc123signingsecret")
 
     # Handle response
     print(res)
@@ -122,11 +125,14 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               |
-| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `config_id`                                                                               | *str*                                                                                     | :heavy_check_mark:                                                                        | N/A                                                                                       |
-| `body`                                                                                    | [models.UpdateSlackBotConfigRequestBody](../../models/updateslackbotconfigrequestbody.md) | :heavy_check_mark:                                                                        | Request payload                                                                           |
-| `retries`                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                          | :heavy_minus_sign:                                                                        | Configuration to override the default retry behavior of the client.                       |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `config_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
+| `name`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot display name                                              | PipesHub Bot                                                        |
+| `bot_token`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot OAuth token                                               | xoxb-example-token                                                  |
+| `signing_secret`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Slack app signing secret                                            | abc123signingsecret                                                 |
+| `agent_id`                                                          | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Optional agent ID to link to this bot                               |                                                                     |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
 

@@ -30,7 +30,11 @@ def test_configuration_manager_create_slack_bot_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.configuration_manager.create_slack_bot_config(request={})
+        res = pipeshub.configuration_manager.create_slack_bot_config(
+            name="PipesHub Bot",
+            bot_token="xoxb-example-token",
+            signing_secret="abc123signingsecret",
+        )
         assert res is not None
         assert res == models.CreateSlackBotConfigResponse()
 
@@ -46,7 +50,10 @@ def test_configuration_manager_update_slack_bot_config():
         assert pipeshub is not None
 
         res = pipeshub.configuration_manager.update_slack_bot_config(
-            config_id="<id>", body={}
+            config_id="<id>",
+            name="PipesHub Bot",
+            bot_token="xoxb-example-token",
+            signing_secret="abc123signingsecret",
         )
         assert res is not None
         assert res == models.UpdateSlackBotConfigResponse()

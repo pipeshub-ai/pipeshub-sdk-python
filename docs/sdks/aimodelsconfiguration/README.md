@@ -68,7 +68,51 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_configuration.create(request={})
+    res = pipeshub.ai_models_configuration.create(ocr=[
+        {
+            "provider": "openai",
+            "configuration": {
+                "model": "gpt-4o",
+            },
+        },
+    ], embedding=[
+        {
+            "provider": "openai",
+            "configuration": {
+                "model": "gpt-4o",
+            },
+        },
+    ], llm=[
+        {
+            "provider": "openai",
+            "configuration": {
+                "model": "gpt-4o",
+                "api_key": "sk-example",
+            },
+            "is_default": True,
+        },
+    ], slm=[
+        {
+            "provider": "openai",
+            "configuration": {
+                "model": "gpt-4o",
+            },
+        },
+    ], reasoning=[
+        {
+            "provider": "openai",
+            "configuration": {
+                "model": "gpt-4o",
+            },
+        },
+    ], multi_modal=[
+        {
+            "provider": "openai",
+            "configuration": {
+                "model": "gpt-4o",
+            },
+        },
+    ])
 
     # Handle response
     print(res)
@@ -77,10 +121,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
-| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `request`                                                                         | [models.CreateAIModelsConfigRequest](../../models/createaimodelsconfigrequest.md) | :heavy_check_mark:                                                                | The request object to use for the request.                                        |
-| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
+| Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `ocr`                                                                     | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `embedding`                                                               | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `llm`                                                                     | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `slm`                                                                     | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `reasoning`                                                               | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `multi_modal`                                                             | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `custom_system_prompt`                                                    | *OptionalNullable[str]*                                                   | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `retries`                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)          | :heavy_minus_sign:                                                        | Configuration to override the default retry behavior of the client.       |
 
 ### Response
 

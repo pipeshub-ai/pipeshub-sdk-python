@@ -4,10 +4,10 @@
 from .basesdk import BaseSDK
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import BaseModel, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional, Union, cast
+from typing import Mapping, Optional
 
 
 class ConfigurationManager(BaseSDK):
@@ -178,10 +178,10 @@ class ConfigurationManager(BaseSDK):
     def create_slack_bot_config(
         self,
         *,
-        request: Union[
-            models.CreateSlackBotConfigRequest,
-            models.CreateSlackBotConfigRequestTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -192,7 +192,10 @@ class ConfigurationManager(BaseSDK):
         Create a new Slack bot configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param name: Slack Bot display name
+        :param bot_token: Slack Bot OAuth token
+        :param signing_secret: Slack app signing secret
+        :param agent_id: Optional agent ID to link to this bot
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -208,9 +211,12 @@ class ConfigurationManager(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateSlackBotConfigRequest)
-        request = cast(models.CreateSlackBotConfigRequest, request)
+        request = models.CreateSlackBotConfigRequest(
+            name=name,
+            bot_token=bot_token,
+            signing_secret=signing_secret,
+            agent_id=agent_id,
+        )
 
         req = self._build_request(
             method="POST",
@@ -275,10 +281,10 @@ class ConfigurationManager(BaseSDK):
     async def create_slack_bot_config_async(
         self,
         *,
-        request: Union[
-            models.CreateSlackBotConfigRequest,
-            models.CreateSlackBotConfigRequestTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -289,7 +295,10 @@ class ConfigurationManager(BaseSDK):
         Create a new Slack bot configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param name: Slack Bot display name
+        :param bot_token: Slack Bot OAuth token
+        :param signing_secret: Slack app signing secret
+        :param agent_id: Optional agent ID to link to this bot
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -305,9 +314,12 @@ class ConfigurationManager(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateSlackBotConfigRequest)
-        request = cast(models.CreateSlackBotConfigRequest, request)
+        request = models.CreateSlackBotConfigRequest(
+            name=name,
+            bot_token=bot_token,
+            signing_secret=signing_secret,
+            agent_id=agent_id,
+        )
 
         req = self._build_request_async(
             method="POST",
@@ -373,10 +385,10 @@ class ConfigurationManager(BaseSDK):
         self,
         *,
         config_id: str,
-        body: Union[
-            models.UpdateSlackBotConfigRequestBody,
-            models.UpdateSlackBotConfigRequestBodyTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -388,7 +400,10 @@ class ConfigurationManager(BaseSDK):
 
 
         :param config_id:
-        :param body: Request payload
+        :param name: Slack Bot display name
+        :param bot_token: Slack Bot OAuth token
+        :param signing_secret: Slack app signing secret
+        :param agent_id: Optional agent ID to link to this bot
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -406,7 +421,12 @@ class ConfigurationManager(BaseSDK):
 
         request = models.UpdateSlackBotConfigRequest(
             config_id=config_id,
-            body=utils.get_pydantic_model(body, models.UpdateSlackBotConfigRequestBody),
+            body=models.UpdateSlackBotConfigRequestBody(
+                name=name,
+                bot_token=bot_token,
+                signing_secret=signing_secret,
+                agent_id=agent_id,
+            ),
         )
 
         req = self._build_request(
@@ -477,10 +497,10 @@ class ConfigurationManager(BaseSDK):
         self,
         *,
         config_id: str,
-        body: Union[
-            models.UpdateSlackBotConfigRequestBody,
-            models.UpdateSlackBotConfigRequestBodyTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -492,7 +512,10 @@ class ConfigurationManager(BaseSDK):
 
 
         :param config_id:
-        :param body: Request payload
+        :param name: Slack Bot display name
+        :param bot_token: Slack Bot OAuth token
+        :param signing_secret: Slack app signing secret
+        :param agent_id: Optional agent ID to link to this bot
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -510,7 +533,12 @@ class ConfigurationManager(BaseSDK):
 
         request = models.UpdateSlackBotConfigRequest(
             config_id=config_id,
-            body=utils.get_pydantic_model(body, models.UpdateSlackBotConfigRequestBody),
+            body=models.UpdateSlackBotConfigRequestBody(
+                name=name,
+                bot_token=bot_token,
+                signing_secret=signing_secret,
+                agent_id=agent_id,
+            ),
         )
 
         req = self._build_request_async(

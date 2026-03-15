@@ -71,6 +71,12 @@ if TYPE_CHECKING:
         InputSchema,
         InputSchemaTypedDict,
     )
+    from .aimodelconfiguration import (
+        AIModelConfiguration,
+        AIModelConfigurationConfiguration,
+        AIModelConfigurationConfigurationTypedDict,
+        AIModelConfigurationTypedDict,
+    )
     from .aimodelproviderconfig import (
         AIModelProviderConfig,
         AIModelProviderConfigConfiguration,
@@ -1930,6 +1936,10 @@ if TYPE_CHECKING:
     )
 
 __all__ = [
+    "AIModelConfiguration",
+    "AIModelConfigurationConfiguration",
+    "AIModelConfigurationConfigurationTypedDict",
+    "AIModelConfigurationTypedDict",
     "AIModelProviderConfig",
     "AIModelProviderConfigConfiguration",
     "AIModelProviderConfigConfigurationTypedDict",
@@ -3392,6 +3402,10 @@ _dynamic_imports: dict[str, str] = {
     "AgentToolTypedDict": ".agenttool",
     "InputSchema": ".agenttool",
     "InputSchemaTypedDict": ".agenttool",
+    "AIModelConfiguration": ".aimodelconfiguration",
+    "AIModelConfigurationConfiguration": ".aimodelconfiguration",
+    "AIModelConfigurationConfigurationTypedDict": ".aimodelconfiguration",
+    "AIModelConfigurationTypedDict": ".aimodelconfiguration",
     "AIModelProviderConfig": ".aimodelproviderconfig",
     "AIModelProviderConfigConfiguration": ".aimodelproviderconfig",
     "AIModelProviderConfigConfigurationTypedDict": ".aimodelproviderconfig",
