@@ -87,7 +87,7 @@ def test_metricscollection_set_metrics_collection_push_interval():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.metrics_collection.set_push_interval()
+        res = pipeshub.metrics_collection.set_push_interval(push_interval_ms=60000)
         assert res is not None
         assert res == models.SetMetricsCollectionPushIntervalResponse()
 
@@ -102,6 +102,8 @@ def test_metricscollection_set_metrics_collection_remote_server():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.metrics_collection.set_server_url()
+        res = pipeshub.metrics_collection.set_server_url(
+            server_url_="https://metrics-collector.example.com/collect-metrics"
+        )
         assert res is not None
         assert res == models.SetMetricsCollectionRemoteServerResponse()

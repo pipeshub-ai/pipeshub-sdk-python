@@ -5,6 +5,6 @@ Request payload
 
 ## Fields
 
-| Field                    | Type                     | Required                 | Description              |
-| ------------------------ | ------------------------ | ------------------------ | ------------------------ |
-| `push_interval`          | *Optional[int]*          | :heavy_minus_sign:       | Push interval in seconds |
+| Field                         | Type                          | Required                      | Description                   | Example                       |
+| ----------------------------- | ----------------------------- | ----------------------------- | ----------------------------- | ----------------------------- |
+| `push_interval_ms`            | *float*                       | :heavy_check_mark:            | Push interval in milliseconds | 60000                         |

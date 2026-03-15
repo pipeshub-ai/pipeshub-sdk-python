@@ -402,7 +402,7 @@ class MetricsCollection(BaseSDK):
     def set_push_interval(
         self,
         *,
-        push_interval: Optional[int] = None,
+        push_interval_ms: float,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -413,7 +413,7 @@ class MetricsCollection(BaseSDK):
         Configure the interval for pushing metrics to the collection server.
 
 
-        :param push_interval: Push interval in seconds
+        :param push_interval_ms: Push interval in milliseconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -430,7 +430,7 @@ class MetricsCollection(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.SetMetricsCollectionPushIntervalRequest(
-            push_interval=push_interval,
+            push_interval_ms=push_interval_ms,
         )
 
         req = self._build_request(
@@ -470,7 +470,7 @@ class MetricsCollection(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionPushInterval",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -500,7 +500,7 @@ class MetricsCollection(BaseSDK):
     async def set_push_interval_async(
         self,
         *,
-        push_interval: Optional[int] = None,
+        push_interval_ms: float,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -511,7 +511,7 @@ class MetricsCollection(BaseSDK):
         Configure the interval for pushing metrics to the collection server.
 
 
-        :param push_interval: Push interval in seconds
+        :param push_interval_ms: Push interval in milliseconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -528,7 +528,7 @@ class MetricsCollection(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.SetMetricsCollectionPushIntervalRequest(
-            push_interval=push_interval,
+            push_interval_ms=push_interval_ms,
         )
 
         req = self._build_request_async(
@@ -568,7 +568,7 @@ class MetricsCollection(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionPushInterval",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -598,7 +598,7 @@ class MetricsCollection(BaseSDK):
     def set_server_url(
         self,
         *,
-        server_url_: Optional[str] = None,
+        server_url_: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -666,7 +666,7 @@ class MetricsCollection(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionRemoteServer",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -696,7 +696,7 @@ class MetricsCollection(BaseSDK):
     async def set_server_url_async(
         self,
         *,
-        server_url_: Optional[str] = None,
+        server_url_: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -764,7 +764,7 @@ class MetricsCollection(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionRemoteServer",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

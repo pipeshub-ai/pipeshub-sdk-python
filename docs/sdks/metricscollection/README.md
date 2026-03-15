@@ -151,7 +151,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.metrics_collection.set_push_interval()
+    res = pipeshub.metrics_collection.set_push_interval(push_interval_ms=60000)
 
     # Handle response
     print(res)
@@ -160,10 +160,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `push_interval`                                                     | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Push interval in seconds                                            |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `push_interval_ms`                                                  | *float*                                                             | :heavy_check_mark:                                                  | Push interval in milliseconds                                       | 60000                                                               |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
 
@@ -194,7 +194,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.metrics_collection.set_server_url()
+    res = pipeshub.metrics_collection.set_server_url(server_url_="https://metrics-collector.example.com/collect-metrics")
 
     # Handle response
     print(res)
@@ -203,10 +203,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `server_url`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `server_url`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 | https://metrics-collector.example.com/collect-metrics               |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
 
