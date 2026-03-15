@@ -1,4 +1,4 @@
-# Indexing
+# ConnectorFiltersConfigIndexing
 
 Indexing filter selections
 

@@ -17,7 +17,7 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class AuthValuesTypedDict(TypedDict):
+class ConnectorConfigAuthValuesTypedDict(TypedDict):
     r"""Auth field values (varies per connector)"""
 
     api_key: NotRequired[str]
@@ -26,7 +26,7 @@ class AuthValuesTypedDict(TypedDict):
     password: NotRequired[str]
 
 
-class AuthValues(BaseModel):
+class ConnectorConfigAuthValues(BaseModel):
     r"""Auth field values (varies per connector)"""
 
     api_key: Annotated[Optional[str], pydantic.Field(alias="apiKey")] = None
@@ -66,7 +66,7 @@ class ConnectorConfigAuthTypedDict(TypedDict):
     scopes: NotRequired[List[str]]
     redirect_uri: NotRequired[str]
     connector_scope: NotRequired[str]
-    values: NotRequired[AuthValuesTypedDict]
+    values: NotRequired[ConnectorConfigAuthValuesTypedDict]
     r"""Auth field values (varies per connector)"""
 
 
@@ -99,7 +99,7 @@ class ConnectorConfigAuth(BaseModel):
         Optional[str], pydantic.Field(alias="connectorScope")
     ] = None
 
-    values: Optional[AuthValues] = None
+    values: Optional[ConnectorConfigAuthValues] = None
     r"""Auth field values (varies per connector)"""
 
     @model_serializer(mode="wrap")
@@ -251,7 +251,7 @@ class ConnectorConfigSync(BaseModel):
         return m
 
 
-class SyncValuesTypedDict(TypedDict):
+class FiltersSyncValuesTypedDict(TypedDict):
     r"""Sync filter values"""
 
     file_types: NotRequired[List[str]]
@@ -259,7 +259,7 @@ class SyncValuesTypedDict(TypedDict):
     include_shared: NotRequired[bool]
 
 
-class SyncValues(BaseModel):
+class FiltersSyncValues(BaseModel):
     r"""Sync filter values"""
 
     file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
@@ -287,17 +287,17 @@ class SyncValues(BaseModel):
         return m
 
 
-class FiltersSyncTypedDict(TypedDict):
+class ConnectorConfigFiltersSyncTypedDict(TypedDict):
     r"""Sync filter configuration"""
 
-    values: NotRequired[SyncValuesTypedDict]
+    values: NotRequired[FiltersSyncValuesTypedDict]
     r"""Sync filter values"""
 
 
-class FiltersSync(BaseModel):
+class ConnectorConfigFiltersSync(BaseModel):
     r"""Sync filter configuration"""
 
-    values: Optional[SyncValues] = None
+    values: Optional[FiltersSyncValues] = None
     r"""Sync filter values"""
 
     @model_serializer(mode="wrap")
@@ -383,7 +383,7 @@ class FiltersValues(BaseModel):
 class ConnectorConfigFiltersTypedDict(TypedDict):
     r"""Filter configuration"""
 
-    sync: NotRequired[FiltersSyncTypedDict]
+    sync: NotRequired[ConnectorConfigFiltersSyncTypedDict]
     r"""Sync filter configuration"""
     values: NotRequired[FiltersValuesTypedDict]
     r"""Filter values (varies per connector)"""
@@ -392,7 +392,7 @@ class ConnectorConfigFiltersTypedDict(TypedDict):
 class ConnectorConfigFilters(BaseModel):
     r"""Filter configuration"""
 
-    sync: Optional[FiltersSync] = None
+    sync: Optional[ConnectorConfigFiltersSync] = None
     r"""Sync filter configuration"""
 
     values: Optional[FiltersValues] = None
@@ -587,7 +587,7 @@ class ConnectorConfig(BaseModel):
 
 
 try:
-    AuthValues.model_rebuild()
+    ConnectorConfigAuthValues.model_rebuild()
 except NameError:
     pass
 try:
@@ -607,7 +607,7 @@ try:
 except NameError:
     pass
 try:
-    SyncValues.model_rebuild()
+    FiltersSyncValues.model_rebuild()
 except NameError:
     pass
 try:

@@ -1,4 +1,4 @@
-# SyncValues
+# FiltersSyncValues
 
 Sync filter values
 

@@ -1,4 +1,4 @@
-# AuthValues
+# ConnectorConfigAuthValues
 
 Auth field values (varies per connector)
 

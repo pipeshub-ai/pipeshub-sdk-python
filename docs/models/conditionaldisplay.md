@@ -1,6 +1,4 @@
-# ConnectorInfo
-
-Additional connector metadata
+# ConditionalDisplay
 
 
 ## Fields

@@ -38,13 +38,13 @@ class ConnectorFiltersConfigSync(BaseModel):
         return m
 
 
-class IndexingTypedDict(TypedDict):
+class ConnectorFiltersConfigIndexingTypedDict(TypedDict):
     r"""Indexing filter selections"""
 
     values: NotRequired[Dict[str, Any]]
 
 
-class Indexing(BaseModel):
+class ConnectorFiltersConfigIndexing(BaseModel):
     r"""Indexing filter selections"""
 
     values: Optional[Dict[str, Any]] = None
@@ -71,7 +71,7 @@ class ConnectorFiltersConfigTypedDict(TypedDict):
 
     sync: NotRequired[ConnectorFiltersConfigSyncTypedDict]
     r"""Sync filter selections"""
-    indexing: NotRequired[IndexingTypedDict]
+    indexing: NotRequired[ConnectorFiltersConfigIndexingTypedDict]
     r"""Indexing filter selections"""
 
 
@@ -81,7 +81,7 @@ class ConnectorFiltersConfig(BaseModel):
     sync: Optional[ConnectorFiltersConfigSync] = None
     r"""Sync filter selections"""
 
-    indexing: Optional[Indexing] = None
+    indexing: Optional[ConnectorFiltersConfigIndexing] = None
     r"""Indexing filter selections"""
 
     @model_serializer(mode="wrap")

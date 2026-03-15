@@ -39,28 +39,296 @@ class ConnectorSchemaDocumentationLink(BaseModel):
         return m
 
 
+class SchemasTypedDict(TypedDict):
+    r"""Auth schemas keyed by auth type"""
+
+
+class Schemas(BaseModel):
+    r"""Auth schemas keyed by auth type"""
+
+
+class OauthConfigsTypedDict(TypedDict):
+    r"""OAuth configurations keyed by auth type"""
+
+
+class OauthConfigs(BaseModel):
+    r"""OAuth configurations keyed by auth type"""
+
+
+class ConnectorSchemaAuthValuesTypedDict(TypedDict):
+    pass
+
+
+class ConnectorSchemaAuthValues(BaseModel):
+    pass
+
+
+class AuthCustomFieldTypedDict(TypedDict):
+    pass
+
+
+class AuthCustomField(BaseModel):
+    pass
+
+
+class AuthCustomValuesTypedDict(TypedDict):
+    pass
+
+
+class AuthCustomValues(BaseModel):
+    pass
+
+
+class ConditionalDisplayTypedDict(TypedDict):
+    pass
+
+
+class ConditionalDisplay(BaseModel):
+    pass
+
+
 class ConnectorSchemaAuthTypedDict(TypedDict):
     r"""Authentication schema configuration"""
+
+    supported_auth_types: NotRequired[List[str]]
+    schemas: NotRequired[SchemasTypedDict]
+    r"""Auth schemas keyed by auth type"""
+    oauth_configs: NotRequired[OauthConfigsTypedDict]
+    r"""OAuth configurations keyed by auth type"""
+    values: NotRequired[ConnectorSchemaAuthValuesTypedDict]
+    custom_fields: NotRequired[List[AuthCustomFieldTypedDict]]
+    custom_values: NotRequired[AuthCustomValuesTypedDict]
+    conditional_display: NotRequired[ConditionalDisplayTypedDict]
 
 
 class ConnectorSchemaAuth(BaseModel):
     r"""Authentication schema configuration"""
 
+    supported_auth_types: Annotated[
+        Optional[List[str]], pydantic.Field(alias="supportedAuthTypes")
+    ] = None
+
+    schemas: Optional[Schemas] = None
+    r"""Auth schemas keyed by auth type"""
+
+    oauth_configs: Annotated[
+        Optional[OauthConfigs], pydantic.Field(alias="oauthConfigs")
+    ] = None
+    r"""OAuth configurations keyed by auth type"""
+
+    values: Optional[ConnectorSchemaAuthValues] = None
+
+    custom_fields: Annotated[
+        Optional[List[AuthCustomField]], pydantic.Field(alias="customFields")
+    ] = None
+
+    custom_values: Annotated[
+        Optional[AuthCustomValues], pydantic.Field(alias="customValues")
+    ] = None
+
+    conditional_display: Annotated[
+        Optional[ConditionalDisplay], pydantic.Field(alias="conditionalDisplay")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "supportedAuthTypes",
+                "schemas",
+                "oauthConfigs",
+                "values",
+                "customFields",
+                "customValues",
+                "conditionalDisplay",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ConnectorSchemaWebhookConfigTypedDict(TypedDict):
+    pass
+
+
+class ConnectorSchemaWebhookConfig(BaseModel):
+    pass
+
+
+class ConnectorSchemaScheduledConfigTypedDict(TypedDict):
+    pass
+
+
+class ConnectorSchemaScheduledConfig(BaseModel):
+    pass
+
+
+class RealtimeConfigTypedDict(TypedDict):
+    pass
+
+
+class RealtimeConfig(BaseModel):
+    pass
+
+
+class SyncCustomFieldTypedDict(TypedDict):
+    pass
+
+
+class SyncCustomField(BaseModel):
+    pass
+
+
+class SyncCustomValuesTypedDict(TypedDict):
+    pass
+
+
+class SyncCustomValues(BaseModel):
+    pass
+
+
+class ConnectorSchemaSyncValuesTypedDict(TypedDict):
+    pass
+
+
+class ConnectorSchemaSyncValues(BaseModel):
+    pass
+
 
 class ConnectorSchemaSyncTypedDict(TypedDict):
     r"""Sync schema configuration"""
+
+    supported_strategies: NotRequired[List[str]]
+    selected_strategy: NotRequired[str]
+    webhook_config: NotRequired[ConnectorSchemaWebhookConfigTypedDict]
+    scheduled_config: NotRequired[ConnectorSchemaScheduledConfigTypedDict]
+    realtime_config: NotRequired[RealtimeConfigTypedDict]
+    custom_fields: NotRequired[List[SyncCustomFieldTypedDict]]
+    custom_values: NotRequired[SyncCustomValuesTypedDict]
+    values: NotRequired[ConnectorSchemaSyncValuesTypedDict]
 
 
 class ConnectorSchemaSync(BaseModel):
     r"""Sync schema configuration"""
 
+    supported_strategies: Annotated[
+        Optional[List[str]], pydantic.Field(alias="supportedStrategies")
+    ] = None
+
+    selected_strategy: Annotated[
+        Optional[str], pydantic.Field(alias="selectedStrategy")
+    ] = None
+
+    webhook_config: Annotated[
+        Optional[ConnectorSchemaWebhookConfig], pydantic.Field(alias="webhookConfig")
+    ] = None
+
+    scheduled_config: Annotated[
+        Optional[ConnectorSchemaScheduledConfig],
+        pydantic.Field(alias="scheduledConfig"),
+    ] = None
+
+    realtime_config: Annotated[
+        Optional[RealtimeConfig], pydantic.Field(alias="realtimeConfig")
+    ] = None
+
+    custom_fields: Annotated[
+        Optional[List[SyncCustomField]], pydantic.Field(alias="customFields")
+    ] = None
+
+    custom_values: Annotated[
+        Optional[SyncCustomValues], pydantic.Field(alias="customValues")
+    ] = None
+
+    values: Optional[ConnectorSchemaSyncValues] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "supportedStrategies",
+                "selectedStrategy",
+                "webhookConfig",
+                "scheduledConfig",
+                "realtimeConfig",
+                "customFields",
+                "customValues",
+                "values",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ConnectorSchemaFiltersSyncTypedDict(TypedDict):
+    r"""Sync filter schema"""
+
+
+class ConnectorSchemaFiltersSync(BaseModel):
+    r"""Sync filter schema"""
+
+
+class ConnectorSchemaIndexingTypedDict(TypedDict):
+    r"""Indexing filter schema"""
+
+
+class ConnectorSchemaIndexing(BaseModel):
+    r"""Indexing filter schema"""
+
 
 class ConnectorSchemaFiltersTypedDict(TypedDict):
     r"""Filter schema configuration"""
 
+    sync: NotRequired[ConnectorSchemaFiltersSyncTypedDict]
+    r"""Sync filter schema"""
+    indexing: NotRequired[ConnectorSchemaIndexingTypedDict]
+    r"""Indexing filter schema"""
+
 
 class ConnectorSchemaFilters(BaseModel):
     r"""Filter schema configuration"""
+
+    sync: Optional[ConnectorSchemaFiltersSync] = None
+    r"""Sync filter schema"""
+
+    indexing: Optional[ConnectorSchemaIndexing] = None
+    r"""Indexing filter schema"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["sync", "indexing"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorSchemaTypedDict(TypedDict):
@@ -158,6 +426,14 @@ class ConnectorSchema(BaseModel):
         return m
 
 
+try:
+    ConnectorSchemaAuth.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorSchemaSync.model_rebuild()
+except NameError:
+    pass
 try:
     ConnectorSchema.model_rebuild()
 except NameError:

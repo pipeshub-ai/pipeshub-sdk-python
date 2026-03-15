@@ -93,6 +93,33 @@ class GetConnectorRegistryScopeCounts(BaseModel):
         return m
 
 
+class RegistryCountsByScopeTypedDict(TypedDict):
+    personal: NotRequired[int]
+    team: NotRequired[int]
+
+
+class RegistryCountsByScope(BaseModel):
+    personal: Optional[int] = None
+
+    team: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["personal", "team"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class GetConnectorRegistryResponseTypedDict(TypedDict):
     r"""Connector registry retrieved"""
 
@@ -101,6 +128,7 @@ class GetConnectorRegistryResponseTypedDict(TypedDict):
     pagination: NotRequired[ConnectorPaginationTypedDict]
     r"""Pagination information for connector lists"""
     scope_counts: NotRequired[GetConnectorRegistryScopeCountsTypedDict]
+    registry_counts_by_scope: NotRequired[RegistryCountsByScopeTypedDict]
 
 
 class GetConnectorRegistryResponse(BaseModel):
@@ -117,9 +145,21 @@ class GetConnectorRegistryResponse(BaseModel):
         Optional[GetConnectorRegistryScopeCounts], pydantic.Field(alias="scopeCounts")
     ] = None
 
+    registry_counts_by_scope: Annotated[
+        Optional[RegistryCountsByScope], pydantic.Field(alias="registryCountsByScope")
+    ] = None
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "connectors", "pagination", "scopeCounts"])
+        optional_fields = set(
+            [
+                "success",
+                "connectors",
+                "pagination",
+                "scopeCounts",
+                "registryCountsByScope",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

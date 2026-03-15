@@ -127,14 +127,6 @@ class ConnectorInstanceConfig(BaseModel):
         return m
 
 
-class ConnectorInfoTypedDict(TypedDict):
-    r"""Additional connector metadata"""
-
-
-class ConnectorInfo(BaseModel):
-    r"""Additional connector metadata"""
-
-
 class ConnectorInstanceTypedDict(TypedDict):
     r"""A configured connector instance. Represents an active or configured
     connection to an external service.
@@ -175,8 +167,8 @@ class ConnectorInstanceTypedDict(TypedDict):
     </ul>
 
     """
-    connector_info: NotRequired[Nullable[ConnectorInfoTypedDict]]
-    r"""Additional connector metadata"""
+    connector_info: NotRequired[Nullable[str]]
+    r"""Additional connector metadata or info message"""
     auth_type: NotRequired[str]
     r"""Current authentication type"""
     is_active: NotRequired[bool]
@@ -266,9 +258,9 @@ class ConnectorInstance(BaseModel):
     """
 
     connector_info: Annotated[
-        OptionalNullable[ConnectorInfo], pydantic.Field(alias="connectorInfo")
+        OptionalNullable[str], pydantic.Field(alias="connectorInfo")
     ] = UNSET
-    r"""Additional connector metadata"""
+    r"""Additional connector metadata or info message"""
 
     auth_type: Annotated[Optional[str], pydantic.Field(alias="authType")] = None
     r"""Current authentication type"""

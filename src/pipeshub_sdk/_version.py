@@ -4,10 +4,10 @@
 import importlib.metadata
 
 __title__: str = "pipeshub-sdk"
-__version__: str = "1.1.21"
+__version__: str = "1.1.22"
 __openapi_doc_version__: str = "1.0.0"
 __gen_version__: str = "2.865.2"
-__user_agent__: str = "speakeasy-sdk/python 1.1.21 2.865.2 1.0.0 pipeshub-sdk"
+__user_agent__: str = "speakeasy-sdk/python 1.1.22 2.865.2 1.0.0 pipeshub-sdk"
 
 try:
     if __package__ is not None:
