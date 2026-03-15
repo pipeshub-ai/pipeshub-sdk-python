@@ -6,8 +6,8 @@ from .message import Message, MessageTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
-from pydantic import ConfigDict, model_serializer
-from typing import Any, Dict, List, Literal, Optional, Union
+from pydantic import model_serializer
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -29,7 +29,7 @@ r"""Current status of the conversation:
 """
 
 
-class ModelInfoTypedDict(TypedDict):
+class ConversationModelInfoTypedDict(TypedDict):
     r"""AI model configuration used"""
 
     model_key: NotRequired[str]
@@ -38,7 +38,7 @@ class ModelInfoTypedDict(TypedDict):
     chat_mode: NotRequired[str]
 
 
-class ModelInfo(BaseModel):
+class ConversationModelInfo(BaseModel):
     r"""AI model configuration used"""
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
@@ -106,11 +106,11 @@ class ConversationSharedWith(BaseModel):
         return m
 
 
-class ConversationErrorTypedDict(TypedDict):
+class ConversationConversationErrorTypedDict(TypedDict):
     pass
 
 
-class ConversationError(BaseModel):
+class ConversationConversationError(BaseModel):
     pass
 
 
@@ -157,7 +157,7 @@ class ConversationTypedDict(TypedDict):
     """
     fail_reason: NotRequired[str]
     r"""Error description if status is FAILED"""
-    model_info: NotRequired[ModelInfoTypedDict]
+    model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration used"""
     is_shared: NotRequired[bool]
     r"""Whether this conversation is shared with others"""
@@ -175,7 +175,7 @@ class ConversationTypedDict(TypedDict):
     r"""Whether this conversation is soft-deleted"""
     conversation_source: NotRequired[str]
     r"""Source of the conversation (e.g., agent_chat, search)"""
-    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
+    conversation_errors: NotRequired[List[ConversationConversationErrorTypedDict]]
     r"""Errors encountered during conversation"""
     is_owner: NotRequired[bool]
     r"""Whether the current user owns this conversation"""
@@ -183,6 +183,8 @@ class ConversationTypedDict(TypedDict):
     r"""Current user's access level"""
     last_activity_at: NotRequired[int]
     r"""Unix timestamp of last activity"""
+    v: NotRequired[int]
+    r"""Document version (MongoDB)"""
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -193,11 +195,6 @@ class Conversation(BaseModel):
     shared, archived, and organized.
 
     """
-
-    model_config = ConfigDict(
-        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
-    )
-    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
 
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
     r"""Unique conversation identifier"""
@@ -233,7 +230,9 @@ class Conversation(BaseModel):
     fail_reason: Annotated[Optional[str], pydantic.Field(alias="failReason")] = None
     r"""Error description if status is FAILED"""
 
-    model_info: Annotated[Optional[ModelInfo], pydantic.Field(alias="modelInfo")] = None
+    model_info: Annotated[
+        Optional[ConversationModelInfo], pydantic.Field(alias="modelInfo")
+    ] = None
     r"""AI model configuration used"""
 
     is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = False
@@ -265,7 +264,8 @@ class Conversation(BaseModel):
     r"""Source of the conversation (e.g., agent_chat, search)"""
 
     conversation_errors: Annotated[
-        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
+        Optional[List[ConversationConversationError]],
+        pydantic.Field(alias="conversationErrors"),
     ] = None
     r"""Errors encountered during conversation"""
 
@@ -282,17 +282,12 @@ class Conversation(BaseModel):
     ] = None
     r"""Unix timestamp of last activity"""
 
+    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
+    r"""Document version (MongoDB)"""
+
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
     updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
-
-    @property
-    def additional_properties(self):
-        return self.__pydantic_extra__
-
-    @additional_properties.setter
-    def additional_properties(self, value):
-        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -319,6 +314,7 @@ class Conversation(BaseModel):
                 "isOwner",
                 "accessLevel",
                 "lastActivityAt",
+                "__v",
                 "createdAt",
                 "updatedAt",
             ]
@@ -329,19 +325,16 @@ class Conversation(BaseModel):
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
-            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
-        for k, v in serialized.items():
-            m[k] = v
 
         return m
 
 
 try:
-    ModelInfo.model_rebuild()
+    ConversationModelInfo.model_rebuild()
 except NameError:
     pass
 try:

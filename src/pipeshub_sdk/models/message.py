@@ -8,8 +8,8 @@ from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
-from pydantic import ConfigDict, model_serializer
-from typing import Any, Dict, List, Literal, Optional, Union
+from pydantic import model_serializer
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -93,6 +93,55 @@ class MessageMetadata(BaseModel):
         return m
 
 
+class MessageModelInfoTypedDict(TypedDict):
+    r"""Model configuration used for this message"""
+
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    model_friendly_name: NotRequired[str]
+    chat_mode: NotRequired[str]
+
+
+class MessageModelInfo(BaseModel):
+    r"""Model configuration used for this message"""
+
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
+    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["modelKey", "modelName", "modelFriendlyName", "chatMode"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ReferenceDatumTypedDict(TypedDict):
+    pass
+
+
+class ReferenceDatum(BaseModel):
+    pass
+
+
 class MessageTypedDict(TypedDict):
     r"""A single message within a conversation. Messages can be user queries,
     AI responses, system messages, or error notifications.
@@ -125,6 +174,10 @@ class MessageTypedDict(TypedDict):
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     r"""User feedback on this message"""
     metadata: NotRequired[MessageMetadataTypedDict]
+    model_info: NotRequired[MessageModelInfoTypedDict]
+    r"""Model configuration used for this message"""
+    reference_data: NotRequired[List[ReferenceDatumTypedDict]]
+    r"""Reference data used in generating this message"""
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -134,11 +187,6 @@ class Message(BaseModel):
     AI responses, system messages, or error notifications.
 
     """
-
-    model_config = ConfigDict(
-        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
-    )
-    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
 
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
     r"""Unique message identifier"""
@@ -181,17 +229,19 @@ class Message(BaseModel):
 
     metadata: Optional[MessageMetadata] = None
 
+    model_info: Annotated[
+        Optional[MessageModelInfo], pydantic.Field(alias="modelInfo")
+    ] = None
+    r"""Model configuration used for this message"""
+
+    reference_data: Annotated[
+        Optional[List[ReferenceDatum]], pydantic.Field(alias="referenceData")
+    ] = None
+    r"""Reference data used in generating this message"""
+
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
     updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
-
-    @property
-    def additional_properties(self):
-        return self.__pydantic_extra__
-
-    @additional_properties.setter
-    def additional_properties(self, value):
-        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -206,6 +256,8 @@ class Message(BaseModel):
                 "followUpQuestions",
                 "feedback",
                 "metadata",
+                "modelInfo",
+                "referenceData",
                 "createdAt",
                 "updatedAt",
             ]
@@ -216,19 +268,20 @@ class Message(BaseModel):
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
-            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
-        for k, v in serialized.items():
-            m[k] = v
 
         return m
 
 
 try:
     MessageMetadata.model_rebuild()
+except NameError:
+    pass
+try:
+    MessageModelInfo.model_rebuild()
 except NameError:
     pass
 try:

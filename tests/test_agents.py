@@ -56,6 +56,8 @@ def test_agents_create_agent():
         assert res == models.Agent(
             agent_key="customer-support-agent",
             name="Customer Support Assistant",
+            user_role="OWNER",
+            access_type="INDIVIDUAL",
         )
 
 
@@ -97,6 +99,8 @@ def test_agents_get_agent():
             agent=models.Agent(
                 agent_key="customer-support-agent",
                 name="Customer Support Assistant",
+                user_role="OWNER",
+                access_type="INDIVIDUAL",
             ),
         )
 
@@ -155,6 +159,8 @@ def test_agents_share_agent():
         assert res == models.Agent(
             agent_key="customer-support-agent",
             name="Customer Support Assistant",
+            user_role="OWNER",
+            access_type="INDIVIDUAL",
         )
 
 
