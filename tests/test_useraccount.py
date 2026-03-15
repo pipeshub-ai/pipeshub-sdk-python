@@ -138,11 +138,7 @@ def test_useraccount_logout():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.user_account.logout()
-        assert res is not None
-        assert res == models.LogoutResponse(
-            message="Logged out successfully",
-        )
+        pipeshub.user_account.logout()
 
 
 def test_useraccount_reset_password():

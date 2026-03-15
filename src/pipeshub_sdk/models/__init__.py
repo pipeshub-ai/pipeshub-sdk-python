@@ -120,6 +120,7 @@ if TYPE_CHECKING:
         AuthenticateToolsetInstanceRequest,
         AuthenticateToolsetInstanceRequestTypedDict,
     )
+    from .autherror import AuthErrorError, AuthErrorErrorTypedDict
     from .authmethod import AuthMethod, AuthMethodType, AuthMethodTypedDict
     from .authproviders import (
         AuthProviders,
@@ -1157,7 +1158,6 @@ if TYPE_CHECKING:
         ListUsersGraphSortBy,
         ListUsersGraphSortOrder,
     )
-    from .logoutop import LogoutResponse, LogoutResponseTypedDict
     from .message import (
         ContentFormat,
         Message,
@@ -1239,7 +1239,7 @@ if TYPE_CHECKING:
         OAuthConsentRequestTypedDict,
     )
     from .oauthcredentials import OAuthCredentials, OAuthCredentialsTypedDict
-    from .oautherrorresponse import Error
+    from .oautherrorresponse import ErrorEnum
     from .oauthexchangerequest import (
         OAuthExchangeRequest,
         OAuthExchangeRequestTypedDict,
@@ -2020,6 +2020,8 @@ __all__ = [
     "Auth",
     "AuthConfig",
     "AuthConfigTypedDict",
+    "AuthErrorError",
+    "AuthErrorErrorTypedDict",
     "AuthMethod",
     "AuthMethodType",
     "AuthMethodTypedDict",
@@ -2302,7 +2304,7 @@ __all__ = [
     "DownloadDocumentResponseBody",
     "DownloadDocumentResponseBodyTypedDict",
     "DownloadDocumentResponseTypedDict",
-    "Error",
+    "ErrorEnum",
     "Event",
     "Failure",
     "FailureTypedDict",
@@ -2782,8 +2784,6 @@ __all__ = [
     "ListUsersGraphSortOrder",
     "Logo",
     "LogoTypedDict",
-    "LogoutResponse",
-    "LogoutResponseTypedDict",
     "MailRecord",
     "MailRecordTypedDict",
     "Message",
@@ -3476,6 +3476,8 @@ _dynamic_imports: dict[str, str] = {
     "AuthenticateResponseTypedDict": ".authenticateresponse",
     "AuthenticateToolsetInstanceRequest": ".authenticatetoolsetinstanceop",
     "AuthenticateToolsetInstanceRequestTypedDict": ".authenticatetoolsetinstanceop",
+    "AuthErrorError": ".autherror",
+    "AuthErrorErrorTypedDict": ".autherror",
     "AuthMethod": ".authmethod",
     "AuthMethodType": ".authmethod",
     "AuthMethodTypedDict": ".authmethod",
@@ -4255,8 +4257,6 @@ _dynamic_imports: dict[str, str] = {
     "ListUsersGraphResponseTypedDict": ".listusersgraphop",
     "ListUsersGraphSortBy": ".listusersgraphop",
     "ListUsersGraphSortOrder": ".listusersgraphop",
-    "LogoutResponse": ".logoutop",
-    "LogoutResponseTypedDict": ".logoutop",
     "ContentFormat": ".message",
     "Message": ".message",
     "MessageMetadata": ".message",
@@ -4314,7 +4314,7 @@ _dynamic_imports: dict[str, str] = {
     "OAuthConsentRequestTypedDict": ".oauthconsentrequest",
     "OAuthCredentials": ".oauthcredentials",
     "OAuthCredentialsTypedDict": ".oauthcredentials",
-    "Error": ".oautherrorresponse",
+    "ErrorEnum": ".oautherrorresponse",
     "OAuthExchangeRequest": ".oauthexchangerequest",
     "OAuthExchangeRequestTypedDict": ".oauthexchangerequest",
     "OAuthExchangeResponse": ".oauthexchangeresponse",

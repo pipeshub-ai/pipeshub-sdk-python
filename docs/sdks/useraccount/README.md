@@ -365,10 +365,9 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.user_account.logout()
+    pipeshub.user_account.logout()
 
-    # Handle response
-    print(res)
+    # Use the SDK ...
 
 ```
 
@@ -377,10 +376,6 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.LogoutResponse](../../models/logoutresponse.md)**
 
 ### Errors
 

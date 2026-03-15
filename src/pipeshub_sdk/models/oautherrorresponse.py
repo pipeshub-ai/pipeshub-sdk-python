@@ -6,7 +6,7 @@ from pipeshub_sdk.types import UnrecognizedStr
 from typing import Literal, Union
 
 
-Error = Union[
+ErrorEnum = Union[
     Literal[
         "invalid_request",
         "invalid_client",

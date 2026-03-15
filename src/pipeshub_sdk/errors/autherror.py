@@ -5,21 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import httpx
 from pipeshub_sdk.errors import PipeshubError
+from pipeshub_sdk.models import autherror as models_autherror
 from pipeshub_sdk.types import BaseModel
-import pydantic
 from typing import Optional
-from typing_extensions import Annotated
 
 
 class AuthErrorData(BaseModel):
-    error: Optional[str] = None
-    r"""Error type identifier"""
-    message: Optional[str] = None
-    r"""Human-readable error message"""
-    code: Optional[str] = None
-    r"""Error code for programmatic handling"""
-    status_code: Annotated[Optional[int], pydantic.Field(alias="statusCode")] = None
-    r"""HTTP status code"""
+    error: Optional[models_autherror.AuthErrorError] = None
+    r"""Error details"""
 
 
 @dataclass(unsafe_hash=True)
@@ -27,13 +20,9 @@ class AuthError(PipeshubError):
     r"""Authentication error response with details for debugging and user feedback.<br><br>
     <b>Common Error Codes:</b><br>
     <ul>
-    <li><code>INVALID_CREDENTIALS</code> - Wrong password or OTP</li>
-    <li><code>ACCOUNT_BLOCKED</code> - Account locked after 5 failed attempts</li>
-    <li><code>SESSION_EXPIRED</code> - Session token has expired</li>
-    <li><code>OTP_EXPIRED</code> - OTP code has expired (10 min validity)</li>
-    <li><code>USER_NOT_FOUND</code> - Email not registered</li>
-    <li><code>INVALID_TOKEN</code> - JWT token is invalid or malformed</li>
-    <li><code>METHOD_NOT_ALLOWED</code> - Auth method not enabled for org</li>
+    <li><code>HTTP_UNAUTHORIZED</code> - Invalid session or token</li>
+    <li><code>HTTP_BAD_REQUEST</code> - Invalid request data</li>
+    <li><code>HTTP_NOT_FOUND</code> - Resource not found</li>
     </ul>
 
     """
@@ -47,6 +36,6 @@ class AuthError(PipeshubError):
         body: Optional[str] = None,
     ):
         fallback = body or raw_response.text
-        message = str(data.message) or fallback
+        message = str(data.error.message) if data.error else fallback
         super().__init__(message, raw_response, body)
         object.__setattr__(self, "data", data)

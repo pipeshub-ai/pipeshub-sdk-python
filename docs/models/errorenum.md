@@ -1,4 +1,4 @@
-# Error
+# ErrorEnum
 
 Error code. Common values:
 - `invalid_request` - Missing or invalid parameter
@@ -13,10 +13,10 @@ Error code. Common values:
 ## Example Usage
 
 ```python
-from pipeshub_sdk.models import Error
+from pipeshub_sdk.models import ErrorEnum
 
 # Open enum: unrecognized values are captured as UnrecognizedStr
-value: Error = "invalid_request"
+value: ErrorEnum = "invalid_request"
 ```
 
 
