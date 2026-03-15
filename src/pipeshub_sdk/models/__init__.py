@@ -1898,6 +1898,8 @@ if TYPE_CHECKING:
         UpdateRecordResponseTypedDict,
     )
     from .updateslackbotconfigop import (
+        UpdateSlackBotConfigConfig,
+        UpdateSlackBotConfigConfigTypedDict,
         UpdateSlackBotConfigRequest,
         UpdateSlackBotConfigRequestBody,
         UpdateSlackBotConfigRequestBodyTypedDict,
@@ -3390,6 +3392,8 @@ __all__ = [
     "UpdateRecordRequestTypedDict",
     "UpdateRecordResponse",
     "UpdateRecordResponseTypedDict",
+    "UpdateSlackBotConfigConfig",
+    "UpdateSlackBotConfigConfigTypedDict",
     "UpdateSlackBotConfigRequest",
     "UpdateSlackBotConfigRequestBody",
     "UpdateSlackBotConfigRequestBodyTypedDict",
@@ -4866,6 +4870,8 @@ _dynamic_imports: dict[str, str] = {
     "UpdateRecordRequestTypedDict": ".updaterecordop",
     "UpdateRecordResponse": ".updaterecordop",
     "UpdateRecordResponseTypedDict": ".updaterecordop",
+    "UpdateSlackBotConfigConfig": ".updateslackbotconfigop",
+    "UpdateSlackBotConfigConfigTypedDict": ".updateslackbotconfigop",
     "UpdateSlackBotConfigRequest": ".updateslackbotconfigop",
     "UpdateSlackBotConfigRequestBody": ".updateslackbotconfigop",
     "UpdateSlackBotConfigRequestBodyTypedDict": ".updateslackbotconfigop",

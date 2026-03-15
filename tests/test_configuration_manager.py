@@ -58,7 +58,9 @@ def test_configuration_manager_update_slack_bot_config():
             signing_secret="abc123signingsecret",
         )
         assert res is not None
-        assert res == models.UpdateSlackBotConfigResponse()
+        assert res == models.UpdateSlackBotConfigResponse(
+            status="success",
+        )
 
 
 def test_configuration_manager_delete_slack_bot_config():
@@ -73,4 +75,6 @@ def test_configuration_manager_delete_slack_bot_config():
 
         res = pipeshub.configuration_manager.delete_slack_bot_config(config_id="<id>")
         assert res is not None
-        assert res == models.DeleteSlackBotConfigResponse()
+        assert res == models.DeleteSlackBotConfigResponse(
+            status="success",
+        )
