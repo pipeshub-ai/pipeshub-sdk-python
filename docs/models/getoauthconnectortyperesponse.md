@@ -1,0 +1,11 @@
+# GetOAuthConnectorTypeResponse
+
+Connector type retrieved
+
+
+## Fields
+
+| Field                                                                                                                    | Type                                                                                                                     | Required                                                                                                                 | Description                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `success`                                                                                                                | *Optional[bool]*                                                                                                         | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |
+| `connector`                                                                                                              | [Optional[models.ConnectorType]](../models/connectortype.md)                                                             | :heavy_minus_sign:                                                                                                       | A connector type from the registry. Represents an available integration<br/>that can be configured as a connector instance.<br/> |

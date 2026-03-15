@@ -1,0 +1,14 @@
+# ListAgentConversationsResponse
+
+List of agent conversations
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `conversations`                                                                                    | List[[models.Conversation](../models/conversation.md)]                                             | :heavy_minus_sign:                                                                                 | N/A                                                                                                |
+| `shared_with_me_conversations`                                                                     | List[[models.Conversation](../models/conversation.md)]                                             | :heavy_minus_sign:                                                                                 | N/A                                                                                                |
+| `pagination`                                                                                       | [Optional[models.ListAgentConversationsPagination]](../models/listagentconversationspagination.md) | :heavy_minus_sign:                                                                                 | N/A                                                                                                |
+| `filters`                                                                                          | [Optional[models.ListAgentConversationsFilters]](../models/listagentconversationsfilters.md)       | :heavy_minus_sign:                                                                                 | Applied and available filters                                                                      |
+| `meta`                                                                                             | [Optional[models.ListAgentConversationsMeta]](../models/listagentconversationsmeta.md)             | :heavy_minus_sign:                                                                                 | N/A                                                                                                |

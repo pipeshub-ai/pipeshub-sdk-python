@@ -1,0 +1,12 @@
+# CreateOAuthConfigRequest
+
+Request to create OAuth configuration (admin only). Stores credentials that users select when setting up connectors.
+
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          | Example                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `oauth_instance_name`                                                                | *str*                                                                                | :heavy_check_mark:                                                                   | Display name for this OAuth configuration (e.g., 'Production Google OAuth')          | Production Google OAuth Credentials                                                  |
+| `config`                                                                             | [models.CreateOAuthConfigRequestConfig](../models/createoauthconfigrequestconfig.md) | :heavy_check_mark:                                                                   | OAuth application credentials                                                        |                                                                                      |
+| `base_url`                                                                           | *Optional[str]*                                                                      | :heavy_minus_sign:                                                                   | Base URL for self-hosted instances (e.g., GitLab Self-Managed)                       | https://gitlab.mycompany.com                                                         |
