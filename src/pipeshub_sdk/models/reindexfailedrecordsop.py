@@ -5,24 +5,38 @@ from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ReindexFailedRecordsRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    connector_id: NotRequired[str]
+    app: str
+    r"""Connector type name"""
+    connector_id: str
+    r"""Connector instance ID"""
+    status_filters: NotRequired[List[str]]
+    r"""Optional status filters"""
 
 
 class ReindexFailedRecordsRequest(BaseModel):
     r"""Request payload"""
 
-    connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
+    app: str
+    r"""Connector type name"""
+
+    connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
+    r"""Connector instance ID"""
+
+    status_filters: Annotated[
+        Optional[List[str]], pydantic.Field(alias="statusFilters")
+    ] = None
+    r"""Optional status filters"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["connectorId"])
+        optional_fields = set(["statusFilters"])
         serialized = handler(self)
         m = {}
 

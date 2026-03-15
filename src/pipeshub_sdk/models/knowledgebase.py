@@ -32,10 +32,10 @@ r"""User's role in this knowledge base"""
 
 
 class KnowledgeBaseTypedDict(TypedDict):
-    name: str
-    r"""Name of the knowledge base"""
     id: NotRequired[str]
     r"""Unique knowledge base identifier"""
+    name: NotRequired[str]
+    r"""Name of the knowledge base"""
     connector_id: NotRequired[Nullable[str]]
     r"""Associated connector ID (null for manual KBs)"""
     created_at_timestamp: NotRequired[int]
@@ -51,11 +51,11 @@ class KnowledgeBaseTypedDict(TypedDict):
 
 
 class KnowledgeBase(BaseModel):
-    name: str
-    r"""Name of the knowledge base"""
-
     id: Optional[str] = None
     r"""Unique knowledge base identifier"""
+
+    name: Optional[str] = None
+    r"""Name of the knowledge base"""
 
     connector_id: Annotated[
         OptionalNullable[str], pydantic.Field(alias="connectorId")
@@ -88,6 +88,7 @@ class KnowledgeBase(BaseModel):
         optional_fields = set(
             [
                 "id",
+                "name",
                 "connectorId",
                 "createdAtTimestamp",
                 "updatedAtTimestamp",

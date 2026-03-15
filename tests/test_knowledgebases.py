@@ -17,9 +17,7 @@ def test_knowledgebases_create_knowledge_base():
 
         res = pipeshub.knowledge_bases.create(kb_name="Product Documentation")
         assert res is not None
-        assert res == models.KnowledgeBase(
-            name="<value>",
-        )
+        assert res == models.KnowledgeBase()
 
 
 def test_knowledgebases_list_knowledge_bases():
@@ -55,9 +53,7 @@ def test_knowledgebases_get_knowledge_base():
 
         res = pipeshub.knowledge_bases.get(kb_id="kb_550e8400-e29b-41d4-a716")
         assert res is not None
-        assert res == models.KnowledgeBase(
-            name="<value>",
-        )
+        assert res == models.KnowledgeBase()
 
 
 def test_knowledgebases_update_knowledge_base():
@@ -74,8 +70,9 @@ def test_knowledgebases_update_knowledge_base():
             kb_id="<id>", kb_name="Updated Documentation Hub"
         )
         assert res is not None
-        assert res == models.KnowledgeBase(
-            name="<value>",
+        assert res == models.UpdateKnowledgeBaseResponse(
+            success=True,
+            message="Knowledge base updated successfully",
         )
 
 
@@ -153,7 +150,9 @@ def test_knowledgebases_reindex_failed_records():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.knowledge_bases.reindex_failed_records()
+        res = pipeshub.knowledge_bases.reindex_failed_records(
+            app="GOOGLE_DRIVE", connector_id="507f1f77bcf86cd799439011"
+        )
         assert res is not None
         assert res == models.ReindexFailedRecordsResponse(
             message="Reindex of failed records triggered",
@@ -171,7 +170,9 @@ def test_knowledgebases_move_record():
         assert pipeshub is not None
 
         res = pipeshub.knowledge_bases.move(
-            kb_id="03bbd815-933b-4f49-9822-7811537c4ddc", record_id="<id>", body={}
+            kb_id="03bbd815-933b-4f49-9822-7811537c4ddc",
+            record_id="<id>",
+            new_parent_id="folder-abc123",
         )
         assert res is not None
         assert res == models.MoveRecordResponse()

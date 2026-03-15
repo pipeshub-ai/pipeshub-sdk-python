@@ -1793,6 +1793,8 @@ if TYPE_CHECKING:
         UpdateKnowledgeBaseRequestBody,
         UpdateKnowledgeBaseRequestBodyTypedDict,
         UpdateKnowledgeBaseRequestTypedDict,
+        UpdateKnowledgeBaseResponse,
+        UpdateKnowledgeBaseResponseTypedDict,
     )
     from .updatelastnameop import (
         UpdateLastNameRequest,
@@ -3261,6 +3263,8 @@ __all__ = [
     "UpdateKnowledgeBaseRequestBody",
     "UpdateKnowledgeBaseRequestBodyTypedDict",
     "UpdateKnowledgeBaseRequestTypedDict",
+    "UpdateKnowledgeBaseResponse",
+    "UpdateKnowledgeBaseResponseTypedDict",
     "UpdateLastNameRequest",
     "UpdateLastNameRequestBody",
     "UpdateLastNameRequestBodyTypedDict",
@@ -4693,6 +4697,8 @@ _dynamic_imports: dict[str, str] = {
     "UpdateKnowledgeBaseRequestBody": ".updateknowledgebaseop",
     "UpdateKnowledgeBaseRequestBodyTypedDict": ".updateknowledgebaseop",
     "UpdateKnowledgeBaseRequestTypedDict": ".updateknowledgebaseop",
+    "UpdateKnowledgeBaseResponse": ".updateknowledgebaseop",
+    "UpdateKnowledgeBaseResponseTypedDict": ".updateknowledgebaseop",
     "UpdateLastNameRequest": ".updatelastnameop",
     "UpdateLastNameRequestBody": ".updatelastnameop",
     "UpdateLastNameRequestBodyTypedDict": ".updatelastnameop",
