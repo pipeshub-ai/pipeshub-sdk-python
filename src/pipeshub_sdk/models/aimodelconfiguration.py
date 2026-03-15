@@ -86,6 +86,8 @@ class AIModelConfigurationConfiguration(BaseModel):
 class AIModelConfigurationTypedDict(TypedDict):
     r"""Configuration for an AI model provider"""
 
+    model_key: NotRequired[str]
+    r"""Unique identifier for this model configuration"""
     provider: NotRequired[str]
     r"""Model provider (e.g., openai, azure_openai, google, aws_bedrock)"""
     configuration: NotRequired[AIModelConfigurationConfigurationTypedDict]
@@ -102,6 +104,9 @@ class AIModelConfigurationTypedDict(TypedDict):
 
 class AIModelConfiguration(BaseModel):
     r"""Configuration for an AI model provider"""
+
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+    r"""Unique identifier for this model configuration"""
 
     provider: Optional[str] = None
     r"""Model provider (e.g., openai, azure_openai, google, aws_bedrock)"""
@@ -129,6 +134,7 @@ class AIModelConfiguration(BaseModel):
     def serialize_model(self, handler):
         optional_fields = set(
             [
+                "modelKey",
                 "provider",
                 "configuration",
                 "isMultimodal",

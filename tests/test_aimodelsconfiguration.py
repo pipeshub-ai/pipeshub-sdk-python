@@ -82,6 +82,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
         res = pipeshub.ai_models_configuration.create(
             ocr=[
                 {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
                     "provider": "openai",
                     "configuration": {
                         "model": "gpt-4o",
@@ -90,6 +91,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             ],
             embedding=[
                 {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
                     "provider": "openai",
                     "configuration": {
                         "model": "gpt-4o",
@@ -108,6 +110,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             ],
             slm=[
                 {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
                     "provider": "openai",
                     "configuration": {
                         "model": "gpt-4o",
@@ -116,6 +119,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             ],
             reasoning=[
                 {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
                     "provider": "openai",
                     "configuration": {
                         "model": "gpt-4o",
@@ -124,6 +128,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             ],
             multi_modal=[
                 {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
                     "provider": "openai",
                     "configuration": {
                         "model": "gpt-4o",

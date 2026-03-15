@@ -70,6 +70,7 @@ with Pipeshub(
 
     res = pipeshub.ai_models_configuration.create(ocr=[
         {
+            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
             "provider": "openai",
             "configuration": {
                 "model": "gpt-4o",
@@ -77,6 +78,7 @@ with Pipeshub(
         },
     ], embedding=[
         {
+            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
             "provider": "openai",
             "configuration": {
                 "model": "gpt-4o",
@@ -93,6 +95,7 @@ with Pipeshub(
         },
     ], slm=[
         {
+            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
             "provider": "openai",
             "configuration": {
                 "model": "gpt-4o",
@@ -100,6 +103,7 @@ with Pipeshub(
         },
     ], reasoning=[
         {
+            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
             "provider": "openai",
             "configuration": {
                 "model": "gpt-4o",
@@ -107,6 +111,7 @@ with Pipeshub(
         },
     ], multi_modal=[
         {
+            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
             "provider": "openai",
             "configuration": {
                 "model": "gpt-4o",
