@@ -18,8 +18,21 @@ def test_connectorconfigurations_get_connector_config():
         res = pipeshub.connector_configurations.get(connector_id="<id>")
         assert res is not None
         assert res == models.GetConnectorConfigResponse(
-            config=models.ConnectorConfig(
+            config=models.ConnectorInstance(
+                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
+                name="Nextcloud",
+                type="Nextcloud",
+                app_group="Cloud Storage",
+                supported_auth_types=[
+                    "BASIC_AUTH",
+                ],
+                app_categories=[
+                    "Storage",
+                    "Collaboration",
+                ],
+                icon_path="/assets/icons/connectors/nextcloud.svg",
                 scope="team",
+                auth_type="BASIC_AUTH",
             ),
         )
 

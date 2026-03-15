@@ -39,6 +39,7 @@ class UpdateConnectorFiltersSyncConfigResponseTypedDict(TypedDict):
     r"""Configuration updated"""
 
     success: NotRequired[bool]
+    message: NotRequired[str]
     config: NotRequired[ConnectorConfigTypedDict]
     r"""Configuration for a connector instance including auth, sync, and filter settings"""
 
@@ -48,12 +49,14 @@ class UpdateConnectorFiltersSyncConfigResponse(BaseModel):
 
     success: Optional[bool] = None
 
+    message: Optional[str] = None
+
     config: Optional[ConnectorConfig] = None
     r"""Configuration for a connector instance including auth, sync, and filter settings"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "config"])
+        optional_fields = set(["success", "message", "config"])
         serialized = handler(self)
         m = {}
 
