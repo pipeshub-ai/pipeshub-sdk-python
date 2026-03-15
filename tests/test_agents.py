@@ -91,9 +91,13 @@ def test_agents_get_agent():
 
         res = pipeshub.agents.get(agent_key="customer-support-agent")
         assert res is not None
-        assert res == models.Agent(
-            agent_key="customer-support-agent",
-            name="Customer Support Assistant",
+        assert res == models.GetAgentResponse(
+            status="success",
+            message="Agent retrieved successfully",
+            agent=models.Agent(
+                agent_key="customer-support-agent",
+                name="Customer Support Assistant",
+            ),
         )
 
 

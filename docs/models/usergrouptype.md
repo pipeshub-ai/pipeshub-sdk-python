@@ -7,12 +7,21 @@ Group type:
 - custom: User-created custom group
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import UserGroupType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: UserGroupType = "admin"
+```
+
 
 ## Values
 
-| Name       | Value      |
-| ---------- | ---------- |
-| `ADMIN`    | admin      |
-| `STANDARD` | standard   |
-| `EVERYONE` | everyone   |
-| `CUSTOM`   | custom     |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"admin"`
+- `"standard"`
+- `"everyone"`
+- `"custom"`

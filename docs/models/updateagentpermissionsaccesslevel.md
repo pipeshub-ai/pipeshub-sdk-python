@@ -1,10 +1,15 @@
 # UpdateAgentPermissionsAccessLevel
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import UpdateAgentPermissionsAccessLevel
+value: UpdateAgentPermissionsAccessLevel = "read"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `READ` | read   |
-| `USE`  | use    |
-| `EDIT` | edit   |
+- `"read"`
+- `"use"`
+- `"edit"`

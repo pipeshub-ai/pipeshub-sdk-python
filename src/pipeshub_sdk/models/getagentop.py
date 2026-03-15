@@ -2,10 +2,13 @@
 # @generated-id: 26046889b30e
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
+from .agent import Agent, AgentTypedDict
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetAgentRequestTypedDict(TypedDict):
@@ -20,3 +23,47 @@ class GetAgentRequest(BaseModel):
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
     r"""Unique agent identifier"""
+
+
+class GetAgentResponseTypedDict(TypedDict):
+    r"""Agent details"""
+
+    status: NotRequired[str]
+    message: NotRequired[str]
+    agent: NotRequired[AgentTypedDict]
+    r"""A custom AI agent with specialized capabilities, tools, and knowledge scope.
+    Agents can be configured for specific use cases like customer support,
+    code review, or domain-specific Q&A.
+
+    """
+
+
+class GetAgentResponse(BaseModel):
+    r"""Agent details"""
+
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    agent: Optional[Agent] = None
+    r"""A custom AI agent with specialized capabilities, tools, and knowledge scope.
+    Agents can be configured for specific use cases like customer support,
+    code review, or domain-specific Q&A.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message", "agent"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

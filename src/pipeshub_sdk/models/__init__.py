@@ -506,7 +506,12 @@ if TYPE_CHECKING:
         GetAgentConversationRequest,
         GetAgentConversationRequestTypedDict,
     )
-    from .getagentop import GetAgentRequest, GetAgentRequestTypedDict
+    from .getagentop import (
+        GetAgentRequest,
+        GetAgentRequestTypedDict,
+        GetAgentResponse,
+        GetAgentResponseTypedDict,
+    )
     from .getagentpermissionsop import (
         GetAgentPermissionsAccessLevel,
         GetAgentPermissionsRequest,
@@ -2295,6 +2300,8 @@ __all__ = [
     "GetAgentPermissionsSharedWithTypedDict",
     "GetAgentRequest",
     "GetAgentRequestTypedDict",
+    "GetAgentResponse",
+    "GetAgentResponseTypedDict",
     "GetAgentTemplateRequest",
     "GetAgentTemplateRequestTypedDict",
     "GetAllConversationsFilters",
@@ -3688,6 +3695,8 @@ _dynamic_imports: dict[str, str] = {
     "GetAgentConversationRequestTypedDict": ".getagentconversationop",
     "GetAgentRequest": ".getagentop",
     "GetAgentRequestTypedDict": ".getagentop",
+    "GetAgentResponse": ".getagentop",
+    "GetAgentResponseTypedDict": ".getagentop",
     "GetAgentPermissionsAccessLevel": ".getagentpermissionsop",
     "GetAgentPermissionsRequest": ".getagentpermissionsop",
     "GetAgentPermissionsRequestTypedDict": ".getagentpermissionsop",

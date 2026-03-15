@@ -224,7 +224,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Agent](../../models/agent.md)**
+**[models.GetAgentResponse](../../models/getagentresponse.md)**
 
 ### Errors
 
