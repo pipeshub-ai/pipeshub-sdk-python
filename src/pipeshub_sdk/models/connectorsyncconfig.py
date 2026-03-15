@@ -18,7 +18,7 @@ SelectedStrategy = Literal[
 r"""Sync strategy: MANUAL (user-triggered), SCHEDULED (interval/cron), WEBHOOK (event-driven), REALTIME (WebSocket)"""
 
 
-class ScheduledConfigTypedDict(TypedDict):
+class ConnectorSyncConfigScheduledConfigTypedDict(TypedDict):
     r"""Configuration for scheduled sync strategy"""
 
     interval_minutes: NotRequired[int]
@@ -29,7 +29,7 @@ class ScheduledConfigTypedDict(TypedDict):
     r"""Timezone for scheduled sync"""
 
 
-class ScheduledConfig(BaseModel):
+class ConnectorSyncConfigScheduledConfig(BaseModel):
     r"""Configuration for scheduled sync strategy"""
 
     interval_minutes: Annotated[
@@ -62,7 +62,7 @@ class ScheduledConfig(BaseModel):
         return m
 
 
-class WebhookConfigTypedDict(TypedDict):
+class ConnectorSyncConfigWebhookConfigTypedDict(TypedDict):
     r"""Configuration for webhook-based sync"""
 
     webhook_url: NotRequired[str]
@@ -71,7 +71,7 @@ class WebhookConfigTypedDict(TypedDict):
     r"""Subscribed event types"""
 
 
-class WebhookConfig(BaseModel):
+class ConnectorSyncConfigWebhookConfig(BaseModel):
     r"""Configuration for webhook-based sync"""
 
     webhook_url: Annotated[Optional[str], pydantic.Field(alias="webhookUrl")] = None
@@ -102,9 +102,9 @@ class ConnectorSyncConfigTypedDict(TypedDict):
 
     selected_strategy: NotRequired[SelectedStrategy]
     r"""Sync strategy: MANUAL (user-triggered), SCHEDULED (interval/cron), WEBHOOK (event-driven), REALTIME (WebSocket)"""
-    scheduled_config: NotRequired[ScheduledConfigTypedDict]
+    scheduled_config: NotRequired[ConnectorSyncConfigScheduledConfigTypedDict]
     r"""Configuration for scheduled sync strategy"""
-    webhook_config: NotRequired[WebhookConfigTypedDict]
+    webhook_config: NotRequired[ConnectorSyncConfigWebhookConfigTypedDict]
     r"""Configuration for webhook-based sync"""
     values: NotRequired[Dict[str, Any]]
     r"""Sync setting values specific to the connector"""
@@ -121,12 +121,14 @@ class ConnectorSyncConfig(BaseModel):
     r"""Sync strategy: MANUAL (user-triggered), SCHEDULED (interval/cron), WEBHOOK (event-driven), REALTIME (WebSocket)"""
 
     scheduled_config: Annotated[
-        Optional[ScheduledConfig], pydantic.Field(alias="scheduledConfig")
+        Optional[ConnectorSyncConfigScheduledConfig],
+        pydantic.Field(alias="scheduledConfig"),
     ] = None
     r"""Configuration for scheduled sync strategy"""
 
     webhook_config: Annotated[
-        Optional[WebhookConfig], pydantic.Field(alias="webhookConfig")
+        Optional[ConnectorSyncConfigWebhookConfig],
+        pydantic.Field(alias="webhookConfig"),
     ] = None
     r"""Configuration for webhook-based sync"""
 
@@ -164,11 +166,11 @@ class ConnectorSyncConfig(BaseModel):
 
 
 try:
-    ScheduledConfig.model_rebuild()
+    ConnectorSyncConfigScheduledConfig.model_rebuild()
 except NameError:
     pass
 try:
-    WebhookConfig.model_rebuild()
+    ConnectorSyncConfigWebhookConfig.model_rebuild()
 except NameError:
     pass
 try:

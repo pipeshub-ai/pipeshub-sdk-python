@@ -1,4 +1,4 @@
-# WebhookConfig
+# ConnectorSyncConfigWebhookConfig
 
 Configuration for webhook-based sync
 

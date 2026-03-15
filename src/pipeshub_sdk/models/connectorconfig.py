@@ -13,32 +13,208 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+class AuthValuesTypedDict(TypedDict):
+    r"""Auth field values"""
+
+
+class AuthValues(BaseModel):
+    r"""Auth field values"""
 
 
 class AuthTypedDict(TypedDict):
     r"""Authentication configuration"""
 
+    oauth_instance_name: NotRequired[str]
+    auth_type: NotRequired[str]
+    oauth_config_id: NotRequired[str]
+    connector_type: NotRequired[str]
+    authorize_url: NotRequired[str]
+    token_url: NotRequired[str]
+    scopes: NotRequired[List[str]]
+    redirect_uri: NotRequired[str]
+    connector_scope: NotRequired[str]
+    values: NotRequired[AuthValuesTypedDict]
+    r"""Auth field values"""
+
 
 class Auth(BaseModel):
     r"""Authentication configuration"""
+
+    oauth_instance_name: Annotated[
+        Optional[str], pydantic.Field(alias="oauthInstanceName")
+    ] = None
+
+    auth_type: Annotated[Optional[str], pydantic.Field(alias="authType")] = None
+
+    oauth_config_id: Annotated[Optional[str], pydantic.Field(alias="oauthConfigId")] = (
+        None
+    )
+
+    connector_type: Annotated[Optional[str], pydantic.Field(alias="connectorType")] = (
+        None
+    )
+
+    authorize_url: Annotated[Optional[str], pydantic.Field(alias="authorizeUrl")] = None
+
+    token_url: Annotated[Optional[str], pydantic.Field(alias="tokenUrl")] = None
+
+    scopes: Optional[List[str]] = None
+
+    redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
+
+    connector_scope: Annotated[
+        Optional[str], pydantic.Field(alias="connectorScope")
+    ] = None
+
+    values: Optional[AuthValues] = None
+    r"""Auth field values"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "oauthInstanceName",
+                "authType",
+                "oauthConfigId",
+                "connectorType",
+                "authorizeUrl",
+                "tokenUrl",
+                "scopes",
+                "redirectUri",
+                "connectorScope",
+                "values",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ConnectorConfigScheduledConfigTypedDict(TypedDict):
+    r"""Scheduled sync configuration"""
+
+
+class ConnectorConfigScheduledConfig(BaseModel):
+    r"""Scheduled sync configuration"""
+
+
+class ConnectorConfigWebhookConfigTypedDict(TypedDict):
+    r"""Webhook configuration"""
+
+
+class ConnectorConfigWebhookConfig(BaseModel):
+    r"""Webhook configuration"""
 
 
 class ConnectorConfigSyncTypedDict(TypedDict):
     r"""Sync configuration"""
 
+    selected_strategy: NotRequired[str]
+    r"""Selected sync strategy"""
+    scheduled_config: NotRequired[ConnectorConfigScheduledConfigTypedDict]
+    r"""Scheduled sync configuration"""
+    webhook_config: NotRequired[ConnectorConfigWebhookConfigTypedDict]
+    r"""Webhook configuration"""
+
 
 class ConnectorConfigSync(BaseModel):
     r"""Sync configuration"""
+
+    selected_strategy: Annotated[
+        Optional[str], pydantic.Field(alias="selectedStrategy")
+    ] = None
+    r"""Selected sync strategy"""
+
+    scheduled_config: Annotated[
+        Optional[ConnectorConfigScheduledConfig],
+        pydantic.Field(alias="scheduledConfig"),
+    ] = None
+    r"""Scheduled sync configuration"""
+
+    webhook_config: Annotated[
+        Optional[ConnectorConfigWebhookConfig], pydantic.Field(alias="webhookConfig")
+    ] = None
+    r"""Webhook configuration"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["selectedStrategy", "scheduledConfig", "webhookConfig"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class FiltersSyncTypedDict(TypedDict):
+    r"""Sync filter configuration"""
+
+
+class FiltersSync(BaseModel):
+    r"""Sync filter configuration"""
+
+
+class FiltersValuesTypedDict(TypedDict):
+    r"""Filter values"""
+
+
+class FiltersValues(BaseModel):
+    r"""Filter values"""
 
 
 class ConnectorConfigFiltersTypedDict(TypedDict):
     r"""Filter configuration"""
 
+    sync: NotRequired[FiltersSyncTypedDict]
+    r"""Sync filter configuration"""
+    values: NotRequired[FiltersValuesTypedDict]
+    r"""Filter values"""
+
 
 class ConnectorConfigFilters(BaseModel):
     r"""Filter configuration"""
+
+    sync: Optional[FiltersSync] = None
+    r"""Sync filter configuration"""
+
+    values: Optional[FiltersValues] = None
+    r"""Filter values"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["sync", "values"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConnectorConfigCredentialsTypedDict(TypedDict):
@@ -212,6 +388,14 @@ class ConnectorConfig(BaseModel):
         return m
 
 
+try:
+    Auth.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorConfigSync.model_rebuild()
+except NameError:
+    pass
 try:
     ConnectorConfig.model_rebuild()
 except NameError:

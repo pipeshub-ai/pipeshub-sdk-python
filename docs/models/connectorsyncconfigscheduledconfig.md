@@ -1,4 +1,4 @@
-# ScheduledConfig
+# ConnectorSyncConfigScheduledConfig
 
 Configuration for scheduled sync strategy
 
