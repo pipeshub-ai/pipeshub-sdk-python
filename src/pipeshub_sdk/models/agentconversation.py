@@ -6,8 +6,8 @@ from .message import Message, MessageTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
-from pydantic import model_serializer
-from typing import List, Literal, Optional, Union
+from pydantic import ConfigDict, model_serializer
+from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -86,6 +86,11 @@ class AgentConversation(BaseModel):
 
     """
 
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
+
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
 
     agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
@@ -115,6 +120,14 @@ class AgentConversation(BaseModel):
 
     updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
 
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -139,10 +152,13 @@ class AgentConversation(BaseModel):
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
 
         return m
 
