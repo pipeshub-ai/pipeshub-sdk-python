@@ -248,6 +248,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request(
             method="GET",
             path="/.well-known/oauth-authorization-server",
@@ -333,6 +336,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request_async(
             method="GET",
             path="/.well-known/oauth-authorization-server",
@@ -422,6 +428,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.OAUTH_PROTECTED_RESOURCE_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request(
             method="GET",
             path="/.well-known/oauth-protected-resource/mcp",
@@ -513,6 +522,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.OAUTH_PROTECTED_RESOURCE_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request_async(
             method="GET",
             path="/.well-known/oauth-protected-resource/mcp",
@@ -604,6 +616,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.OPENID_CONFIGURATION_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request(
             method="GET",
             path="/.well-known/openid-configuration",
@@ -693,6 +708,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.OPENID_CONFIGURATION_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request_async(
             method="GET",
             path="/.well-known/openid-configuration",
@@ -784,6 +802,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.JWKS_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request(
             method="GET",
             path="/.well-known/jwks.json",
@@ -875,6 +896,9 @@ class OpenIDConnect(BaseSDK):
             base_url = server_url
         else:
             base_url = models.JWKS_OP_SERVERS[0]
+            url_variables = {
+                "instance_url": "https://app.pipeshub.com",
+            }
         req = self._build_request_async(
             method="GET",
             path="/.well-known/jwks.json",

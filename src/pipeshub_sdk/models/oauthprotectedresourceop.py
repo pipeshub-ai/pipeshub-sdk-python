@@ -6,5 +6,5 @@ from __future__ import annotations
 
 OAUTH_PROTECTED_RESOURCE_OP_SERVERS = [
     # Root URL (not /api/v1)
-    "/",
+    "https://{instance_url}",
 ]

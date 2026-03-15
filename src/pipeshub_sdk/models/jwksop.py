@@ -6,5 +6,5 @@ from __future__ import annotations
 
 JWKS_OP_SERVERS = [
     # Root URL (not /api/v1)
-    "/",
+    "https://{instance_url}",
 ]
