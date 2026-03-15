@@ -1,8 +1,13 @@
 # JsonrpcRequest
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import JsonrpcRequest
+value: JsonrpcRequest = "2.0"
+```
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `TWO_DOT_0` | 2.0         |
+- `"2.0"`

@@ -53,7 +53,11 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub(
     security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+        oauth2=models.SchemeOauth2(
+            client_id=os.getenv("PIPESHUB_CLIENT_ID", ""),
+            client_secret=os.getenv("PIPESHUB_CLIENT_SECRET", ""),
+            token_url=os.getenv("PIPESHUB_TOKEN_URL", ""),
+        ),
     ),
 ) as pipeshub:
 

@@ -147,7 +147,12 @@ def test_teams_add_users_to_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.add_users(team_id="507f1f77bcf86cd799439011")
+        res = pipeshub.teams.add_users(
+            team_id="507f1f77bcf86cd799439011",
+            user_ids=[
+                "507f1f77bcf86cd799439011",
+            ],
+        )
         assert res is not None
         assert res == models.AddUsersToTeamResponse()
 
@@ -162,7 +167,12 @@ def test_teams_remove_user_from_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.remove_users(team_id="<id>")
+        res = pipeshub.teams.remove_users(
+            team_id="<id>",
+            user_ids=[
+                "507f1f77bcf86cd799439011",
+            ],
+        )
         assert res is not None
         assert res == models.RemoveUserFromTeamResponse()
 
@@ -177,7 +187,15 @@ def test_teams_update_team_users_permissions():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.update_user_permissions(team_id="<id>", body={})
+        res = pipeshub.teams.update_user_permissions(
+            team_id="<id>",
+            user_roles=[
+                {
+                    "user_id": "507f1f77bcf86cd799439011",
+                    "role": "member",
+                },
+            ],
+        )
         assert res is not None
         assert res == models.UpdateTeamUsersPermissionsResponse()
 

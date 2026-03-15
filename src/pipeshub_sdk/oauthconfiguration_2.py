@@ -84,7 +84,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthRegistry",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -182,7 +182,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthRegistry",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -270,7 +270,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthConnectorType",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -360,7 +360,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthConnectorType",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -462,7 +462,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthConfigs",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -562,7 +562,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthConfigs",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -659,7 +659,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthConfigsByType",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -758,7 +758,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthConfigsByType",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -875,7 +875,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url_ or "",
                 operation_id="createOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -990,7 +990,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url_ or "",
                 operation_id="createOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1081,7 +1081,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1172,7 +1172,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1283,7 +1283,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1394,7 +1394,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1489,7 +1489,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1584,7 +1584,7 @@ class OauthConfiguration2(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

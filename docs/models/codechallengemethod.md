@@ -2,10 +2,15 @@
 
 PKCE challenge method
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import CodeChallengeMethod
+value: CodeChallengeMethod = "S256"
+```
+
 
 ## Values
 
-| Name    | Value   |
-| ------- | ------- |
-| `S256`  | S256    |
-| `PLAIN` | plain   |
+- `"S256"`
+- `"plain"`

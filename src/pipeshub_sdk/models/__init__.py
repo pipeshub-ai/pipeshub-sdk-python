@@ -1884,6 +1884,8 @@ if TYPE_CHECKING:
         UpdateTeamUsersPermissionsRequestTypedDict,
         UpdateTeamUsersPermissionsResponse,
         UpdateTeamUsersPermissionsResponseTypedDict,
+        UpdateTeamUsersPermissionsUserRole,
+        UpdateTeamUsersPermissionsUserRoleTypedDict,
     )
     from .updatetoolsetconfigop import (
         UpdateToolsetConfigAuth,
@@ -3340,6 +3342,8 @@ __all__ = [
     "UpdateTeamUsersPermissionsRequestTypedDict",
     "UpdateTeamUsersPermissionsResponse",
     "UpdateTeamUsersPermissionsResponseTypedDict",
+    "UpdateTeamUsersPermissionsUserRole",
+    "UpdateTeamUsersPermissionsUserRoleTypedDict",
     "UpdateToolsetConfigAuth",
     "UpdateToolsetConfigAuthTypedDict",
     "UpdateToolsetConfigRequest",
@@ -4784,6 +4788,8 @@ _dynamic_imports: dict[str, str] = {
     "UpdateTeamUsersPermissionsRequestTypedDict": ".updateteamuserspermissionsop",
     "UpdateTeamUsersPermissionsResponse": ".updateteamuserspermissionsop",
     "UpdateTeamUsersPermissionsResponseTypedDict": ".updateteamuserspermissionsop",
+    "UpdateTeamUsersPermissionsUserRole": ".updateteamuserspermissionsop",
+    "UpdateTeamUsersPermissionsUserRoleTypedDict": ".updateteamuserspermissionsop",
     "UpdateToolsetConfigAuth": ".updatetoolsetconfigop",
     "UpdateToolsetConfigAuthTypedDict": ".updatetoolsetconfigop",
     "UpdateToolsetConfigRequest": ".updatetoolsetconfigop",

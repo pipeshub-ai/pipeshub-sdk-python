@@ -12,29 +12,26 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class SMTPConfigTypedDict(TypedDict):
     r"""SMTP email server configuration for sending system emails (invitations, notifications, password resets)"""
 
-    host: str
+    host: NotRequired[str]
     r"""SMTP server hostname or IP address"""
-    port: int
+    port: NotRequired[int]
     r"""SMTP server port. Common ports are 25 (unencrypted), 465 (SSL), 587 (TLS/STARTTLS)"""
-    from_email: str
-    r"""Default sender email address that appears in the \"From\" field of outgoing emails"""
     username: NotRequired[str]
     r"""SMTP authentication username. Usually an email address for services like Gmail, SendGrid, etc."""
     password: NotRequired[str]
     r"""SMTP authentication password or app-specific password. For Gmail, use an App Password instead of your account password."""
+    from_email: NotRequired[str]
+    r"""Default sender email address that appears in the \"From\" field of outgoing emails"""
 
 
 class SMTPConfig(BaseModel):
     r"""SMTP email server configuration for sending system emails (invitations, notifications, password resets)"""
 
-    host: str
+    host: Optional[str] = None
     r"""SMTP server hostname or IP address"""
 
-    port: int
+    port: Optional[int] = None
     r"""SMTP server port. Common ports are 25 (unencrypted), 465 (SSL), 587 (TLS/STARTTLS)"""
-
-    from_email: Annotated[str, pydantic.Field(alias="fromEmail")]
-    r"""Default sender email address that appears in the \"From\" field of outgoing emails"""
 
     username: Optional[str] = None
     r"""SMTP authentication username. Usually an email address for services like Gmail, SendGrid, etc."""
@@ -42,15 +39,18 @@ class SMTPConfig(BaseModel):
     password: Optional[str] = None
     r"""SMTP authentication password or app-specific password. For Gmail, use an App Password instead of your account password."""
 
+    from_email: Annotated[Optional[str], pydantic.Field(alias="fromEmail")] = None
+    r"""Default sender email address that appears in the \"From\" field of outgoing emails"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["username", "password"])
+        optional_fields = set(["host", "port", "username", "password", "fromEmail"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
