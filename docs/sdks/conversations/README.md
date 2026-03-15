@@ -758,8 +758,10 @@ with Pipeshub(
 
     res = pipeshub.conversations.regenerate(conversation_id="<value>", message_id="<value>")
 
-    # Handle response
-    print(res)
+    with res as event_stream:
+        for event in event_stream:
+            # handle event
+            print(event, flush=True)
 
 ```
 
@@ -777,7 +779,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[Union[eventstreaming.EventStream[models.SSEEvent], eventstreaming.EventStreamAsync[models.SSEEvent]]](../../models/.md)**
 
 ### Errors
 
@@ -868,7 +870,9 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.unshare(conversation_id="<value>")
+    res = pipeshub.conversations.unshare(conversation_id="<value>", user_ids=[
+        "507f1f77bcf86cd799439011",
+    ])
 
     # Handle response
     print(res)
@@ -877,12 +881,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `team_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
 

@@ -13,37 +13,18 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class UnshareConversationByIDRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    user_ids: NotRequired[List[str]]
-    team_ids: NotRequired[List[str]]
+    user_ids: List[str]
 
 
 class UnshareConversationByIDRequestBody(BaseModel):
     r"""Request payload"""
 
-    user_ids: Annotated[Optional[List[str]], pydantic.Field(alias="userIds")] = None
-
-    team_ids: Annotated[Optional[List[str]], pydantic.Field(alias="teamIds")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["userIds", "teamIds"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
 
 
 class UnshareConversationByIDRequestTypedDict(TypedDict):
     conversation_id: str
-    body: NotRequired[UnshareConversationByIDRequestBodyTypedDict]
+    body: UnshareConversationByIDRequestBodyTypedDict
     r"""Request payload"""
 
 
@@ -55,26 +36,10 @@ class UnshareConversationByIDRequest(BaseModel):
     ]
 
     body: Annotated[
-        Optional[UnshareConversationByIDRequestBody],
+        UnshareConversationByIDRequestBody,
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
-    ] = None
+    ]
     r"""Request payload"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["body"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
 
 
 class UnshareConversationByIDResponseTypedDict(TypedDict):

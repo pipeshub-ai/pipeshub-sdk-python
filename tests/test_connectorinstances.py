@@ -290,14 +290,16 @@ def test_connectorinstances_list_configured_connectors():
         )
         assert res is not None
         assert res == models.ListConfiguredConnectorsResponse(
-            connectors=[
-                models.ConnectorInstance(
-                    connector_id="conn_abc123",
-                    connector_type="google-drive",
-                    instance_name="Company Google Drive",
-                    scope="team",
-                ),
-            ],
+            connectors=models.ListConfiguredConnectorsConnectors(
+                connectors=[
+                    models.ConnectorInstance(
+                        connector_id="conn_abc123",
+                        connector_type="google-drive",
+                        instance_name="Company Google Drive",
+                        scope="team",
+                    ),
+                ],
+            ),
         )
 
 

@@ -2,6 +2,7 @@
 # @generated-id: d42a9e2d3cc5
 
 from pipeshub_sdk import Pipeshub, models
+import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -270,23 +271,11 @@ def test_conversations_unarchive_conversation():
         )
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step regenerateAnswer.test referencing operation regenerateAnswer is not currently supported`]"
+)
 def test_conversations_regenerate_answer():
-    test_http_client = create_test_http_client("regenerateAnswer")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.conversations.regenerate(
-            conversation_id="<value>", message_id="<value>"
-        )
-        assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
-        )
+    pass
 
 
 def test_conversations_update_message_feedback():
@@ -318,6 +307,11 @@ def test_conversations_unshare_conversation_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.unshare(conversation_id="<value>")
+        res = pipeshub.conversations.unshare(
+            conversation_id="<value>",
+            user_ids=[
+                "507f1f77bcf86cd799439011",
+            ],
+        )
         assert res is not None
         assert res == models.UnshareConversationByIDResponse()

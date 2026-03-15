@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from pipeshub_sdk.connectorinstances import ConnectorInstances
     from pipeshub_sdk.connectoroauth import ConnectorOAuth
     from pipeshub_sdk.connectorregistry import ConnectorRegistry
-    from pipeshub_sdk.connectors import Connectors
+    from pipeshub_sdk.connectors_sdk import ConnectorsSDK
     from pipeshub_sdk.conversations import Conversations
     from pipeshub_sdk.crawlingjobs import CrawlingJobs
     from pipeshub_sdk.documentmanagement import DocumentManagement
@@ -157,7 +157,7 @@ class Pipeshub(BaseSDK):
     uploads: "Uploads"
     connector: "ConnectorSDK"
     r"""Connector-related operations"""
-    connectors: "Connectors"
+    connectors: "ConnectorsSDK"
     permissions: "PermissionsSDK"
     r"""Permission management for knowledge bases"""
     conversations: "Conversations"
@@ -245,7 +245,7 @@ class Pipeshub(BaseSDK):
         "upload": ("pipeshub_sdk.upload", "Upload"),
         "uploads": ("pipeshub_sdk.uploads", "Uploads"),
         "connector": ("pipeshub_sdk.connector_sdk", "ConnectorSDK"),
-        "connectors": ("pipeshub_sdk.connectors", "Connectors"),
+        "connectors": ("pipeshub_sdk.connectors_sdk", "ConnectorsSDK"),
         "permissions": ("pipeshub_sdk.permissions_sdk", "PermissionsSDK"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
         "semantic_search": ("pipeshub_sdk.semanticsearch", "SemanticSearch"),

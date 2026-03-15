@@ -42,4 +42,6 @@ def test_connectorregistry_get_connector_schema():
 
         res = pipeshub.connector_registry.get_schema(connector_type="google-drive")
         assert res is not None
-        assert res == models.GetConnectorSchemaResponse()
+        assert res == models.GetConnectorSchemaResponse(
+            success=True,
+        )

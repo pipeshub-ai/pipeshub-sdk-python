@@ -161,7 +161,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Folder](../../models/folder.md)**
+**[models.UpdateFolderResponse](../../models/updatefolderresponse.md)**
 
 ### Errors
 
