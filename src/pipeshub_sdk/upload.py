@@ -21,7 +21,7 @@ class Upload(BaseSDK):
             List[models.UploadRecordsToKBFile],
             List[models.UploadRecordsToKBFileTypedDict],
         ],
-        files_metadata: Optional[str] = None,
+        files_metadata: str,
         is_versioned: Optional[bool] = True,
         record_type: Optional[str] = "FILE",
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -50,7 +50,9 @@ class Upload(BaseSDK):
 
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
-        :param files_metadata: JSON array with file_path and last_modified for each file
+        :param files_metadata: JSON array with file_path and last_modified (epoch ms) for each file.
+            Must have one entry per uploaded file.
+
         :param is_versioned: Enable version tracking
         :param record_type: Type of records to create
         :param retries: Override the default retry configuration for this method
@@ -152,7 +154,7 @@ class Upload(BaseSDK):
             List[models.UploadRecordsToKBFile],
             List[models.UploadRecordsToKBFileTypedDict],
         ],
-        files_metadata: Optional[str] = None,
+        files_metadata: str,
         is_versioned: Optional[bool] = True,
         record_type: Optional[str] = "FILE",
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -181,7 +183,9 @@ class Upload(BaseSDK):
 
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
-        :param files_metadata: JSON array with file_path and last_modified for each file
+        :param files_metadata: JSON array with file_path and last_modified (epoch ms) for each file.
+            Must have one entry per uploaded file.
+
         :param is_versioned: Enable version tracking
         :param record_type: Type of records to create
         :param retries: Override the default retry configuration for this method

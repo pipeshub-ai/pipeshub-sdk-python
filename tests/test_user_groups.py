@@ -21,11 +21,7 @@ def test_user_groups_create_user_group():
             description="All engineering department members",
         )
         assert res is not None
-        assert res == models.UserGroup(
-            type="standard",
-            name="<value>",
-            org_id="<value>",
-        )
+        assert res == models.UserGroup()
 
 
 def test_user_groups_get_all_user_groups():
@@ -40,9 +36,9 @@ def test_user_groups_get_all_user_groups():
 
         res = pipeshub.user_groups.get_all_user_groups()
         assert res is not None
-        assert res == models.GetAllUserGroupsResponse(
-            success=True,
-        )
+        assert res == [
+            models.UserGroup(),
+        ]
 
 
 def test_user_groups_get_user_group_by_id():
@@ -59,11 +55,7 @@ def test_user_groups_get_user_group_by_id():
             group_id="507f1f77bcf86cd799439011"
         )
         assert res is not None
-        assert res == models.UserGroup(
-            type="custom",
-            name="<value>",
-            org_id="<value>",
-        )
+        assert res == models.UserGroup()
 
 
 def test_user_groups_update_user_group():
@@ -82,11 +74,7 @@ def test_user_groups_update_user_group():
             description="All engineering and DevOps members",
         )
         assert res is not None
-        assert res == models.UserGroup(
-            type="admin",
-            name="<value>",
-            org_id="<value>",
-        )
+        assert res == models.UserGroup()
 
 
 def test_user_groups_delete_user_group():

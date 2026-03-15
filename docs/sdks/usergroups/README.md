@@ -126,7 +126,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetAllUserGroupsResponse](../../models/getallusergroupsresponse.md)**
+**[List[models.UserGroup]](../../models/.md)**
 
 ### Errors
 

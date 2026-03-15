@@ -568,10 +568,6 @@ if TYPE_CHECKING:
         GetAllRecordsSortOrder,
         Origins,
     )
-    from .getallusergroupsop import (
-        GetAllUserGroupsResponse,
-        GetAllUserGroupsResponseTypedDict,
-    )
     from .getallusersop import GetAllUsersRequest, GetAllUsersRequestTypedDict
     from .getalluserswithgroupsop import (
         GetAllUsersWithGroupsData,
@@ -2375,8 +2371,6 @@ __all__ = [
     "GetAllRecordsRequest",
     "GetAllRecordsRequestTypedDict",
     "GetAllRecordsSortOrder",
-    "GetAllUserGroupsResponse",
-    "GetAllUserGroupsResponseTypedDict",
     "GetAllUsersRequest",
     "GetAllUsersRequestTypedDict",
     "GetAllUsersWithGroupsData",
@@ -3823,8 +3817,6 @@ _dynamic_imports: dict[str, str] = {
     "GetAllRecordsRequestTypedDict": ".getallrecordsop",
     "GetAllRecordsSortOrder": ".getallrecordsop",
     "Origins": ".getallrecordsop",
-    "GetAllUserGroupsResponse": ".getallusergroupsop",
-    "GetAllUserGroupsResponseTypedDict": ".getallusergroupsop",
     "GetAllUsersRequest": ".getallusersop",
     "GetAllUsersRequestTypedDict": ".getallusersop",
     "GetAllUsersWithGroupsData": ".getalluserswithgroupsop",

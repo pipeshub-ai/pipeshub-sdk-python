@@ -2,6 +2,7 @@
 # @generated-id: 3b2f4216f062
 
 from __future__ import annotations
+from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
 from pydantic import model_serializer
@@ -30,7 +31,11 @@ r"""Group type:
 class UserGroupTypedDict(TypedDict):
     r"""User group for organizing users within an organization"""
 
-    type: UserGroupType
+    id: NotRequired[str]
+    r"""Unique group identifier"""
+    slug: NotRequired[str]
+    r"""Unique slug for the group"""
+    type: NotRequired[UserGroupType]
     r"""Group type:
     - admin: System admin group (cannot be modified)
     - standard: Default user group
@@ -38,30 +43,32 @@ class UserGroupTypedDict(TypedDict):
     - custom: User-created custom group
 
     """
-    name: str
+    name: NotRequired[str]
     r"""Group name (unique within organization)"""
-    org_id: str
+    org_id: NotRequired[str]
     r"""Organization ID"""
-    id: NotRequired[str]
-    r"""Unique group identifier"""
-    slug: NotRequired[str]
-    r"""Unique slug for the group"""
     users: NotRequired[List[str]]
     r"""Array of user IDs in this group"""
     is_deleted: NotRequired[bool]
     r"""Soft delete flag"""
     deleted_by: NotRequired[str]
     r"""ID of user who deleted this group"""
-    created_at: NotRequired[int]
+    created_at: NotRequired[datetime]
     r"""Creation timestamp"""
-    updated_at: NotRequired[int]
+    updated_at: NotRequired[datetime]
     r"""Last update timestamp"""
 
 
 class UserGroup(BaseModel):
     r"""User group for organizing users within an organization"""
 
-    type: UserGroupType
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Unique group identifier"""
+
+    slug: Optional[str] = None
+    r"""Unique slug for the group"""
+
+    type: Optional[UserGroupType] = None
     r"""Group type:
     - admin: System admin group (cannot be modified)
     - standard: Default user group
@@ -70,17 +77,11 @@ class UserGroup(BaseModel):
 
     """
 
-    name: str
+    name: Optional[str] = None
     r"""Group name (unique within organization)"""
 
-    org_id: Annotated[str, pydantic.Field(alias="orgId")]
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
     r"""Organization ID"""
-
-    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
-    r"""Unique group identifier"""
-
-    slug: Optional[str] = None
-    r"""Unique slug for the group"""
 
     users: Optional[List[str]] = None
     r"""Array of user IDs in this group"""
@@ -91,16 +92,27 @@ class UserGroup(BaseModel):
     deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
     r"""ID of user who deleted this group"""
 
-    created_at: Annotated[Optional[int], pydantic.Field(alias="createdAt")] = None
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
     r"""Creation timestamp"""
 
-    updated_at: Annotated[Optional[int], pydantic.Field(alias="updatedAt")] = None
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
     r"""Last update timestamp"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["_id", "slug", "users", "isDeleted", "deletedBy", "createdAt", "updatedAt"]
+            [
+                "_id",
+                "slug",
+                "type",
+                "name",
+                "orgId",
+                "users",
+                "isDeleted",
+                "deletedBy",
+                "createdAt",
+                "updatedAt",
+            ]
         )
         serialized = handler(self)
         m = {}
