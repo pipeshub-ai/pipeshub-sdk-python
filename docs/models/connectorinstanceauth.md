@@ -1,6 +1,6 @@
-# Auth
+# ConnectorInstanceAuth
 
-Authentication configuration (sensitive data redacted)
+Authentication configuration
 
 
 ## Fields

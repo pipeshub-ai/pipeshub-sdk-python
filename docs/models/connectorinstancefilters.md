@@ -1,4 +1,6 @@
-# GetUsersByIdsResponse
+# ConnectorInstanceFilters
+
+Filter configuration for sync and indexing
 
 
 ## Fields

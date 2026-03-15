@@ -308,7 +308,9 @@ def test_users_get_users_by_ids():
             ]
         )
         assert res is not None
-        assert res == models.GetUsersByIdsResponse()
+        assert res == [
+            models.GetUsersByIdsResponse(),
+        ]
 
 
 def test_users_update_full_name():

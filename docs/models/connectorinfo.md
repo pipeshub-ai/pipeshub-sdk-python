@@ -1,4 +1,6 @@
-# GetUsersByIdsResponse
+# ConnectorInfo
+
+Additional connector metadata
 
 
 ## Fields

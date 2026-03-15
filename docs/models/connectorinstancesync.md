@@ -1,4 +1,6 @@
-# GetUsersByIdsResponse
+# ConnectorInstanceSync
+
+Sync configuration
 
 
 ## Fields

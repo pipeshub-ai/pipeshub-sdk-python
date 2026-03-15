@@ -1,4 +1,6 @@
-# GetUsersByIdsData
+# ConnectorConfigAuth
+
+Authentication configuration (sensitive data redacted)
 
 
 ## Fields

@@ -1014,7 +1014,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.GetUsersByIdsResponse](../../models/getusersbyidsresponse.md)**
+**[List[models.GetUsersByIdsResponse]](../../models/.md)**
 
 ### Errors
 

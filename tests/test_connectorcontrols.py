@@ -20,9 +20,19 @@ def test_connectorcontrols_toggle_connector():
         assert res == models.ToggleConnectorResponse(
             message="Sync enabled successfully",
             connector=models.ConnectorInstance(
-                connector_id="conn_abc123",
-                connector_type="google-drive",
-                instance_name="Company Google Drive",
+                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
+                name="Nextcloud",
+                type="Nextcloud",
+                app_group="Cloud Storage",
+                supported_auth_types=[
+                    "BASIC_AUTH",
+                ],
+                app_categories=[
+                    "Storage",
+                    "Collaboration",
+                ],
+                icon_path="/assets/icons/connectors/nextcloud.svg",
                 scope="team",
+                auth_type="BASIC_AUTH",
             ),
         )

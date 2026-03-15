@@ -2,162 +2,138 @@
 # @generated-id: 5d1dc798e0ec
 
 from __future__ import annotations
-from .connectorauthtype import ConnectorAuthType
 from .connectorscope import ConnectorScope
-from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+)
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class ConnectorInstanceTypedDict(TypedDict):
-    r"""A configured connector instance. Represents an active or configured
-    connection to an external service.
-
-    """
-
-    connector_id: NotRequired[str]
-    r"""Unique instance identifier"""
-    connector_type: NotRequired[str]
-    r"""Type of connector (from registry)"""
-    instance_name: NotRequired[str]
-    r"""User-defined name for this instance"""
-    scope: NotRequired[ConnectorScope]
-    r"""Scope determines visibility and access control for connectors:<br>
-    <ul>
-    <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
-    <li><code>personal</code> - Private to the creating user only</li>
-    </ul>
-
-    """
-    auth_type: NotRequired[ConnectorAuthType]
-    r"""Authentication method required by the connector:<br>
-    <ul>
-    <li><code>OAUTH</code> - User OAuth consent flow</li>
-    <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
-    <li><code>API_TOKEN</code> - API key or token authentication</li>
-    <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
-    <li><code>NONE</code> - No authentication required</li>
-    </ul>
-
-    """
-    created_by: NotRequired[str]
-    r"""User ID who created this instance"""
-    org_id: NotRequired[str]
-    r"""Organization ID"""
-    is_active: NotRequired[bool]
-    r"""Whether connector is enabled for syncing/agent"""
-    is_configured: NotRequired[bool]
-    r"""Whether all required configuration is complete"""
-    is_authenticated: NotRequired[bool]
-    r"""Whether authentication is complete and valid"""
-    sync_enabled: NotRequired[bool]
-    r"""Whether sync is enabled"""
-    agent_enabled: NotRequired[bool]
-    r"""Whether agent integration is enabled"""
-    last_sync_at: NotRequired[datetime]
-    r"""Timestamp of last successful sync"""
-    created_at: NotRequired[datetime]
-    updated_at: NotRequired[datetime]
+class DocumentationLinkTypedDict(TypedDict):
+    title: NotRequired[str]
+    url: NotRequired[str]
+    type: NotRequired[str]
 
 
-class ConnectorInstance(BaseModel):
-    r"""A configured connector instance. Represents an active or configured
-    connection to an external service.
+class DocumentationLink(BaseModel):
+    title: Optional[str] = None
 
-    """
+    url: Optional[str] = None
 
-    connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
-    r"""Unique instance identifier"""
+    type: Optional[str] = None
 
-    connector_type: Annotated[Optional[str], pydantic.Field(alias="connectorType")] = (
-        None
-    )
-    r"""Type of connector (from registry)"""
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["title", "url", "type"])
+        serialized = handler(self)
+        m = {}
 
-    instance_name: Annotated[Optional[str], pydantic.Field(alias="instanceName")] = None
-    r"""User-defined name for this instance"""
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
 
-    scope: Optional[ConnectorScope] = None
-    r"""Scope determines visibility and access control for connectors:<br>
-    <ul>
-    <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
-    <li><code>personal</code> - Private to the creating user only</li>
-    </ul>
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
 
-    """
+        return m
 
-    auth_type: Annotated[
-        Optional[ConnectorAuthType], pydantic.Field(alias="authType")
+
+class ConnectorInstanceAuthTypedDict(TypedDict):
+    r"""Authentication configuration"""
+
+
+class ConnectorInstanceAuth(BaseModel):
+    r"""Authentication configuration"""
+
+
+class ConnectorInstanceSyncTypedDict(TypedDict):
+    r"""Sync configuration"""
+
+
+class ConnectorInstanceSync(BaseModel):
+    r"""Sync configuration"""
+
+
+class ConnectorInstanceFiltersTypedDict(TypedDict):
+    r"""Filter configuration for sync and indexing"""
+
+
+class ConnectorInstanceFilters(BaseModel):
+    r"""Filter configuration for sync and indexing"""
+
+
+class ConnectorInstanceConfigTypedDict(TypedDict):
+    r"""Full connector configuration including auth, sync, and filter settings"""
+
+    icon_path: NotRequired[str]
+    supports_realtime: NotRequired[bool]
+    supports_sync: NotRequired[bool]
+    supports_agent: NotRequired[bool]
+    documentation_links: NotRequired[List[DocumentationLinkTypedDict]]
+    hide_connector: NotRequired[bool]
+    auth: NotRequired[ConnectorInstanceAuthTypedDict]
+    r"""Authentication configuration"""
+    sync: NotRequired[ConnectorInstanceSyncTypedDict]
+    r"""Sync configuration"""
+    filters: NotRequired[ConnectorInstanceFiltersTypedDict]
+    r"""Filter configuration for sync and indexing"""
+
+
+class ConnectorInstanceConfig(BaseModel):
+    r"""Full connector configuration including auth, sync, and filter settings"""
+
+    icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
+
+    supports_realtime: Annotated[
+        Optional[bool], pydantic.Field(alias="supportsRealtime")
     ] = None
-    r"""Authentication method required by the connector:<br>
-    <ul>
-    <li><code>OAUTH</code> - User OAuth consent flow</li>
-    <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
-    <li><code>API_TOKEN</code> - API key or token authentication</li>
-    <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
-    <li><code>NONE</code> - No authentication required</li>
-    </ul>
 
-    """
-
-    created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
-    r"""User ID who created this instance"""
-
-    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
-    r"""Organization ID"""
-
-    is_active: Annotated[Optional[bool], pydantic.Field(alias="isActive")] = None
-    r"""Whether connector is enabled for syncing/agent"""
-
-    is_configured: Annotated[Optional[bool], pydantic.Field(alias="isConfigured")] = (
+    supports_sync: Annotated[Optional[bool], pydantic.Field(alias="supportsSync")] = (
         None
     )
-    r"""Whether all required configuration is complete"""
 
-    is_authenticated: Annotated[
-        Optional[bool], pydantic.Field(alias="isAuthenticated")
+    supports_agent: Annotated[Optional[bool], pydantic.Field(alias="supportsAgent")] = (
+        None
+    )
+
+    documentation_links: Annotated[
+        Optional[List[DocumentationLink]], pydantic.Field(alias="documentationLinks")
     ] = None
-    r"""Whether authentication is complete and valid"""
 
-    sync_enabled: Annotated[Optional[bool], pydantic.Field(alias="syncEnabled")] = None
-    r"""Whether sync is enabled"""
-
-    agent_enabled: Annotated[Optional[bool], pydantic.Field(alias="agentEnabled")] = (
+    hide_connector: Annotated[Optional[bool], pydantic.Field(alias="hideConnector")] = (
         None
     )
-    r"""Whether agent integration is enabled"""
 
-    last_sync_at: Annotated[Optional[datetime], pydantic.Field(alias="lastSyncAt")] = (
-        None
-    )
-    r"""Timestamp of last successful sync"""
+    auth: Optional[ConnectorInstanceAuth] = None
+    r"""Authentication configuration"""
 
-    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+    sync: Optional[ConnectorInstanceSync] = None
+    r"""Sync configuration"""
 
-    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
+    filters: Optional[ConnectorInstanceFilters] = None
+    r"""Filter configuration for sync and indexing"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
             [
-                "connectorId",
-                "connectorType",
-                "instanceName",
-                "scope",
-                "authType",
-                "createdBy",
-                "orgId",
-                "isActive",
-                "isConfigured",
-                "isAuthenticated",
-                "syncEnabled",
-                "agentEnabled",
-                "lastSyncAt",
-                "createdAt",
-                "updatedAt",
+                "iconPath",
+                "supportsRealtime",
+                "supportsSync",
+                "supportsAgent",
+                "documentationLinks",
+                "hideConnector",
+                "auth",
+                "sync",
+                "filters",
             ]
         )
         serialized = handler(self)
@@ -174,6 +150,241 @@ class ConnectorInstance(BaseModel):
         return m
 
 
+class ConnectorInfoTypedDict(TypedDict):
+    r"""Additional connector metadata"""
+
+
+class ConnectorInfo(BaseModel):
+    r"""Additional connector metadata"""
+
+
+class ConnectorInstanceTypedDict(TypedDict):
+    r"""A configured connector instance. Represents an active or configured
+    connection to an external service.
+
+    """
+
+    key: NotRequired[str]
+    r"""Unique instance identifier"""
+    name: NotRequired[str]
+    r"""Connector display name"""
+    type: NotRequired[str]
+    r"""Connector type identifier"""
+    app_group: NotRequired[str]
+    r"""Application group category"""
+    supported_auth_types: NotRequired[List[str]]
+    r"""Supported authentication methods"""
+    app_description: NotRequired[str]
+    r"""Description of the connector"""
+    app_categories: NotRequired[List[str]]
+    r"""Connector categories"""
+    icon_path: NotRequired[str]
+    r"""Path to the connector icon"""
+    supports_realtime: NotRequired[bool]
+    r"""Whether connector supports real-time sync"""
+    supports_sync: NotRequired[bool]
+    r"""Whether connector supports scheduled sync"""
+    supports_agent: NotRequired[bool]
+    r"""Whether connector supports AI agent integration"""
+    config: NotRequired[ConnectorInstanceConfigTypedDict]
+    r"""Full connector configuration including auth, sync, and filter settings"""
+    scope: NotRequired[ConnectorScope]
+    r"""Scope determines visibility and access control for connectors:<br>
+    <ul>
+    <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
+    <li><code>personal</code> - Private to the creating user only</li>
+    </ul>
+
+    """
+    connector_info: NotRequired[Nullable[ConnectorInfoTypedDict]]
+    r"""Additional connector metadata"""
+    auth_type: NotRequired[str]
+    r"""Current authentication type"""
+    is_active: NotRequired[bool]
+    r"""Whether connector is enabled for syncing/agent"""
+    is_agent_active: NotRequired[bool]
+    r"""Whether agent integration is active"""
+    is_configured: NotRequired[bool]
+    r"""Whether all required configuration is complete"""
+    is_authenticated: NotRequired[bool]
+    r"""Whether authentication is complete and valid"""
+    status: NotRequired[Nullable[str]]
+    r"""Current connector status"""
+    created_by: NotRequired[str]
+    r"""User ID who created this instance"""
+    updated_by: NotRequired[str]
+    r"""User ID who last updated this instance"""
+    created_at_timestamp: NotRequired[int]
+    r"""Creation timestamp in milliseconds"""
+    updated_at_timestamp: NotRequired[int]
+    r"""Last update timestamp in milliseconds"""
+
+
+class ConnectorInstance(BaseModel):
+    r"""A configured connector instance. Represents an active or configured
+    connection to an external service.
+
+    """
+
+    key: Annotated[Optional[str], pydantic.Field(alias="_key")] = None
+    r"""Unique instance identifier"""
+
+    name: Optional[str] = None
+    r"""Connector display name"""
+
+    type: Optional[str] = None
+    r"""Connector type identifier"""
+
+    app_group: Annotated[Optional[str], pydantic.Field(alias="appGroup")] = None
+    r"""Application group category"""
+
+    supported_auth_types: Annotated[
+        Optional[List[str]], pydantic.Field(alias="supportedAuthTypes")
+    ] = None
+    r"""Supported authentication methods"""
+
+    app_description: Annotated[
+        Optional[str], pydantic.Field(alias="appDescription")
+    ] = None
+    r"""Description of the connector"""
+
+    app_categories: Annotated[
+        Optional[List[str]], pydantic.Field(alias="appCategories")
+    ] = None
+    r"""Connector categories"""
+
+    icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
+    r"""Path to the connector icon"""
+
+    supports_realtime: Annotated[
+        Optional[bool], pydantic.Field(alias="supportsRealtime")
+    ] = None
+    r"""Whether connector supports real-time sync"""
+
+    supports_sync: Annotated[Optional[bool], pydantic.Field(alias="supportsSync")] = (
+        None
+    )
+    r"""Whether connector supports scheduled sync"""
+
+    supports_agent: Annotated[Optional[bool], pydantic.Field(alias="supportsAgent")] = (
+        None
+    )
+    r"""Whether connector supports AI agent integration"""
+
+    config: Optional[ConnectorInstanceConfig] = None
+    r"""Full connector configuration including auth, sync, and filter settings"""
+
+    scope: Optional[ConnectorScope] = None
+    r"""Scope determines visibility and access control for connectors:<br>
+    <ul>
+    <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
+    <li><code>personal</code> - Private to the creating user only</li>
+    </ul>
+
+    """
+
+    connector_info: Annotated[
+        OptionalNullable[ConnectorInfo], pydantic.Field(alias="connectorInfo")
+    ] = UNSET
+    r"""Additional connector metadata"""
+
+    auth_type: Annotated[Optional[str], pydantic.Field(alias="authType")] = None
+    r"""Current authentication type"""
+
+    is_active: Annotated[Optional[bool], pydantic.Field(alias="isActive")] = None
+    r"""Whether connector is enabled for syncing/agent"""
+
+    is_agent_active: Annotated[
+        Optional[bool], pydantic.Field(alias="isAgentActive")
+    ] = None
+    r"""Whether agent integration is active"""
+
+    is_configured: Annotated[Optional[bool], pydantic.Field(alias="isConfigured")] = (
+        None
+    )
+    r"""Whether all required configuration is complete"""
+
+    is_authenticated: Annotated[
+        Optional[bool], pydantic.Field(alias="isAuthenticated")
+    ] = None
+    r"""Whether authentication is complete and valid"""
+
+    status: OptionalNullable[str] = UNSET
+    r"""Current connector status"""
+
+    created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
+    r"""User ID who created this instance"""
+
+    updated_by: Annotated[Optional[str], pydantic.Field(alias="updatedBy")] = None
+    r"""User ID who last updated this instance"""
+
+    created_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="createdAtTimestamp")
+    ] = None
+    r"""Creation timestamp in milliseconds"""
+
+    updated_at_timestamp: Annotated[
+        Optional[int], pydantic.Field(alias="updatedAtTimestamp")
+    ] = None
+    r"""Last update timestamp in milliseconds"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "_key",
+                "name",
+                "type",
+                "appGroup",
+                "supportedAuthTypes",
+                "appDescription",
+                "appCategories",
+                "iconPath",
+                "supportsRealtime",
+                "supportsSync",
+                "supportsAgent",
+                "config",
+                "scope",
+                "connectorInfo",
+                "authType",
+                "isActive",
+                "isAgentActive",
+                "isConfigured",
+                "isAuthenticated",
+                "status",
+                "createdBy",
+                "updatedBy",
+                "createdAtTimestamp",
+                "updatedAtTimestamp",
+            ]
+        )
+        nullable_fields = set(["connectorInfo", "status"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
+
+try:
+    ConnectorInstanceConfig.model_rebuild()
+except NameError:
+    pass
 try:
     ConnectorInstance.model_rebuild()
 except NameError:

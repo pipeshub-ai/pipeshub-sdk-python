@@ -2,11 +2,10 @@
 # @generated-id: c4ec13657aee
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel
 import pydantic
-from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import List
+from typing_extensions import Annotated, TypedDict
 
 
 class GetUsersByIdsRequestTypedDict(TypedDict):
@@ -21,43 +20,12 @@ class GetUsersByIdsRequest(BaseModel):
     user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
 
 
-class GetUsersByIdsDataTypedDict(TypedDict):
-    pass
-
-
-class GetUsersByIdsData(BaseModel):
-    pass
-
-
 class GetUsersByIdsResponseTypedDict(TypedDict):
-    r"""Users retrieved successfully"""
-
-    success: NotRequired[bool]
-    data: NotRequired[List[GetUsersByIdsDataTypedDict]]
+    pass
 
 
 class GetUsersByIdsResponse(BaseModel):
-    r"""Users retrieved successfully"""
-
-    success: Optional[bool] = None
-
-    data: Optional[List[GetUsersByIdsData]] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["success", "data"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    pass
 
 
 try:
