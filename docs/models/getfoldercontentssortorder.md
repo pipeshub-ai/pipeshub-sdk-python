@@ -1,9 +1,14 @@
 # GetFolderContentsSortOrder
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetFolderContentsSortOrder
+value: GetFolderContentsSortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

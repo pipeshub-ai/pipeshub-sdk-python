@@ -2,7 +2,7 @@
 # @generated-id: 55e27edbc32c
 
 from __future__ import annotations
-from .agentlistitem import AgentListItem, AgentListItemTypedDict
+from .agentcreateresponse import AgentCreateResponse, AgentCreateResponseTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -40,7 +40,7 @@ class CreateAgentModel(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -80,7 +80,7 @@ class CreateAgentTool(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -125,7 +125,7 @@ class CreateAgentToolset(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -160,7 +160,7 @@ class CreateAgentKnowledge(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -249,7 +249,7 @@ class CreateAgentRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -271,8 +271,8 @@ class CreateAgentResponseTypedDict(TypedDict):
 
     status: NotRequired[str]
     message: NotRequired[str]
-    agent: NotRequired[AgentListItemTypedDict]
-    r"""Agent summary returned in list endpoints (models as compact strings)"""
+    agent: NotRequired[AgentCreateResponseTypedDict]
+    r"""Agent object returned from create endpoint"""
     warnings: NotRequired[Nullable[List[str]]]
     r"""Warnings from agent creation (e.g., failed toolset connections)"""
 
@@ -284,8 +284,8 @@ class CreateAgentResponse(BaseModel):
 
     message: Optional[str] = None
 
-    agent: Optional[AgentListItem] = None
-    r"""Agent summary returned in list endpoints (models as compact strings)"""
+    agent: Optional[AgentCreateResponse] = None
+    r"""Agent object returned from create endpoint"""
 
     warnings: OptionalNullable[List[str]] = UNSET
     r"""Warnings from agent creation (e.g., failed toolset connections)"""
@@ -299,7 +299,7 @@ class CreateAgentResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
