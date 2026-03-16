@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
-from pipeshub_sdk.types import BaseModel
+from datetime import datetime
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class UpdateMessageFeedbackRequestTypedDict(TypedDict):
@@ -34,3 +37,92 @@ class UpdateMessageFeedbackRequest(BaseModel):
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
     r"""Request payload"""
+
+
+class FeedbackTypedDict(TypedDict):
+    r"""Feedback details"""
+
+
+class Feedback(BaseModel):
+    r"""Feedback details"""
+
+
+class UpdateMessageFeedbackMetaTypedDict(TypedDict):
+    request_id: NotRequired[str]
+    timestamp: NotRequired[datetime]
+    duration: NotRequired[int]
+
+
+class UpdateMessageFeedbackMeta(BaseModel):
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+
+    timestamp: Optional[datetime] = None
+
+    duration: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["requestId", "timestamp", "duration"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class UpdateMessageFeedbackResponseTypedDict(TypedDict):
+    r"""Feedback submitted successfully"""
+
+    conversation_id: NotRequired[str]
+    message_id: NotRequired[str]
+    feedback: NotRequired[FeedbackTypedDict]
+    r"""Feedback details"""
+    meta: NotRequired[UpdateMessageFeedbackMetaTypedDict]
+
+
+class UpdateMessageFeedbackResponse(BaseModel):
+    r"""Feedback submitted successfully"""
+
+    conversation_id: Annotated[
+        Optional[str], pydantic.Field(alias="conversationId")
+    ] = None
+
+    message_id: Annotated[Optional[str], pydantic.Field(alias="messageId")] = None
+
+    feedback: Optional[Feedback] = None
+    r"""Feedback details"""
+
+    meta: Optional[UpdateMessageFeedbackMeta] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["conversationId", "messageId", "feedback", "meta"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    UpdateMessageFeedbackMeta.model_rebuild()
+except NameError:
+    pass
+try:
+    UpdateMessageFeedbackResponse.model_rebuild()
+except NameError:
+    pass

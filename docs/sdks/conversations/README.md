@@ -471,7 +471,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.AddMessageResponse](../../models/addmessageresponse.md)**
 
 ### Errors
 
@@ -588,7 +588,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.ShareConversationResponse](../../models/shareconversationresponse.md)**
 
 ### Errors
 
@@ -640,7 +640,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.UpdateConversationTitleResponse](../../models/updateconversationtitleresponse.md)**
 
 ### Errors
 
@@ -688,7 +688,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.ArchiveConversationResponse](../../models/archiveconversationresponse.md)**
 
 ### Errors
 
@@ -733,7 +733,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.UnarchiveConversationResponse](../../models/unarchiveconversationresponse.md)**
 
 ### Errors
 
@@ -863,7 +863,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.UpdateMessageFeedbackResponse](../../models/updatemessagefeedbackresponse.md)**
 
 ### Errors
 

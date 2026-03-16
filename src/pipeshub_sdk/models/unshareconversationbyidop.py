@@ -2,6 +2,7 @@
 # @generated-id: 113699df410f
 
 from __future__ import annotations
+from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
@@ -42,20 +43,75 @@ class UnshareConversationByIDRequest(BaseModel):
     r"""Request payload"""
 
 
+class UnshareConversationByIDSharedWithTypedDict(TypedDict):
+    pass
+
+
+class UnshareConversationByIDSharedWith(BaseModel):
+    pass
+
+
+class UnshareConversationByIDMetaTypedDict(TypedDict):
+    request_id: NotRequired[str]
+    timestamp: NotRequired[datetime]
+    duration: NotRequired[int]
+
+
+class UnshareConversationByIDMeta(BaseModel):
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+
+    timestamp: Optional[datetime] = None
+
+    duration: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["requestId", "timestamp", "duration"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class UnshareConversationByIDResponseTypedDict(TypedDict):
     r"""Conversation unshared successfully"""
 
-    message: NotRequired[str]
+    id: NotRequired[str]
+    is_shared: NotRequired[bool]
+    shared_with: NotRequired[List[UnshareConversationByIDSharedWithTypedDict]]
+    unshared_users: NotRequired[List[str]]
+    meta: NotRequired[UnshareConversationByIDMetaTypedDict]
 
 
 class UnshareConversationByIDResponse(BaseModel):
     r"""Conversation unshared successfully"""
 
-    message: Optional[str] = None
+    id: Optional[str] = None
+
+    is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = None
+
+    shared_with: Annotated[
+        Optional[List[UnshareConversationByIDSharedWith]],
+        pydantic.Field(alias="sharedWith"),
+    ] = None
+
+    unshared_users: Annotated[
+        Optional[List[str]], pydantic.Field(alias="unsharedUsers")
+    ] = None
+
+    meta: Optional[UnshareConversationByIDMeta] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message"])
+        optional_fields = set(["id", "isShared", "sharedWith", "unsharedUsers", "meta"])
         serialized = handler(self)
         m = {}
 
@@ -72,5 +128,13 @@ class UnshareConversationByIDResponse(BaseModel):
 
 try:
     UnshareConversationByIDRequestBody.model_rebuild()
+except NameError:
+    pass
+try:
+    UnshareConversationByIDMeta.model_rebuild()
+except NameError:
+    pass
+try:
+    UnshareConversationByIDResponse.model_rebuild()
 except NameError:
     pass

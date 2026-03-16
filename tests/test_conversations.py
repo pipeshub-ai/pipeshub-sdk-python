@@ -171,7 +171,9 @@ def test_conversations_get_conversation_by_id():
         )
         assert res is not None
         assert res == models.GetConversationByIDResponse(
-            title="Q4 Financial Report Discussion",
+            conversation=models.Conversation(
+                title="Q4 Financial Report Discussion",
+            ),
         )
 
 
@@ -212,8 +214,10 @@ def test_conversations_add_message():
             },
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
+        assert res == models.AddMessageResponse(
+            conversation=models.Conversation(
+                title="Q4 Financial Report Discussion",
+            ),
         )
 
 
@@ -235,9 +239,7 @@ def test_conversations_share_conversation():
             access_level="read",
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
-        )
+        assert res == models.ShareConversationResponse()
 
 
 def test_conversations_update_conversation_title():
@@ -254,8 +256,10 @@ def test_conversations_update_conversation_title():
             conversation_id="<value>", title="Q4 Sales Analysis Discussion"
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
+        assert res == models.UpdateConversationTitleResponse(
+            conversation=models.Conversation(
+                title="Q4 Financial Report Discussion",
+            ),
         )
 
 
@@ -271,9 +275,7 @@ def test_conversations_archive_conversation():
 
         res = pipeshub.conversations.archive(conversation_id="<value>")
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
-        )
+        assert res == models.ArchiveConversationResponse()
 
 
 def test_conversations_unarchive_conversation():
@@ -288,9 +290,7 @@ def test_conversations_unarchive_conversation():
 
         res = pipeshub.conversations.unarchive(conversation_id="<value>")
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
-        )
+        assert res == models.UnarchiveConversationResponse()
 
 
 @pytest.mark.skip(
@@ -314,9 +314,7 @@ def test_conversations_update_message_feedback():
             conversation_id="<value>", message_id="<value>"
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
-        )
+        assert res == models.UpdateMessageFeedbackResponse()
 
 
 def test_conversations_unshare_conversation_by_id():
