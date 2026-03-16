@@ -2,13 +2,18 @@
 
 Authentication type (required if connector supports multiple auth methods)
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AuthType
+value: AuthType = "OAUTH"
+```
+
 
 ## Values
 
-| Name                  | Value                 |
-| --------------------- | --------------------- |
-| `OAUTH`               | OAUTH                 |
-| `OAUTH_ADMIN_CONSENT` | OAUTH_ADMIN_CONSENT   |
-| `API_TOKEN`           | API_TOKEN             |
-| `USERNAME_PASSWORD`   | USERNAME_PASSWORD     |
-| `SERVICE_ACCOUNT`     | SERVICE_ACCOUNT       |
+- `"OAUTH"`
+- `"OAUTH_ADMIN_CONSENT"`
+- `"API_TOKEN"`
+- `"USERNAME_PASSWORD"`
+- `"SERVICE_ACCOUNT"`

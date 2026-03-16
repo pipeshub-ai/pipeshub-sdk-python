@@ -2,10 +2,15 @@
 
 PKCE method (S256 recommended)
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import OauthAuthorizeCodeChallengeMethod
+value: OauthAuthorizeCodeChallengeMethod = "S256"
+```
+
 
 ## Values
 
-| Name    | Value   |
-| ------- | ------- |
-| `S256`  | S256    |
-| `PLAIN` | plain   |
+- `"S256"`
+- `"plain"`

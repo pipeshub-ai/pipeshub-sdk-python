@@ -15,6 +15,82 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+class ModelTypedDict(TypedDict):
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    model_friendly_name: NotRequired[str]
+    provider: NotRequired[str]
+    is_reasoning: NotRequired[bool]
+    is_multimodal: NotRequired[bool]
+    is_default: NotRequired[bool]
+    model_type: NotRequired[str]
+
+
+class Model(BaseModel):
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
+    provider: Optional[str] = None
+
+    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
+
+    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
+        None
+    )
+
+    is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
+
+    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "provider",
+                "isReasoning",
+                "isMultimodal",
+                "isDefault",
+                "modelType",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ToolsetTypedDict(TypedDict):
+    pass
+
+
+class Toolset(BaseModel):
+    pass
+
+
+class KnowledgeTypedDict(TypedDict):
+    pass
+
+
+class Knowledge(BaseModel):
+    pass
+
+
 class AgentTypedDict(TypedDict):
     r"""A custom AI agent with specialized capabilities, tools, and knowledge scope.
     Agents can be configured for specific use cases like customer support,
@@ -38,8 +114,8 @@ class AgentTypedDict(TypedDict):
     r"""Initial greeting shown when conversation starts"""
     instructions: NotRequired[Nullable[str]]
     r"""Additional agent execution instructions"""
-    models: NotRequired[List[str]]
-    r"""Model configuration entries (string format modelKey_modelName)"""
+    models: NotRequired[List[ModelTypedDict]]
+    r"""Model configuration entries"""
     tags: NotRequired[List[str]]
     r"""Tags for categorization"""
     is_active: NotRequired[bool]
@@ -48,6 +124,10 @@ class AgentTypedDict(TypedDict):
     r"""Soft delete flag"""
     share_with_org: NotRequired[bool]
     r"""Whether agent is shared with the organization"""
+    toolsets: NotRequired[List[ToolsetTypedDict]]
+    r"""Toolsets attached to the agent"""
+    knowledge: NotRequired[List[KnowledgeTypedDict]]
+    r"""Knowledge sources connected to the agent"""
     created_by: NotRequired[str]
     r"""User key who created the agent"""
     updated_by: NotRequired[Nullable[str]]
@@ -101,8 +181,8 @@ class Agent(BaseModel):
     instructions: OptionalNullable[str] = UNSET
     r"""Additional agent execution instructions"""
 
-    models: Optional[List[str]] = None
-    r"""Model configuration entries (string format modelKey_modelName)"""
+    models: Optional[List[Model]] = None
+    r"""Model configuration entries"""
 
     tags: Optional[List[str]] = None
     r"""Tags for categorization"""
@@ -117,6 +197,12 @@ class Agent(BaseModel):
         None
     )
     r"""Whether agent is shared with the organization"""
+
+    toolsets: Optional[List[Toolset]] = None
+    r"""Toolsets attached to the agent"""
+
+    knowledge: Optional[List[Knowledge]] = None
+    r"""Knowledge sources connected to the agent"""
 
     created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
     r"""User key who created the agent"""
@@ -171,6 +257,8 @@ class Agent(BaseModel):
                 "isActive",
                 "isDeleted",
                 "shareWithOrg",
+                "toolsets",
+                "knowledge",
                 "createdBy",
                 "updatedBy",
                 "createdAtTimestamp",
@@ -189,7 +277,7 @@ class Agent(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -206,6 +294,10 @@ class Agent(BaseModel):
         return m
 
 
+try:
+    Model.model_rebuild()
+except NameError:
+    pass
 try:
     Agent.model_rebuild()
 except NameError:
