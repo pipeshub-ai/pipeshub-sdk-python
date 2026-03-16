@@ -18,6 +18,8 @@ class SSOAuthConfigTypedDict(TypedDict):
     r"""X.509 certificate for signature validation (PEM format)"""
     email_key: NotRequired[str]
     r"""SAML attribute name for user email"""
+    enable_jit: NotRequired[bool]
+    r"""Enable Just-In-Time user provisioning via SAML"""
 
 
 class SSOAuthConfig(BaseModel):
@@ -32,9 +34,12 @@ class SSOAuthConfig(BaseModel):
     email_key: Annotated[Optional[str], pydantic.Field(alias="emailKey")] = None
     r"""SAML attribute name for user email"""
 
+    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
+    r"""Enable Just-In-Time user provisioning via SAML"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["entryPoint", "certificate", "emailKey"])
+        optional_fields = set(["entryPoint", "certificate", "emailKey", "enableJit"])
         serialized = handler(self)
         m = {}
 
