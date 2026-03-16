@@ -39,8 +39,7 @@ class CreateAgentConversationResponseTypedDict(TypedDict):
     r"""Agent conversation created"""
 
     conversation: NotRequired[AgentConversationTypedDict]
-    r"""A conversation with a specific AI agent. Similar to regular conversations
-    but tied to an agent's configuration and capabilities.
+    r"""A conversation with a specific AI agent.
 
     """
     meta: NotRequired[Dict[str, Any]]
@@ -51,8 +50,7 @@ class CreateAgentConversationResponse(BaseModel):
     r"""Agent conversation created"""
 
     conversation: Optional[AgentConversation] = None
-    r"""A conversation with a specific AI agent. Similar to regular conversations
-    but tied to an agent's configuration and capabilities.
+    r"""A conversation with a specific AI agent.
 
     """
 

@@ -120,3 +120,21 @@ def test_agents_share_agent():
 )
 def test_agents_unshare_agent():
     pass
+
+
+def test_agents_delete_agent():
+    test_http_client = create_test_http_client("deleteAgent")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.agents.delete_agent(agent_key="<value>")
+        assert res is not None
+        assert res == models.DeleteAgentResponse(
+            status="success",
+            message="Agent deleted successfully",
+        )

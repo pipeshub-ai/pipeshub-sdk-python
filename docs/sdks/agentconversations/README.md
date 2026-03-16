@@ -37,7 +37,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.list_agent_conversations(agent_key="<value>")
+    res = pipeshub.agent_conversations.list_agent_conversations(agent_key="<value>", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -49,6 +49,8 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Agent identifier                                                    |
+| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Page number                                                         |
+| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Items per page                                                      |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
@@ -243,9 +245,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.agent_conversations.delete_agent_conversation(agent_key="<value>", conversation_id="<value>")
+    res = pipeshub.agent_conversations.delete_agent_conversation(agent_key="<value>", conversation_id="<value>")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -256,6 +259,10 @@ with Pipeshub(
 | `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.DeleteAgentConversationResponse](../../models/deleteagentconversationresponse.md)**
 
 ### Errors
 

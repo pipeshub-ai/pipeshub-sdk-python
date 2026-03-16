@@ -15,7 +15,9 @@ def test_agent_conversations_list_agent_conversations():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agent_conversations.list_agent_conversations(agent_key="<value>")
+        res = pipeshub.agent_conversations.list_agent_conversations(
+            agent_key="<value>", page=1, limit=20
+        )
         assert res is not None
         assert res == models.ListAgentConversationsResponse(
             conversations=[
@@ -100,3 +102,22 @@ def test_agent_conversations_add_agent_message():
         )
         assert res is not None
         assert res == models.AddAgentMessageResponse()
+
+
+def test_agent_conversations_delete_agent_conversation():
+    test_http_client = create_test_http_client("deleteAgentConversation")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.agent_conversations.delete_agent_conversation(
+            agent_key="<value>", conversation_id="<value>"
+        )
+        assert res is not None
+        assert res == models.DeleteAgentConversationResponse(
+            message="Conversation deleted successfully",
+        )

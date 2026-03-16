@@ -2,10 +2,12 @@
 # @generated-id: 1fd02f899cd3
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class DeleteAgentRequestTypedDict(TypedDict):
@@ -18,3 +20,73 @@ class DeleteAgentRequest(BaseModel):
         pydantic.Field(alias="agentKey"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+
+
+class DeletedTypedDict(TypedDict):
+    agents: NotRequired[int]
+    toolsets: NotRequired[int]
+    tools: NotRequired[int]
+    knowledge: NotRequired[int]
+    edges: NotRequired[int]
+
+
+class Deleted(BaseModel):
+    agents: Optional[int] = None
+
+    toolsets: Optional[int] = None
+
+    tools: Optional[int] = None
+
+    knowledge: Optional[int] = None
+
+    edges: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["agents", "toolsets", "tools", "knowledge", "edges"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class DeleteAgentResponseTypedDict(TypedDict):
+    r"""Agent deleted"""
+
+    status: NotRequired[str]
+    message: NotRequired[str]
+    deleted: NotRequired[DeletedTypedDict]
+
+
+class DeleteAgentResponse(BaseModel):
+    r"""Agent deleted"""
+
+    status: Optional[str] = None
+
+    message: Optional[str] = None
+
+    deleted: Optional[Deleted] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message", "deleted"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

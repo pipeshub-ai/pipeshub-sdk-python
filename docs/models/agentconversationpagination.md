@@ -1,7 +1,5 @@
 # AgentConversationPagination
 
-Message pagination info
-
 
 ## Fields
 

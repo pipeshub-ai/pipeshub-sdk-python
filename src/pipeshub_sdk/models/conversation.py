@@ -116,11 +116,11 @@ class ConversationSharedWith(BaseModel):
         return m
 
 
-class ConversationConversationErrorTypedDict(TypedDict):
+class ConversationErrorTypedDict(TypedDict):
     pass
 
 
-class ConversationConversationError(BaseModel):
+class ConversationError(BaseModel):
     pass
 
 
@@ -301,7 +301,7 @@ class ConversationTypedDict(TypedDict):
     r"""Whether this conversation is soft-deleted"""
     conversation_source: NotRequired[str]
     r"""Source of the conversation (e.g., agent_chat, search)"""
-    conversation_errors: NotRequired[List[ConversationConversationErrorTypedDict]]
+    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
     r"""Errors encountered during conversation"""
     is_owner: NotRequired[bool]
     r"""Whether the current user owns this conversation"""
@@ -394,8 +394,7 @@ class Conversation(BaseModel):
     r"""Source of the conversation (e.g., agent_chat, search)"""
 
     conversation_errors: Annotated[
-        Optional[List[ConversationConversationError]],
-        pydantic.Field(alias="conversationErrors"),
+        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
     ] = None
     r"""Errors encountered during conversation"""
 

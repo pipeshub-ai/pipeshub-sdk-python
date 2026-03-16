@@ -5,7 +5,7 @@ from __future__ import annotations
 from .conversation import Conversation, ConversationTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
+from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
 from typing import Any, Dict, List, Optional
@@ -15,6 +15,10 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class ListAgentConversationsRequestTypedDict(TypedDict):
     agent_key: str
     r"""Agent identifier"""
+    page: NotRequired[int]
+    r"""Page number"""
+    limit: NotRequired[int]
+    r"""Items per page"""
 
 
 class ListAgentConversationsRequest(BaseModel):
@@ -24,6 +28,34 @@ class ListAgentConversationsRequest(BaseModel):
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
     r"""Agent identifier"""
+
+    page: Annotated[
+        Optional[int],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = 1
+    r"""Page number"""
+
+    limit: Annotated[
+        Optional[int],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = 20
+    r"""Items per page"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["page", "limit"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ListAgentConversationsPaginationTypedDict(TypedDict):

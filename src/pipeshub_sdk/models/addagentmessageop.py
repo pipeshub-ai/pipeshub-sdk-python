@@ -43,8 +43,7 @@ class AddAgentMessageResponseTypedDict(TypedDict):
     r"""Message added"""
 
     conversation: NotRequired[AgentConversationTypedDict]
-    r"""A conversation with a specific AI agent. Similar to regular conversations
-    but tied to an agent's configuration and capabilities.
+    r"""A conversation with a specific AI agent.
 
     """
     records_used: NotRequired[int]
@@ -57,8 +56,7 @@ class AddAgentMessageResponse(BaseModel):
     r"""Message added"""
 
     conversation: Optional[AgentConversation] = None
-    r"""A conversation with a specific AI agent. Similar to regular conversations
-    but tied to an agent's configuration and capabilities.
+    r"""A conversation with a specific AI agent.
 
     """
 

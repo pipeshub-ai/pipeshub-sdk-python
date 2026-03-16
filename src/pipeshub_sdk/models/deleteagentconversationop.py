@@ -2,10 +2,13 @@
 # @generated-id: 319307f2cc5b
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
+from datetime import datetime
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class DeleteAgentConversationRequestTypedDict(TypedDict):
@@ -25,3 +28,128 @@ class DeleteAgentConversationRequest(BaseModel):
         pydantic.Field(alias="conversationId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+
+
+class DeleteAgentConversationConversationTypedDict(TypedDict):
+    id: NotRequired[str]
+    agent_key: NotRequired[str]
+    user_id: NotRequired[str]
+    org_id: NotRequired[str]
+    title: NotRequired[str]
+    initiator: NotRequired[str]
+    status: NotRequired[str]
+    is_shared: NotRequired[bool]
+    is_deleted: NotRequired[bool]
+    is_archived: NotRequired[bool]
+    conversation_source: NotRequired[str]
+    deleted_by: NotRequired[str]
+    last_activity_at: NotRequired[int]
+    created_at: NotRequired[datetime]
+    updated_at: NotRequired[datetime]
+
+
+class DeleteAgentConversationConversation(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
+
+    title: Optional[str] = None
+
+    initiator: Optional[str] = None
+
+    status: Optional[str] = None
+
+    is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = None
+
+    is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = None
+
+    is_archived: Annotated[Optional[bool], pydantic.Field(alias="isArchived")] = None
+
+    conversation_source: Annotated[
+        Optional[str], pydantic.Field(alias="conversationSource")
+    ] = None
+
+    deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
+
+    last_activity_at: Annotated[
+        Optional[int], pydantic.Field(alias="lastActivityAt")
+    ] = None
+
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "_id",
+                "agentKey",
+                "userId",
+                "orgId",
+                "title",
+                "initiator",
+                "status",
+                "isShared",
+                "isDeleted",
+                "isArchived",
+                "conversationSource",
+                "deletedBy",
+                "lastActivityAt",
+                "createdAt",
+                "updatedAt",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class DeleteAgentConversationResponseTypedDict(TypedDict):
+    r"""Conversation deleted"""
+
+    message: NotRequired[str]
+    conversation: NotRequired[DeleteAgentConversationConversationTypedDict]
+
+
+class DeleteAgentConversationResponse(BaseModel):
+    r"""Conversation deleted"""
+
+    message: Optional[str] = None
+
+    conversation: Optional[DeleteAgentConversationConversation] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["message", "conversation"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    DeleteAgentConversationConversation.model_rebuild()
+except NameError:
+    pass

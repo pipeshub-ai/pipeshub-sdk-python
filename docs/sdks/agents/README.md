@@ -251,9 +251,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.agents.delete_agent(agent_key="<value>")
+    res = pipeshub.agents.delete_agent(agent_key="<value>")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -263,6 +264,10 @@ with Pipeshub(
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.DeleteAgentResponse](../../models/deleteagentresponse.md)**
 
 ### Errors
 

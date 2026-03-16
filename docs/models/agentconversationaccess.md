@@ -1,7 +1,5 @@
 # AgentConversationAccess
 
-Current user's access info
-
 
 ## Fields
 
