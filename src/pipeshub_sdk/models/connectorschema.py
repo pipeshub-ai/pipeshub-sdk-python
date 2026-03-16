@@ -793,7 +793,6 @@ class ConnectorSchemaFilters(BaseModel):
 class ConnectorSchemaTypedDict(TypedDict):
     r"""Schema definition for configuring a connector type"""
 
-    connector_type: NotRequired[str]
     icon_path: NotRequired[str]
     supports_realtime: NotRequired[bool]
     supports_sync: NotRequired[bool]
@@ -806,16 +805,10 @@ class ConnectorSchemaTypedDict(TypedDict):
     r"""Sync schema configuration"""
     filters: NotRequired[ConnectorSchemaFiltersTypedDict]
     r"""Filter schema configuration"""
-    required_fields: NotRequired[List[str]]
-    r"""Required field names"""
 
 
 class ConnectorSchema(BaseModel):
     r"""Schema definition for configuring a connector type"""
-
-    connector_type: Annotated[Optional[str], pydantic.Field(alias="connectorType")] = (
-        None
-    )
 
     icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
 
@@ -849,16 +842,10 @@ class ConnectorSchema(BaseModel):
     filters: Optional[ConnectorSchemaFilters] = None
     r"""Filter schema configuration"""
 
-    required_fields: Annotated[
-        Optional[List[str]], pydantic.Field(alias="requiredFields")
-    ] = None
-    r"""Required field names"""
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
             [
-                "connectorType",
                 "iconPath",
                 "supportsRealtime",
                 "supportsSync",
@@ -868,7 +855,6 @@ class ConnectorSchema(BaseModel):
                 "auth",
                 "sync",
                 "filters",
-                "requiredFields",
             ]
         )
         serialized = handler(self)

@@ -1,4 +1,4 @@
-# SearchResultItemMetadata
+# Metadata
 
 Additional metadata about the source
 

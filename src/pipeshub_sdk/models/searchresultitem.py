@@ -9,7 +9,7 @@ from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class SearchResultItemMetadataTypedDict(TypedDict):
+class MetadataTypedDict(TypedDict):
     r"""Additional metadata about the source"""
 
     record_id: NotRequired[str]
@@ -19,7 +19,7 @@ class SearchResultItemMetadataTypedDict(TypedDict):
     mime_type: NotRequired[str]
 
 
-class SearchResultItemMetadata(BaseModel):
+class Metadata(BaseModel):
     r"""Additional metadata about the source"""
 
     record_id: Annotated[Optional[str], pydantic.Field(alias="recordId")] = None
@@ -62,7 +62,7 @@ class SearchResultItemTypedDict(TypedDict):
     r"""Index of this chunk within the source document"""
     citation_type: NotRequired[str]
     r"""Type of citation/source"""
-    metadata: NotRequired[SearchResultItemMetadataTypedDict]
+    metadata: NotRequired[MetadataTypedDict]
     r"""Additional metadata about the source"""
     score: NotRequired[float]
     r"""Relevance score (higher is more relevant)"""
@@ -80,7 +80,7 @@ class SearchResultItem(BaseModel):
     citation_type: Annotated[Optional[str], pydantic.Field(alias="citationType")] = None
     r"""Type of citation/source"""
 
-    metadata: Optional[SearchResultItemMetadata] = None
+    metadata: Optional[Metadata] = None
     r"""Additional metadata about the source"""
 
     score: Optional[float] = None
@@ -106,7 +106,7 @@ class SearchResultItem(BaseModel):
 
 
 try:
-    SearchResultItemMetadata.model_rebuild()
+    Metadata.model_rebuild()
 except NameError:
     pass
 try:

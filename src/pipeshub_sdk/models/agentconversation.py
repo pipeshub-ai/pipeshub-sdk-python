@@ -106,12 +106,89 @@ class AgentConversationConversationError(BaseModel):
     pass
 
 
+class MessageRangeTypedDict(TypedDict):
+    start: NotRequired[int]
+    end: NotRequired[int]
+
+
+class MessageRange(BaseModel):
+    start: Optional[int] = None
+
+    end: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["start", "end"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class AgentConversationPaginationTypedDict(TypedDict):
     r"""Message pagination info"""
+
+    page: NotRequired[int]
+    limit: NotRequired[int]
+    total_count: NotRequired[int]
+    total_pages: NotRequired[int]
+    has_next_page: NotRequired[bool]
+    has_prev_page: NotRequired[bool]
+    message_range: NotRequired[MessageRangeTypedDict]
 
 
 class AgentConversationPagination(BaseModel):
     r"""Message pagination info"""
+
+    page: Optional[int] = None
+
+    limit: Optional[int] = None
+
+    total_count: Annotated[Optional[int], pydantic.Field(alias="totalCount")] = None
+
+    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
+
+    has_next_page: Annotated[Optional[bool], pydantic.Field(alias="hasNextPage")] = None
+
+    has_prev_page: Annotated[Optional[bool], pydantic.Field(alias="hasPrevPage")] = None
+
+    message_range: Annotated[
+        Optional[MessageRange], pydantic.Field(alias="messageRange")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "page",
+                "limit",
+                "totalCount",
+                "totalPages",
+                "hasNextPage",
+                "hasPrevPage",
+                "messageRange",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class AccessTypedDict(TypedDict):
@@ -300,6 +377,10 @@ except NameError:
     pass
 try:
     AgentConversationSharedWith.model_rebuild()
+except NameError:
+    pass
+try:
+    AgentConversationPagination.model_rebuild()
 except NameError:
     pass
 try:

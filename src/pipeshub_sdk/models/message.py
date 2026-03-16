@@ -46,53 +46,6 @@ ContentFormat = Union[
 r"""Format of the content for rendering"""
 
 
-class MessageMetadataTypedDict(TypedDict):
-    processing_time_ms: NotRequired[float]
-    r"""Time taken to generate response in milliseconds"""
-    model_version: NotRequired[str]
-    r"""Version of the AI model used"""
-    ai_transaction_id: NotRequired[str]
-    r"""Transaction ID for tracking in AI backend"""
-    reason: NotRequired[str]
-    r"""Additional context or reasoning"""
-
-
-class MessageMetadata(BaseModel):
-    processing_time_ms: Annotated[
-        Optional[float], pydantic.Field(alias="processingTimeMs")
-    ] = None
-    r"""Time taken to generate response in milliseconds"""
-
-    model_version: Annotated[Optional[str], pydantic.Field(alias="modelVersion")] = None
-    r"""Version of the AI model used"""
-
-    ai_transaction_id: Annotated[
-        Optional[str], pydantic.Field(alias="aiTransactionId")
-    ] = None
-    r"""Transaction ID for tracking in AI backend"""
-
-    reason: Optional[str] = None
-    r"""Additional context or reasoning"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            ["processingTimeMs", "modelVersion", "aiTransactionId", "reason"]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
 class MessageModelInfoTypedDict(TypedDict):
     r"""Model configuration used for this message"""
 
@@ -173,7 +126,6 @@ class MessageTypedDict(TypedDict):
     r"""Suggested follow-up questions"""
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     r"""User feedback on this message"""
-    metadata: NotRequired[MessageMetadataTypedDict]
     model_info: NotRequired[MessageModelInfoTypedDict]
     r"""Model configuration used for this message"""
     reference_data: NotRequired[List[ReferenceDatumTypedDict]]
@@ -227,8 +179,6 @@ class Message(BaseModel):
     feedback: Optional[List[MessageFeedback]] = None
     r"""User feedback on this message"""
 
-    metadata: Optional[MessageMetadata] = None
-
     model_info: Annotated[
         Optional[MessageModelInfo], pydantic.Field(alias="modelInfo")
     ] = None
@@ -255,7 +205,6 @@ class Message(BaseModel):
                 "confidence",
                 "followUpQuestions",
                 "feedback",
-                "metadata",
                 "modelInfo",
                 "referenceData",
                 "createdAt",
@@ -276,10 +225,6 @@ class Message(BaseModel):
         return m
 
 
-try:
-    MessageMetadata.model_rebuild()
-except NameError:
-    pass
 try:
     MessageModelInfo.model_rebuild()
 except NameError:
