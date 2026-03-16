@@ -85,11 +85,14 @@ ConversationSharedWithAccessLevel = Union[
 
 
 class ConversationSharedWithTypedDict(TypedDict):
+    id: NotRequired[str]
     user_id: NotRequired[str]
     access_level: NotRequired[ConversationSharedWithAccessLevel]
 
 
 class ConversationSharedWith(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
     access_level: Annotated[
@@ -98,7 +101,7 @@ class ConversationSharedWith(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["_id", "userId", "accessLevel"])
         serialized = handler(self)
         m = {}
 
@@ -129,6 +132,122 @@ ConversationAccessLevel = Union[
     UnrecognizedStr,
 ]
 r"""Current user's access level"""
+
+
+class ConversationMessageRangeTypedDict(TypedDict):
+    start: NotRequired[int]
+    end: NotRequired[int]
+
+
+class ConversationMessageRange(BaseModel):
+    start: Optional[int] = None
+
+    end: Optional[int] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["start", "end"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ConversationPaginationTypedDict(TypedDict):
+    r"""Message pagination info"""
+
+    page: NotRequired[int]
+    limit: NotRequired[int]
+    total_count: NotRequired[int]
+    total_pages: NotRequired[int]
+    has_next_page: NotRequired[bool]
+    has_prev_page: NotRequired[bool]
+    message_range: NotRequired[ConversationMessageRangeTypedDict]
+
+
+class ConversationPagination(BaseModel):
+    r"""Message pagination info"""
+
+    page: Optional[int] = None
+
+    limit: Optional[int] = None
+
+    total_count: Annotated[Optional[int], pydantic.Field(alias="totalCount")] = None
+
+    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
+
+    has_next_page: Annotated[Optional[bool], pydantic.Field(alias="hasNextPage")] = None
+
+    has_prev_page: Annotated[Optional[bool], pydantic.Field(alias="hasPrevPage")] = None
+
+    message_range: Annotated[
+        Optional[ConversationMessageRange], pydantic.Field(alias="messageRange")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "page",
+                "limit",
+                "totalCount",
+                "totalPages",
+                "hasNextPage",
+                "hasPrevPage",
+                "messageRange",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ConversationAccessTypedDict(TypedDict):
+    r"""Current user's access info"""
+
+    is_owner: NotRequired[bool]
+    access_level: NotRequired[str]
+
+
+class ConversationAccess(BaseModel):
+    r"""Current user's access info"""
+
+    is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
+
+    access_level: Annotated[Optional[str], pydantic.Field(alias="accessLevel")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["isOwner", "accessLevel"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class ConversationTypedDict(TypedDict):
@@ -188,6 +307,10 @@ class ConversationTypedDict(TypedDict):
     r"""Whether the current user owns this conversation"""
     access_level: NotRequired[ConversationAccessLevel]
     r"""Current user's access level"""
+    pagination: NotRequired[ConversationPaginationTypedDict]
+    r"""Message pagination info"""
+    access: NotRequired[ConversationAccessTypedDict]
+    r"""Current user's access info"""
     last_activity_at: NotRequired[int]
     r"""Unix timestamp of last activity"""
     v: NotRequired[int]
@@ -284,6 +407,12 @@ class Conversation(BaseModel):
     ] = None
     r"""Current user's access level"""
 
+    pagination: Optional[ConversationPagination] = None
+    r"""Message pagination info"""
+
+    access: Optional[ConversationAccess] = None
+    r"""Current user's access info"""
+
     last_activity_at: Annotated[
         Optional[int], pydantic.Field(alias="lastActivityAt")
     ] = None
@@ -320,6 +449,8 @@ class Conversation(BaseModel):
                 "conversationErrors",
                 "isOwner",
                 "accessLevel",
+                "pagination",
+                "access",
                 "lastActivityAt",
                 "__v",
                 "createdAt",
@@ -346,6 +477,14 @@ except NameError:
     pass
 try:
     ConversationSharedWith.model_rebuild()
+except NameError:
+    pass
+try:
+    ConversationPagination.model_rebuild()
+except NameError:
+    pass
+try:
+    ConversationAccess.model_rebuild()
 except NameError:
     pass
 try:

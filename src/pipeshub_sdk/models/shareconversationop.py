@@ -95,12 +95,18 @@ class ShareConversationMeta(BaseModel):
 class ShareConversationResponseTypedDict(TypedDict):
     r"""Conversation shared successfully"""
 
+    id: NotRequired[str]
+    is_shared: NotRequired[bool]
     shared_with: NotRequired[List[ShareConversationSharedWithTypedDict]]
     meta: NotRequired[ShareConversationMetaTypedDict]
 
 
 class ShareConversationResponse(BaseModel):
     r"""Conversation shared successfully"""
+
+    id: Optional[str] = None
+
+    is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = None
 
     shared_with: Annotated[
         Optional[List[ShareConversationSharedWith]], pydantic.Field(alias="sharedWith")
@@ -110,7 +116,7 @@ class ShareConversationResponse(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["sharedWith", "meta"])
+        optional_fields = set(["id", "isShared", "sharedWith", "meta"])
         serialized = handler(self)
         m = {}
 

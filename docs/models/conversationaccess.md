@@ -1,4 +1,4 @@
-# Access
+# ConversationAccess
 
 Current user's access info
 

@@ -106,12 +106,12 @@ class AgentConversationConversationError(BaseModel):
     pass
 
 
-class MessageRangeTypedDict(TypedDict):
+class AgentConversationMessageRangeTypedDict(TypedDict):
     start: NotRequired[int]
     end: NotRequired[int]
 
 
-class MessageRange(BaseModel):
+class AgentConversationMessageRange(BaseModel):
     start: Optional[int] = None
 
     end: Optional[int] = None
@@ -142,7 +142,7 @@ class AgentConversationPaginationTypedDict(TypedDict):
     total_pages: NotRequired[int]
     has_next_page: NotRequired[bool]
     has_prev_page: NotRequired[bool]
-    message_range: NotRequired[MessageRangeTypedDict]
+    message_range: NotRequired[AgentConversationMessageRangeTypedDict]
 
 
 class AgentConversationPagination(BaseModel):
@@ -161,7 +161,7 @@ class AgentConversationPagination(BaseModel):
     has_prev_page: Annotated[Optional[bool], pydantic.Field(alias="hasPrevPage")] = None
 
     message_range: Annotated[
-        Optional[MessageRange], pydantic.Field(alias="messageRange")
+        Optional[AgentConversationMessageRange], pydantic.Field(alias="messageRange")
     ] = None
 
     @model_serializer(mode="wrap")
@@ -191,14 +191,14 @@ class AgentConversationPagination(BaseModel):
         return m
 
 
-class AccessTypedDict(TypedDict):
+class AgentConversationAccessTypedDict(TypedDict):
     r"""Current user's access info"""
 
     is_owner: NotRequired[bool]
     access_level: NotRequired[str]
 
 
-class Access(BaseModel):
+class AgentConversationAccess(BaseModel):
     r"""Current user's access info"""
 
     is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
@@ -252,7 +252,7 @@ class AgentConversationTypedDict(TypedDict):
     r"""Errors encountered during conversation"""
     pagination: NotRequired[AgentConversationPaginationTypedDict]
     r"""Message pagination info"""
-    access: NotRequired[AccessTypedDict]
+    access: NotRequired[AgentConversationAccessTypedDict]
     r"""Current user's access info"""
     v: NotRequired[int]
     r"""Document version (MongoDB)"""
@@ -316,7 +316,7 @@ class AgentConversation(BaseModel):
     pagination: Optional[AgentConversationPagination] = None
     r"""Message pagination info"""
 
-    access: Optional[Access] = None
+    access: Optional[AgentConversationAccess] = None
     r"""Current user's access info"""
 
     v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
@@ -384,7 +384,7 @@ try:
 except NameError:
     pass
 try:
-    Access.model_rebuild()
+    AgentConversationAccess.model_rebuild()
 except NameError:
     pass
 try:

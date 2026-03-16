@@ -56,7 +56,9 @@ class UnarchiveConversationMeta(BaseModel):
 class UnarchiveConversationResponseTypedDict(TypedDict):
     r"""Conversation unarchived successfully"""
 
+    id: NotRequired[str]
     message: NotRequired[str]
+    status: NotRequired[str]
     unarchived_by: NotRequired[str]
     unarchived_at: NotRequired[datetime]
     meta: NotRequired[UnarchiveConversationMetaTypedDict]
@@ -65,7 +67,11 @@ class UnarchiveConversationResponseTypedDict(TypedDict):
 class UnarchiveConversationResponse(BaseModel):
     r"""Conversation unarchived successfully"""
 
+    id: Optional[str] = None
+
     message: Optional[str] = None
+
+    status: Optional[str] = None
 
     unarchived_by: Annotated[Optional[str], pydantic.Field(alias="unarchivedBy")] = None
 
@@ -77,7 +83,9 @@ class UnarchiveConversationResponse(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message", "unarchivedBy", "unarchivedAt", "meta"])
+        optional_fields = set(
+            ["id", "message", "status", "unarchivedBy", "unarchivedAt", "meta"]
+        )
         serialized = handler(self)
         m = {}
 

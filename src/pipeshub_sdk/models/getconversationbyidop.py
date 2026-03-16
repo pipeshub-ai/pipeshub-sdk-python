@@ -88,6 +88,7 @@ class GetConversationByIDMetaTypedDict(TypedDict):
     timestamp: NotRequired[datetime]
     duration: NotRequired[int]
     message_count: NotRequired[int]
+    conversation_id: NotRequired[str]
 
 
 class GetConversationByIDMeta(BaseModel):
@@ -99,9 +100,15 @@ class GetConversationByIDMeta(BaseModel):
 
     message_count: Annotated[Optional[int], pydantic.Field(alias="messageCount")] = None
 
+    conversation_id: Annotated[
+        Optional[str], pydantic.Field(alias="conversationId")
+    ] = None
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["requestId", "timestamp", "duration", "messageCount"])
+        optional_fields = set(
+            ["requestId", "timestamp", "duration", "messageCount", "conversationId"]
+        )
         serialized = handler(self)
         m = {}
 

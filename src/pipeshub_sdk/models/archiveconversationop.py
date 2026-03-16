@@ -56,7 +56,10 @@ class ArchiveConversationMeta(BaseModel):
 class ArchiveConversationResponseTypedDict(TypedDict):
     r"""Conversation archived successfully"""
 
+    id: NotRequired[str]
     message: NotRequired[str]
+    status: NotRequired[str]
+    archived_by: NotRequired[str]
     archived_at: NotRequired[datetime]
     meta: NotRequired[ArchiveConversationMetaTypedDict]
 
@@ -64,7 +67,13 @@ class ArchiveConversationResponseTypedDict(TypedDict):
 class ArchiveConversationResponse(BaseModel):
     r"""Conversation archived successfully"""
 
+    id: Optional[str] = None
+
     message: Optional[str] = None
+
+    status: Optional[str] = None
+
+    archived_by: Annotated[Optional[str], pydantic.Field(alias="archivedBy")] = None
 
     archived_at: Annotated[Optional[datetime], pydantic.Field(alias="archivedAt")] = (
         None
@@ -74,7 +83,9 @@ class ArchiveConversationResponse(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message", "archivedAt", "meta"])
+        optional_fields = set(
+            ["id", "message", "status", "archivedBy", "archivedAt", "meta"]
+        )
         serialized = handler(self)
         m = {}
 

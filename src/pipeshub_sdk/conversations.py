@@ -2966,6 +2966,19 @@ class Conversations(BaseSDK):
             Union[List[models.CitationFeedback], List[models.CitationFeedbackTypedDict]]
         ] = None,
         follow_up_questions_helpful: Optional[bool] = None,
+        feedback_provider: Optional[str] = None,
+        timestamp: Optional[int] = None,
+        metrics: Optional[Union[models.Metrics, models.MetricsTypedDict]] = None,
+        unused_follow_up_questions: Optional[
+            Union[
+                List[models.UnusedFollowUpQuestion],
+                List[models.UnusedFollowUpQuestionTypedDict],
+            ]
+        ] = None,
+        source: Optional[str] = None,
+        revisions: Optional[
+            Union[List[models.Revision], List[models.RevisionTypedDict]]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2998,6 +3011,12 @@ class Conversations(BaseSDK):
         :param comments:
         :param citation_feedback: Feedback on individual citations
         :param follow_up_questions_helpful: Were the suggested follow-up questions helpful
+        :param feedback_provider: User ID who provided feedback
+        :param timestamp: Feedback timestamp in milliseconds
+        :param metrics: Feedback metrics
+        :param unused_follow_up_questions: Follow-up questions not used
+        :param source: Source of feedback (e.g., user)
+        :param revisions: Feedback revisions
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3025,6 +3044,17 @@ class Conversations(BaseSDK):
                     citation_feedback, Optional[List[models.CitationFeedback]]
                 ),
                 follow_up_questions_helpful=follow_up_questions_helpful,
+                feedback_provider=feedback_provider,
+                timestamp=timestamp,
+                metrics=utils.get_pydantic_model(metrics, Optional[models.Metrics]),
+                unused_follow_up_questions=utils.get_pydantic_model(
+                    unused_follow_up_questions,
+                    Optional[List[models.UnusedFollowUpQuestion]],
+                ),
+                source=source,
+                revisions=utils.get_pydantic_model(
+                    revisions, Optional[List[models.Revision]]
+                ),
             ),
         )
 
@@ -3101,6 +3131,19 @@ class Conversations(BaseSDK):
             Union[List[models.CitationFeedback], List[models.CitationFeedbackTypedDict]]
         ] = None,
         follow_up_questions_helpful: Optional[bool] = None,
+        feedback_provider: Optional[str] = None,
+        timestamp: Optional[int] = None,
+        metrics: Optional[Union[models.Metrics, models.MetricsTypedDict]] = None,
+        unused_follow_up_questions: Optional[
+            Union[
+                List[models.UnusedFollowUpQuestion],
+                List[models.UnusedFollowUpQuestionTypedDict],
+            ]
+        ] = None,
+        source: Optional[str] = None,
+        revisions: Optional[
+            Union[List[models.Revision], List[models.RevisionTypedDict]]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3133,6 +3176,12 @@ class Conversations(BaseSDK):
         :param comments:
         :param citation_feedback: Feedback on individual citations
         :param follow_up_questions_helpful: Were the suggested follow-up questions helpful
+        :param feedback_provider: User ID who provided feedback
+        :param timestamp: Feedback timestamp in milliseconds
+        :param metrics: Feedback metrics
+        :param unused_follow_up_questions: Follow-up questions not used
+        :param source: Source of feedback (e.g., user)
+        :param revisions: Feedback revisions
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3160,6 +3209,17 @@ class Conversations(BaseSDK):
                     citation_feedback, Optional[List[models.CitationFeedback]]
                 ),
                 follow_up_questions_helpful=follow_up_questions_helpful,
+                feedback_provider=feedback_provider,
+                timestamp=timestamp,
+                metrics=utils.get_pydantic_model(metrics, Optional[models.Metrics]),
+                unused_follow_up_questions=utils.get_pydantic_model(
+                    unused_follow_up_questions,
+                    Optional[List[models.UnusedFollowUpQuestion]],
+                ),
+                source=source,
+                revisions=utils.get_pydantic_model(
+                    revisions, Optional[List[models.Revision]]
+                ),
             ),
         )
 

@@ -136,6 +136,30 @@ class CitationFeedback(BaseModel):
         return m
 
 
+class MetricsTypedDict(TypedDict):
+    r"""Feedback metrics"""
+
+
+class Metrics(BaseModel):
+    r"""Feedback metrics"""
+
+
+class UnusedFollowUpQuestionTypedDict(TypedDict):
+    pass
+
+
+class UnusedFollowUpQuestion(BaseModel):
+    pass
+
+
+class RevisionTypedDict(TypedDict):
+    pass
+
+
+class Revision(BaseModel):
+    pass
+
+
 class MessageFeedbackTypedDict(TypedDict):
     r"""Comprehensive feedback on an AI response. Feedback helps improve
     the AI's performance and response quality over time.
@@ -152,6 +176,18 @@ class MessageFeedbackTypedDict(TypedDict):
     r"""Feedback on individual citations"""
     follow_up_questions_helpful: NotRequired[bool]
     r"""Were the suggested follow-up questions helpful"""
+    feedback_provider: NotRequired[str]
+    r"""User ID who provided feedback"""
+    timestamp: NotRequired[int]
+    r"""Feedback timestamp in milliseconds"""
+    metrics: NotRequired[MetricsTypedDict]
+    r"""Feedback metrics"""
+    unused_follow_up_questions: NotRequired[List[UnusedFollowUpQuestionTypedDict]]
+    r"""Follow-up questions not used"""
+    source: NotRequired[str]
+    r"""Source of feedback (e.g., user)"""
+    revisions: NotRequired[List[RevisionTypedDict]]
+    r"""Feedback revisions"""
 
 
 class MessageFeedback(BaseModel):
@@ -180,6 +216,29 @@ class MessageFeedback(BaseModel):
     ] = None
     r"""Were the suggested follow-up questions helpful"""
 
+    feedback_provider: Annotated[
+        Optional[str], pydantic.Field(alias="feedbackProvider")
+    ] = None
+    r"""User ID who provided feedback"""
+
+    timestamp: Optional[int] = None
+    r"""Feedback timestamp in milliseconds"""
+
+    metrics: Optional[Metrics] = None
+    r"""Feedback metrics"""
+
+    unused_follow_up_questions: Annotated[
+        Optional[List[UnusedFollowUpQuestion]],
+        pydantic.Field(alias="unusedFollowUpQuestions"),
+    ] = None
+    r"""Follow-up questions not used"""
+
+    source: Optional[str] = None
+    r"""Source of feedback (e.g., user)"""
+
+    revisions: Optional[List[Revision]] = None
+    r"""Feedback revisions"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -190,6 +249,12 @@ class MessageFeedback(BaseModel):
                 "comments",
                 "citationFeedback",
                 "followUpQuestionsHelpful",
+                "feedbackProvider",
+                "timestamp",
+                "metrics",
+                "unusedFollowUpQuestions",
+                "source",
+                "revisions",
             ]
         )
         serialized = handler(self)
