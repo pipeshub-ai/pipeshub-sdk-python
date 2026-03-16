@@ -16,7 +16,7 @@ from typing import Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-Provider = Literal[
+AddAIModelProviderRequestProvider = Literal[
     "anthropic",
     "bedrock",
     "azureAI",
@@ -40,7 +40,15 @@ r"""Provider name"""
 
 
 class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Required fields vary by provider:<br>
+    <ul>
+    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
+    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
+    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
+    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
+    </ul>
+
+    """
 
     model: NotRequired[str]
     r"""Model name/identifier"""
@@ -61,7 +69,15 @@ class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
 
 
 class AddAIModelProviderRequestConfiguration(BaseModel):
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Required fields vary by provider:<br>
+    <ul>
+    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
+    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
+    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
+    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
+    </ul>
+
+    """
 
     model: Optional[str] = None
     r"""Model name/identifier"""
@@ -128,10 +144,18 @@ class AddAIModelProviderRequestTypedDict(TypedDict):
 
     model_type: ModelType
     r"""Type of AI model"""
-    provider: Provider
+    provider: AddAIModelProviderRequestProvider
     r"""Provider name"""
     configuration: AddAIModelProviderRequestConfigurationTypedDict
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Required fields vary by provider:<br>
+    <ul>
+    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
+    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
+    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
+    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
+    </ul>
+
+    """
     is_multimodal: NotRequired[bool]
     r"""Whether the model supports multimodal inputs"""
     is_reasoning: NotRequired[bool]
@@ -148,11 +172,19 @@ class AddAIModelProviderRequest(BaseModel):
     model_type: Annotated[ModelType, pydantic.Field(alias="modelType")]
     r"""Type of AI model"""
 
-    provider: Provider
+    provider: AddAIModelProviderRequestProvider
     r"""Provider name"""
 
     configuration: AddAIModelProviderRequestConfiguration
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Required fields vary by provider:<br>
+    <ul>
+    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
+    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
+    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
+    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
+    </ul>
+
+    """
 
     is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
         False

@@ -50,6 +50,7 @@ def test_aimodelsproviders_add_ai_model_provider():
             provider="cohere",
             configuration={
                 "model": "gpt-4",
+                "api_key": "sk-example-key",
             },
             is_multimodal=False,
             is_reasoning=False,
@@ -78,7 +79,7 @@ def test_aimodelsproviders_get_ai_models_providers():
                 ocr=[
                     models.AIModelConfiguration(
                         model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                        provider="openai",
+                        provider="azureAI",
                         configuration=models.AIModelConfigurationConfiguration(
                             model="gpt-4o",
                         ),
@@ -87,7 +88,7 @@ def test_aimodelsproviders_get_ai_models_providers():
                 embedding=[
                     models.AIModelConfiguration(
                         model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                        provider="openai",
+                        provider="huggingFace",
                         configuration=models.AIModelConfigurationConfiguration(
                             model="gpt-4o",
                         ),
@@ -96,7 +97,7 @@ def test_aimodelsproviders_get_ai_models_providers():
                 slm=[
                     models.AIModelConfiguration(
                         model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                        provider="openai",
+                        provider="fireworks",
                         configuration=models.AIModelConfigurationConfiguration(
                             model="gpt-4o",
                         ),
@@ -105,7 +106,7 @@ def test_aimodelsproviders_get_ai_models_providers():
                 llm=[
                     models.AIModelConfiguration(
                         model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                        provider="openai",
+                        provider="openAI",
                         configuration=models.AIModelConfigurationConfiguration(
                             model="gpt-4o",
                         ),
@@ -114,7 +115,7 @@ def test_aimodelsproviders_get_ai_models_providers():
                 reasoning=[
                     models.AIModelConfiguration(
                         model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                        provider="openai",
+                        provider="togetherAI",
                         configuration=models.AIModelConfigurationConfiguration(
                             model="gpt-4o",
                         ),
@@ -123,7 +124,7 @@ def test_aimodelsproviders_get_ai_models_providers():
                 multi_modal=[
                     models.AIModelConfiguration(
                         model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                        provider="openai",
+                        provider="openRouter",
                         configuration=models.AIModelConfigurationConfiguration(
                             model="gpt-4o",
                         ),

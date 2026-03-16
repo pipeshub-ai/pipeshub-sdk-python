@@ -20,7 +20,7 @@ def test_aimodelsconfiguration_get_ai_models_config():
         assert res == models.GetAIModelsConfigResponse(
             ocr=[
                 models.AIModelConfiguration(
-                    provider="openai",
+                    provider="azureDI",
                     configuration=models.AIModelConfigurationConfiguration(
                         model="gpt-4o",
                     ),
@@ -28,7 +28,7 @@ def test_aimodelsconfiguration_get_ai_models_config():
             ],
             embedding=[
                 models.AIModelConfiguration(
-                    provider="openai",
+                    provider="openRouter",
                     configuration=models.AIModelConfigurationConfiguration(
                         model="gpt-4o",
                     ),
@@ -36,7 +36,7 @@ def test_aimodelsconfiguration_get_ai_models_config():
             ],
             slm=[
                 models.AIModelConfiguration(
-                    provider="openai",
+                    provider="azureAI",
                     configuration=models.AIModelConfigurationConfiguration(
                         model="gpt-4o",
                     ),
@@ -44,7 +44,7 @@ def test_aimodelsconfiguration_get_ai_models_config():
             ],
             llm=[
                 models.AIModelConfiguration(
-                    provider="openai",
+                    provider="deepseek",
                     configuration=models.AIModelConfigurationConfiguration(
                         model="gpt-4o",
                     ),
@@ -52,7 +52,7 @@ def test_aimodelsconfiguration_get_ai_models_config():
             ],
             reasoning=[
                 models.AIModelConfiguration(
-                    provider="openai",
+                    provider="ollama",
                     configuration=models.AIModelConfigurationConfiguration(
                         model="gpt-4o",
                     ),
@@ -60,7 +60,7 @@ def test_aimodelsconfiguration_get_ai_models_config():
             ],
             multi_modal=[
                 models.AIModelConfiguration(
-                    provider="openai",
+                    provider="azureDI",
                     configuration=models.AIModelConfigurationConfiguration(
                         model="gpt-4o",
                     ),
@@ -83,7 +83,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             ocr=[
                 {
                     "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                    "provider": "openai",
+                    "provider": "openAI",
                     "configuration": {
                         "model": "gpt-4o",
                     },
@@ -92,7 +92,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             embedding=[
                 {
                     "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                    "provider": "openai",
+                    "provider": "openAI",
                     "configuration": {
                         "model": "gpt-4o",
                     },
@@ -100,7 +100,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             ],
             llm=[
                 {
-                    "provider": "openai",
+                    "provider": "groq",
                     "configuration": {
                         "model": "gpt-4o",
                         "api_key": "sk-example",
@@ -111,7 +111,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             slm=[
                 {
                     "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                    "provider": "openai",
+                    "provider": "openAI",
                     "configuration": {
                         "model": "gpt-4o",
                     },
@@ -120,7 +120,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             reasoning=[
                 {
                     "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                    "provider": "openai",
+                    "provider": "openAI",
                     "configuration": {
                         "model": "gpt-4o",
                     },
@@ -129,7 +129,7 @@ def test_aimodelsconfiguration_create_ai_models_config():
             multi_modal=[
                 {
                     "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-                    "provider": "openai",
+                    "provider": "openAI",
                     "configuration": {
                         "model": "gpt-4o",
                     },

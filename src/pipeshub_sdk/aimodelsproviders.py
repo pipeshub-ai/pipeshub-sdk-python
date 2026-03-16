@@ -371,7 +371,7 @@ class AiModelsProviders(BaseSDK):
         self,
         *,
         model_type: models.ModelType,
-        provider: models.Provider,
+        provider: models.AddAIModelProviderRequestProvider,
         configuration: Union[
             models.AddAIModelProviderRequestConfiguration,
             models.AddAIModelProviderRequestConfigurationTypedDict,
@@ -391,7 +391,14 @@ class AiModelsProviders(BaseSDK):
 
         :param model_type: Type of AI model
         :param provider: Provider name
-        :param configuration: Provider-specific configuration
+        :param configuration: Provider-specific configuration. Required fields vary by provider:<br>
+            <ul>
+            <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
+            <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
+            <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
+            <li><b>Ollama/self-hosted:</b> model, endpoint</li>
+            </ul>
+
         :param is_multimodal: Whether the model supports multimodal inputs
         :param is_reasoning: Whether this is a reasoning model
         :param is_default: Set as default model for this type
@@ -466,7 +473,7 @@ class AiModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "201", "application/json"):
+        if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AIModelProviderResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -485,7 +492,7 @@ class AiModelsProviders(BaseSDK):
         self,
         *,
         model_type: models.ModelType,
-        provider: models.Provider,
+        provider: models.AddAIModelProviderRequestProvider,
         configuration: Union[
             models.AddAIModelProviderRequestConfiguration,
             models.AddAIModelProviderRequestConfigurationTypedDict,
@@ -505,7 +512,14 @@ class AiModelsProviders(BaseSDK):
 
         :param model_type: Type of AI model
         :param provider: Provider name
-        :param configuration: Provider-specific configuration
+        :param configuration: Provider-specific configuration. Required fields vary by provider:<br>
+            <ul>
+            <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
+            <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
+            <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
+            <li><b>Ollama/self-hosted:</b> model, endpoint</li>
+            </ul>
+
         :param is_multimodal: Whether the model supports multimodal inputs
         :param is_reasoning: Whether this is a reasoning model
         :param is_default: Set as default model for this type
@@ -580,7 +594,7 @@ class AiModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "201", "application/json"):
+        if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AIModelProviderResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)

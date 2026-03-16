@@ -81,11 +81,11 @@ class CreateKBPermissionRequest(BaseModel):
     r"""Request payload"""
 
 
-class DetailsTypedDict(TypedDict):
+class CreateKBPermissionDetailsTypedDict(TypedDict):
     pass
 
 
-class Details(BaseModel):
+class CreateKBPermissionDetails(BaseModel):
     pass
 
 
@@ -95,7 +95,7 @@ class PermissionResultTypedDict(TypedDict):
     granted_users: NotRequired[List[str]]
     granted_teams: NotRequired[List[str]]
     role: NotRequired[str]
-    details: NotRequired[DetailsTypedDict]
+    details: NotRequired[CreateKBPermissionDetailsTypedDict]
 
 
 class PermissionResult(BaseModel):
@@ -113,7 +113,7 @@ class PermissionResult(BaseModel):
 
     role: Optional[str] = None
 
-    details: Optional[Details] = None
+    details: Optional[CreateKBPermissionDetails] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

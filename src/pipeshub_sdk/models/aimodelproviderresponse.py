@@ -2,11 +2,11 @@
 # @generated-id: 6f6c6bef899e
 
 from __future__ import annotations
-from .aimodelproviderconfig import AIModelProviderConfig, AIModelProviderConfigTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+import pydantic
 from pydantic import model_serializer
 from typing import Literal, Optional, Union
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 AIModelProviderResponseStatus = Union[
@@ -18,26 +18,30 @@ AIModelProviderResponseStatus = Union[
 ]
 
 
-class AIModelProviderResponseTypedDict(TypedDict):
-    r"""Response containing AI model provider details"""
+class DetailsTypedDict(TypedDict):
+    model_key: NotRequired[str]
+    model_type: NotRequired[str]
+    provider: NotRequired[str]
+    model: NotRequired[str]
+    is_default: NotRequired[bool]
 
-    status: NotRequired[AIModelProviderResponseStatus]
-    message: NotRequired[str]
-    data: NotRequired[AIModelProviderConfigTypedDict]
 
+class Details(BaseModel):
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
 
-class AIModelProviderResponse(BaseModel):
-    r"""Response containing AI model provider details"""
+    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
 
-    status: Optional[AIModelProviderResponseStatus] = None
+    provider: Optional[str] = None
 
-    message: Optional[str] = None
+    model: Optional[str] = None
 
-    data: Optional[AIModelProviderConfig] = None
+    is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["status", "message", "data"])
+        optional_fields = set(
+            ["modelKey", "modelType", "provider", "model", "isDefault"]
+        )
         serialized = handler(self)
         m = {}
 
@@ -50,3 +54,43 @@ class AIModelProviderResponse(BaseModel):
                     m[k] = val
 
         return m
+
+
+class AIModelProviderResponseTypedDict(TypedDict):
+    r"""Response containing AI model provider details"""
+
+    status: NotRequired[AIModelProviderResponseStatus]
+    message: NotRequired[str]
+    details: NotRequired[DetailsTypedDict]
+
+
+class AIModelProviderResponse(BaseModel):
+    r"""Response containing AI model provider details"""
+
+    status: Optional[AIModelProviderResponseStatus] = None
+
+    message: Optional[str] = None
+
+    details: Optional[Details] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["status", "message", "details"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    Details.model_rebuild()
+except NameError:
+    pass

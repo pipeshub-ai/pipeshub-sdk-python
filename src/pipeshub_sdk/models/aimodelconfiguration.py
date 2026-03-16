@@ -8,11 +8,38 @@ from pipeshub_sdk.types import (
     OptionalNullable,
     UNSET,
     UNSET_SENTINEL,
+    UnrecognizedStr,
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+AIModelConfigurationProvider = Union[
+    Literal[
+        "anthropic",
+        "bedrock",
+        "azureAI",
+        "azureOpenAI",
+        "cohere",
+        "deepseek",
+        "fireworks",
+        "google",
+        "groq",
+        "huggingFace",
+        "mistral",
+        "ollama",
+        "openAI",
+        "openRouter",
+        "togetherAI",
+        "voyageAI",
+        "azureDI",
+        "ocrmypdf",
+    ],
+    UnrecognizedStr,
+]
+r"""Model provider"""
 
 
 class AIModelConfigurationConfigurationTypedDict(TypedDict):
@@ -88,8 +115,8 @@ class AIModelConfigurationTypedDict(TypedDict):
 
     model_key: NotRequired[str]
     r"""Unique identifier for this model configuration"""
-    provider: NotRequired[str]
-    r"""Model provider (e.g., openai, azure_openai, google, aws_bedrock)"""
+    provider: NotRequired[AIModelConfigurationProvider]
+    r"""Model provider"""
     configuration: NotRequired[AIModelConfigurationConfigurationTypedDict]
     r"""Provider-specific configuration"""
     is_multimodal: NotRequired[bool]
@@ -108,8 +135,8 @@ class AIModelConfiguration(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""Unique identifier for this model configuration"""
 
-    provider: Optional[str] = None
-    r"""Model provider (e.g., openai, azure_openai, google, aws_bedrock)"""
+    provider: Optional[AIModelConfigurationProvider] = None
+    r"""Model provider"""
 
     configuration: Optional[AIModelConfigurationConfiguration] = None
     r"""Provider-specific configuration"""
