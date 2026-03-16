@@ -7,10 +7,15 @@ Permission level for shared users:
 </ul>
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ShareRequestAccessLevel
+value: ShareRequestAccessLevel = "read"
+```
+
 
 ## Values
 
-| Name    | Value   |
-| ------- | ------- |
-| `READ`  | read    |
-| `WRITE` | write   |
+- `"read"`
+- `"write"`

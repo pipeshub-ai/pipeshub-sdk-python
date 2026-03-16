@@ -2,12 +2,13 @@
 # @generated-id: 319307f2cc5b
 
 from __future__ import annotations
+from .message import Message, MessageTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -30,6 +31,52 @@ class DeleteAgentConversationRequest(BaseModel):
     ]
 
 
+class DeleteAgentConversationModelInfoTypedDict(TypedDict):
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    chat_mode: NotRequired[str]
+
+
+class DeleteAgentConversationModelInfo(BaseModel):
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["modelKey", "modelName", "chatMode"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class DeleteAgentConversationSharedWithTypedDict(TypedDict):
+    pass
+
+
+class DeleteAgentConversationSharedWith(BaseModel):
+    pass
+
+
+class DeleteAgentConversationConversationErrorTypedDict(TypedDict):
+    pass
+
+
+class DeleteAgentConversationConversationError(BaseModel):
+    pass
+
+
 class DeleteAgentConversationConversationTypedDict(TypedDict):
     id: NotRequired[str]
     agent_key: NotRequired[str]
@@ -37,13 +84,20 @@ class DeleteAgentConversationConversationTypedDict(TypedDict):
     org_id: NotRequired[str]
     title: NotRequired[str]
     initiator: NotRequired[str]
+    messages: NotRequired[List[MessageTypedDict]]
     status: NotRequired[str]
+    model_info: NotRequired[DeleteAgentConversationModelInfoTypedDict]
     is_shared: NotRequired[bool]
+    shared_with: NotRequired[List[DeleteAgentConversationSharedWithTypedDict]]
     is_deleted: NotRequired[bool]
     is_archived: NotRequired[bool]
     conversation_source: NotRequired[str]
+    conversation_errors: NotRequired[
+        List[DeleteAgentConversationConversationErrorTypedDict]
+    ]
     deleted_by: NotRequired[str]
     last_activity_at: NotRequired[int]
+    v: NotRequired[int]
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -61,9 +115,20 @@ class DeleteAgentConversationConversation(BaseModel):
 
     initiator: Optional[str] = None
 
+    messages: Optional[List[Message]] = None
+
     status: Optional[str] = None
 
+    model_info: Annotated[
+        Optional[DeleteAgentConversationModelInfo], pydantic.Field(alias="modelInfo")
+    ] = None
+
     is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = None
+
+    shared_with: Annotated[
+        Optional[List[DeleteAgentConversationSharedWith]],
+        pydantic.Field(alias="sharedWith"),
+    ] = None
 
     is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = None
 
@@ -73,11 +138,18 @@ class DeleteAgentConversationConversation(BaseModel):
         Optional[str], pydantic.Field(alias="conversationSource")
     ] = None
 
+    conversation_errors: Annotated[
+        Optional[List[DeleteAgentConversationConversationError]],
+        pydantic.Field(alias="conversationErrors"),
+    ] = None
+
     deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
 
     last_activity_at: Annotated[
         Optional[int], pydantic.Field(alias="lastActivityAt")
     ] = None
+
+    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
@@ -93,13 +165,18 @@ class DeleteAgentConversationConversation(BaseModel):
                 "orgId",
                 "title",
                 "initiator",
+                "messages",
                 "status",
+                "modelInfo",
                 "isShared",
+                "sharedWith",
                 "isDeleted",
                 "isArchived",
                 "conversationSource",
+                "conversationErrors",
                 "deletedBy",
                 "lastActivityAt",
+                "__v",
                 "createdAt",
                 "updatedAt",
             ]
@@ -109,7 +186,7 @@ class DeleteAgentConversationConversation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -140,7 +217,7 @@ class DeleteAgentConversationResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -149,6 +226,10 @@ class DeleteAgentConversationResponse(BaseModel):
         return m
 
 
+try:
+    DeleteAgentConversationModelInfo.model_rebuild()
+except NameError:
+    pass
 try:
     DeleteAgentConversationConversation.model_rebuild()
 except NameError:
