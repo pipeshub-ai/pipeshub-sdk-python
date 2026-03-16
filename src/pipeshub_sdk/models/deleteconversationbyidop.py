@@ -2,6 +2,7 @@
 # @generated-id: 411776652def
 
 from __future__ import annotations
+from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
@@ -24,20 +25,22 @@ class DeleteConversationByIDRequest(BaseModel):
     r"""Unique conversation identifier"""
 
 
-class DeleteConversationByIDResponseTypedDict(TypedDict):
-    r"""Conversation deleted successfully"""
+class DeleteConversationByIDMetaTypedDict(TypedDict):
+    request_id: NotRequired[str]
+    timestamp: NotRequired[datetime]
+    duration: NotRequired[int]
 
-    message: NotRequired[str]
 
+class DeleteConversationByIDMeta(BaseModel):
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
 
-class DeleteConversationByIDResponse(BaseModel):
-    r"""Conversation deleted successfully"""
+    timestamp: Optional[datetime] = None
 
-    message: Optional[str] = None
+    duration: Optional[int] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message"])
+        optional_fields = set(["requestId", "timestamp", "duration"])
         serialized = handler(self)
         m = {}
 
@@ -50,3 +53,71 @@ class DeleteConversationByIDResponse(BaseModel):
                     m[k] = val
 
         return m
+
+
+class DeleteConversationByIDResponseTypedDict(TypedDict):
+    r"""Conversation deleted successfully"""
+
+    id: NotRequired[str]
+    message: NotRequired[str]
+    status: NotRequired[str]
+    deleted_at: NotRequired[datetime]
+    deleted_by: NotRequired[str]
+    citations_deleted: NotRequired[int]
+    meta: NotRequired[DeleteConversationByIDMetaTypedDict]
+
+
+class DeleteConversationByIDResponse(BaseModel):
+    r"""Conversation deleted successfully"""
+
+    id: Optional[str] = None
+
+    message: Optional[str] = None
+
+    status: Optional[str] = None
+
+    deleted_at: Annotated[Optional[datetime], pydantic.Field(alias="deletedAt")] = None
+
+    deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
+
+    citations_deleted: Annotated[
+        Optional[int], pydantic.Field(alias="citationsDeleted")
+    ] = None
+
+    meta: Optional[DeleteConversationByIDMeta] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "id",
+                "message",
+                "status",
+                "deletedAt",
+                "deletedBy",
+                "citationsDeleted",
+                "meta",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    DeleteConversationByIDMeta.model_rebuild()
+except NameError:
+    pass
+try:
+    DeleteConversationByIDResponse.model_rebuild()
+except NameError:
+    pass

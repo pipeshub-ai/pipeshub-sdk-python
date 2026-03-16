@@ -189,9 +189,7 @@ def test_conversations_delete_conversation_by_id():
 
         res = pipeshub.conversations.delete(conversation_id="<value>")
         assert res is not None
-        assert res == models.DeleteConversationByIDResponse(
-            message="Conversation deleted successfully",
-        )
+        assert res == models.DeleteConversationByIDResponse()
 
 
 def test_conversations_add_message():

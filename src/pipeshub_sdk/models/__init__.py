@@ -540,6 +540,8 @@ if TYPE_CHECKING:
         DeleteConnectorInstanceResponseTypedDict,
     )
     from .deleteconversationbyidop import (
+        DeleteConversationByIDMeta,
+        DeleteConversationByIDMetaTypedDict,
         DeleteConversationByIDRequest,
         DeleteConversationByIDRequestTypedDict,
         DeleteConversationByIDResponse,
@@ -2513,6 +2515,8 @@ __all__ = [
     "DeleteConnectorInstanceRequestTypedDict",
     "DeleteConnectorInstanceResponse",
     "DeleteConnectorInstanceResponseTypedDict",
+    "DeleteConversationByIDMeta",
+    "DeleteConversationByIDMetaTypedDict",
     "DeleteConversationByIDRequest",
     "DeleteConversationByIDRequestTypedDict",
     "DeleteConversationByIDResponse",
@@ -4139,6 +4143,8 @@ _dynamic_imports: dict[str, str] = {
     "DeleteConnectorInstanceRequestTypedDict": ".deleteconnectorinstanceop",
     "DeleteConnectorInstanceResponse": ".deleteconnectorinstanceop",
     "DeleteConnectorInstanceResponseTypedDict": ".deleteconnectorinstanceop",
+    "DeleteConversationByIDMeta": ".deleteconversationbyidop",
+    "DeleteConversationByIDMetaTypedDict": ".deleteconversationbyidop",
     "DeleteConversationByIDRequest": ".deleteconversationbyidop",
     "DeleteConversationByIDRequestTypedDict": ".deleteconversationbyidop",
     "DeleteConversationByIDResponse": ".deleteconversationbyidop",
