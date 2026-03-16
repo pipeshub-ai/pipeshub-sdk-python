@@ -28,7 +28,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.authentication_configuration.set_microsoft(client_id="12345678-1234-1234-1234-123456789abc", tenant_id="common")
+    pipeshub.authentication_configuration.set_microsoft(client_id="12345678-1234-1234-1234-123456789abc", tenant_id="common", authority="https://login.microsoftonline.com/common")
 
     # Use the SDK ...
 
@@ -40,6 +40,8 @@ with Pipeshub(
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `client_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft application client ID                                     | 12345678-1234-1234-1234-123456789abc                                |
 | `tenant_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft tenant ID                                                 |                                                                     |
+| `authority`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft authority URL                                             | https://login.microsoftonline.com/common                            |
+| `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |                                                                     |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Errors
@@ -118,6 +120,7 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `client_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Google OAuth client ID                                              | 123456789-abc.apps.googleusercontent.com                            |
+| `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |                                                                     |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Errors
