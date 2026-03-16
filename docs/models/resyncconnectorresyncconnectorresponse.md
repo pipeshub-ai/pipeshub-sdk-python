@@ -5,5 +5,7 @@ Resync operation result
 
 ## Fields
 
-| Field       | Type        | Required    | Description |
-| ----------- | ----------- | ----------- | ----------- |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `success`          | *Optional[bool]*   | :heavy_minus_sign: | N/A                |
+| `message`          | *Optional[str]*    | :heavy_minus_sign: | N/A                |

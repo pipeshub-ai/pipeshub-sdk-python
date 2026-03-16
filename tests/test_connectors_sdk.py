@@ -19,6 +19,4 @@ def test_connectors_sdk_resync_connector():
             connector_name="GOOGLE_DRIVE", connector_id="<id>", full_sync=False
         )
         assert res is not None
-        assert res == models.ResyncConnectorResponse(
-            resync_connector_response=models.ResyncConnectorResyncConnectorResponse(),
-        )
+        assert res == models.ResyncConnectorResponse()
