@@ -2,7 +2,6 @@
 # @generated-id: 47e62c67f326
 
 from __future__ import annotations
-from .filters import Filters, FiltersTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
@@ -14,39 +13,37 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class RegenerateAgentAnswerRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    filters: NotRequired[FiltersTypedDict]
-    model_key: NotRequired[str]
     model_name: NotRequired[str]
+    r"""Model name"""
+    model_provider: NotRequired[str]
+    r"""Model provider"""
     chat_mode: NotRequired[str]
-    model_friendly_name: NotRequired[str]
+    r"""Chat mode"""
 
 
 class RegenerateAgentAnswerRequestBody(BaseModel):
     r"""Request payload"""
 
-    filters: Optional[Filters] = None
-
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+    r"""Model name"""
+
+    model_provider: Annotated[Optional[str], pydantic.Field(alias="modelProvider")] = (
+        None
+    )
+    r"""Model provider"""
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
-
-    model_friendly_name: Annotated[
-        Optional[str], pydantic.Field(alias="modelFriendlyName")
-    ] = None
+    r"""Chat mode"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            ["filters", "modelKey", "modelName", "chatMode", "modelFriendlyName"]
-        )
+        optional_fields = set(["modelName", "modelProvider", "chatMode"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -96,7 +93,7 @@ class RegenerateAgentAnswerRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

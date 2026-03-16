@@ -212,6 +212,7 @@ def test_conversations_add_message():
                     "550e8400-e29b-41d4-a716-446655440000",
                 ],
             },
+            timezone="Asia/Calcutta",
         )
         assert res is not None
         assert res == models.AddMessageResponse(

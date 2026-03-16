@@ -2,6 +2,7 @@
 # @generated-id: 0ca561aedc86
 
 from .basesdk import BaseSDK
+from datetime import datetime
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
@@ -422,7 +423,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -571,7 +571,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1385,6 +1384,9 @@ class Conversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1414,6 +1416,9 @@ class Conversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1438,6 +1443,9 @@ class Conversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1474,7 +1482,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="addMessage",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1509,6 +1517,9 @@ class Conversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1538,6 +1549,9 @@ class Conversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1562,6 +1576,9 @@ class Conversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1598,7 +1615,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="addMessage",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1633,6 +1650,9 @@ class Conversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1655,6 +1675,9 @@ class Conversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1679,6 +1702,9 @@ class Conversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1731,7 +1757,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1759,6 +1784,9 @@ class Conversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1781,6 +1809,9 @@ class Conversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1805,6 +1836,9 @@ class Conversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1857,7 +1891,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -2822,7 +2855,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -2959,7 +2991,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)

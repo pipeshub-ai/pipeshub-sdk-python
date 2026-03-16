@@ -3,11 +3,20 @@
 
 from __future__ import annotations
 from .filters import Filters, FiltersTypedDict
+from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+class ToolTypedDict(TypedDict):
+    pass
+
+
+class Tool(BaseModel):
+    pass
 
 
 class AddMessageRequestTypedDict(TypedDict):
@@ -24,6 +33,12 @@ class AddMessageRequestTypedDict(TypedDict):
     r"""Chat mode for this message"""
     model_friendly_name: NotRequired[str]
     r"""Friendly display name of the model"""
+    timezone: NotRequired[str]
+    r"""User's timezone"""
+    current_time: NotRequired[datetime]
+    r"""Current time in ISO 8601 format"""
+    tools: NotRequired[List[ToolTypedDict]]
+    r"""Tools available for this message"""
 
 
 class AddMessageRequest(BaseModel):
@@ -48,17 +63,37 @@ class AddMessageRequest(BaseModel):
     ] = None
     r"""Friendly display name of the model"""
 
+    timezone: Optional[str] = None
+    r"""User's timezone"""
+
+    current_time: Annotated[Optional[datetime], pydantic.Field(alias="currentTime")] = (
+        None
+    )
+    r"""Current time in ISO 8601 format"""
+
+    tools: Optional[List[Tool]] = None
+    r"""Tools available for this message"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["filters", "modelKey", "modelName", "chatMode", "modelFriendlyName"]
+            [
+                "filters",
+                "modelKey",
+                "modelName",
+                "chatMode",
+                "modelFriendlyName",
+                "timezone",
+                "currentTime",
+                "tools",
+            ]
         )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

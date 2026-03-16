@@ -31,7 +31,12 @@ if TYPE_CHECKING:
         AddMessageResponse,
         AddMessageResponseTypedDict,
     )
-    from .addmessagerequest import AddMessageRequest, AddMessageRequestTypedDict
+    from .addmessagerequest import (
+        AddMessageRequest,
+        AddMessageRequestTypedDict,
+        Tool,
+        ToolTypedDict,
+    )
     from .addmessagestreamop import (
         AddMessageStreamRequest,
         AddMessageStreamRequestTypedDict,
@@ -3335,6 +3340,8 @@ __all__ = [
     "TokenPasswordResetRequest",
     "TokenPasswordResetRequestTypedDict",
     "TokenType",
+    "Tool",
+    "ToolTypedDict",
     "Topic",
     "TopicTypedDict",
     "URLConfig",
@@ -3620,6 +3627,8 @@ _dynamic_imports: dict[str, str] = {
     "AddMessageResponseTypedDict": ".addmessageop",
     "AddMessageRequest": ".addmessagerequest",
     "AddMessageRequestTypedDict": ".addmessagerequest",
+    "Tool": ".addmessagerequest",
+    "ToolTypedDict": ".addmessagerequest",
     "AddMessageStreamRequest": ".addmessagestreamop",
     "AddMessageStreamRequestTypedDict": ".addmessagestreamop",
     "Address": ".address",

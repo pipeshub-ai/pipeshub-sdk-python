@@ -2,6 +2,7 @@
 # @generated-id: 3dc119d98ba9
 
 from .basesdk import BaseSDK
+from datetime import datetime
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
@@ -585,7 +586,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -719,7 +719,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1120,6 +1119,9 @@ class AgentConversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1137,6 +1139,9 @@ class AgentConversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1162,6 +1167,9 @@ class AgentConversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1234,6 +1242,9 @@ class AgentConversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1251,6 +1262,9 @@ class AgentConversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1276,6 +1290,9 @@ class AgentConversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1348,6 +1365,9 @@ class AgentConversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1365,6 +1385,9 @@ class AgentConversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1390,6 +1413,9 @@ class AgentConversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1442,7 +1468,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1471,6 +1496,9 @@ class AgentConversations(BaseSDK):
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1488,6 +1516,9 @@ class AgentConversations(BaseSDK):
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
         :param model_friendly_name: Friendly display name of the model
+        :param timezone: User's timezone
+        :param current_time: Current time in ISO 8601 format
+        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1513,6 +1544,9 @@ class AgentConversations(BaseSDK):
                 model_name=model_name,
                 chat_mode=chat_mode,
                 model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
@@ -1565,7 +1599,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1589,11 +1622,9 @@ class AgentConversations(BaseSDK):
         agent_key: str,
         conversation_id: str,
         message_id: str,
-        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
-        model_key: Optional[str] = None,
         model_name: Optional[str] = None,
+        model_provider: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1609,11 +1640,9 @@ class AgentConversations(BaseSDK):
         :param agent_key:
         :param conversation_id:
         :param message_id:
-        :param filters:
-        :param model_key:
-        :param model_name:
-        :param chat_mode:
-        :param model_friendly_name:
+        :param model_name: Model name
+        :param model_provider: Model provider
+        :param chat_mode: Chat mode
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1634,11 +1663,9 @@ class AgentConversations(BaseSDK):
             conversation_id=conversation_id,
             message_id=message_id,
             body=models.RegenerateAgentAnswerRequestBody(
-                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
-                model_key=model_key,
                 model_name=model_name,
+                model_provider=model_provider,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -1695,7 +1722,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1719,11 +1745,9 @@ class AgentConversations(BaseSDK):
         agent_key: str,
         conversation_id: str,
         message_id: str,
-        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
-        model_key: Optional[str] = None,
         model_name: Optional[str] = None,
+        model_provider: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1739,11 +1763,9 @@ class AgentConversations(BaseSDK):
         :param agent_key:
         :param conversation_id:
         :param message_id:
-        :param filters:
-        :param model_key:
-        :param model_name:
-        :param chat_mode:
-        :param model_friendly_name:
+        :param model_name: Model name
+        :param model_provider: Model provider
+        :param chat_mode: Chat mode
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1764,11 +1786,9 @@ class AgentConversations(BaseSDK):
             conversation_id=conversation_id,
             message_id=message_id,
             body=models.RegenerateAgentAnswerRequestBody(
-                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
-                model_key=model_key,
                 model_name=model_name,
+                model_provider=model_provider,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -1825,7 +1845,6 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
