@@ -39,14 +39,6 @@ class UpdateMessageFeedbackRequest(BaseModel):
     r"""Request payload"""
 
 
-class FeedbackTypedDict(TypedDict):
-    r"""Feedback details"""
-
-
-class Feedback(BaseModel):
-    r"""Feedback details"""
-
-
 class UpdateMessageFeedbackMetaTypedDict(TypedDict):
     request_id: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -82,8 +74,11 @@ class UpdateMessageFeedbackResponseTypedDict(TypedDict):
 
     conversation_id: NotRequired[str]
     message_id: NotRequired[str]
-    feedback: NotRequired[FeedbackTypedDict]
-    r"""Feedback details"""
+    feedback: NotRequired[MessageFeedbackTypedDict]
+    r"""Comprehensive feedback on an AI response. Feedback helps improve
+    the AI's performance and response quality over time.
+
+    """
     meta: NotRequired[UpdateMessageFeedbackMetaTypedDict]
 
 
@@ -96,8 +91,11 @@ class UpdateMessageFeedbackResponse(BaseModel):
 
     message_id: Annotated[Optional[str], pydantic.Field(alias="messageId")] = None
 
-    feedback: Optional[Feedback] = None
-    r"""Feedback details"""
+    feedback: Optional[MessageFeedback] = None
+    r"""Comprehensive feedback on an AI response. Feedback helps improve
+    the AI's performance and response quality over time.
+
+    """
 
     meta: Optional[UpdateMessageFeedbackMeta] = None
 

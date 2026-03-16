@@ -1968,8 +1968,6 @@ if TYPE_CHECKING:
         UpdateLastNameResponseTypedDict,
     )
     from .updatemessagefeedbackop import (
-        Feedback,
-        FeedbackTypedDict,
         UpdateMessageFeedbackMeta,
         UpdateMessageFeedbackMetaTypedDict,
         UpdateMessageFeedbackRequest,
@@ -2591,8 +2589,6 @@ __all__ = [
     "FailureTypedDict",
     "FeatureFlag",
     "FeatureFlagTypedDict",
-    "Feedback",
-    "FeedbackTypedDict",
     "FileRecord",
     "FileRecordTypedDict",
     "Filter",
@@ -5190,8 +5186,6 @@ _dynamic_imports: dict[str, str] = {
     "UpdateLastNameRequestTypedDict": ".updatelastnameop",
     "UpdateLastNameResponse": ".updatelastnameop",
     "UpdateLastNameResponseTypedDict": ".updatelastnameop",
-    "Feedback": ".updatemessagefeedbackop",
-    "FeedbackTypedDict": ".updatemessagefeedbackop",
     "UpdateMessageFeedbackMeta": ".updatemessagefeedbackop",
     "UpdateMessageFeedbackMetaTypedDict": ".updatemessagefeedbackop",
     "UpdateMessageFeedbackRequest": ".updatemessagefeedbackop",
