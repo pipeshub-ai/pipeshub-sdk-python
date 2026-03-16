@@ -6,19 +6,19 @@ Team management operations
 
 ### Available Operations
 
-* [create](#create) - Create a team
-* [list](#list) - List teams
-* [get_by_id](#get_by_id) - Get team by ID
-* [update](#update) - Update team
-* [delete](#delete) - Delete team
-* [get_user](#get_user) - Get current user's teams
-* [get_members](#get_members) - Get users in team
-* [add_users](#add_users) - Add users to team
-* [remove_users](#remove_users) - Remove user from team
-* [update_user_permissions](#update_user_permissions) - Update team users permissions
-* [list_created](#list_created) - Get user created teams
+* [create_team](#create_team) - Create a team
+* [list_teams](#list_teams) - List teams
+* [get_team_by_id](#get_team_by_id) - Get team by ID
+* [update_team](#update_team) - Update team
+* [delete_team](#delete_team) - Delete team
+* [get_user_teams](#get_user_teams) - Get current user's teams
+* [get_team_users](#get_team_users) - Get users in team
+* [add_users_to_team](#add_users_to_team) - Add users to team
+* [remove_user_from_team](#remove_user_from_team) - Remove user from team
+* [update_team_users_permissions](#update_team_users_permissions) - Update team users permissions
+* [get_user_created_teams](#get_user_created_teams) - Get user created teams
 
-## create
+## create_team
 
 Create a new team within the organization for project collaboration and resource sharing.<br><br>
 <b>Overview:</b><br>
@@ -49,7 +49,7 @@ You can optionally add initial members with their roles during creation using th
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createTeam" method="post" path="/teams" -->
+<!-- UsageSnippet language="python" operationID="createTeam" method="post" path="/api/v1/teams" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -61,7 +61,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.create(name="Engineering Team", description="Core engineering team for product development")
+    res = pipeshub.teams.create_team(name="Engineering Team", description="Core engineering team for product development")
 
     # Handle response
     print(res)
@@ -87,7 +87,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## list_teams
 
 Retrieve all teams in the organization with optional search and pagination.<br><br>
 <b>Overview:</b><br>
@@ -112,7 +112,7 @@ Results are sorted by name alphabetically by default.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listTeams" method="get" path="/teams" -->
+<!-- UsageSnippet language="python" operationID="listTeams" method="get" path="/api/v1/teams" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -124,7 +124,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.list(search="engineering", limit=10, page=1)
+    res = pipeshub.teams.list_teams(search="engineering", limit=10, page=1)
 
     # Handle response
     print(res)
@@ -150,7 +150,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_team_by_id
 
 Retrieve detailed information about a specific team.<br><br>
 <b>Overview:</b><br>
@@ -172,7 +172,7 @@ Returns complete team details including metadata, member list with roles, and re
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getTeamById" method="get" path="/teams/{teamId}" -->
+<!-- UsageSnippet language="python" operationID="getTeamById" method="get" path="/api/v1/teams/{teamId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -184,7 +184,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.get_by_id(team_id="507f1f77bcf86cd799439011")
+    res = pipeshub.teams.get_team_by_id(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -208,7 +208,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_team
 
 Update team metadata and settings.<br><br>
 <b>Overview:</b><br>
@@ -234,7 +234,7 @@ This endpoint allows updating team properties like name and description. Member 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateTeam" method="put" path="/teams/{teamId}" -->
+<!-- UsageSnippet language="python" operationID="updateTeam" method="put" path="/api/v1/teams/{teamId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -246,7 +246,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.update(team_id="507f1f77bcf86cd799439011", name="Core Engineering Team", description="Primary engineering team for product development")
+    res = pipeshub.teams.update_team(team_id="507f1f77bcf86cd799439011", name="Core Engineering Team", description="Primary engineering team for product development")
 
     # Handle response
     print(res)
@@ -272,7 +272,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_team
 
 Delete a team from the organization.<br><br>
 <b>Behavior:</b><br>
@@ -290,7 +290,7 @@ Delete a team from the organization.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteTeam" method="delete" path="/teams/{teamId}" -->
+<!-- UsageSnippet language="python" operationID="deleteTeam" method="delete" path="/api/v1/teams/{teamId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -302,7 +302,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.delete(team_id="507f1f77bcf86cd799439011")
+    res = pipeshub.teams.delete_team(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -326,7 +326,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_user
+## get_user_teams
 
 Retrieve all teams that the authenticated user is a member of.<br><br>
 <b>Response Details:</b><br>
@@ -345,7 +345,7 @@ Retrieve all teams that the authenticated user is a member of.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserTeams" method="get" path="/teams/user/teams" -->
+<!-- UsageSnippet language="python" operationID="getUserTeams" method="get" path="/api/v1/teams/user/teams" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -357,7 +357,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.get_user(page=1, limit=20)
+    res = pipeshub.teams.get_user_teams(page=1, limit=20)
 
     # Handle response
     print(res)
@@ -382,14 +382,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_members
+## get_team_users
 
 Retrieve all users that belong to a specific team.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getTeamUsers" method="get" path="/teams/{teamId}/users" -->
+<!-- UsageSnippet language="python" operationID="getTeamUsers" method="get" path="/api/v1/teams/{teamId}/users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -401,7 +401,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.get_members(team_id="507f1f77bcf86cd799439011")
+    res = pipeshub.teams.get_team_users(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -425,14 +425,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add_users
+## add_users_to_team
 
 Add one or more users to a team.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="addUsersToTeam" method="post" path="/teams/{teamId}/users" -->
+<!-- UsageSnippet language="python" operationID="addUsersToTeam" method="post" path="/api/v1/teams/{teamId}/users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -444,7 +444,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.add_users(team_id="507f1f77bcf86cd799439011", user_ids=[
+    res = pipeshub.teams.add_users_to_team(team_id="507f1f77bcf86cd799439011", user_ids=[
         "507f1f77bcf86cd799439011",
     ])
 
@@ -471,14 +471,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## remove_users
+## remove_user_from_team
 
 Remove a user from a team.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="removeUserFromTeam" method="delete" path="/teams/{teamId}/users" -->
+<!-- UsageSnippet language="python" operationID="removeUserFromTeam" method="delete" path="/api/v1/teams/{teamId}/users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -490,7 +490,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.remove_users(team_id="<id>", user_ids=[
+    res = pipeshub.teams.remove_user_from_team(team_id="<id>", user_ids=[
         "507f1f77bcf86cd799439011",
     ])
 
@@ -517,14 +517,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_user_permissions
+## update_team_users_permissions
 
 Update permissions for users within a team.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateTeamUsersPermissions" method="put" path="/teams/{teamId}/users/permissions" -->
+<!-- UsageSnippet language="python" operationID="updateTeamUsersPermissions" method="put" path="/api/v1/teams/{teamId}/users/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -536,7 +536,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.update_user_permissions(team_id="<id>", user_roles=[
+    res = pipeshub.teams.update_team_users_permissions(team_id="<id>", user_roles=[
         {
             "user_id": "507f1f77bcf86cd799439011",
             "role": "member",
@@ -568,14 +568,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_created
+## get_user_created_teams
 
 Retrieve teams created by the authenticated user.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserCreatedTeams" method="get" path="/teams/user/teams/created" -->
+<!-- UsageSnippet language="python" operationID="getUserCreatedTeams" method="get" path="/api/v1/teams/user/teams/created" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -587,7 +587,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.list_created()
+    res = pipeshub.teams.get_user_created_teams()
 
     # Handle response
     print(res)

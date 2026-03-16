@@ -2,12 +2,14 @@
 
 ## Overview
 
+SAML 2.0 Single Sign-On integration with enterprise Identity Providers
+
 ### Available Operations
 
-* [sign_in](#sign_in) - Initiate SAML sign-in flow
-* [callback](#callback) - SAML sign-in callback
+* [sign_in_via_saml](#sign_in_via_saml) - Initiate SAML sign-in flow
+* [saml_sign_in_callback](#saml_sign_in_callback) - SAML sign-in callback
 
-## sign_in
+## sign_in_via_saml
 
 Initiate SAML Single Sign-On authentication by redirecting to the Identity Provider (IDP).
 <br><br>
@@ -28,14 +30,14 @@ The user's browser should be redirected to this URL.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="signInViaSAML" method="get" path="/saml/signIn" -->
+<!-- UsageSnippet language="python" operationID="signInViaSAML" method="get" path="/api/v1/saml/signIn" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.saml.sign_in(email="Daphney.Koss@hotmail.com")
+    res = pipeshub.saml.sign_in_via_saml(email="Daphney.Koss@hotmail.com")
 
     # Handle response
     print(res)
@@ -60,21 +62,21 @@ with Pipeshub() as pipeshub:
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## callback
+## saml_sign_in_callback
 
 Handle the SAML Identity Provider callback after user authentication. This endpoint receives the SAML assertion from the IdP.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="samlSignInCallback" method="post" path="/saml/signIn/callback" -->
+<!-- UsageSnippet language="python" operationID="samlSignInCallback" method="post" path="/api/v1/saml/signIn/callback" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
 
 with Pipeshub() as pipeshub:
 
-    pipeshub.saml.callback()
+    pipeshub.saml.saml_sign_in_callback()
 
     # Use the SDK ...
 

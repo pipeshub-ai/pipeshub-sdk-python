@@ -13,7 +13,7 @@ from typing import Mapping, Optional, Union
 class Organizations(BaseSDK):
     r"""Organization management operations"""
 
-    def check_exists(
+    def check_org_exists(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -56,7 +56,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/org/exists",
+            path="/api/v1/org/exists",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -106,7 +106,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def check_exists_async(
+    async def check_org_exists_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -149,7 +149,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/org/exists",
+            path="/api/v1/org/exists",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -199,7 +199,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_organization(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -279,7 +279,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -332,7 +332,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_organization_async(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -412,7 +412,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -465,7 +465,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_current_organization(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -513,7 +513,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -566,7 +566,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_current_organization_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -614,7 +614,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -667,7 +667,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_organization(
         self,
         *,
         registered_name: Optional[str] = None,
@@ -743,7 +743,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -799,7 +799,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_organization_async(
         self,
         *,
         registered_name: Optional[str] = None,
@@ -875,7 +875,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -931,7 +931,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_organization(
         self,
         *,
         confirm: models.Confirm,
@@ -981,7 +981,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1034,7 +1034,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_organization_async(
         self,
         *,
         confirm: models.Confirm,
@@ -1084,7 +1084,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/org",
+            path="/api/v1/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1137,7 +1137,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def upload_logo(
+    def upload_organization_logo(
         self,
         *,
         logo: Union[models.Logo, models.LogoTypedDict],
@@ -1191,7 +1191,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/org/logo",
+            path="/api/v1/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1249,7 +1249,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def upload_logo_async(
+    async def upload_organization_logo_async(
         self,
         *,
         logo: Union[models.Logo, models.LogoTypedDict],
@@ -1303,7 +1303,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/org/logo",
+            path="/api/v1/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1361,7 +1361,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_logo(
+    def get_organization_logo(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1401,7 +1401,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/org/logo",
+            path="/api/v1/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1456,7 +1456,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_logo_async(
+    async def get_organization_logo_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1496,7 +1496,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/org/logo",
+            path="/api/v1/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1551,7 +1551,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_logo(
+    def delete_organization_logo(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1585,7 +1585,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="DELETE",
-            path="/org/logo",
+            path="/api/v1/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1640,7 +1640,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_logo_async(
+    async def delete_organization_logo_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1674,7 +1674,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="DELETE",
-            path="/org/logo",
+            path="/api/v1/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1772,7 +1772,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/org/onboarding-status",
+            path="/api/v1/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1868,7 +1868,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/org/onboarding-status",
+            path="/api/v1/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1971,7 +1971,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/org/onboarding-status",
+            path="/api/v1/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2079,7 +2079,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/org/onboarding-status",
+            path="/api/v1/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

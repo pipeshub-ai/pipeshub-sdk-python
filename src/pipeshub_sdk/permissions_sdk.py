@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional
 class PermissionsSDK(BaseSDK):
     r"""Permission management for knowledge bases"""
 
-    def grant(
+    def create_kb_permission(
         self,
         *,
         kb_id: str,
@@ -72,7 +72,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -128,7 +128,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def grant_async(
+    async def create_kb_permission_async(
         self,
         *,
         kb_id: str,
@@ -187,7 +187,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -243,7 +243,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list(
+    def list_kb_permissions(
         self,
         *,
         kb_id: str,
@@ -280,7 +280,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -333,7 +333,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_async(
+    async def list_kb_permissions_async(
         self,
         *,
         kb_id: str,
@@ -370,7 +370,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -423,7 +423,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_kb_permissions(
         self,
         *,
         kb_id: str,
@@ -471,7 +471,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -531,7 +531,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_kb_permissions_async(
         self,
         *,
         kb_id: str,
@@ -579,7 +579,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -639,7 +639,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_kb_permissions(
         self,
         *,
         kb_id: str,
@@ -685,7 +685,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -745,7 +745,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_kb_permissions_async(
         self,
         *,
         kb_id: str,
@@ -791,7 +791,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/knowledgeBase/{kbId}/permissions",
+            path="/api/v1/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

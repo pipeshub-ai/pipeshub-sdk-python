@@ -53,7 +53,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/{toolsetId}/oauth/authorize",
+            path="/api/v1/toolsets/{toolsetId}/oauth/authorize",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -146,7 +146,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/{toolsetId}/oauth/authorize",
+            path="/api/v1/toolsets/{toolsetId}/oauth/authorize",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -245,7 +245,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/oauth/callback",
+            path="/api/v1/toolsets/oauth/callback",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -346,7 +346,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/oauth/callback",
+            path="/api/v1/toolsets/oauth/callback",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -434,7 +434,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/instances/{instanceId}/oauth/authorize",
+            path="/api/v1/toolsets/instances/{instanceId}/oauth/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -522,7 +522,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/instances/{instanceId}/oauth/authorize",
+            path="/api/v1/toolsets/instances/{instanceId}/oauth/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

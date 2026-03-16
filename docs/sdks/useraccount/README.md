@@ -2,14 +2,16 @@
 
 ## Overview
 
+User authentication including multi-step MFA, password reset, OTP login, and token management
+
 ### Available Operations
 
 * [init_auth](#init_auth) - Initialize authentication session
 * [authenticate](#authenticate) - Authenticate user with credentials
-* [generate_otp](#generate_otp) - Generate and send OTP for login
+* [generate_login_otp](#generate_login_otp) - Generate and send OTP for login
 * [forgot_password](#forgot_password) - Request password reset email
-* [reset_password_token](#reset_password_token) - Reset password with email token
-* [refresh](#refresh) - Refresh access token
+* [reset_password_with_token](#reset_password_with_token) - Reset password with email token
+* [refresh_token](#refresh_token) - Refresh access token
 * [logout](#logout) - Logout current session
 * [reset_password](#reset_password) - Reset password
 
@@ -36,7 +38,7 @@ authentication steps. Each step completion returns the next step's allowed metho
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="initAuth" method="post" path="/userAccount/initAuth" -->
+<!-- UsageSnippet language="python" operationID="initAuth" method="post" path="/api/v1/userAccount/initAuth" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -97,7 +99,7 @@ After completing all steps:<br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="authenticate" method="post" path="/userAccount/authenticate" -->
+<!-- UsageSnippet language="python" operationID="authenticate" method="post" path="/api/v1/userAccount/authenticate" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -135,7 +137,7 @@ with Pipeshub() as pipeshub:
 | errors.AuthError            | 400, 401, 403, 404, 410     | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## generate_otp
+## generate_login_otp
 
 Generate and send a 6-digit one-time password (OTP) to the user's email.
 Use this endpoint before authenticating with the <code>otp</code> method.
@@ -155,14 +157,14 @@ If Cloudflare Turnstile is enabled, include <code>cf-turnstile-response</code> i
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="generateLoginOtp" method="post" path="/userAccount/login/otp/generate" -->
+<!-- UsageSnippet language="python" operationID="generateLoginOtp" method="post" path="/api/v1/userAccount/login/otp/generate" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.generate_otp(email="Garland.Sipes42@hotmail.com")
+    res = pipeshub.user_account.generate_login_otp(email="Garland.Sipes42@hotmail.com")
 
     # Handle response
     print(res)
@@ -198,7 +200,7 @@ The link contains a time-limited token that can be used to reset the password.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="forgotPassword" method="post" path="/userAccount/password/forgot" -->
+<!-- UsageSnippet language="python" operationID="forgotPassword" method="post" path="/api/v1/userAccount/password/forgot" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -230,7 +232,7 @@ with Pipeshub() as pipeshub:
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## reset_password_token
+## reset_password_with_token
 
 Reset password using a token received via email from the forgot password flow.
 <br><br>
@@ -248,7 +250,7 @@ Reset password using a token received via email from the forgot password flow.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="resetPasswordWithToken" method="post" path="/userAccount/password/reset/token" -->
+<!-- UsageSnippet language="python" operationID="resetPasswordWithToken" method="post" path="/api/v1/userAccount/password/reset/token" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -256,7 +258,7 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.reset_password_token(security=models.ResetPasswordWithTokenSecurity(
+    res = pipeshub.user_account.reset_password_with_token(security=models.ResetPasswordWithTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
     ), password="H9GEHoL829GXj06")
 
@@ -284,7 +286,7 @@ with Pipeshub() as pipeshub:
 | errors.AuthError            | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## refresh
+## refresh_token
 
 Get a new access token using a valid refresh token.
 <br><br>
@@ -304,7 +306,7 @@ Get a new access token using a valid refresh token.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="refreshToken" method="post" path="/userAccount/refresh/token" -->
+<!-- UsageSnippet language="python" operationID="refreshToken" method="post" path="/api/v1/userAccount/refresh/token" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -312,7 +314,7 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.refresh(security=models.RefreshTokenSecurity(
+    res = pipeshub.user_account.refresh_token(security=models.RefreshTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
     ))
 
@@ -353,7 +355,7 @@ Log out the current user session and invalidate tokens.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="logout" method="post" path="/userAccount/logout/manual" -->
+<!-- UsageSnippet language="python" operationID="logout" method="post" path="/api/v1/userAccount/logout/manual" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -392,7 +394,7 @@ Allows a logged-in user to change their password by providing the current passwo
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="resetPassword" method="post" path="/userAccount/password/reset" -->
+<!-- UsageSnippet language="python" operationID="resetPassword" method="post" path="/api/v1/userAccount/password/reset" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

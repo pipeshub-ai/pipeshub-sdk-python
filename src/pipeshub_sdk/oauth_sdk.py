@@ -9,8 +9,10 @@ from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, Mapping, Optional
 
 
-class OauthSDK(BaseSDK):
-    def exchange_code(
+class OAuthSDK(BaseSDK):
+    r"""OAuth 2.0 token exchange for third-party authentication providers"""
+
+    def exchange_o_auth_code(
         self,
         *,
         code: str,
@@ -65,7 +67,7 @@ class OauthSDK(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/userAccount/oauth/exchange",
+            path="/api/v1/userAccount/oauth/exchange",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -122,7 +124,7 @@ class OauthSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def exchange_code_async(
+    async def exchange_o_auth_code_async(
         self,
         *,
         code: str,
@@ -177,7 +179,7 @@ class OauthSDK(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/userAccount/oauth/exchange",
+            path="/api/v1/userAccount/oauth/exchange",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

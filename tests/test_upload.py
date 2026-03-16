@@ -15,7 +15,7 @@ def test_upload_upload_records_to_kb():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.upload.to_knowledge_base(
+        res = pipeshub.upload.upload_records_to_kb(
             kb_id="<id>",
             files=[
                 {
@@ -43,7 +43,7 @@ def test_upload_upload_records_to_folder():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.upload.records_to_folder(
+        res = pipeshub.upload.upload_records_to_folder(
             kb_id="<id>",
             folder_id="<id>",
             files=[
@@ -57,4 +57,22 @@ def test_upload_upload_records_to_folder():
         assert res is not None
         assert res == models.UploadResult(
             message="Files uploaded successfully",
+        )
+
+
+def test_upload_get_upload_limits():
+    test_http_client = create_test_http_client("getUploadLimits")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.upload.get_upload_limits()
+        assert res is not None
+        assert res == models.GetUploadLimitsResponse(
+            max_files_per_request=1000,
+            max_file_size_bytes=31457280,
         )

@@ -6,18 +6,18 @@ Custom AI agents with specialized capabilities and tool integrations
 
 ### Available Operations
 
-* [get_all](#get_all) - List agents
-* [create](#create) - Create agent
-* [get_tools](#get_tools) - List available tools
-* [get](#get) - Get agent
-* [update](#update) - Update agent
-* [delete](#delete) - Delete agent
-* [get_permissions](#get_permissions) - Get agent permissions
-* [update_permissions](#update_permissions) - Update agent permissions
-* [share](#share) - Share agent
-* [unshare](#unshare) - Unshare an agent
+* [list_agents](#list_agents) - List agents
+* [create_agent](#create_agent) - Create agent
+* [list_agent_tools](#list_agent_tools) - List available tools
+* [get_agent](#get_agent) - Get agent
+* [update_agent](#update_agent) - Update agent
+* [delete_agent](#delete_agent) - Delete agent
+* [get_agent_permissions](#get_agent_permissions) - Get agent permissions
+* [update_agent_permissions](#update_agent_permissions) - Update agent permissions
+* [share_agent](#share_agent) - Share agent
+* [unshare_agent](#unshare_agent) - Unshare an agent
 
-## get_all
+## list_agents
 
 Retrieve all agents available to the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -27,7 +27,7 @@ Each agent has unique capabilities defined by its tools and knowledge scope.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listAgents" method="get" path="/agents" -->
+<!-- UsageSnippet language="python" operationID="listAgents" method="get" path="/api/v1/agents" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -39,7 +39,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.get_all()
+    res = pipeshub.agents.list_agents()
 
     # Handle response
     print(res)
@@ -62,7 +62,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_agent
 
 Create a new custom AI agent.<br><br>
 <b>Overview:</b><br>
@@ -86,7 +86,7 @@ be limited to certain knowledge bases.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createAgent" method="post" path="/agents/create" -->
+<!-- UsageSnippet language="python" operationID="createAgent" method="post" path="/api/v1/agents/create" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -98,7 +98,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.create(name="Product Support Agent", models=[
+    res = pipeshub.agents.create_agent(name="Product Support Agent", models=[
         {
             "model_key": "gpt-4o",
             "model_name": "GPT-4o",
@@ -138,7 +138,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_tools
+## list_agent_tools
 
 Get all tools that can be assigned to agents.<br><br>
 <b>Overview:</b><br>
@@ -155,7 +155,7 @@ has specific inputs and outputs defined by its schema.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listAgentTools" method="get" path="/agents/tools/list" -->
+<!-- UsageSnippet language="python" operationID="listAgentTools" method="get" path="/api/v1/agents/tools/list" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -167,7 +167,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.get_tools()
+    res = pipeshub.agents.list_agent_tools()
 
     # Handle response
     print(res)
@@ -190,13 +190,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_agent
 
 Retrieve agent details by its unique key.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAgent" method="get" path="/agents/{agentKey}" -->
+<!-- UsageSnippet language="python" operationID="getAgent" method="get" path="/api/v1/agents/{agentKey}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -208,7 +208,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.get(agent_key="customer-support-agent")
+    res = pipeshub.agents.get_agent(agent_key="customer-support-agent")
 
     # Handle response
     print(res)
@@ -232,7 +232,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_agent
 
 Update an existing agent's configuration.<br><br>
 <b>Permissions:</b><br>
@@ -241,7 +241,7 @@ Only the agent creator can update it.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateAgent" method="put" path="/agents/{agentKey}" -->
+<!-- UsageSnippet language="python" operationID="updateAgent" method="put" path="/api/v1/agents/{agentKey}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -253,7 +253,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.update(agent_key="<value>")
+    res = pipeshub.agents.update_agent(agent_key="<value>")
 
     # Handle response
     print(res)
@@ -287,7 +287,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_agent
 
 Delete an agent.<br><br>
 <b>Warning:</b><br>
@@ -296,7 +296,7 @@ All conversations with this agent will become inaccessible.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteAgent" method="delete" path="/agents/{agentKey}" -->
+<!-- UsageSnippet language="python" operationID="deleteAgent" method="delete" path="/api/v1/agents/{agentKey}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -308,7 +308,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.agents.delete(agent_key="<value>")
+    pipeshub.agents.delete_agent(agent_key="<value>")
 
     # Use the SDK ...
 
@@ -327,13 +327,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_permissions
+## get_agent_permissions
 
 Get the current permission configuration for an agent.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAgentPermissions" method="get" path="/agents/{agentKey}/permissions" -->
+<!-- UsageSnippet language="python" operationID="getAgentPermissions" method="get" path="/api/v1/agents/{agentKey}/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -345,7 +345,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.get_permissions(agent_key="<value>")
+    res = pipeshub.agents.get_agent_permissions(agent_key="<value>")
 
     # Handle response
     print(res)
@@ -369,13 +369,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_permissions
+## update_agent_permissions
 
 Update who can access and use the agent.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateAgentPermissions" method="put" path="/agents/{agentKey}/permissions" -->
+<!-- UsageSnippet language="python" operationID="updateAgentPermissions" method="put" path="/api/v1/agents/{agentKey}/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -387,7 +387,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.agents.update_permissions(agent_key="<value>")
+    pipeshub.agents.update_agent_permissions(agent_key="<value>")
 
     # Use the SDK ...
 
@@ -408,13 +408,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## share
+## share_agent
 
 Share an agent with specific users.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="shareAgent" method="post" path="/agents/{agentKey}/share" -->
+<!-- UsageSnippet language="python" operationID="shareAgent" method="post" path="/api/v1/agents/{agentKey}/share" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -426,7 +426,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.share(agent_key="<value>", user_ids=[
+    res = pipeshub.agents.share_agent(agent_key="<value>", user_ids=[
         "507f1f77bcf86cd799439011",
     ], access_level="read")
 
@@ -454,14 +454,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unshare
+## unshare_agent
 
 Revoke sharing for an agent, removing access for specified users or teams.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="unshareAgent" method="post" path="/agents/{agentKey}/unshare" -->
+<!-- UsageSnippet language="python" operationID="unshareAgent" method="post" path="/api/v1/agents/{agentKey}/unshare" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -473,7 +473,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agents.unshare(agent_key="<value>")
+    res = pipeshub.agents.unshare_agent(agent_key="<value>")
 
     # Handle response
     print(res)

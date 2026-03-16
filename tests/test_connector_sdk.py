@@ -15,7 +15,7 @@ def test_connector_sdk_get_connector_stats():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.connector.get_stats(connector_id="<id>")
+        res = pipeshub.connector.get_connector_stats(connector_id="<id>")
         assert res is not None
         assert res == models.ConnectorStats()
 
@@ -56,3 +56,20 @@ def test_connector_sdk_reindex_record_group():
             success=True,
             message="Reindex initiated for record group grp-abc123 with depth 0",
         )
+
+
+def test_connector_sdk_resync_connector():
+    test_http_client = create_test_http_client("resyncConnector")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.connector.resync_connector(
+            connector_name="GOOGLE_DRIVE", connector_id="<id>", full_sync=False
+        )
+        assert res is not None
+        assert res == models.ResyncConnectorResponse()

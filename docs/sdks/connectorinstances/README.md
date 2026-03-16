@@ -2,19 +2,21 @@
 
 ## Overview
 
+Create, manage, and delete connector instances for your organization
+
 ### Available Operations
 
-* [list](#list) - List connector instances
-* [create](#create) - Create connector instance
-* [list_active](#list_active) - List active connector instances
-* [list_inactive](#list_inactive) - List inactive connector instances
-* [list_configured](#list_configured) - List configured connector instances
-* [list_active_agents](#list_active_agents) - List active agent connectors
-* [get](#get) - Get connector instance
-* [delete](#delete) - Delete connector instance
-* [update_name](#update_name) - Update connector instance name
+* [list_connector_instances](#list_connector_instances) - List connector instances
+* [create_connector_instance](#create_connector_instance) - Create connector instance
+* [list_active_connectors](#list_active_connectors) - List active connector instances
+* [list_inactive_connectors](#list_inactive_connectors) - List inactive connector instances
+* [list_configured_connectors](#list_configured_connectors) - List configured connector instances
+* [list_active_agent_connectors](#list_active_agent_connectors) - List active agent connectors
+* [get_connector_instance](#get_connector_instance) - Get connector instance
+* [delete_connector_instance](#delete_connector_instance) - Delete connector instance
+* [update_connector_name](#update_connector_name) - Update connector instance name
 
-## list
+## list_connector_instances
 
 Get all configured connector instances for your organization.<br><br>
 <b>Overview:</b><br>
@@ -31,7 +33,7 @@ are only visible to their creators.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listConnectorInstances" method="get" path="/connectors" -->
+<!-- UsageSnippet language="python" operationID="listConnectorInstances" method="get" path="/api/v1/connectors" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -43,7 +45,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list(scope="team", page=1, limit=20)
+    res = pipeshub.connector_instances.list_connector_instances(scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -70,7 +72,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_connector_instance
 
 Create a new connector instance from a registry type.<br><br>
 <b>Overview:</b><br>
@@ -93,7 +95,7 @@ and filter setup before it can be activated.<br><br>
 
 ### Example Usage: confluence
 
-<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="confluence" -->
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/api/v1/connectors" example="confluence" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -105,7 +107,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.create(connector_type="confluence", instance_name="My Confluence", scope="personal", auth_type="API_TOKEN", config={
+    res = pipeshub.connector_instances.create_connector_instance(connector_type="confluence", instance_name="My Confluence", scope="personal", auth_type="API_TOKEN", config={
         "auth": {
             "values": {
                 "apiKey": "sk-xxxxx",
@@ -150,7 +152,7 @@ with Pipeshub(
 ```
 ### Example Usage: googleDrive
 
-<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="googleDrive" -->
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/api/v1/connectors" example="googleDrive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -162,7 +164,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.create(connector_type="google-drive", instance_name="Company Google Drive", scope="team", auth_type="OAUTH_ADMIN_CONSENT", config={
+    res = pipeshub.connector_instances.create_connector_instance(connector_type="google-drive", instance_name="Company Google Drive", scope="team", auth_type="OAUTH_ADMIN_CONSENT", config={
         "auth": {
             "values": {
                 "apiKey": "sk-xxxxx",
@@ -228,7 +230,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_active
+## list_active_connectors
 
 Get all active (enabled) connector instances.<br><br>
 <b>Overview:</b><br>
@@ -238,7 +240,7 @@ These are connectors currently syncing data or available to AI agents.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listActiveConnectors" method="get" path="/connectors/active" -->
+<!-- UsageSnippet language="python" operationID="listActiveConnectors" method="get" path="/api/v1/connectors/active" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -250,7 +252,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_active()
+    res = pipeshub.connector_instances.list_active_connectors()
 
     # Handle response
     print(res)
@@ -273,13 +275,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_inactive
+## list_inactive_connectors
 
 Get all inactive (disabled) connector instances.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listInactiveConnectors" method="get" path="/connectors/inactive" -->
+<!-- UsageSnippet language="python" operationID="listInactiveConnectors" method="get" path="/api/v1/connectors/inactive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -291,7 +293,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_inactive()
+    res = pipeshub.connector_instances.list_inactive_connectors()
 
     # Handle response
     print(res)
@@ -314,7 +316,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_configured
+## list_configured_connectors
 
 Get all connector instances that have completed configuration.<br><br>
 <b>Overview:</b><br>
@@ -324,7 +326,7 @@ These have all required settings but may not be active yet.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listConfiguredConnectors" method="get" path="/connectors/configured" -->
+<!-- UsageSnippet language="python" operationID="listConfiguredConnectors" method="get" path="/api/v1/connectors/configured" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -336,7 +338,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_configured(scope="team", page=1, limit=20)
+    res = pipeshub.connector_instances.list_configured_connectors(scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -363,7 +365,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_active_agents
+## list_active_agent_connectors
 
 Get connector instances enabled for AI agent integration.<br><br>
 <b>Overview:</b><br>
@@ -373,7 +375,7 @@ These are available to AI agents for querying and actions.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listActiveAgentConnectors" method="get" path="/connectors/agents/active" -->
+<!-- UsageSnippet language="python" operationID="listActiveAgentConnectors" method="get" path="/api/v1/connectors/agents/active" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -385,7 +387,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_active_agents(scope="team", page=1, limit=20)
+    res = pipeshub.connector_instances.list_active_agent_connectors(scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -412,13 +414,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_connector_instance
 
 Retrieve a specific connector instance by ID.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getConnectorInstance" method="get" path="/connectors/{connectorId}" -->
+<!-- UsageSnippet language="python" operationID="getConnectorInstance" method="get" path="/api/v1/connectors/{connectorId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -430,7 +432,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.get(connector_id="conn_abc123")
+    res = pipeshub.connector_instances.get_connector_instance(connector_id="conn_abc123")
 
     # Handle response
     print(res)
@@ -454,7 +456,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_connector_instance
 
 Delete a connector instance and all associated data.<br><br>
 <b>Warning:</b><br>
@@ -469,7 +471,7 @@ Synced records in knowledge bases are NOT deleted.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteConnectorInstance" method="delete" path="/connectors/{connectorId}" -->
+<!-- UsageSnippet language="python" operationID="deleteConnectorInstance" method="delete" path="/api/v1/connectors/{connectorId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -481,7 +483,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.delete(connector_id="<id>")
+    res = pipeshub.connector_instances.delete_connector_instance(connector_id="<id>")
 
     # Handle response
     print(res)
@@ -505,7 +507,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_name
+## update_connector_name
 
 Update the display name of a connector instance.<br><br>
 <b>Note:</b> This only updates the display name, not the connector configuration.
@@ -513,7 +515,7 @@ Update the display name of a connector instance.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateConnectorName" method="put" path="/connectors/{connectorId}/name" -->
+<!-- UsageSnippet language="python" operationID="updateConnectorName" method="put" path="/api/v1/connectors/{connectorId}/name" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -525,7 +527,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.update_name(connector_id="<id>", instance_name="Sales Team Drive (Updated)")
+    res = pipeshub.connector_instances.update_connector_name(connector_id="<id>", instance_name="Sales Team Drive (Updated)")
 
     # Handle response
     print(res)

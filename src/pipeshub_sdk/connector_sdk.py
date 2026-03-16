@@ -61,7 +61,7 @@ class ConnectorSDK(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/knowledgeBase/reindex/record/{recordId}",
+            path="/api/v1/knowledgeBase/reindex/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -169,7 +169,7 @@ class ConnectorSDK(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/knowledgeBase/reindex/record/{recordId}",
+            path="/api/v1/knowledgeBase/reindex/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -275,7 +275,7 @@ class ConnectorSDK(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/knowledgeBase/reindex/record-group/{recordGroupId}",
+            path="/api/v1/knowledgeBase/reindex/record-group/{recordGroupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -381,7 +381,7 @@ class ConnectorSDK(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/knowledgeBase/reindex/record-group/{recordGroupId}",
+            path="/api/v1/knowledgeBase/reindex/record-group/{recordGroupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -441,7 +441,209 @@ class ConnectorSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_stats(
+    def resync_connector(
+        self,
+        *,
+        connector_name: str,
+        connector_id: str,
+        full_sync: Optional[bool] = False,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ResyncConnectorResponse:
+        r"""Resync connector
+
+        Trigger a full resync of all records from a connector.<br><br>
+        <b>Overview:</b><br>
+        Fetches all content from the external source and updates local records. Use when you suspect data is out of sync.<br><br>
+        <b>Warning:</b> This can be resource-intensive for large connectors.
+
+
+        :param connector_name: Connector type name
+        :param connector_id: Connector instance ID
+        :param full_sync: Whether to perform a full sync
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.ResyncConnectorRequest(
+            connector_name=connector_name,
+            connector_id=connector_id,
+            full_sync=full_sync,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/api/v1/knowledgeBase/resync/connector",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.ResyncConnectorRequest
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="resyncConnector",
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ResyncConnectorResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def resync_connector_async(
+        self,
+        *,
+        connector_name: str,
+        connector_id: str,
+        full_sync: Optional[bool] = False,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ResyncConnectorResponse:
+        r"""Resync connector
+
+        Trigger a full resync of all records from a connector.<br><br>
+        <b>Overview:</b><br>
+        Fetches all content from the external source and updates local records. Use when you suspect data is out of sync.<br><br>
+        <b>Warning:</b> This can be resource-intensive for large connectors.
+
+
+        :param connector_name: Connector type name
+        :param connector_id: Connector instance ID
+        :param full_sync: Whether to perform a full sync
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.ResyncConnectorRequest(
+            connector_name=connector_name,
+            connector_id=connector_id,
+            full_sync=full_sync,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/api/v1/knowledgeBase/resync/connector",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.ResyncConnectorRequest
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="resyncConnector",
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ResyncConnectorResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_connector_stats(
         self,
         *,
         connector_id: str,
@@ -477,7 +679,7 @@ class ConnectorSDK(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/stats/{connectorId}",
+            path="/api/v1/knowledgeBase/stats/{connectorId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -530,7 +732,7 @@ class ConnectorSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_stats_async(
+    async def get_connector_stats_async(
         self,
         *,
         connector_id: str,
@@ -566,7 +768,7 @@ class ConnectorSDK(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/stats/{connectorId}",
+            path="/api/v1/knowledgeBase/stats/{connectorId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

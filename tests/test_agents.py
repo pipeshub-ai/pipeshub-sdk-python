@@ -15,7 +15,7 @@ def test_agents_list_agents():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.get_all()
+        res = pipeshub.agents.list_agents()
         assert res is not None
         assert res == models.ListAgentsResponse(
             status="success",
@@ -39,7 +39,7 @@ def test_agents_create_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.create(
+        res = pipeshub.agents.create_agent(
             name="Product Support Agent",
             models=[
                 {
@@ -75,7 +75,7 @@ def test_agents_list_agent_tools():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.get_tools()
+        res = pipeshub.agents.list_agent_tools()
         assert res is not None
         assert res == [
             models.AgentTool(),
@@ -92,7 +92,7 @@ def test_agents_get_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.get(agent_key="customer-support-agent")
+        res = pipeshub.agents.get_agent(agent_key="customer-support-agent")
         assert res is not None
         assert res == models.GetAgentResponse(
             status="success",
@@ -116,7 +116,7 @@ def test_agents_update_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.update(agent_key="<value>")
+        res = pipeshub.agents.update_agent(agent_key="<value>")
         assert res is not None
         assert res == models.UpdateAgentResponse(
             status="success",
@@ -134,7 +134,7 @@ def test_agents_get_agent_permissions():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.get_permissions(agent_key="<value>")
+        res = pipeshub.agents.get_agent_permissions(agent_key="<value>")
         assert res is not None
         assert res == models.GetAgentPermissionsResponse(
             status="success",
@@ -152,7 +152,7 @@ def test_agents_share_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.share(
+        res = pipeshub.agents.share_agent(
             agent_key="<value>",
             user_ids=[
                 "507f1f77bcf86cd799439011",
@@ -178,7 +178,7 @@ def test_agents_unshare_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.unshare(agent_key="<value>")
+        res = pipeshub.agents.unshare_agent(agent_key="<value>")
         assert res is not None
         assert res == models.UnshareAgentResponse(
             status="success",

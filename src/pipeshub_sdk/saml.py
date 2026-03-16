@@ -10,7 +10,9 @@ from typing import Any, Mapping, Optional, Union, cast
 
 
 class Saml(BaseSDK):
-    def sign_in(
+    r"""SAML 2.0 Single Sign-On integration with enterprise Identity Providers"""
+
+    def sign_in_via_saml(
         self,
         *,
         email: str,
@@ -65,7 +67,7 @@ class Saml(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/saml/signIn",
+            path="/api/v1/saml/signIn",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -117,7 +119,7 @@ class Saml(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def sign_in_async(
+    async def sign_in_via_saml_async(
         self,
         *,
         email: str,
@@ -172,7 +174,7 @@ class Saml(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/saml/signIn",
+            path="/api/v1/saml/signIn",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -224,7 +226,7 @@ class Saml(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def callback(
+    def saml_sign_in_callback(
         self,
         *,
         request: Optional[
@@ -267,7 +269,7 @@ class Saml(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/saml/signIn/callback",
+            path="/api/v1/saml/signIn/callback",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -331,7 +333,7 @@ class Saml(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def callback_async(
+    async def saml_sign_in_callback_async(
         self,
         *,
         request: Optional[
@@ -374,7 +376,7 @@ class Saml(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/saml/signIn/callback",
+            path="/api/v1/saml/signIn/callback",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

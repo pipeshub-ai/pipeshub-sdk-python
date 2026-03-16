@@ -1,24 +1,25 @@
-# AiModelsProviders
+# AIModelsProviders
 
 ## Overview
 
+Manage individual AI model providers - add, update, delete, and set defaults.
+
 ### Available Operations
 
-* [get_by_type](#get_by_type) - Get models by type
-* [get_available_by_type](#get_available_by_type) - Get available models for selection
-* [add](#add) - Add new AI model provider
-* [update](#update) - Update AI model provider
-* [delete](#delete) - Delete AI model provider
-* [set_default](#set_default) - Set default AI model
-* [list](#list) - Get AI model providers
+* [get_models_by_type](#get_models_by_type) - Get models by type
+* [get_available_models_by_type](#get_available_models_by_type) - Get available models for selection
+* [add_ai_model_provider](#add_ai_model_provider) - Add new AI model provider
+* [update_ai_model_provider](#update_ai_model_provider) - Update AI model provider
+* [delete_ai_model_provider](#delete_ai_model_provider) - Delete AI model provider
+* [set_default_ai_model](#set_default_ai_model) - Set default AI model
 
-## get_by_type
+## get_models_by_type
 
 Get all configured models of a specific type.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getModelsByType" method="get" path="/configurationManager/ai-models/{modelType}" -->
+<!-- UsageSnippet language="python" operationID="getModelsByType" method="get" path="/api/v1/configurationManager/ai-models/{modelType}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -30,7 +31,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_providers.get_by_type(model_type="embedding")
+    res = pipeshub.ai_models_providers.get_models_by_type(model_type="embedding")
 
     # Handle response
     print(res)
@@ -54,13 +55,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_available_by_type
+## get_available_models_by_type
 
 Get available models in a flattened format for UI selection dropdowns.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAvailableModelsByType" method="get" path="/configurationManager/ai-models/available/{modelType}" -->
+<!-- UsageSnippet language="python" operationID="getAvailableModelsByType" method="get" path="/api/v1/configurationManager/ai-models/available/{modelType}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -72,7 +73,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_providers.get_available_by_type(model_type="llm")
+    res = pipeshub.ai_models_providers.get_available_models_by_type(model_type="llm")
 
     # Handle response
     print(res)
@@ -96,13 +97,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add
+## add_ai_model_provider
 
 Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="addAIModelProvider" method="post" path="/configurationManager/ai-models/providers" -->
+<!-- UsageSnippet language="python" operationID="addAIModelProvider" method="post" path="/api/v1/configurationManager/ai-models/providers" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -114,7 +115,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_providers.add(model_type="embedding", provider="cohere", configuration={
+    res = pipeshub.ai_models_providers.add_ai_model_provider(model_type="embedding", provider="cohere", configuration={
         "model": "gpt-4",
         "api_key": "sk-example-key",
     }, is_multimodal=False, is_reasoning=False, is_default=False)
@@ -147,13 +148,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_ai_model_provider
 
 Update an existing AI model provider configuration.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateAIModelProvider" method="put" path="/configurationManager/ai-models/providers/{modelType}/{modelKey}" -->
+<!-- UsageSnippet language="python" operationID="updateAIModelProvider" method="put" path="/api/v1/configurationManager/ai-models/providers/{modelType}/{modelKey}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -165,7 +166,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.ai_models_providers.update(model_type="reasoning", model_key="<value>", provider="<value>", configuration={})
+    pipeshub.ai_models_providers.update_ai_model_provider(model_type="reasoning", model_key="<value>", provider="<value>", configuration={})
 
     # Use the SDK ...
 
@@ -191,13 +192,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_ai_model_provider
 
 Remove an AI model provider configuration. Cannot delete the default model if it's the only one.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteAIModelProvider" method="delete" path="/configurationManager/ai-models/providers/{modelType}/{modelKey}" -->
+<!-- UsageSnippet language="python" operationID="deleteAIModelProvider" method="delete" path="/api/v1/configurationManager/ai-models/providers/{modelType}/{modelKey}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -209,7 +210,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.ai_models_providers.delete(model_type="reasoning", model_key="<value>")
+    pipeshub.ai_models_providers.delete_ai_model_provider(model_type="reasoning", model_key="<value>")
 
     # Use the SDK ...
 
@@ -229,13 +230,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## set_default
+## set_default_ai_model
 
 Set a model as the default for its type.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="setDefaultAIModel" method="put" path="/configurationManager/ai-models/default/{modelType}/{modelKey}" -->
+<!-- UsageSnippet language="python" operationID="setDefaultAIModel" method="put" path="/api/v1/configurationManager/ai-models/default/{modelType}/{modelKey}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -247,7 +248,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.ai_models_providers.set_default(model_type="ocr", model_key="<value>")
+    pipeshub.ai_models_providers.set_default_ai_model(model_type="ocr", model_key="<value>")
 
     # Use the SDK ...
 
@@ -260,48 +261,6 @@ with Pipeshub(
 | `model_type`                                                        | [models.ModelType](../../models/modeltype.md)                       | :heavy_check_mark:                                                  | Type of AI model                                                    |
 | `model_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## list
-
-Retrieve all available AI model providers.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getAIModelsProviders" method="get" path="/configurationManager/ai-models" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.ai_models_providers.list()
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.GetAIModelsProvidersResponse](../../models/getaimodelsprovidersresponse.md)**
 
 ### Errors
 

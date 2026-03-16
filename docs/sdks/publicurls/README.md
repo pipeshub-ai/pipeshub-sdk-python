@@ -1,21 +1,23 @@
-# PublicUrls
+# PublicURLs
 
 ## Overview
 
+Configure public URLs for frontend application and connector callbacks.
+
 ### Available Operations
 
-* [set](#set) - Set frontend public URL
-* [get_frontend](#get_frontend) - Get frontend public URL
-* [set_connector](#set_connector) - Set connector public URL
-* [get_connector](#get_connector) - Get connector public URL
+* [set_frontend_public_url](#set_frontend_public_url) - Set frontend public URL
+* [get_frontend_public_url](#get_frontend_public_url) - Get frontend public URL
+* [set_connector_public_url](#set_connector_public_url) - Set connector public URL
+* [get_connector_public_url](#get_connector_public_url) - Get connector public URL
 
-## set
+## set_frontend_public_url
 
 Configure the public URL where the frontend application is accessible. Used for OAuth redirects and email links.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="setFrontendPublicUrl" method="post" path="/configurationManager/frontendPublicUrl" -->
+<!-- UsageSnippet language="python" operationID="setFrontendPublicUrl" method="post" path="/api/v1/configurationManager/frontendPublicUrl" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -27,7 +29,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.public_urls.set(url="https://app.example.com")
+    pipeshub.public_ur_ls.set_frontend_public_url(url="https://app.example.com")
 
     # Use the SDK ...
 
@@ -46,13 +48,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_frontend
+## get_frontend_public_url
 
 Get frontend public URL.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getFrontendPublicUrl" method="get" path="/configurationManager/frontendPublicUrl" -->
+<!-- UsageSnippet language="python" operationID="getFrontendPublicUrl" method="get" path="/api/v1/configurationManager/frontendPublicUrl" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -64,7 +66,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.public_urls.get_frontend()
+    res = pipeshub.public_ur_ls.get_frontend_public_url()
 
     # Handle response
     print(res)
@@ -87,13 +89,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## set_connector
+## set_connector_public_url
 
 Configure the public URL for connector OAuth callbacks.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="setConnectorPublicUrl" method="post" path="/configurationManager/connectorPublicUrl" -->
+<!-- UsageSnippet language="python" operationID="setConnectorPublicUrl" method="post" path="/api/v1/configurationManager/connectorPublicUrl" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -105,7 +107,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.public_urls.set_connector(url="https://app.example.com")
+    pipeshub.public_ur_ls.set_connector_public_url(url="https://app.example.com")
 
     # Use the SDK ...
 
@@ -124,13 +126,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_connector
+## get_connector_public_url
 
 Get connector public URL.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getConnectorPublicUrl" method="get" path="/configurationManager/connectorPublicUrl" -->
+<!-- UsageSnippet language="python" operationID="getConnectorPublicUrl" method="get" path="/api/v1/configurationManager/connectorPublicUrl" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -142,7 +144,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.public_urls.get_connector()
+    res = pipeshub.public_ur_ls.get_connector_public_url()
 
     # Handle response
     print(res)

@@ -2,18 +2,20 @@
 
 ## Overview
 
+Conversations with custom AI agents including streaming and feedback
+
 ### Available Operations
 
-* [list](#list) - List agent conversations
-* [create](#create) - Create agent conversation
-* [stream](#stream) - Create agent conversation with streaming
-* [get](#get) - Get agent conversation
-* [delete](#delete) - Delete agent conversation
-* [add_message](#add_message) - Add message to agent conversation
-* [stream_message](#stream_message) - Add message with streaming
-* [regenerate_response](#regenerate_response) - Regenerate agent response
+* [list_agent_conversations](#list_agent_conversations) - List agent conversations
+* [create_agent_conversation](#create_agent_conversation) - Create agent conversation
+* [stream_agent_conversation](#stream_agent_conversation) - Create agent conversation with streaming
+* [get_agent_conversation](#get_agent_conversation) - Get agent conversation
+* [delete_agent_conversation](#delete_agent_conversation) - Delete agent conversation
+* [add_agent_message](#add_agent_message) - Add message to agent conversation
+* [stream_agent_message](#stream_agent_message) - Add message with streaming
+* [regenerate_agent_answer](#regenerate_agent_answer) - Regenerate agent response
 
-## list
+## list_agent_conversations
 
 Get all conversations with a specific agent.<br><br>
 <b>Overview:</b><br>
@@ -23,7 +25,7 @@ Agent conversations maintain the agent's context and capabilities.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listAgentConversations" method="get" path="/agents/{agentKey}/conversations" -->
+<!-- UsageSnippet language="python" operationID="listAgentConversations" method="get" path="/api/v1/agents/{agentKey}/conversations" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -35,7 +37,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.list(agent_key="<value>")
+    res = pipeshub.agent_conversations.list_agent_conversations(agent_key="<value>")
 
     # Handle response
     print(res)
@@ -59,7 +61,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_agent_conversation
 
 Start a new conversation with an agent.<br><br>
 <b>Overview:</b><br>
@@ -69,7 +71,7 @@ its system prompt, tools, and knowledge base access.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createAgentConversation" method="post" path="/agents/{agentKey}/conversations" -->
+<!-- UsageSnippet language="python" operationID="createAgentConversation" method="post" path="/api/v1/agents/{agentKey}/conversations" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -81,7 +83,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.create(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
+    res = pipeshub.agent_conversations.create_agent_conversation(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], filters={
@@ -119,7 +121,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## stream
+## stream_agent_conversation
 
 Start a new agent conversation with SSE streaming response.<br><br>
 <b>Overview:</b><br>
@@ -128,7 +130,7 @@ Same as POST /agents/{agentKey}/conversations but with real-time streaming.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="streamAgentConversation" method="post" path="/agents/{agentKey}/conversations/stream" -->
+<!-- UsageSnippet language="python" operationID="streamAgentConversation" method="post" path="/api/v1/agents/{agentKey}/conversations/stream" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -140,7 +142,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.stream(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
+    res = pipeshub.agent_conversations.stream_agent_conversation(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], filters={
@@ -180,13 +182,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_agent_conversation
 
 Retrieve a specific agent conversation by ID.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAgentConversation" method="get" path="/agents/{agentKey}/conversations/{conversationId}" -->
+<!-- UsageSnippet language="python" operationID="getAgentConversation" method="get" path="/api/v1/agents/{agentKey}/conversations/{conversationId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -198,7 +200,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.get(agent_key="<value>", conversation_id="<value>")
+    res = pipeshub.agent_conversations.get_agent_conversation(agent_key="<value>", conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -223,13 +225,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_agent_conversation
 
 Delete a conversation with an agent.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteAgentConversation" method="delete" path="/agents/{agentKey}/conversations/{conversationId}" -->
+<!-- UsageSnippet language="python" operationID="deleteAgentConversation" method="delete" path="/api/v1/agents/{agentKey}/conversations/{conversationId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -241,7 +243,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.agent_conversations.delete(agent_key="<value>", conversation_id="<value>")
+    pipeshub.agent_conversations.delete_agent_conversation(agent_key="<value>", conversation_id="<value>")
 
     # Use the SDK ...
 
@@ -261,13 +263,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add_message
+## add_agent_message
 
 Add a follow-up message to an agent conversation.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="addAgentMessage" method="post" path="/agents/{agentKey}/conversations/{conversationId}/messages" -->
+<!-- UsageSnippet language="python" operationID="addAgentMessage" method="post" path="/api/v1/agents/{agentKey}/conversations/{conversationId}/messages" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -279,7 +281,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.add_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
+    res = pipeshub.agent_conversations.add_agent_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
         "apps": [
             "550e8400-e29b-41d4-a716-446655440000",
         ],
@@ -313,13 +315,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## stream_message
+## stream_agent_message
 
 Add a message to agent conversation with SSE streaming response.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="streamAgentMessage" method="post" path="/agents/{agentKey}/conversations/{conversationId}/messages/stream" -->
+<!-- UsageSnippet language="python" operationID="streamAgentMessage" method="post" path="/api/v1/agents/{agentKey}/conversations/{conversationId}/messages/stream" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -331,7 +333,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.stream_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
+    res = pipeshub.agent_conversations.stream_agent_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
         "apps": [
             "550e8400-e29b-41d4-a716-446655440000",
         ],
@@ -367,7 +369,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## regenerate_response
+## regenerate_agent_answer
 
 Regenerate the agent's response for a specific message.<br><br>
 <b>Overview:</b><br>
@@ -376,7 +378,7 @@ Similar to conversation regeneration but uses the agent's configuration.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="regenerateAgentAnswer" method="post" path="/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/regenerate" -->
+<!-- UsageSnippet language="python" operationID="regenerateAgentAnswer" method="post" path="/api/v1/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/regenerate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -388,7 +390,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.regenerate_response(agent_key="<value>", conversation_id="<value>", message_id="<value>", filters={
+    res = pipeshub.agent_conversations.regenerate_agent_answer(agent_key="<value>", conversation_id="<value>", message_id="<value>", filters={
         "apps": [
             "550e8400-e29b-41d4-a716-446655440000",
         ],

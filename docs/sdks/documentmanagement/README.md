@@ -2,11 +2,13 @@
 
 ## Overview
 
+Document CRUD and retrieval operations
+
 ### Available Operations
 
-* [download](#download) - Download document
+* [download_document](#download_document) - Download document
 
-## download
+## download_document
 
 Get a time-limited signed URL to download the document, or receive the file directly for local storage.<br><br>
 <b>Overview:</b><br>
@@ -30,7 +32,7 @@ Signed URLs are single-use and time-limited. They can be safely shared for tempo
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="downloadDocument" method="get" path="/document/{documentId}/download" -->
+<!-- UsageSnippet language="python" operationID="downloadDocument" method="get" path="/api/v1/document/{documentId}/download" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -42,7 +44,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.document_management.download(document_id="507f1f77bcf86cd799439011", version=2, expiration_time_in_seconds=7200)
+    res = pipeshub.document_management.download_document(document_id="507f1f77bcf86cd799439011", version=2, expiration_time_in_seconds=7200)
 
     # Handle response
     print(res)

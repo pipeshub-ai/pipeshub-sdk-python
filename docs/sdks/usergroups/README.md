@@ -42,7 +42,7 @@ Create a new user group within the organization.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createUserGroup" method="post" path="/userGroups" -->
+<!-- UsageSnippet language="python" operationID="createUserGroup" method="post" path="/api/v1/userGroups" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -99,7 +99,7 @@ Retrieve all user groups in the organization.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAllUserGroups" method="get" path="/userGroups" -->
+<!-- UsageSnippet language="python" operationID="getAllUserGroups" method="get" path="/api/v1/userGroups" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -148,7 +148,7 @@ Retrieve detailed information about a specific user group.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserGroupById" method="get" path="/userGroups/{groupId}" -->
+<!-- UsageSnippet language="python" operationID="getUserGroupById" method="get" path="/api/v1/userGroups/{groupId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -197,7 +197,7 @@ Update an existing user group's information.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateUserGroup" method="put" path="/userGroups/{groupId}" -->
+<!-- UsageSnippet language="python" operationID="updateUserGroup" method="put" path="/api/v1/userGroups/{groupId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -253,7 +253,7 @@ Soft delete a user group.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteUserGroup" method="delete" path="/userGroups/{groupId}" -->
+<!-- UsageSnippet language="python" operationID="deleteUserGroup" method="delete" path="/api/v1/userGroups/{groupId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -308,7 +308,7 @@ Add one or more users to a user group.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="addUsersToGroup" method="post" path="/userGroups/add-users" -->
+<!-- UsageSnippet language="python" operationID="addUsersToGroup" method="post" path="/api/v1/userGroups/add-users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -367,7 +367,7 @@ Remove one or more users from a user group.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="removeUsersFromGroup" method="post" path="/userGroups/remove-users" -->
+<!-- UsageSnippet language="python" operationID="removeUsersFromGroup" method="post" path="/api/v1/userGroups/remove-users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -426,7 +426,7 @@ Retrieve all user groups that a specific user belongs to.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getGroupsForUser" method="get" path="/userGroups/users/{userId}" -->
+<!-- UsageSnippet language="python" operationID="getGroupsForUser" method="get" path="/api/v1/userGroups/users/{userId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -469,7 +469,7 @@ Retrieve all users that belong to a specific user group.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUsersInGroup" method="get" path="/userGroups/{groupId}/users" -->
+<!-- UsageSnippet language="python" operationID="getUsersInGroup" method="get" path="/api/v1/userGroups/{groupId}/users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -512,7 +512,7 @@ Retrieve statistics for all user groups including member counts.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getGroupStatistics" method="get" path="/userGroups/stats/list" -->
+<!-- UsageSnippet language="python" operationID="getGroupStatistics" method="get" path="/api/v1/userGroups/stats/list" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

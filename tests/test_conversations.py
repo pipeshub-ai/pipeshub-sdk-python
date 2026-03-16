@@ -16,7 +16,7 @@ def test_conversations_create_conversation_simple():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.create(
+        res = pipeshub.conversations.create_conversation(
             query="What is our company's vacation policy?",
             record_ids=[
                 "507f1f77bcf86cd799439011",
@@ -49,7 +49,7 @@ def test_conversations_create_conversation_filtered():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.create(
+        res = pipeshub.conversations.create_conversation(
             query="Summarize the Q4 sales report",
             record_ids=[
                 "507f1f77bcf86cd799439011",
@@ -82,7 +82,7 @@ def test_conversations_create_conversation():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.create(
+        res = pipeshub.conversations.create_conversation(
             query="What are the key findings from our Q4 financial report?",
             record_ids=[
                 "507f1f77bcf86cd799439011",
@@ -115,7 +115,7 @@ def test_conversations_get_all_conversations():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.list()
+        res = pipeshub.conversations.get_all_conversations()
         assert res is not None
         assert res == models.GetAllConversationsResponse(
             conversations=[
@@ -141,7 +141,7 @@ def test_conversations_get_archived_conversations():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.list_archived()
+        res = pipeshub.conversations.get_archived_conversations()
         assert res is not None
         assert res == models.GetArchivedConversationsResponse(
             conversations=[
@@ -162,7 +162,7 @@ def test_conversations_get_conversation_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.get_by_id(
+        res = pipeshub.conversations.get_conversation_by_id(
             conversation_id="507f1f77bcf86cd799439011",
             page=1,
             limit=10,
@@ -187,7 +187,9 @@ def test_conversations_delete_conversation_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.delete(conversation_id="<value>")
+        res = pipeshub.conversations.delete_conversation_by_id(
+            conversation_id="<value>"
+        )
         assert res is not None
         assert res == models.DeleteConversationByIDResponse()
 
@@ -229,7 +231,7 @@ def test_conversations_share_conversation():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.share(
+        res = pipeshub.conversations.share_conversation(
             conversation_id="<value>",
             user_ids=[
                 "507f1f77bcf86cd799439011",
@@ -250,7 +252,7 @@ def test_conversations_update_conversation_title():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.update_title(
+        res = pipeshub.conversations.update_conversation_title(
             conversation_id="<value>", title="Q4 Sales Analysis Discussion"
         )
         assert res is not None
@@ -271,7 +273,7 @@ def test_conversations_archive_conversation():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.archive(conversation_id="<value>")
+        res = pipeshub.conversations.archive_conversation(conversation_id="<value>")
         assert res is not None
         assert res == models.ArchiveConversationResponse()
 
@@ -286,7 +288,7 @@ def test_conversations_unarchive_conversation():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.unarchive(conversation_id="<value>")
+        res = pipeshub.conversations.unarchive_conversation(conversation_id="<value>")
         assert res is not None
         assert res == models.UnarchiveConversationResponse()
 
@@ -308,7 +310,7 @@ def test_conversations_update_message_feedback():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.submit_feedback(
+        res = pipeshub.conversations.update_message_feedback(
             conversation_id="<value>", message_id="<value>"
         )
         assert res is not None
@@ -325,7 +327,7 @@ def test_conversations_unshare_conversation_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.conversations.unshare(
+        res = pipeshub.conversations.unshare_conversation_by_id(
             conversation_id="<value>",
             user_ids=[
                 "507f1f77bcf86cd799439011",

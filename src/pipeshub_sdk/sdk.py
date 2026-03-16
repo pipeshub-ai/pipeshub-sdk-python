@@ -16,59 +16,50 @@ from typing import Callable, Dict, List, Optional, TYPE_CHECKING, Union, cast
 import weakref
 
 if TYPE_CHECKING:
-    from pipeshub_sdk.agentconversations import AgentConversations
+    from pipeshub_sdk.agent_conversations import AgentConversations
+    from pipeshub_sdk.agent_templates import AgentTemplates
     from pipeshub_sdk.agents import Agents
-    from pipeshub_sdk.agenttemplates import AgentTemplates
-    from pipeshub_sdk.aimodelsconfiguration import AiModelsConfiguration
-    from pipeshub_sdk.aimodelsproviders import AiModelsProviders
-    from pipeshub_sdk.authconfig_sdk import AuthConfigSDK
-    from pipeshub_sdk.authenticationconfiguration import AuthenticationConfiguration
-    from pipeshub_sdk.authenticationconfigurations import AuthenticationConfigurations
+    from pipeshub_sdk.ai_models_providers import AIModelsProviders
+    from pipeshub_sdk.authentication_configuration import AuthenticationConfiguration
     from pipeshub_sdk.configuration_manager import ConfigurationManager
+    from pipeshub_sdk.connector_configuration import ConnectorConfiguration
+    from pipeshub_sdk.connector_control import ConnectorControl
+    from pipeshub_sdk.connector_filters import ConnectorFilters
+    from pipeshub_sdk.connector_instances import ConnectorInstances
+    from pipeshub_sdk.connector_oauth import ConnectorOAuth
+    from pipeshub_sdk.connector_registry import ConnectorRegistry
     from pipeshub_sdk.connector_sdk import ConnectorSDK
-    from pipeshub_sdk.connectorconfiguration import ConnectorConfiguration
-    from pipeshub_sdk.connectorconfigurations import ConnectorConfigurations
-    from pipeshub_sdk.connectorcontrols import ConnectorControls
-    from pipeshub_sdk.connectorfilters import ConnectorFilters
-    from pipeshub_sdk.connectorinstances import ConnectorInstances
-    from pipeshub_sdk.connectoroauth import ConnectorOAuth
-    from pipeshub_sdk.connectorregistry import ConnectorRegistry
-    from pipeshub_sdk.connectors_sdk import ConnectorsSDK
     from pipeshub_sdk.conversations import Conversations
-    from pipeshub_sdk.crawlingjobs import CrawlingJobs
-    from pipeshub_sdk.documentmanagement import DocumentManagement
+    from pipeshub_sdk.crawling_jobs import CrawlingJobs
+    from pipeshub_sdk.document_management import DocumentManagement
     from pipeshub_sdk.folders import Folders
-    from pipeshub_sdk.knowledgebases import KnowledgeBases
+    from pipeshub_sdk.knowledge_bases import KnowledgeBases
+    from pipeshub_sdk.knowledge_hub import KnowledgeHub
     from pipeshub_sdk.mcp import Mcp
-    from pipeshub_sdk.metricscollection import MetricsCollection
-    from pipeshub_sdk.oauth_configuration_1 import OAuthConfiguration1
+    from pipeshub_sdk.metrics_collection import MetricsCollection
+    from pipeshub_sdk.oauth_apps import OAuthApps
+    from pipeshub_sdk.oauth_configuration import OAuthConfiguration
     from pipeshub_sdk.oauth_provider import OAuthProvider
-    from pipeshub_sdk.oauth_sdk import OauthSDK
-    from pipeshub_sdk.oauthapps import OauthApps
-    from pipeshub_sdk.oauthconfiguration_2 import OauthConfiguration2
+    from pipeshub_sdk.oauth_sdk import OAuthSDK
     from pipeshub_sdk.openid_connect import OpenIDConnect
-    from pipeshub_sdk.organizationauthconfig import OrganizationAuthConfig
-    from pipeshub_sdk.organizationauthconfigs import OrganizationAuthConfigs
+    from pipeshub_sdk.organization_auth_config import OrganizationAuthConfig
     from pipeshub_sdk.organizations import Organizations
     from pipeshub_sdk.permissions_sdk import PermissionsSDK
-    from pipeshub_sdk.platformsettings_sdk import PlatformSettingsSDK
-    from pipeshub_sdk.publicurls import PublicUrls
-    from pipeshub_sdk.queuemanagement import QueueManagement
+    from pipeshub_sdk.platform_settings_sdk import PlatformSettingsSDK
+    from pipeshub_sdk.public_urls import PublicURLs
     from pipeshub_sdk.records import Records
     from pipeshub_sdk.saml import Saml
-    from pipeshub_sdk.semanticsearch import SemanticSearch
-    from pipeshub_sdk.smtpconfiguration import SMTPConfiguration
-    from pipeshub_sdk.smtpconfigurations import SMTPConfigurations
-    from pipeshub_sdk.storageconfiguration import StorageConfiguration
+    from pipeshub_sdk.semantic_search import SemanticSearch
+    from pipeshub_sdk.smtp_configuration import SMTPConfiguration
+    from pipeshub_sdk.storage_configuration import StorageConfiguration
     from pipeshub_sdk.teams import Teams
     from pipeshub_sdk.toolset_configuration import ToolsetConfiguration
     from pipeshub_sdk.toolset_instances import ToolsetInstances
     from pipeshub_sdk.toolset_oauth import ToolsetOAuth
     from pipeshub_sdk.toolset_registry import ToolsetRegistry
     from pipeshub_sdk.upload import Upload
-    from pipeshub_sdk.uploads import Uploads
+    from pipeshub_sdk.user_account import UserAccount
     from pipeshub_sdk.user_groups import UserGroups
-    from pipeshub_sdk.useraccount import UserAccount
     from pipeshub_sdk.users import Users
 
 
@@ -88,13 +79,12 @@ class Pipeshub(BaseSDK):
     ## Authentication
     Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
 
-    ## Base URLs
-    All endpoints use the `/api/v1` prefix unless otherwise noted.
-
     """
 
     user_account: "UserAccount"
-    oauth: "OauthSDK"
+    r"""User authentication including multi-step MFA, password reset, OTP login, and token management"""
+    o_auth: "OAuthSDK"
+    r"""OAuth 2.0 token exchange for third-party authentication providers"""
     o_auth_provider: "OAuthProvider"
     r"""PipesHub OAuth 2.0 Authorization Server implementing RFC 6749, RFC 7636 (PKCE), and OpenID Connect.
 
@@ -133,10 +123,27 @@ class Pipeshub(BaseSDK):
     - `name`, `given_name`, `family_name` - Name information
 
     """
-    oauth_apps: "OauthApps"
-    organization_auth_configs: "OrganizationAuthConfigs"
+    o_auth_apps: "OAuthApps"
+    r"""Manage OAuth 2.0 client applications registered with PipesHub.
+
+    OAuth apps allow third-party applications to access PipesHub APIs on behalf of users
+    or organizations. Each app receives a client ID and secret for authentication.
+
+    **App Types:**
+    - **Confidential clients**: Server-side apps that can securely store secrets
+    - **Public clients**: Browser/mobile apps that cannot securely store secrets (use PKCE)
+
+    **App Lifecycle:**
+    - Create apps with name, redirect URIs, and allowed scopes
+    - Regenerate secrets if compromised
+    - Suspend/activate apps to control access
+    - Revoke all tokens for emergency access removal
+
+    """
     organization_auth_config: "OrganizationAuthConfig"
+    r"""Admin configuration of authentication methods including MFA steps and allowed providers"""
     saml: "Saml"
+    r"""SAML 2.0 Single Sign-On integration with enterprise Identity Providers"""
     users: "Users"
     r"""User management operations"""
     teams: "Teams"
@@ -146,6 +153,7 @@ class Pipeshub(BaseSDK):
     user_groups: "UserGroups"
     r"""User group management operations"""
     document_management: "DocumentManagement"
+    r"""Document CRUD and retrieval operations"""
     knowledge_bases: "KnowledgeBases"
     r"""Knowledge base management operations"""
     records: "Records"
@@ -154,26 +162,34 @@ class Pipeshub(BaseSDK):
     r"""Folder organization and management"""
     upload: "Upload"
     r"""File upload operations"""
-    uploads: "Uploads"
     connector: "ConnectorSDK"
     r"""Connector-related operations"""
-    connectors: "ConnectorsSDK"
     permissions: "PermissionsSDK"
     r"""Permission management for knowledge bases"""
+    knowledge_hub: "KnowledgeHub"
+    r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
     conversations: "Conversations"
     r"""AI-powered conversational chat management with citations and follow-up questions"""
     semantic_search: "SemanticSearch"
+    r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
     agent_templates: "AgentTemplates"
+    r"""Reusable templates for creating AI agents with predefined configurations"""
     agents: "Agents"
     r"""Custom AI agents with specialized capabilities and tool integrations"""
     agent_conversations: "AgentConversations"
+    r"""Conversations with custom AI agents including streaming and feedback"""
     connector_registry: "ConnectorRegistry"
+    r"""Browse available connector types and their configuration schemas"""
     connector_instances: "ConnectorInstances"
-    connector_configurations: "ConnectorConfigurations"
+    r"""Create, manage, and delete connector instances for your organization"""
     connector_configuration: "ConnectorConfiguration"
-    connector_controls: "ConnectorControls"
+    r"""Configure authentication, sync settings, and filters for connectors"""
+    connector_control: "ConnectorControl"
+    r"""Enable/disable connectors for sync or agent functionality"""
     connector_o_auth: "ConnectorOAuth"
+    r"""OAuth 2.0 authorization flow for connectors requiring user consent"""
     connector_filters: "ConnectorFilters"
+    r"""Dynamic filter options for selecting which data to sync"""
     toolset_registry: "ToolsetRegistry"
     r"""Browse available toolsets and their configuration schemas for agent integrations"""
     toolset_instances: "ToolsetInstances"
@@ -182,23 +198,72 @@ class Pipeshub(BaseSDK):
     r"""Configure authentication and settings for toolset instances"""
     toolset_o_auth: "ToolsetOAuth"
     r"""OAuth 2.0 authorization flow for toolsets requiring user consent"""
-    o_auth_configuration: "OAuthConfiguration1"
+    o_auth_configuration: "OAuthConfiguration"
     r"""Admin management of OAuth credentials for connector types"""
-    oauth_configuration: "OauthConfiguration2"
     storage_configuration: "StorageConfiguration"
-    smtp_configurations: "SMTPConfigurations"
+    r"""Configure storage backend for file uploads and documents. Supports AWS S3, Azure Blob Storage, or local filesystem."""
     smtp_configuration: "SMTPConfiguration"
-    auth_config: "AuthConfigSDK"
-    authentication_configurations: "AuthenticationConfigurations"
+    r"""Configure SMTP email server for sending notifications and invitations."""
     authentication_configuration: "AuthenticationConfiguration"
-    ai_models_providers: "AiModelsProviders"
-    public_urls: "PublicUrls"
+    r"""Configure authentication providers including Azure AD, Microsoft, Google OAuth, SAML SSO, and custom OAuth 2.0."""
+    ai_models_providers: "AIModelsProviders"
+    r"""Manage individual AI model providers - add, update, delete, and set defaults."""
+    public_ur_ls: "PublicURLs"
+    r"""Configure public URLs for frontend application and connector callbacks."""
     platform_settings: "PlatformSettingsSDK"
+    r"""Platform-wide settings including file upload limits, feature flags, and custom system prompts."""
     metrics_collection: "MetricsCollection"
+    r"""Configure telemetry and metrics collection for application monitoring and analytics.
+
+    PipesHub collects anonymized usage metrics to help improve the product. Metrics are pushed
+    to a configurable remote server at regular intervals.
+
+    **Collected Metrics:**
+    - API request counts and response times
+    - User activity patterns (anonymized)
+    - Feature usage statistics
+    - Error rates and types
+
+    **Configuration Options:**
+    - Enable/disable metrics collection entirely
+    - Configure push interval (minimum 1 second, default 60 seconds)
+    - Set custom metrics server URL for self-hosted analytics
+
+    **Privacy:**
+    - All metrics are anonymized before collection
+    - No personally identifiable information (PII) is collected
+    - Organization can disable collection at any time
+
+    """
     configuration_manager: "ConfigurationManager"
-    ai_models_configuration: "AiModelsConfiguration"
     crawling_jobs: "CrawlingJobs"
-    queue_management: "QueueManagement"
+    r"""Endpoints for scheduling, managing, and monitoring data crawling jobs for enterprise connectors.
+
+    The Crawling Manager uses BullMQ (Redis-based queue) to schedule and execute crawling jobs that
+    sync data from external connectors (Google Drive, OneDrive, Slack, Jira, etc.) into PipesHub's
+    search index.
+
+    **Key Features:**
+    - Schedule recurring crawls (hourly, daily, weekly, monthly) or one-time crawls
+    - Pause and resume crawling jobs without losing configuration
+    - Priority-based job execution (1-10 scale)
+    - Automatic retry with exponential backoff on failures
+    - Per-connector job isolation and tracking
+
+    **Access Control:**
+    - Team-scoped connectors require admin privileges
+    - Personal-scoped connectors can only be managed by the creator
+    - All operations require valid JWT authentication
+
+    **Schedule Types:**
+    - `hourly`: Run every X hours at specified minute
+    - `daily`: Run once per day at specified time
+    - `weekly`: Run on specified days of the week
+    - `monthly`: Run on specified day of the month
+    - `custom`: Use cron expression for complex schedules
+    - `once`: Run once at a specific future time
+
+    """
     mcp: "Mcp"
     r"""Model Context Protocol (MCP) endpoints for AI tool integration.
 
@@ -217,17 +282,13 @@ class Pipeshub(BaseSDK):
 
     """
     _sub_sdk_map = {
-        "user_account": ("pipeshub_sdk.useraccount", "UserAccount"),
-        "oauth": ("pipeshub_sdk.oauth_sdk", "OauthSDK"),
+        "user_account": ("pipeshub_sdk.user_account", "UserAccount"),
+        "o_auth": ("pipeshub_sdk.oauth_sdk", "OAuthSDK"),
         "o_auth_provider": ("pipeshub_sdk.oauth_provider", "OAuthProvider"),
         "open_id_connect": ("pipeshub_sdk.openid_connect", "OpenIDConnect"),
-        "oauth_apps": ("pipeshub_sdk.oauthapps", "OauthApps"),
-        "organization_auth_configs": (
-            "pipeshub_sdk.organizationauthconfigs",
-            "OrganizationAuthConfigs",
-        ),
+        "o_auth_apps": ("pipeshub_sdk.oauth_apps", "OAuthApps"),
         "organization_auth_config": (
-            "pipeshub_sdk.organizationauthconfig",
+            "pipeshub_sdk.organization_auth_config",
             "OrganizationAuthConfig",
         ),
         "saml": ("pipeshub_sdk.saml", "Saml"),
@@ -236,41 +297,36 @@ class Pipeshub(BaseSDK):
         "organizations": ("pipeshub_sdk.organizations", "Organizations"),
         "user_groups": ("pipeshub_sdk.user_groups", "UserGroups"),
         "document_management": (
-            "pipeshub_sdk.documentmanagement",
+            "pipeshub_sdk.document_management",
             "DocumentManagement",
         ),
-        "knowledge_bases": ("pipeshub_sdk.knowledgebases", "KnowledgeBases"),
+        "knowledge_bases": ("pipeshub_sdk.knowledge_bases", "KnowledgeBases"),
         "records": ("pipeshub_sdk.records", "Records"),
         "folders": ("pipeshub_sdk.folders", "Folders"),
         "upload": ("pipeshub_sdk.upload", "Upload"),
-        "uploads": ("pipeshub_sdk.uploads", "Uploads"),
         "connector": ("pipeshub_sdk.connector_sdk", "ConnectorSDK"),
-        "connectors": ("pipeshub_sdk.connectors_sdk", "ConnectorsSDK"),
         "permissions": ("pipeshub_sdk.permissions_sdk", "PermissionsSDK"),
+        "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
-        "semantic_search": ("pipeshub_sdk.semanticsearch", "SemanticSearch"),
-        "agent_templates": ("pipeshub_sdk.agenttemplates", "AgentTemplates"),
+        "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
+        "agent_templates": ("pipeshub_sdk.agent_templates", "AgentTemplates"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
         "agent_conversations": (
-            "pipeshub_sdk.agentconversations",
+            "pipeshub_sdk.agent_conversations",
             "AgentConversations",
         ),
-        "connector_registry": ("pipeshub_sdk.connectorregistry", "ConnectorRegistry"),
+        "connector_registry": ("pipeshub_sdk.connector_registry", "ConnectorRegistry"),
         "connector_instances": (
-            "pipeshub_sdk.connectorinstances",
+            "pipeshub_sdk.connector_instances",
             "ConnectorInstances",
         ),
-        "connector_configurations": (
-            "pipeshub_sdk.connectorconfigurations",
-            "ConnectorConfigurations",
-        ),
         "connector_configuration": (
-            "pipeshub_sdk.connectorconfiguration",
+            "pipeshub_sdk.connector_configuration",
             "ConnectorConfiguration",
         ),
-        "connector_controls": ("pipeshub_sdk.connectorcontrols", "ConnectorControls"),
-        "connector_o_auth": ("pipeshub_sdk.connectoroauth", "ConnectorOAuth"),
-        "connector_filters": ("pipeshub_sdk.connectorfilters", "ConnectorFilters"),
+        "connector_control": ("pipeshub_sdk.connector_control", "ConnectorControl"),
+        "connector_o_auth": ("pipeshub_sdk.connector_oauth", "ConnectorOAuth"),
+        "connector_filters": ("pipeshub_sdk.connector_filters", "ConnectorFilters"),
         "toolset_registry": ("pipeshub_sdk.toolset_registry", "ToolsetRegistry"),
         "toolset_instances": ("pipeshub_sdk.toolset_instances", "ToolsetInstances"),
         "toolset_configuration": (
@@ -279,48 +335,33 @@ class Pipeshub(BaseSDK):
         ),
         "toolset_o_auth": ("pipeshub_sdk.toolset_oauth", "ToolsetOAuth"),
         "o_auth_configuration": (
-            "pipeshub_sdk.oauth_configuration_1",
-            "OAuthConfiguration1",
-        ),
-        "oauth_configuration": (
-            "pipeshub_sdk.oauthconfiguration_2",
-            "OauthConfiguration2",
+            "pipeshub_sdk.oauth_configuration",
+            "OAuthConfiguration",
         ),
         "storage_configuration": (
-            "pipeshub_sdk.storageconfiguration",
+            "pipeshub_sdk.storage_configuration",
             "StorageConfiguration",
         ),
-        "smtp_configurations": (
-            "pipeshub_sdk.smtpconfigurations",
-            "SMTPConfigurations",
-        ),
-        "smtp_configuration": ("pipeshub_sdk.smtpconfiguration", "SMTPConfiguration"),
-        "auth_config": ("pipeshub_sdk.authconfig_sdk", "AuthConfigSDK"),
-        "authentication_configurations": (
-            "pipeshub_sdk.authenticationconfigurations",
-            "AuthenticationConfigurations",
-        ),
+        "smtp_configuration": ("pipeshub_sdk.smtp_configuration", "SMTPConfiguration"),
         "authentication_configuration": (
-            "pipeshub_sdk.authenticationconfiguration",
+            "pipeshub_sdk.authentication_configuration",
             "AuthenticationConfiguration",
         ),
-        "ai_models_providers": ("pipeshub_sdk.aimodelsproviders", "AiModelsProviders"),
-        "public_urls": ("pipeshub_sdk.publicurls", "PublicUrls"),
+        "ai_models_providers": (
+            "pipeshub_sdk.ai_models_providers",
+            "AIModelsProviders",
+        ),
+        "public_ur_ls": ("pipeshub_sdk.public_urls", "PublicURLs"),
         "platform_settings": (
-            "pipeshub_sdk.platformsettings_sdk",
+            "pipeshub_sdk.platform_settings_sdk",
             "PlatformSettingsSDK",
         ),
-        "metrics_collection": ("pipeshub_sdk.metricscollection", "MetricsCollection"),
+        "metrics_collection": ("pipeshub_sdk.metrics_collection", "MetricsCollection"),
         "configuration_manager": (
             "pipeshub_sdk.configuration_manager",
             "ConfigurationManager",
         ),
-        "ai_models_configuration": (
-            "pipeshub_sdk.aimodelsconfiguration",
-            "AiModelsConfiguration",
-        ),
-        "crawling_jobs": ("pipeshub_sdk.crawlingjobs", "CrawlingJobs"),
-        "queue_management": ("pipeshub_sdk.queuemanagement", "QueueManagement"),
+        "crawling_jobs": ("pipeshub_sdk.crawling_jobs", "CrawlingJobs"),
         "mcp": ("pipeshub_sdk.mcp", "Mcp"),
     }
 
@@ -376,9 +417,6 @@ class Pipeshub(BaseSDK):
             if url_params is not None:
                 server_url = utils.template_url(server_url, url_params)
         server_defaults: List[Dict[str, str]] = [
-            {
-                "instance_url": instance_url or "https://app.pipeshub.com",
-            },
             {
                 "instance_url": instance_url or "https://app.pipeshub.com",
             },

@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, Union
 class Conversations(BaseSDK):
     r"""AI-powered conversational chat management with citations and follow-up questions"""
 
-    def create(
+    def create_conversation(
         self,
         *,
         query: str,
@@ -96,7 +96,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/create",
+            path="/api/v1/conversations/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -152,7 +152,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_conversation_async(
         self,
         *,
         query: str,
@@ -235,7 +235,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/create",
+            path="/api/v1/conversations/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -291,7 +291,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create_with_streaming(
+    def stream_chat(
         self,
         *,
         query: str,
@@ -375,7 +375,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/stream",
+            path="/api/v1/conversations/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -439,7 +439,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def create_with_streaming_async(
+    async def stream_chat_async(
         self,
         *,
         query: str,
@@ -523,7 +523,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/stream",
+            path="/api/v1/conversations/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -587,7 +587,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def list(
+    def get_all_conversations(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -626,7 +626,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/conversations",
+            path="/api/v1/conversations",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -679,7 +679,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_async(
+    async def get_all_conversations_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -718,7 +718,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/conversations",
+            path="/api/v1/conversations",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -771,7 +771,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_archived(
+    def get_archived_conversations(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -806,7 +806,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/conversations/show/archives",
+            path="/api/v1/conversations/show/archives",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -861,7 +861,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_archived_async(
+    async def get_archived_conversations_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -896,7 +896,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/conversations/show/archives",
+            path="/api/v1/conversations/show/archives",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -951,7 +951,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_conversation_by_id(
         self,
         *,
         conversation_id: str,
@@ -1012,7 +1012,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/conversations/{conversationId}",
+            path="/api/v1/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1065,7 +1065,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_conversation_by_id_async(
         self,
         *,
         conversation_id: str,
@@ -1126,7 +1126,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/conversations/{conversationId}",
+            path="/api/v1/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1179,7 +1179,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_conversation_by_id(
         self,
         *,
         conversation_id: str,
@@ -1221,7 +1221,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/conversations/{conversationId}",
+            path="/api/v1/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1276,7 +1276,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_conversation_by_id_async(
         self,
         *,
         conversation_id: str,
@@ -1318,7 +1318,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/conversations/{conversationId}",
+            path="/api/v1/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1438,7 +1438,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/{conversationId}/messages",
+            path="/api/v1/conversations/{conversationId}/messages",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1559,7 +1559,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/{conversationId}/messages",
+            path="/api/v1/conversations/{conversationId}/messages",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1673,7 +1673,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/{conversationId}/messages/stream",
+            path="/api/v1/conversations/{conversationId}/messages/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1795,7 +1795,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/{conversationId}/messages/stream",
+            path="/api/v1/conversations/{conversationId}/messages/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1859,7 +1859,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def share(
+    def share_conversation(
         self,
         *,
         conversation_id: str,
@@ -1919,7 +1919,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/{conversationId}/share",
+            path="/api/v1/conversations/{conversationId}/share",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1975,7 +1975,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def share_async(
+    async def share_conversation_async(
         self,
         *,
         conversation_id: str,
@@ -2035,7 +2035,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/{conversationId}/share",
+            path="/api/v1/conversations/{conversationId}/share",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2091,7 +2091,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_title(
+    def update_conversation_title(
         self,
         *,
         conversation_id: str,
@@ -2140,7 +2140,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/conversations/{conversationId}/title",
+            path="/api/v1/conversations/{conversationId}/title",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2202,7 +2202,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_title_async(
+    async def update_conversation_title_async(
         self,
         *,
         conversation_id: str,
@@ -2251,7 +2251,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/conversations/{conversationId}/title",
+            path="/api/v1/conversations/{conversationId}/title",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2313,7 +2313,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def archive(
+    def archive_conversation(
         self,
         *,
         conversation_id: str,
@@ -2354,7 +2354,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/conversations/{conversationId}/archive",
+            path="/api/v1/conversations/{conversationId}/archive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2407,7 +2407,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def archive_async(
+    async def archive_conversation_async(
         self,
         *,
         conversation_id: str,
@@ -2448,7 +2448,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/conversations/{conversationId}/archive",
+            path="/api/v1/conversations/{conversationId}/archive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2501,7 +2501,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def unarchive(
+    def unarchive_conversation(
         self,
         *,
         conversation_id: str,
@@ -2539,7 +2539,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/conversations/{conversationId}/unarchive",
+            path="/api/v1/conversations/{conversationId}/unarchive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2594,7 +2594,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def unarchive_async(
+    async def unarchive_conversation_async(
         self,
         *,
         conversation_id: str,
@@ -2632,7 +2632,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/conversations/{conversationId}/unarchive",
+            path="/api/v1/conversations/{conversationId}/unarchive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2687,7 +2687,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def regenerate(
+    def regenerate_answer(
         self,
         *,
         conversation_id: str,
@@ -2752,7 +2752,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/{conversationId}/message/{messageId}/regenerate",
+            path="/api/v1/conversations/{conversationId}/message/{messageId}/regenerate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2820,7 +2820,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def regenerate_async(
+    async def regenerate_answer_async(
         self,
         *,
         conversation_id: str,
@@ -2885,7 +2885,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/{conversationId}/message/{messageId}/regenerate",
+            path="/api/v1/conversations/{conversationId}/message/{messageId}/regenerate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2953,7 +2953,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def submit_feedback(
+    def update_message_feedback(
         self,
         *,
         conversation_id: str,
@@ -3060,7 +3060,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/{conversationId}/message/{messageId}/feedback",
+            path="/api/v1/conversations/{conversationId}/message/{messageId}/feedback",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3118,7 +3118,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def submit_feedback_async(
+    async def update_message_feedback_async(
         self,
         *,
         conversation_id: str,
@@ -3225,7 +3225,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/{conversationId}/message/{messageId}/feedback",
+            path="/api/v1/conversations/{conversationId}/message/{messageId}/feedback",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3283,7 +3283,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def unshare(
+    def unshare_conversation_by_id(
         self,
         *,
         conversation_id: str,
@@ -3324,7 +3324,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/conversations/{conversationId}/unshare",
+            path="/api/v1/conversations/{conversationId}/unshare",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3386,7 +3386,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def unshare_async(
+    async def unshare_conversation_by_id_async(
         self,
         *,
         conversation_id: str,
@@ -3427,7 +3427,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/conversations/{conversationId}/unshare",
+            path="/api/v1/conversations/{conversationId}/unshare",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

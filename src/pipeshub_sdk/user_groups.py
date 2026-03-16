@@ -73,7 +73,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/userGroups",
+            path="/api/v1/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -189,7 +189,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/userGroups",
+            path="/api/v1/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -286,7 +286,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/userGroups",
+            path="/api/v1/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -380,7 +380,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/userGroups",
+            path="/api/v1/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -476,7 +476,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/userGroups/{groupId}",
+            path="/api/v1/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -572,7 +572,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/userGroups/{groupId}",
+            path="/api/v1/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -675,7 +675,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/userGroups/{groupId}",
+            path="/api/v1/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -781,7 +781,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/userGroups/{groupId}",
+            path="/api/v1/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -884,7 +884,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/userGroups/{groupId}",
+            path="/api/v1/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -984,7 +984,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/userGroups/{groupId}",
+            path="/api/v1/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1088,7 +1088,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/userGroups/add-users",
+            path="/api/v1/userGroups/add-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1195,7 +1195,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/userGroups/add-users",
+            path="/api/v1/userGroups/add-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1300,7 +1300,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/userGroups/remove-users",
+            path="/api/v1/userGroups/remove-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1407,7 +1407,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/userGroups/remove-users",
+            path="/api/v1/userGroups/remove-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1512,7 +1512,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/userGroups/users/{userId}",
+            path="/api/v1/userGroups/users/{userId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1612,7 +1612,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/userGroups/users/{userId}",
+            path="/api/v1/userGroups/users/{userId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1701,7 +1701,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/userGroups/{groupId}/users",
+            path="/api/v1/userGroups/{groupId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1790,7 +1790,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/userGroups/{groupId}/users",
+            path="/api/v1/userGroups/{groupId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1872,7 +1872,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/userGroups/stats/list",
+            path="/api/v1/userGroups/stats/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1956,7 +1956,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/userGroups/stats/list",
+            path="/api/v1/userGroups/stats/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,

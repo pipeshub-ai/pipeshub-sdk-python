@@ -48,7 +48,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -136,7 +136,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -237,7 +237,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -341,7 +341,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -442,7 +442,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -547,7 +547,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -642,7 +642,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -730,7 +730,7 @@ class ToolsetConfiguration(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/toolsets/{toolsetId}/config",
+            path="/api/v1/toolsets/{toolsetId}/config",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

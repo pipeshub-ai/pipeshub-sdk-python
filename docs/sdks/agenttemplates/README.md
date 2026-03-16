@@ -2,15 +2,17 @@
 
 ## Overview
 
+Reusable templates for creating AI agents with predefined configurations
+
 ### Available Operations
 
-* [list](#list) - List agent templates
-* [create](#create) - Create agent template
-* [get_template](#get_template) - Get agent template
-* [update](#update) - Update agent template
-* [delete](#delete) - Delete agent template
+* [list_agent_templates](#list_agent_templates) - List agent templates
+* [create_agent_template](#create_agent_template) - Create agent template
+* [get_agent_template](#get_agent_template) - Get agent template
+* [update_agent_template](#update_agent_template) - Update agent template
+* [delete_agent_template](#delete_agent_template) - Delete agent template
 
-## list
+## list_agent_templates
 
 Retrieve all available agent templates.<br><br>
 <b>Overview:</b><br>
@@ -26,7 +28,7 @@ and configuration schemas.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listAgentTemplates" method="get" path="/agents/template" -->
+<!-- UsageSnippet language="python" operationID="listAgentTemplates" method="get" path="/api/v1/agents/template" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -38,7 +40,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_templates.list()
+    res = pipeshub.agent_templates.list_agent_templates()
 
     # Handle response
     print(res)
@@ -61,7 +63,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create
+## create_agent_template
 
 Create a new reusable agent template.<br><br>
 <b>Overview:</b><br>
@@ -77,7 +79,7 @@ system prompts, tool recommendations, and customization options.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createAgentTemplate" method="post" path="/agents/template" -->
+<!-- UsageSnippet language="python" operationID="createAgentTemplate" method="post" path="/api/v1/agents/template" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -89,7 +91,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_templates.create(name="Customer Support Agent", description="A template for customer support agents", system_prompt="You are a helpful customer support assistant.", category="Support", is_public=False)
+    res = pipeshub.agent_templates.create_agent_template(name="Customer Support Agent", description="A template for customer support agents", system_prompt="You are a helpful customer support assistant.", category="Support", is_public=False)
 
     # Handle response
     print(res)
@@ -119,13 +121,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_template
+## get_agent_template
 
 Retrieve a specific agent template by ID.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAgentTemplate" method="get" path="/agents/template/{templateId}" -->
+<!-- UsageSnippet language="python" operationID="getAgentTemplate" method="get" path="/api/v1/agents/template/{templateId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -137,7 +139,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_templates.get_template(template_id="<id>")
+    res = pipeshub.agent_templates.get_agent_template(template_id="<id>")
 
     # Handle response
     print(res)
@@ -161,7 +163,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_agent_template
 
 Update an existing agent template.<br><br>
 <b>Permissions:</b><br>
@@ -170,7 +172,7 @@ Only the template creator can update it.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateAgentTemplate" method="put" path="/agents/template/{templateId}" -->
+<!-- UsageSnippet language="python" operationID="updateAgentTemplate" method="put" path="/api/v1/agents/template/{templateId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -182,7 +184,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_templates.update(template_id="<id>")
+    res = pipeshub.agent_templates.update_agent_template(template_id="<id>")
 
     # Handle response
     print(res)
@@ -213,7 +215,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_agent_template
 
 Delete an agent template.<br><br>
 <b>Note:</b><br>
@@ -222,7 +224,7 @@ Existing agents created from this template are not affected.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteAgentTemplate" method="delete" path="/agents/template/{templateId}" -->
+<!-- UsageSnippet language="python" operationID="deleteAgentTemplate" method="delete" path="/api/v1/agents/template/{templateId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -234,7 +236,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.agent_templates.delete(template_id="<id>")
+    pipeshub.agent_templates.delete_agent_template(template_id="<id>")
 
     # Use the SDK ...
 

@@ -6,17 +6,15 @@ Knowledge base management operations
 
 ### Available Operations
 
-* [create](#create) - Create a new knowledge base
-* [list](#list) - List all knowledge bases
-* [get](#get) - Get knowledge base by ID
-* [update](#update) - Update knowledge base
-* [delete](#delete) - Delete knowledge base
-* [get_root_nodes](#get_root_nodes) - Get knowledge hub root nodes
-* [get_child_nodes](#get_child_nodes) - Get knowledge hub child nodes
+* [create_knowledge_base](#create_knowledge_base) - Create a new knowledge base
+* [list_knowledge_bases](#list_knowledge_bases) - List all knowledge bases
+* [get_knowledge_base](#get_knowledge_base) - Get knowledge base by ID
+* [update_knowledge_base](#update_knowledge_base) - Update knowledge base
+* [delete_knowledge_base](#delete_knowledge_base) - Delete knowledge base
 * [reindex_failed_records](#reindex_failed_records) - Reindex failed records for connector
-* [move](#move) - Move record to another location
+* [move_record](#move_record) - Move record to another location
 
-## create
+## create_knowledge_base
 
 Create a new knowledge base for organizing and managing documents within your organization.<br><br>
 <b>Overview:</b><br>
@@ -41,7 +39,7 @@ The user creating the KB automatically becomes the OWNER with full administrativ
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createKnowledgeBase" method="post" path="/knowledgeBase" -->
+<!-- UsageSnippet language="python" operationID="createKnowledgeBase" method="post" path="/api/v1/knowledgeBase" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -53,7 +51,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.create(kb_name="Product Documentation")
+    res = pipeshub.knowledge_bases.create_knowledge_base(kb_name="Product Documentation")
 
     # Handle response
     print(res)
@@ -77,7 +75,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## list_knowledge_bases
 
 Retrieve a paginated list of all knowledge bases accessible to the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -100,7 +98,7 @@ Uses efficient pagination with limit/offset. For large result sets, use smaller 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listKnowledgeBases" method="get" path="/knowledgeBase" -->
+<!-- UsageSnippet language="python" operationID="listKnowledgeBases" method="get" path="/api/v1/knowledgeBase" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -112,7 +110,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.list(page=1, limit=20, permissions="OWNER,ORGANIZER,WRITER", sort_by="name", sort_order="asc")
+    res = pipeshub.knowledge_bases.list_knowledge_bases(page=1, limit=20, permissions="OWNER,ORGANIZER,WRITER", sort_by="name", sort_order="asc")
 
     # Handle response
     print(res)
@@ -141,7 +139,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get
+## get_knowledge_base
 
 Retrieve detailed information about a specific knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -152,7 +150,7 @@ User must have at least READER permission to view KB details.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getKnowledgeBase" method="get" path="/knowledgeBase/{kbId}" -->
+<!-- UsageSnippet language="python" operationID="getKnowledgeBase" method="get" path="/api/v1/knowledgeBase/{kbId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -164,7 +162,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.get(kb_id="kb_550e8400-e29b-41d4-a716")
+    res = pipeshub.knowledge_bases.get_knowledge_base(kb_id="kb_550e8400-e29b-41d4-a716")
 
     # Handle response
     print(res)
@@ -188,7 +186,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_knowledge_base
 
 Update a knowledge base's name.<br><br>
 <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
@@ -201,7 +199,7 @@ Update a knowledge base's name.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateKnowledgeBase" method="put" path="/knowledgeBase/{kbId}" -->
+<!-- UsageSnippet language="python" operationID="updateKnowledgeBase" method="put" path="/api/v1/knowledgeBase/{kbId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -213,7 +211,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.update(kb_id="<id>", kb_name="Updated Documentation Hub")
+    res = pipeshub.knowledge_bases.update_knowledge_base(kb_id="<id>", kb_name="Updated Documentation Hub")
 
     # Handle response
     print(res)
@@ -238,7 +236,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_knowledge_base
 
 Permanently delete a knowledge base and all its contents.<br><br>
 <b>Required Permission:</b> OWNER only<br><br>
@@ -254,7 +252,7 @@ Permanently delete a knowledge base and all its contents.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteKnowledgeBase" method="delete" path="/knowledgeBase/{kbId}" -->
+<!-- UsageSnippet language="python" operationID="deleteKnowledgeBase" method="delete" path="/api/v1/knowledgeBase/{kbId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -266,7 +264,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.delete(kb_id="<id>")
+    res = pipeshub.knowledge_bases.delete_knowledge_base(kb_id="<id>")
 
     # Handle response
     print(res)
@@ -290,135 +288,6 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_root_nodes
-
-Retrieve root-level nodes (Apps) or search across all nodes for unified knowledge hub browsing.<br><br>
-<b>Overview:</b><br>
-Provides a unified view across all knowledge sources - Collections, connectors, and apps. Use for building file browser UIs.<br><br>
-<b>Node Types:</b><br>
-<ul>
-<li><b>Collection:</b> Local collections (formerly Knowledge Bases)</li>
-<li><b>Connector:</b> External connector instances</li>
-<li><b>App:</b> Connected applications</li>
-</ul>
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getKnowledgeHubRootNodes" method="get" path="/knowledgeBase/knowledge-hub/nodes" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.knowledge_bases.get_root_nodes(only_containers=False, page=1, limit=50, sort_by="updatedAt", sort_order="desc", flattened=False)
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                                               | Type                                                                                                    | Required                                                                                                | Description                                                                                             |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `only_containers`                                                                                       | *Optional[bool]*                                                                                        | :heavy_minus_sign:                                                                                      | Only return nodes with children (for sidebar)                                                           |
-| `page`                                                                                                  | *Optional[int]*                                                                                         | :heavy_minus_sign:                                                                                      | Page number (1-indexed)                                                                                 |
-| `limit`                                                                                                 | *Optional[int]*                                                                                         | :heavy_minus_sign:                                                                                      | Items per page                                                                                          |
-| `sort_by`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Sort field (name, createdAt, updatedAt, size, type)                                                     |
-| `sort_order`                                                                                            | [Optional[models.GetKnowledgeHubRootNodesSortOrder]](../../models/getknowledgehubrootnodessortorder.md) | :heavy_minus_sign:                                                                                      | Sort order (asc or desc)                                                                                |
-| `q`                                                                                                     | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Full-text search query                                                                                  |
-| `node_types`                                                                                            | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Filter by node types (comma-separated)                                                                  |
-| `record_types`                                                                                          | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated record types                                                                            |
-| `origins`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated origins (COLLECTION, CONNECTOR)                                                         |
-| `connector_ids`                                                                                         | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated connector instance IDs                                                                  |
-| `indexing_status`                                                                                       | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated indexing statuses                                                                       |
-| `created_at`                                                                                            | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Created date range (gte:timestamp,lte:timestamp)                                                        |
-| `updated_at`                                                                                            | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Updated date range (gte:timestamp,lte:timestamp)                                                        |
-| `size`                                                                                                  | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Size range (gte:bytes,lte:bytes)                                                                        |
-| `flattened`                                                                                             | *Optional[bool]*                                                                                        | :heavy_minus_sign:                                                                                      | Return flattened view with all nested children                                                          |
-| `include`                                                                                               | *Optional[str]*                                                                                         | :heavy_minus_sign:                                                                                      | Comma-separated includes (breadcrumbs, counts, availableFilters, permissions)                           |
-| `retries`                                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                        | :heavy_minus_sign:                                                                                      | Configuration to override the default retry behavior of the client.                                     |
-
-### Response
-
-**[models.KnowledgeHubNodesResponse](../../models/knowledgehubnodesresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## get_child_nodes
-
-Get children of a specific node. Retrieve child nodes under a specific parent in the knowledge hub tree.<br><br>
-<b>Navigation:</b><br>
-Use this to drill down into collections, folders, and connector hierarchies.<br><br>
-parent_type must be one of: app, recordGroup, folder, record.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="getKnowledgeHubChildNodes" method="get" path="/knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.knowledge_bases.get_child_nodes(parent_type="recordGroup", parent_id="507f1f77bcf86cd799439011", only_containers=False, page=1, limit=50, sort_by="updatedAt", sort_order="desc", flattened=False)
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                                                 | Type                                                                                                      | Required                                                                                                  | Description                                                                                               | Example                                                                                                   |
-| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `parent_type`                                                                                             | [models.ParentType](../../models/parenttype.md)                                                           | :heavy_check_mark:                                                                                        | Type of parent node (app, recordGroup, folder, record)                                                    | recordGroup                                                                                               |
-| `parent_id`                                                                                               | *str*                                                                                                     | :heavy_check_mark:                                                                                        | ID of parent node (UUID or knowledgeBase_<orgId> for Collection app)                                      | 507f1f77bcf86cd799439011                                                                                  |
-| `only_containers`                                                                                         | *Optional[bool]*                                                                                          | :heavy_minus_sign:                                                                                        | Only return nodes with children (for sidebar)                                                             |                                                                                                           |
-| `page`                                                                                                    | *Optional[int]*                                                                                           | :heavy_minus_sign:                                                                                        | Page number (1-indexed)                                                                                   |                                                                                                           |
-| `limit`                                                                                                   | *Optional[int]*                                                                                           | :heavy_minus_sign:                                                                                        | Items per page                                                                                            |                                                                                                           |
-| `sort_by`                                                                                                 | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Sort field (name, createdAt, updatedAt, size, type)                                                       |                                                                                                           |
-| `sort_order`                                                                                              | [Optional[models.GetKnowledgeHubChildNodesSortOrder]](../../models/getknowledgehubchildnodessortorder.md) | :heavy_minus_sign:                                                                                        | Sort order (asc or desc)                                                                                  |                                                                                                           |
-| `q`                                                                                                       | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Full-text search query                                                                                    |                                                                                                           |
-| `node_types`                                                                                              | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Filter by node types (comma-separated)                                                                    |                                                                                                           |
-| `record_types`                                                                                            | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated record types                                                                              |                                                                                                           |
-| `origins`                                                                                                 | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated origins (COLLECTION, CONNECTOR)                                                           |                                                                                                           |
-| `connector_ids`                                                                                           | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated connector instance IDs                                                                    |                                                                                                           |
-| `indexing_status`                                                                                         | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated indexing statuses                                                                         |                                                                                                           |
-| `created_at`                                                                                              | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Created date range (gte:timestamp,lte:timestamp)                                                          |                                                                                                           |
-| `updated_at`                                                                                              | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Updated date range (gte:timestamp,lte:timestamp)                                                          |                                                                                                           |
-| `size`                                                                                                    | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Size range (gte:bytes,lte:bytes)                                                                          |                                                                                                           |
-| `flattened`                                                                                               | *Optional[bool]*                                                                                          | :heavy_minus_sign:                                                                                        | Return flattened view with all nested children                                                            |                                                                                                           |
-| `include`                                                                                                 | *Optional[str]*                                                                                           | :heavy_minus_sign:                                                                                        | Comma-separated includes (breadcrumbs, counts, availableFilters, permissions)                             |                                                                                                           |
-| `retries`                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                          | :heavy_minus_sign:                                                                                        | Configuration to override the default retry behavior of the client.                                       |                                                                                                           |
-
-### Response
-
-**[models.KnowledgeHubNodesResponse](../../models/knowledgehubnodesresponse.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
 ## reindex_failed_records
 
 Trigger reindexing of records that previously failed to index for a specific connector.
@@ -426,7 +295,7 @@ Trigger reindexing of records that previously failed to index for a specific con
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="reindexFailedRecords" method="post" path="/knowledgeBase/reindex-failed/connector" -->
+<!-- UsageSnippet language="python" operationID="reindexFailedRecords" method="post" path="/api/v1/knowledgeBase/reindex-failed/connector" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -464,14 +333,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## move
+## move_record
 
 Move a record from one location to another within a knowledge base.
 
 
 ### Example Usage: moveToFolder
 
-<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToFolder" -->
+<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/api/v1/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToFolder" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -483,7 +352,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.move(kb_id="702f8ff0-0a01-4354-b592-eea268f40f25", record_id="<id>", new_parent_id="folder-abc123")
+    res = pipeshub.knowledge_bases.move_record(kb_id="702f8ff0-0a01-4354-b592-eea268f40f25", record_id="<id>", new_parent_id="folder-abc123")
 
     # Handle response
     print(res)
@@ -491,7 +360,7 @@ with Pipeshub(
 ```
 ### Example Usage: moveToRoot
 
-<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToRoot" -->
+<!-- UsageSnippet language="python" operationID="moveRecord" method="put" path="/api/v1/knowledgeBase/{kbId}/record/{recordId}/move" example="moveToRoot" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -503,7 +372,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.move(kb_id="8bdbd4fc-ec2e-4e15-8a88-ae59a5b4bad2", record_id="<id>", new_parent_id=None)
+    res = pipeshub.knowledge_bases.move_record(kb_id="8bdbd4fc-ec2e-4e15-8a88-ae59a5b4bad2", record_id="<id>", new_parent_id=None)
 
     # Handle response
     print(res)

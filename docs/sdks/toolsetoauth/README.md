@@ -18,7 +18,7 @@ Returns a URL that the user should visit to authorize the toolset.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetOAuthUrl" method="get" path="/toolsets/{toolsetId}/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="getToolsetOAuthUrl" method="get" path="/api/v1/toolsets/{toolsetId}/oauth/authorize" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -63,7 +63,7 @@ This endpoint processes the authorization code and completes the OAuth flow.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="handleToolsetOAuthCallback" method="get" path="/toolsets/oauth/callback" -->
+<!-- UsageSnippet language="python" operationID="handleToolsetOAuthCallback" method="get" path="/api/v1/toolsets/oauth/callback" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -108,7 +108,7 @@ Get OAuth authorization URL for instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getInstanceOAuthAuthorizationUrl" method="get" path="/toolsets/instances/{instanceId}/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="getInstanceOAuthAuthorizationUrl" method="get" path="/api/v1/toolsets/instances/{instanceId}/oauth/authorize" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

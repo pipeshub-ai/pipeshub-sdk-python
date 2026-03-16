@@ -15,7 +15,7 @@ def test_records_get_all_records():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.records.get_all(
+        res = pipeshub.records.get_all_records(
             page=1,
             limit=20,
             record_types="FILE,WEBPAGE,EMAIL",
@@ -61,7 +61,7 @@ def test_records_get_kb_records():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.records.get(
+        res = pipeshub.records.get_kb_records(
             kb_id="<id>",
             page=1,
             limit=20,
@@ -151,7 +151,7 @@ def test_records_get_record_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.records.get_by_id(record_id="<id>", convert_to="txt")
+        res = pipeshub.records.get_record_by_id(record_id="<id>", convert_to="txt")
         assert res is not None
         assert res == models.GetRecordByIDResponse(
             record=models.Record(
@@ -189,7 +189,7 @@ def test_records_update_record():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.records.update(record_id="<id>")
+        res = pipeshub.records.update_record(record_id="<id>")
         assert res is not None
         assert res == models.UpdateRecordResponse(
             record=models.Record(
@@ -227,7 +227,7 @@ def test_records_stream_record_buffer():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.records.stream(record_id="<id>")
+        res = pipeshub.records.stream_record_buffer(record_id="<id>")
         assert res is not None
         assert (
             bytes().join(res.iter_bytes())

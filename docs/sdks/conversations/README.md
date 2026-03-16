@@ -6,23 +6,23 @@ AI-powered conversational chat management with citations and follow-up questions
 
 ### Available Operations
 
-* [create](#create) - Create a new AI conversation
-* [create_with_streaming](#create_with_streaming) - Create conversation with streaming response
-* [list](#list) - List all conversations
-* [list_archived](#list_archived) - List archived conversations
-* [get_by_id](#get_by_id) - Get conversation by ID
-* [delete](#delete) - Delete conversation
+* [create_conversation](#create_conversation) - Create a new AI conversation
+* [stream_chat](#stream_chat) - Create conversation with streaming response
+* [get_all_conversations](#get_all_conversations) - List all conversations
+* [get_archived_conversations](#get_archived_conversations) - List archived conversations
+* [get_conversation_by_id](#get_conversation_by_id) - Get conversation by ID
+* [delete_conversation_by_id](#delete_conversation_by_id) - Delete conversation
 * [add_message](#add_message) - Add message to conversation
 * [add_message_stream](#add_message_stream) - Add message with streaming response
-* [share](#share) - Share conversation with users
-* [update_title](#update_title) - Update conversation title
-* [archive](#archive) - Archive conversation
-* [unarchive](#unarchive) - Unarchive conversation
-* [regenerate](#regenerate) - Regenerate AI response
-* [submit_feedback](#submit_feedback) - Submit feedback on AI response
-* [unshare](#unshare) - Unshare a conversation
+* [share_conversation](#share_conversation) - Share conversation with users
+* [update_conversation_title](#update_conversation_title) - Update conversation title
+* [archive_conversation](#archive_conversation) - Archive conversation
+* [unarchive_conversation](#unarchive_conversation) - Unarchive conversation
+* [regenerate_answer](#regenerate_answer) - Regenerate AI response
+* [update_message_feedback](#update_message_feedback) - Submit feedback on AI response
+* [unshare_conversation_by_id](#unshare_conversation_by_id) - Unshare a conversation
 
-## create
+## create_conversation
 
 Start a new conversation with PipesHub's AI assistant.<br><br>
 <b>Overview:</b><br>
@@ -50,7 +50,7 @@ Each model may have different capabilities, speed, and accuracy trade-offs.
 
 ### Example Usage: filtered
 
-<!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/conversations/create" example="filtered" -->
+<!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/api/v1/conversations/create" example="filtered" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -62,7 +62,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.create(query="Summarize the Q4 sales report", record_ids=[
+    res = pipeshub.conversations.create_conversation(query="Summarize the Q4 sales report", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], filters={
@@ -77,7 +77,7 @@ with Pipeshub(
 ```
 ### Example Usage: simple
 
-<!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/conversations/create" example="simple" -->
+<!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/api/v1/conversations/create" example="simple" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -89,7 +89,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.create(query="What is our company's vacation policy?", record_ids=[
+    res = pipeshub.conversations.create_conversation(query="What is our company's vacation policy?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], filters={
@@ -126,7 +126,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_with_streaming
+## stream_chat
 
 Start a new conversation with real-time streaming response using Server-Sent Events (SSE).<br><br>
 <b>Overview:</b><br>
@@ -155,7 +155,7 @@ The conversation is marked as FAILED with the error reason stored.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="streamChat" method="post" path="/conversations/stream" -->
+<!-- UsageSnippet language="python" operationID="streamChat" method="post" path="/api/v1/conversations/stream" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -167,7 +167,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.create_with_streaming(query="What are the key findings from our Q4 financial report?", record_ids=[
+    res = pipeshub.conversations.stream_chat(query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
     ], filters={
@@ -206,7 +206,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list
+## get_all_conversations
 
 Retrieve all conversations for the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -223,7 +223,7 @@ Conversations are sorted by last activity timestamp (most recent first).
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAllConversations" method="get" path="/conversations" -->
+<!-- UsageSnippet language="python" operationID="getAllConversations" method="get" path="/api/v1/conversations" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -235,7 +235,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.list()
+    res = pipeshub.conversations.get_all_conversations()
 
     # Handle response
     print(res)
@@ -258,7 +258,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_archived
+## get_archived_conversations
 
 Retrieve all archived conversations for the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -271,7 +271,7 @@ to the active list.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getArchivedConversations" method="get" path="/conversations/show/archives" -->
+<!-- UsageSnippet language="python" operationID="getArchivedConversations" method="get" path="/api/v1/conversations/show/archives" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -283,7 +283,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.list_archived()
+    res = pipeshub.conversations.get_archived_conversations()
 
     # Handle response
     print(res)
@@ -306,7 +306,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_by_id
+## get_conversation_by_id
 
 Retrieve a specific conversation with its full message history.<br><br>
 <b>Overview:</b><br>
@@ -326,7 +326,7 @@ Users can access conversations they own or that have been shared with them.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getConversationById" method="get" path="/conversations/{conversationId}" -->
+<!-- UsageSnippet language="python" operationID="getConversationById" method="get" path="/api/v1/conversations/{conversationId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -338,7 +338,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.get_by_id(conversation_id="507f1f77bcf86cd799439011", page=1, limit=10, sort_by="createdAt", sort_order="desc")
+    res = pipeshub.conversations.get_conversation_by_id(conversation_id="507f1f77bcf86cd799439011", page=1, limit=10, sort_by="createdAt", sort_order="desc")
 
     # Handle response
     print(res)
@@ -366,7 +366,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_conversation_by_id
 
 Delete a conversation by its ID.<br><br>
 <b>Overview:</b><br>
@@ -379,7 +379,7 @@ Shared users cannot delete conversations.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteConversationById" method="delete" path="/conversations/{conversationId}" -->
+<!-- UsageSnippet language="python" operationID="deleteConversationById" method="delete" path="/api/v1/conversations/{conversationId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -391,7 +391,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.delete(conversation_id="<value>")
+    res = pipeshub.conversations.delete_conversation_by_id(conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -434,7 +434,7 @@ This allows switching models mid-conversation if needed.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="addMessage" method="post" path="/conversations/{conversationId}/messages" -->
+<!-- UsageSnippet language="python" operationID="addMessage" method="post" path="/api/v1/conversations/{conversationId}/messages" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -491,7 +491,7 @@ See <code>/conversations/stream</code> for event type documentation.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="addMessageStream" method="post" path="/conversations/{conversationId}/messages/stream" -->
+<!-- UsageSnippet language="python" operationID="addMessageStream" method="post" path="/api/v1/conversations/{conversationId}/messages/stream" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -538,7 +538,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## share
+## share_conversation
 
 Share a conversation with other users in your organization.<br><br>
 <b>Overview:</b><br>
@@ -556,7 +556,7 @@ to the same organization.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="shareConversation" method="post" path="/conversations/{conversationId}/share" -->
+<!-- UsageSnippet language="python" operationID="shareConversation" method="post" path="/api/v1/conversations/{conversationId}/share" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -568,7 +568,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.share(conversation_id="<value>", user_ids=[
+    res = pipeshub.conversations.share_conversation(conversation_id="<value>", user_ids=[
         "507f1f77bcf86cd799439011",
     ], access_level="read")
 
@@ -596,7 +596,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_title
+## update_conversation_title
 
 Update the title of a conversation.<br><br>
 <b>Overview:</b><br>
@@ -611,7 +611,7 @@ Use this endpoint to set a custom, more descriptive title.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateConversationTitle" method="patch" path="/conversations/{conversationId}/title" -->
+<!-- UsageSnippet language="python" operationID="updateConversationTitle" method="patch" path="/api/v1/conversations/{conversationId}/title" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -623,7 +623,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.update_title(conversation_id="<value>", title="Q4 Sales Analysis Discussion")
+    res = pipeshub.conversations.update_conversation_title(conversation_id="<value>", title="Q4 Sales Analysis Discussion")
 
     # Handle response
     print(res)
@@ -648,7 +648,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## archive
+## archive_conversation
 
 Archive a conversation to hide it from the main list.<br><br>
 <b>Overview:</b><br>
@@ -660,7 +660,7 @@ View archived conversations using <code>GET /conversations/show/archives</code>.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="archiveConversation" method="patch" path="/conversations/{conversationId}/archive" -->
+<!-- UsageSnippet language="python" operationID="archiveConversation" method="patch" path="/api/v1/conversations/{conversationId}/archive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -672,7 +672,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.archive(conversation_id="<value>")
+    res = pipeshub.conversations.archive_conversation(conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -696,7 +696,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unarchive
+## unarchive_conversation
 
 Restore an archived conversation to the active list.<br><br>
 <b>Overview:</b><br>
@@ -705,7 +705,7 @@ Removes the archived flag, making the conversation visible in the main list agai
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="unarchiveConversation" method="patch" path="/conversations/{conversationId}/unarchive" -->
+<!-- UsageSnippet language="python" operationID="unarchiveConversation" method="patch" path="/api/v1/conversations/{conversationId}/unarchive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -717,7 +717,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.unarchive(conversation_id="<value>")
+    res = pipeshub.conversations.unarchive_conversation(conversation_id="<value>")
 
     # Handle response
     print(res)
@@ -741,7 +741,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## regenerate
+## regenerate_answer
 
 Regenerate the AI response for a specific message.<br><br>
 <b>Overview:</b><br>
@@ -760,7 +760,7 @@ Specify <code>modelKey</code> to use a different model for regeneration.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="regenerateAnswer" method="post" path="/conversations/{conversationId}/message/{messageId}/regenerate" -->
+<!-- UsageSnippet language="python" operationID="regenerateAnswer" method="post" path="/api/v1/conversations/{conversationId}/message/{messageId}/regenerate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -772,7 +772,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.regenerate(conversation_id="<value>", message_id="<value>", filters={
+    res = pipeshub.conversations.regenerate_answer(conversation_id="<value>", message_id="<value>", filters={
         "apps": [
             "550e8400-e29b-41d4-a716-446655440000",
         ],
@@ -807,7 +807,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## submit_feedback
+## update_message_feedback
 
 Provide feedback on an AI-generated response.<br><br>
 <b>Overview:</b><br>
@@ -828,7 +828,7 @@ not on user queries or system messages.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateMessageFeedback" method="post" path="/conversations/{conversationId}/message/{messageId}/feedback" -->
+<!-- UsageSnippet language="python" operationID="updateMessageFeedback" method="post" path="/api/v1/conversations/{conversationId}/message/{messageId}/feedback" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -840,7 +840,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.submit_feedback(conversation_id="<value>", message_id="<value>")
+    res = pipeshub.conversations.update_message_feedback(conversation_id="<value>", message_id="<value>")
 
     # Handle response
     print(res)
@@ -877,14 +877,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unshare
+## unshare_conversation_by_id
 
 Revoke sharing for a conversation, making it private again.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="unshareConversationById" method="post" path="/conversations/{conversationId}/unshare" -->
+<!-- UsageSnippet language="python" operationID="unshareConversationById" method="post" path="/api/v1/conversations/{conversationId}/unshare" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -896,7 +896,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.unshare(conversation_id="<value>", user_ids=[
+    res = pipeshub.conversations.unshare_conversation_by_id(conversation_id="<value>", user_ids=[
         "507f1f77bcf86cd799439011",
     ])
 

@@ -28,7 +28,7 @@ Create a new toolset instance with authentication configuration
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createToolset" method="post" path="/toolsets" -->
+<!-- UsageSnippet language="python" operationID="createToolset" method="post" path="/api/v1/toolsets" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -72,7 +72,7 @@ Get all configured toolsets for the authenticated user
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listConfiguredToolsets" method="get" path="/toolsets/configured" -->
+<!-- UsageSnippet language="python" operationID="listConfiguredToolsets" method="get" path="/api/v1/toolsets/configured" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -113,7 +113,7 @@ Check authentication status of a toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="checkToolsetStatus" method="get" path="/toolsets/{toolsetId}/status" -->
+<!-- UsageSnippet language="python" operationID="checkToolsetStatus" method="get" path="/api/v1/toolsets/{toolsetId}/status" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -152,7 +152,7 @@ Only applicable to OAuth-configured toolsets.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="reauthenticateToolset" method="post" path="/toolsets/{toolsetId}/reauthenticate" -->
+<!-- UsageSnippet language="python" operationID="reauthenticateToolset" method="post" path="/api/v1/toolsets/{toolsetId}/reauthenticate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -194,7 +194,7 @@ Returns organization toolset instances merged with current user's authentication
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getMyToolsets" method="get" path="/toolsets/my-toolsets" -->
+<!-- UsageSnippet language="python" operationID="getMyToolsets" method="get" path="/api/v1/toolsets/my-toolsets" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -235,7 +235,7 @@ List all toolset instances configured for the organization.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetInstances" method="get" path="/toolsets/instances" -->
+<!-- UsageSnippet language="python" operationID="getToolsetInstances" method="get" path="/api/v1/toolsets/instances" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -276,7 +276,7 @@ Create a new toolset instance (admin only).
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createToolsetInstance" method="post" path="/toolsets/instances" -->
+<!-- UsageSnippet language="python" operationID="createToolsetInstance" method="post" path="/api/v1/toolsets/instances" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -319,7 +319,7 @@ Get toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetInstance" method="get" path="/toolsets/instances/{instanceId}" -->
+<!-- UsageSnippet language="python" operationID="getToolsetInstance" method="get" path="/api/v1/toolsets/instances/{instanceId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -356,7 +356,7 @@ Update toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateToolsetInstance" method="put" path="/toolsets/instances/{instanceId}" -->
+<!-- UsageSnippet language="python" operationID="updateToolsetInstance" method="put" path="/api/v1/toolsets/instances/{instanceId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -396,7 +396,7 @@ Delete toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteToolsetInstance" method="delete" path="/toolsets/instances/{instanceId}" -->
+<!-- UsageSnippet language="python" operationID="deleteToolsetInstance" method="delete" path="/api/v1/toolsets/instances/{instanceId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -433,7 +433,7 @@ Authenticate toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="authenticateToolsetInstance" method="post" path="/toolsets/instances/{instanceId}/authenticate" -->
+<!-- UsageSnippet language="python" operationID="authenticateToolsetInstance" method="post" path="/api/v1/toolsets/instances/{instanceId}/authenticate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -473,7 +473,7 @@ Remove toolset credentials
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="removeToolsetCredentials" method="delete" path="/toolsets/instances/{instanceId}/credentials" -->
+<!-- UsageSnippet language="python" operationID="removeToolsetCredentials" method="delete" path="/api/v1/toolsets/instances/{instanceId}/credentials" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -510,7 +510,7 @@ Mark instance for reauthentication
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="reauthenticateToolsetInstance" method="post" path="/toolsets/instances/{instanceId}/reauthenticate" -->
+<!-- UsageSnippet language="python" operationID="reauthenticateToolsetInstance" method="post" path="/api/v1/toolsets/instances/{instanceId}/reauthenticate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -547,7 +547,7 @@ Get instance authentication status
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetInstanceStatus" method="get" path="/toolsets/instances/{instanceId}/status" -->
+<!-- UsageSnippet language="python" operationID="getToolsetInstanceStatus" method="get" path="/api/v1/toolsets/instances/{instanceId}/status" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

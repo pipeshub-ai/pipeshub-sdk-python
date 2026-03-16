@@ -5,6 +5,114 @@ from pipeshub_sdk import Pipeshub, models
 from tests.test_client import create_test_http_client
 
 
+def test_configuration_manager_get_ai_models_providers():
+    test_http_client = create_test_http_client("getAIModelsProviders")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.configuration_manager.get_ai_models_providers()
+        assert res is not None
+        assert res == models.GetAIModelsProvidersResponse(
+            status="success",
+            message="AI models retrieved successfully",
+            models=models.Models(
+                ocr=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="azureAI",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                embedding=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="huggingFace",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                slm=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="fireworks",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                llm=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openAI",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                reasoning=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="togetherAI",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+                multi_modal=[
+                    models.AIModelConfiguration(
+                        model_key="5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                        provider="openRouter",
+                        configuration=models.AIModelConfigurationConfiguration(
+                            model="gpt-4o",
+                        ),
+                    ),
+                ],
+            ),
+        )
+
+
+def test_configuration_manager_set_metrics_collection_push_interval():
+    test_http_client = create_test_http_client("setMetricsCollectionPushInterval")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.configuration_manager.set_metrics_collection_push_interval(
+            push_interval_ms=60000
+        )
+        assert res is not None
+        assert res == models.SetMetricsCollectionPushIntervalResponse()
+
+
+def test_configuration_manager_set_metrics_collection_remote_server():
+    test_http_client = create_test_http_client("setMetricsCollectionRemoteServer")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.configuration_manager.set_metrics_collection_remote_server(
+            server_url_="https://metrics-collector.example.com/collect-metrics"
+        )
+        assert res is not None
+        assert res == models.SetMetricsCollectionRemoteServerResponse()
+
+
 def test_configuration_manager_get_slack_bot_configs():
     test_http_client = create_test_http_client("getSlackBotConfigs")
 
@@ -78,3 +186,138 @@ def test_configuration_manager_delete_slack_bot_config():
         assert res == models.DeleteSlackBotConfigResponse(
             status="success",
         )
+
+
+def test_configuration_manager_get_ai_models_config():
+    test_http_client = create_test_http_client("getAIModelsConfig")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.configuration_manager.get_ai_models_config()
+        assert res is not None
+        assert res == models.GetAIModelsConfigResponse(
+            ocr=[
+                models.AIModelConfiguration(
+                    provider="azureDI",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            embedding=[
+                models.AIModelConfiguration(
+                    provider="openRouter",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            slm=[
+                models.AIModelConfiguration(
+                    provider="azureAI",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            llm=[
+                models.AIModelConfiguration(
+                    provider="deepseek",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            reasoning=[
+                models.AIModelConfiguration(
+                    provider="ollama",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+            multi_modal=[
+                models.AIModelConfiguration(
+                    provider="azureDI",
+                    configuration=models.AIModelConfigurationConfiguration(
+                        model="gpt-4o",
+                    ),
+                ),
+            ],
+        )
+
+
+def test_configuration_manager_create_ai_models_config():
+    test_http_client = create_test_http_client("createAIModelsConfig")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.configuration_manager.create_ai_models_config(
+            ocr=[
+                {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                    "provider": "openAI",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            embedding=[
+                {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                    "provider": "openAI",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            llm=[
+                {
+                    "provider": "groq",
+                    "configuration": {
+                        "model": "gpt-4o",
+                        "api_key": "sk-example",
+                    },
+                    "is_default": True,
+                },
+            ],
+            slm=[
+                {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                    "provider": "openAI",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            reasoning=[
+                {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                    "provider": "openAI",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+            multi_modal=[
+                {
+                    "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
+                    "provider": "openAI",
+                    "configuration": {
+                        "model": "gpt-4o",
+                    },
+                },
+            ],
+        )
+        assert res is not None
+        assert res == models.CreateAIModelsConfigResponse()

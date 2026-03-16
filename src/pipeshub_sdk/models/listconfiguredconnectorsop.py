@@ -99,14 +99,14 @@ class ListConfiguredConnectorsScopeCounts(BaseModel):
         return m
 
 
-class ListConfiguredConnectorsConnectorsTypedDict(TypedDict):
+class ConnectorsTypedDict(TypedDict):
     connectors: NotRequired[List[ConnectorInstanceTypedDict]]
     pagination: NotRequired[ConnectorPaginationTypedDict]
     r"""Pagination information for connector lists"""
     scope_counts: NotRequired[ListConfiguredConnectorsScopeCountsTypedDict]
 
 
-class ListConfiguredConnectorsConnectors(BaseModel):
+class Connectors(BaseModel):
     connectors: Optional[List[ConnectorInstance]] = None
 
     pagination: Optional[ConnectorPagination] = None
@@ -138,7 +138,7 @@ class ListConfiguredConnectorsResponseTypedDict(TypedDict):
     r"""Configured connectors retrieved"""
 
     success: NotRequired[bool]
-    connectors: NotRequired[ListConfiguredConnectorsConnectorsTypedDict]
+    connectors: NotRequired[ConnectorsTypedDict]
 
 
 class ListConfiguredConnectorsResponse(BaseModel):
@@ -146,7 +146,7 @@ class ListConfiguredConnectorsResponse(BaseModel):
 
     success: Optional[bool] = None
 
-    connectors: Optional[ListConfiguredConnectorsConnectors] = None
+    connectors: Optional[Connectors] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -166,6 +166,6 @@ class ListConfiguredConnectorsResponse(BaseModel):
 
 
 try:
-    ListConfiguredConnectorsConnectors.model_rebuild()
+    Connectors.model_rebuild()
 except NameError:
     pass

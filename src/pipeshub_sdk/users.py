@@ -12,7 +12,7 @@ from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import List, Mapping, Optional, Union
 
 
-class GetDisplayPictureAcceptEnum(str, Enum):
+class GetUserDisplayPictureAcceptEnum(str, Enum):
     IMAGE_JPEG = "image/jpeg"
     IMAGE_PNG = "image/png"
 
@@ -20,7 +20,7 @@ class GetDisplayPictureAcceptEnum(str, Enum):
 class Users(BaseSDK):
     r"""User management operations"""
 
-    def get_all(
+    def get_all_users(
         self,
         *,
         page: Optional[int] = 1,
@@ -83,7 +83,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/users",
+            path="/api/v1/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -136,7 +136,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_async(
+    async def get_all_users_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -199,7 +199,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/users",
+            path="/api/v1/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -252,7 +252,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_user(
         self,
         *,
         full_name: str,
@@ -326,7 +326,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/users",
+            path="/api/v1/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -382,7 +382,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_user_async(
         self,
         *,
         full_name: str,
@@ -456,7 +456,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/users",
+            path="/api/v1/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -512,7 +512,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_user_by_id(
         self,
         *,
         id: str,
@@ -569,7 +569,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/users/{id}",
+            path="/api/v1/users/{id}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -622,7 +622,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_user_by_id_async(
         self,
         *,
         id: str,
@@ -679,7 +679,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/users/{id}",
+            path="/api/v1/users/{id}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -732,7 +732,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_user(
         self,
         *,
         id: str,
@@ -821,7 +821,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/users/{id}",
+            path="/api/v1/users/{id}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -877,7 +877,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_user_async(
         self,
         *,
         id: str,
@@ -966,7 +966,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/users/{id}",
+            path="/api/v1/users/{id}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1022,7 +1022,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_user(
         self,
         *,
         id: str,
@@ -1084,7 +1084,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/users/{id}",
+            path="/api/v1/users/{id}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1137,7 +1137,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_user_async(
         self,
         *,
         id: str,
@@ -1199,7 +1199,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/users/{id}",
+            path="/api/v1/users/{id}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1252,7 +1252,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_email(
+    def get_user_email_by_id(
         self,
         *,
         id: str,
@@ -1305,7 +1305,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/users/{id}/email",
+            path="/api/v1/users/{id}/email",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1358,7 +1358,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_email_async(
+    async def get_user_email_by_id_async(
         self,
         *,
         id: str,
@@ -1411,7 +1411,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/users/{id}/email",
+            path="/api/v1/users/{id}/email",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1505,7 +1505,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/users/{id}/email",
+            path="/api/v1/users/{id}/email",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1602,7 +1602,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/users/{id}/email",
+            path="/api/v1/users/{id}/email",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1658,7 +1658,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def upload_display_picture(
+    def upload_user_display_picture(
         self,
         *,
         file: Union[
@@ -1721,7 +1721,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/users/dp",
+            path="/api/v1/users/dp",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1785,7 +1785,7 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def upload_display_picture_async(
+    async def upload_user_display_picture_async(
         self,
         *,
         file: Union[
@@ -1848,7 +1848,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/users/dp",
+            path="/api/v1/users/dp",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1912,13 +1912,13 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def get_display_picture(
+    def get_user_display_picture(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
-        accept_header_override: Optional[GetDisplayPictureAcceptEnum] = None,
+        accept_header_override: Optional[GetUserDisplayPictureAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetUserDisplayPictureResponse:
         r"""Get display picture
@@ -1959,7 +1959,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/users/dp",
+            path="/api/v1/users/dp",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2020,13 +2020,13 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def get_display_picture_async(
+    async def get_user_display_picture_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
-        accept_header_override: Optional[GetDisplayPictureAcceptEnum] = None,
+        accept_header_override: Optional[GetUserDisplayPictureAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetUserDisplayPictureResponse:
         r"""Get display picture
@@ -2067,7 +2067,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/users/dp",
+            path="/api/v1/users/dp",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2128,7 +2128,7 @@ class Users(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def remove_display_picture(
+    def remove_user_display_picture(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -2168,7 +2168,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="DELETE",
-            path="/users/dp",
+            path="/api/v1/users/dp",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2223,7 +2223,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def remove_display_picture_async(
+    async def remove_user_display_picture_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -2263,7 +2263,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="DELETE",
-            path="/users/dp",
+            path="/api/v1/users/dp",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2318,7 +2318,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def bulk_invite(
+    def bulk_invite_users(
         self,
         *,
         emails: List[str],
@@ -2386,7 +2386,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/users/bulk/invite",
+            path="/api/v1/users/bulk/invite",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2442,7 +2442,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def bulk_invite_async(
+    async def bulk_invite_users_async(
         self,
         *,
         emails: List[str],
@@ -2510,7 +2510,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/users/bulk/invite",
+            path="/api/v1/users/bulk/invite",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2566,7 +2566,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def resend_invite(
+    def resend_user_invite(
         self,
         *,
         id: str,
@@ -2625,7 +2625,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/users/{id}/resend-invite",
+            path="/api/v1/users/{id}/resend-invite",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2678,7 +2678,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def resend_invite_async(
+    async def resend_user_invite_async(
         self,
         *,
         id: str,
@@ -2737,7 +2737,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/users/{id}/resend-invite",
+            path="/api/v1/users/{id}/resend-invite",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2790,7 +2790,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_with_graph(
+    def list_users_graph(
         self,
         *,
         page: Optional[int] = 1,
@@ -2861,7 +2861,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/users/graph/list",
+            path="/api/v1/users/graph/list",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2914,7 +2914,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_with_graph_async(
+    async def list_users_graph_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -2985,7 +2985,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/users/graph/list",
+            path="/api/v1/users/graph/list",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3093,7 +3093,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/users/{id}/unblock",
+            path="/api/v1/users/{id}/unblock",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3201,7 +3201,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/users/{id}/unblock",
+            path="/api/v1/users/{id}/unblock",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3254,7 +3254,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_all_with_groups(
+    def get_all_users_with_groups(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -3283,7 +3283,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/users/fetch/with-groups",
+            path="/api/v1/users/fetch/with-groups",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -3338,7 +3338,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_with_groups_async(
+    async def get_all_users_with_groups_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -3367,7 +3367,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/users/fetch/with-groups",
+            path="/api/v1/users/fetch/with-groups",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -3422,7 +3422,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_ids(
+    def get_users_by_ids(
         self,
         *,
         user_ids: List[str],
@@ -3458,7 +3458,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/users/by-ids",
+            path="/api/v1/users/by-ids",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3514,7 +3514,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_ids_async(
+    async def get_users_by_ids_async(
         self,
         *,
         user_ids: List[str],
@@ -3550,7 +3550,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/users/by-ids",
+            path="/api/v1/users/by-ids",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3647,7 +3647,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/users/{id}/fullname",
+            path="/api/v1/users/{id}/fullname",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3744,7 +3744,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/users/{id}/fullname",
+            path="/api/v1/users/{id}/fullname",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3841,7 +3841,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/users/{id}/firstName",
+            path="/api/v1/users/{id}/firstName",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3938,7 +3938,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/users/{id}/firstName",
+            path="/api/v1/users/{id}/firstName",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4035,7 +4035,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/users/{id}/lastName",
+            path="/api/v1/users/{id}/lastName",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4132,7 +4132,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/users/{id}/lastName",
+            path="/api/v1/users/{id}/lastName",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4229,7 +4229,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/users/{id}/designation",
+            path="/api/v1/users/{id}/designation",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4326,7 +4326,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/users/{id}/designation",
+            path="/api/v1/users/{id}/designation",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4382,7 +4382,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def check_admin_status(
+    def admin_check(
         self,
         *,
         id: str,
@@ -4418,7 +4418,7 @@ class Users(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/users/{id}/adminCheck",
+            path="/api/v1/users/{id}/adminCheck",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4471,7 +4471,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def check_admin_status_async(
+    async def admin_check_async(
         self,
         *,
         id: str,
@@ -4507,7 +4507,7 @@ class Users(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/users/{id}/adminCheck",
+            path="/api/v1/users/{id}/adminCheck",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -4560,7 +4560,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_teams(
+    def get_user_teams_via_users(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -4589,7 +4589,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/users/teams/list",
+            path="/api/v1/users/teams/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -4644,7 +4644,7 @@ class Users(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_teams_async(
+    async def get_user_teams_via_users_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -4673,7 +4673,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/users/teams/list",
+            path="/api/v1/users/teams/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,

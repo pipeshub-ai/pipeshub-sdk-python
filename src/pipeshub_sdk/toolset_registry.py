@@ -61,7 +61,7 @@ class ToolsetRegistry(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/registry",
+            path="/api/v1/toolsets/registry",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -162,7 +162,7 @@ class ToolsetRegistry(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/registry",
+            path="/api/v1/toolsets/registry",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -250,7 +250,7 @@ class ToolsetRegistry(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/registry/{toolsetType}/schema",
+            path="/api/v1/toolsets/registry/{toolsetType}/schema",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -338,7 +338,7 @@ class ToolsetRegistry(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/registry/{toolsetType}/schema",
+            path="/api/v1/toolsets/registry/{toolsetType}/schema",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

@@ -15,7 +15,7 @@ def test_users_get_all_users():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_all(page=1, limit=50)
+        res = pipeshub.users.get_all_users(page=1, limit=50)
         assert res is not None
         assert res == [
             models.User(
@@ -35,7 +35,7 @@ def test_users_create_user():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.create(
+        res = pipeshub.users.create_user(
             full_name="John Smith",
             email="john.smith@company.com",
             mobile="+15551234567",
@@ -59,7 +59,7 @@ def test_users_get_user_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_by_id(id="507f1f77bcf86cd799439011")
+        res = pipeshub.users.get_user_by_id(id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.User()
 
@@ -74,7 +74,7 @@ def test_users_update_user():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.update(
+        res = pipeshub.users.update_user(
             id="507f1f77bcf86cd799439011",
             full_name="John Smith",
             first_name="John",
@@ -100,7 +100,7 @@ def test_users_delete_user():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.delete(id="507f1f77bcf86cd799439011")
+        res = pipeshub.users.delete_user(id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.DeleteUserResponse(
             success=True,
@@ -118,7 +118,7 @@ def test_users_get_user_email_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_email(id="507f1f77bcf86cd799439011")
+        res = pipeshub.users.get_user_email_by_id(id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.GetUserEmailByIDResponse(
             success=True,
@@ -136,7 +136,7 @@ def test_users_upload_user_display_picture():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.upload_display_picture(
+        res = pipeshub.users.upload_user_display_picture(
             file={
                 "file_name": "example.file",
                 "content": open(".speakeasy/testfiles/example.file", "rb"),
@@ -159,7 +159,7 @@ def test_users_get_user_display_picture():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_display_picture()
+        res = pipeshub.users.get_user_display_picture()
         assert res is not None
         assert (
             bytes().join(res.iter_bytes())
@@ -177,7 +177,7 @@ def test_users_remove_user_display_picture():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.remove_display_picture()
+        res = pipeshub.users.remove_user_display_picture()
         assert res is not None
         assert res == models.RemoveUserDisplayPictureResponse(
             success=True,
@@ -195,7 +195,7 @@ def test_users_bulk_invite_users():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.bulk_invite(
+        res = pipeshub.users.bulk_invite_users(
             emails=[
                 "user1@company.com",
                 "user2@company.com",
@@ -225,7 +225,7 @@ def test_users_resend_user_invite():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.resend_invite(id="507f1f77bcf86cd799439011")
+        res = pipeshub.users.resend_user_invite(id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.ResendUserInviteResponse(
             success=True,
@@ -243,7 +243,7 @@ def test_users_list_users_graph():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.list_with_graph(
+        res = pipeshub.users.list_users_graph(
             page=1, limit=10, search="john", sort_by="fullName", sort_order="asc"
         )
         assert res is not None
@@ -285,7 +285,7 @@ def test_users_get_all_users_with_groups():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_all_with_groups()
+        res = pipeshub.users.get_all_users_with_groups()
         assert res is not None
         assert res == [
             models.GetAllUsersWithGroupsResponse(),
@@ -302,7 +302,7 @@ def test_users_get_users_by_ids():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_by_ids(
+        res = pipeshub.users.get_users_by_ids(
             user_ids=[
                 "507f1f77bcf86cd799439011",
             ]
@@ -385,7 +385,7 @@ def test_users_admin_check():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.check_admin_status(id="<id>")
+        res = pipeshub.users.admin_check(id="<id>")
         assert res is not None
         assert res == models.AdminCheckResponse()
 
@@ -400,6 +400,6 @@ def test_users_get_user_teams_via_users():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.users.get_teams()
+        res = pipeshub.users.get_user_teams_via_users()
         assert res is not None
         assert res == models.GetUserTeamsViaUsersResponse()

@@ -6,14 +6,14 @@ Folder organization and management
 
 ### Available Operations
 
-* [create_root](#create_root) - Create root folder
-* [get_contents](#get_contents) - Get folder contents
-* [update](#update) - Update folder
-* [delete](#delete) - Delete folder
+* [create_root_folder](#create_root_folder) - Create root folder
+* [get_folder_contents](#get_folder_contents) - Get folder contents
+* [update_folder](#update_folder) - Update folder
+* [delete_folder](#delete_folder) - Delete folder
 * [get_folder_children](#get_folder_children) - Get folder children (alias for folder contents)
-* [create_sub](#create_sub) - Create subfolder
+* [create_subfolder](#create_subfolder) - Create subfolder
 
-## create_root
+## create_root_folder
 
 Create a new folder at the root level of a knowledge base.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher<br><br>
@@ -33,7 +33,7 @@ Create a new folder at the root level of a knowledge base.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createRootFolder" method="post" path="/knowledgeBase/{kbId}/folder" -->
+<!-- UsageSnippet language="python" operationID="createRootFolder" method="post" path="/api/v1/knowledgeBase/{kbId}/folder" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -45,7 +45,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.folders.create_root(kb_id="<id>", folder_name="Project Documents")
+    res = pipeshub.folders.create_root_folder(kb_id="<id>", folder_name="Project Documents")
 
     # Handle response
     print(res)
@@ -70,7 +70,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_contents
+## get_folder_contents
 
 Retrieve the contents of a folder including subfolders and records.<br><br>
 <b>Overview:</b><br>
@@ -81,7 +81,7 @@ Use this endpoint to browse folder hierarchies. Response includes folder metadat
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getFolderContents" method="get" path="/knowledgeBase/{kbId}/folder/{folderId}" -->
+<!-- UsageSnippet language="python" operationID="getFolderContents" method="get" path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -93,7 +93,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.folders.get_contents(kb_id="<id>", folder_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
+    res = pipeshub.folders.get_folder_contents(kb_id="<id>", folder_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
 
     # Handle response
     print(res)
@@ -123,7 +123,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update
+## update_folder
 
 Rename a folder.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher
@@ -131,7 +131,7 @@ Rename a folder.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateFolder" method="put" path="/knowledgeBase/{kbId}/folder/{folderId}" -->
+<!-- UsageSnippet language="python" operationID="updateFolder" method="put" path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -143,7 +143,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.folders.update(kb_id="<id>", folder_id="<id>", folder_name="<value>")
+    res = pipeshub.folders.update_folder(kb_id="<id>", folder_id="<id>", folder_name="<value>")
 
     # Handle response
     print(res)
@@ -169,7 +169,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete
+## delete_folder
 
 Delete a folder and all its contents.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher<br><br>
@@ -180,7 +180,7 @@ All subfolders and records within will be permanently deleted.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteFolder" method="delete" path="/knowledgeBase/{kbId}/folder/{folderId}" -->
+<!-- UsageSnippet language="python" operationID="deleteFolder" method="delete" path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -192,7 +192,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.folders.delete(kb_id="<id>", folder_id="<id>")
+    pipeshub.folders.delete_folder(kb_id="<id>", folder_id="<id>")
 
     # Use the SDK ...
 
@@ -223,7 +223,7 @@ Use this endpoint to browse folder hierarchies. Response includes folder metadat
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getFolderChildren" method="get" path="/knowledgeBase/{kbId}/folder/{folderId}/children" -->
+<!-- UsageSnippet language="python" operationID="getFolderChildren" method="get" path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/children" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -265,7 +265,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_sub
+## create_subfolder
 
 Create a nested folder within an existing folder.<br><br>
 <b>Required Permission:</b> FILEORGANIZER or higher<br><br>
@@ -275,7 +275,7 @@ Supports unlimited folder nesting depth for complex organizational structures.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createSubfolder" method="post" path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder" -->
+<!-- UsageSnippet language="python" operationID="createSubfolder" method="post" path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/subfolder" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -287,7 +287,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.folders.create_sub(kb_id="<id>", folder_id="<id>", folder_name="<value>")
+    res = pipeshub.folders.create_subfolder(kb_id="<id>", folder_id="<id>", folder_name="<value>")
 
     # Handle response
     print(res)

@@ -11,7 +11,7 @@ from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Mapping, Optional, Union
 
 
-class StreamAcceptEnum(str, Enum):
+class StreamRecordBufferAcceptEnum(str, Enum):
     APPLICATION_OCTET_STREAM = "application/octet-stream"
     APPLICATION_PDF = "application/pdf"
     APPLICATION_WILDCARD_ = "application/*"
@@ -22,7 +22,7 @@ class StreamAcceptEnum(str, Enum):
 class Records(BaseSDK):
     r"""Record management and operations"""
 
-    def get_all(
+    def get_all_records(
         self,
         *,
         page: Optional[int] = 1,
@@ -105,7 +105,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/records",
+            path="/api/v1/knowledgeBase/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -158,7 +158,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_async(
+    async def get_all_records_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -241,7 +241,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/records",
+            path="/api/v1/knowledgeBase/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -294,7 +294,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_kb_records(
         self,
         *,
         kb_id: str,
@@ -372,7 +372,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/{kbId}/records",
+            path="/api/v1/knowledgeBase/{kbId}/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -425,7 +425,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_kb_records_async(
         self,
         *,
         kb_id: str,
@@ -503,7 +503,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/{kbId}/records",
+            path="/api/v1/knowledgeBase/{kbId}/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -634,7 +634,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/{kbId}/children",
+            path="/api/v1/knowledgeBase/{kbId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -765,7 +765,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/{kbId}/children",
+            path="/api/v1/knowledgeBase/{kbId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -818,7 +818,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_record_by_id(
         self,
         *,
         record_id: str,
@@ -861,7 +861,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/record/{recordId}",
+            path="/api/v1/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -914,7 +914,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_record_by_id_async(
         self,
         *,
         record_id: str,
@@ -957,7 +957,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/record/{recordId}",
+            path="/api/v1/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1010,7 +1010,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_record(
         self,
         *,
         record_id: str,
@@ -1067,7 +1067,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/knowledgeBase/record/{recordId}",
+            path="/api/v1/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1127,7 +1127,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_record_async(
         self,
         *,
         record_id: str,
@@ -1184,7 +1184,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/knowledgeBase/record/{recordId}",
+            path="/api/v1/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1244,7 +1244,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_record(
         self,
         *,
         record_id: str,
@@ -1288,7 +1288,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/knowledgeBase/record/{recordId}",
+            path="/api/v1/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1341,7 +1341,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_record_async(
         self,
         *,
         record_id: str,
@@ -1385,7 +1385,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/knowledgeBase/record/{recordId}",
+            path="/api/v1/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1438,7 +1438,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def stream(
+    def stream_record_buffer(
         self,
         *,
         record_id: str,
@@ -1446,7 +1446,7 @@ class Records(BaseSDK):
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
-        accept_header_override: Optional[StreamAcceptEnum] = None,
+        accept_header_override: Optional[StreamRecordBufferAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.StreamRecordBufferResponse:
         r"""Stream record content
@@ -1489,7 +1489,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/stream/record/{recordId}",
+            path="/api/v1/knowledgeBase/stream/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1556,7 +1556,7 @@ class Records(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def stream_async(
+    async def stream_record_buffer_async(
         self,
         *,
         record_id: str,
@@ -1564,7 +1564,7 @@ class Records(BaseSDK):
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
-        accept_header_override: Optional[StreamAcceptEnum] = None,
+        accept_header_override: Optional[StreamRecordBufferAcceptEnum] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.StreamRecordBufferResponse:
         r"""Stream record content
@@ -1607,7 +1607,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/stream/record/{recordId}",
+            path="/api/v1/knowledgeBase/stream/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

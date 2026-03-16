@@ -13,7 +13,7 @@ from typing import Mapping, Optional
 class Folders(BaseSDK):
     r"""Folder organization and management"""
 
-    def create_root(
+    def create_root_folder(
         self,
         *,
         kb_id: str,
@@ -67,7 +67,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/knowledgeBase/{kbId}/folder",
+            path="/api/v1/knowledgeBase/{kbId}/folder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -123,7 +123,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_root_async(
+    async def create_root_folder_async(
         self,
         *,
         kb_id: str,
@@ -177,7 +177,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/knowledgeBase/{kbId}/folder",
+            path="/api/v1/knowledgeBase/{kbId}/folder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -233,7 +233,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_contents(
+    def get_folder_contents(
         self,
         *,
         kb_id: str,
@@ -291,7 +291,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -344,7 +344,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_contents_async(
+    async def get_folder_contents_async(
         self,
         *,
         kb_id: str,
@@ -402,7 +402,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -455,7 +455,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_folder(
         self,
         *,
         kb_id: str,
@@ -500,7 +500,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -556,7 +556,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_folder_async(
         self,
         *,
         kb_id: str,
@@ -601,7 +601,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -657,7 +657,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_folder(
         self,
         *,
         kb_id: str,
@@ -700,7 +700,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -753,7 +753,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_folder_async(
         self,
         *,
         kb_id: str,
@@ -796,7 +796,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -907,7 +907,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/knowledgeBase/{kbId}/folder/{folderId}/children",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1018,7 +1018,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/knowledgeBase/{kbId}/folder/{folderId}/children",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1071,7 +1071,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create_sub(
+    def create_subfolder(
         self,
         *,
         kb_id: str,
@@ -1118,7 +1118,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1174,7 +1174,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_sub_async(
+    async def create_subfolder_async(
         self,
         *,
         kb_id: str,
@@ -1221,7 +1221,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
+            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

@@ -110,7 +110,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/oauth2/authorize",
+            path="/api/v1/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -247,7 +247,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/oauth2/authorize",
+            path="/api/v1/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -366,7 +366,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/oauth2/authorize",
+            path="/api/v1/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -491,7 +491,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/oauth2/authorize",
+            path="/api/v1/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -634,7 +634,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/oauth2/token",
+            path="/api/v1/oauth2/token",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -772,7 +772,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/oauth2/token",
+            path="/api/v1/oauth2/token",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -887,7 +887,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/oauth2/revoke",
+            path="/api/v1/oauth2/revoke",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1002,7 +1002,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/oauth2/revoke",
+            path="/api/v1/oauth2/revoke",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1117,7 +1117,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/oauth2/introspect",
+            path="/api/v1/oauth2/introspect",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1232,7 +1232,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/oauth2/introspect",
+            path="/api/v1/oauth2/introspect",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

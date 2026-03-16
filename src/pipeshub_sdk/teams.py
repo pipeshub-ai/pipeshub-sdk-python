@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, Union
 class Teams(BaseSDK):
     r"""Team management operations"""
 
-    def create(
+    def create_team(
         self,
         *,
         name: str,
@@ -83,7 +83,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/teams",
+            path="/api/v1/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -139,7 +139,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_team_async(
         self,
         *,
         name: str,
@@ -209,7 +209,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/teams",
+            path="/api/v1/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -265,7 +265,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list(
+    def list_teams(
         self,
         *,
         search: Optional[str] = None,
@@ -325,7 +325,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/teams",
+            path="/api/v1/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -378,7 +378,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_async(
+    async def list_teams_async(
         self,
         *,
         search: Optional[str] = None,
@@ -438,7 +438,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/teams",
+            path="/api/v1/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -491,7 +491,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_by_id(
+    def get_team_by_id(
         self,
         *,
         team_id: str,
@@ -542,7 +542,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/teams/{teamId}",
+            path="/api/v1/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -595,7 +595,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_by_id_async(
+    async def get_team_by_id_async(
         self,
         *,
         team_id: str,
@@ -646,7 +646,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/teams/{teamId}",
+            path="/api/v1/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -699,7 +699,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_team(
         self,
         *,
         team_id: str,
@@ -762,7 +762,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/teams/{teamId}",
+            path="/api/v1/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -818,7 +818,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_team_async(
         self,
         *,
         team_id: str,
@@ -881,7 +881,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/teams/{teamId}",
+            path="/api/v1/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -937,7 +937,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_team(
         self,
         *,
         team_id: str,
@@ -984,7 +984,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/teams/{teamId}",
+            path="/api/v1/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1037,7 +1037,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_team_async(
         self,
         *,
         team_id: str,
@@ -1084,7 +1084,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/teams/{teamId}",
+            path="/api/v1/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1137,7 +1137,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_user(
+    def get_user_teams(
         self,
         *,
         page: Optional[int] = 1,
@@ -1188,7 +1188,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/teams/user/teams",
+            path="/api/v1/teams/user/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1241,7 +1241,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_user_async(
+    async def get_user_teams_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -1292,7 +1292,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/teams/user/teams",
+            path="/api/v1/teams/user/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1345,7 +1345,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_members(
+    def get_team_users(
         self,
         *,
         team_id: str,
@@ -1381,7 +1381,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/teams/{teamId}/users",
+            path="/api/v1/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1434,7 +1434,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_members_async(
+    async def get_team_users_async(
         self,
         *,
         team_id: str,
@@ -1470,7 +1470,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/teams/{teamId}/users",
+            path="/api/v1/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1523,7 +1523,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def add_users(
+    def add_users_to_team(
         self,
         *,
         team_id: str,
@@ -1564,7 +1564,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/teams/{teamId}/users",
+            path="/api/v1/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1620,7 +1620,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def add_users_async(
+    async def add_users_to_team_async(
         self,
         *,
         team_id: str,
@@ -1661,7 +1661,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/teams/{teamId}/users",
+            path="/api/v1/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1717,7 +1717,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def remove_users(
+    def remove_user_from_team(
         self,
         *,
         team_id: str,
@@ -1758,7 +1758,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/teams/{teamId}/users",
+            path="/api/v1/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1814,7 +1814,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def remove_users_async(
+    async def remove_user_from_team_async(
         self,
         *,
         team_id: str,
@@ -1855,7 +1855,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/teams/{teamId}/users",
+            path="/api/v1/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1911,7 +1911,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_user_permissions(
+    def update_team_users_permissions(
         self,
         *,
         team_id: str,
@@ -1966,7 +1966,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/teams/{teamId}/users/permissions",
+            path="/api/v1/teams/{teamId}/users/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2028,7 +2028,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_user_permissions_async(
+    async def update_team_users_permissions_async(
         self,
         *,
         team_id: str,
@@ -2083,7 +2083,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/teams/{teamId}/users/permissions",
+            path="/api/v1/teams/{teamId}/users/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2145,7 +2145,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_created(
+    def get_user_created_teams(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -2174,7 +2174,7 @@ class Teams(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/teams/user/teams/created",
+            path="/api/v1/teams/user/teams/created",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2227,7 +2227,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_created_async(
+    async def get_user_created_teams_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -2256,7 +2256,7 @@ class Teams(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/teams/user/teams/created",
+            path="/api/v1/teams/user/teams/created",
             base_url=base_url,
             url_variables=url_variables,
             request=None,

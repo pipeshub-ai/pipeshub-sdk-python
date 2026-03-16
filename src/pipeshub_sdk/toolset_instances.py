@@ -61,7 +61,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/toolsets",
+            path="/api/v1/toolsets",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -165,7 +165,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/toolsets",
+            path="/api/v1/toolsets",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -250,7 +250,7 @@ class ToolsetInstances(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/toolsets/configured",
+            path="/api/v1/toolsets/configured",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -334,7 +334,7 @@ class ToolsetInstances(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/configured",
+            path="/api/v1/toolsets/configured",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -424,7 +424,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/{toolsetId}/status",
+            path="/api/v1/toolsets/{toolsetId}/status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -512,7 +512,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/{toolsetId}/status",
+            path="/api/v1/toolsets/{toolsetId}/status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -602,7 +602,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/toolsets/{toolsetId}/reauthenticate",
+            path="/api/v1/toolsets/{toolsetId}/reauthenticate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -694,7 +694,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/toolsets/{toolsetId}/reauthenticate",
+            path="/api/v1/toolsets/{toolsetId}/reauthenticate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -777,7 +777,7 @@ class ToolsetInstances(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/toolsets/my-toolsets",
+            path="/api/v1/toolsets/my-toolsets",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -858,7 +858,7 @@ class ToolsetInstances(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/my-toolsets",
+            path="/api/v1/toolsets/my-toolsets",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -939,7 +939,7 @@ class ToolsetInstances(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/toolsets/instances",
+            path="/api/v1/toolsets/instances",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1020,7 +1020,7 @@ class ToolsetInstances(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/instances",
+            path="/api/v1/toolsets/instances",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1126,7 +1126,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/toolsets/instances",
+            path="/api/v1/toolsets/instances",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -1235,7 +1235,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/toolsets/instances",
+            path="/api/v1/toolsets/instances",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -1324,7 +1324,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/instances/{instanceId}",
+            path="/api/v1/toolsets/instances/{instanceId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1410,7 +1410,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/instances/{instanceId}",
+            path="/api/v1/toolsets/instances/{instanceId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1499,7 +1499,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/toolsets/instances/{instanceId}",
+            path="/api/v1/toolsets/instances/{instanceId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1591,7 +1591,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/toolsets/instances/{instanceId}",
+            path="/api/v1/toolsets/instances/{instanceId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1680,7 +1680,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/toolsets/instances/{instanceId}",
+            path="/api/v1/toolsets/instances/{instanceId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1766,7 +1766,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/toolsets/instances/{instanceId}",
+            path="/api/v1/toolsets/instances/{instanceId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1855,7 +1855,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/toolsets/instances/{instanceId}/authenticate",
+            path="/api/v1/toolsets/instances/{instanceId}/authenticate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1947,7 +1947,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/toolsets/instances/{instanceId}/authenticate",
+            path="/api/v1/toolsets/instances/{instanceId}/authenticate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2036,7 +2036,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/toolsets/instances/{instanceId}/credentials",
+            path="/api/v1/toolsets/instances/{instanceId}/credentials",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2122,7 +2122,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/toolsets/instances/{instanceId}/credentials",
+            path="/api/v1/toolsets/instances/{instanceId}/credentials",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2208,7 +2208,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/toolsets/instances/{instanceId}/reauthenticate",
+            path="/api/v1/toolsets/instances/{instanceId}/reauthenticate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2294,7 +2294,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/toolsets/instances/{instanceId}/reauthenticate",
+            path="/api/v1/toolsets/instances/{instanceId}/reauthenticate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2380,7 +2380,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/toolsets/instances/{instanceId}/status",
+            path="/api/v1/toolsets/instances/{instanceId}/status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2466,7 +2466,7 @@ class ToolsetInstances(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/toolsets/instances/{instanceId}/status",
+            path="/api/v1/toolsets/instances/{instanceId}/status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

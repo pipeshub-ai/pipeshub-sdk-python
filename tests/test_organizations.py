@@ -15,7 +15,7 @@ def test_organizations_check_org_exists():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.check_exists()
+        res = pipeshub.organizations.check_org_exists()
         assert res is not None
         assert res == models.CheckOrgExistsResponse(
             exists=True,
@@ -32,7 +32,7 @@ def test_organizations_create_organization():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.create(
+        res = pipeshub.organizations.create_organization(
             account_type="business",
             contact_email="admin@acme.com",
             admin_full_name="John Smith",
@@ -57,7 +57,7 @@ def test_organizations_get_current_organization():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.get()
+        res = pipeshub.organizations.get_current_organization()
         assert res is not None
         assert res == models.Organization(
             domain="excited-sand.info",
@@ -76,7 +76,7 @@ def test_organizations_update_organization():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.update(
+        res = pipeshub.organizations.update_organization(
             registered_name="Acme Corporation Inc.",
             short_name="Acme Corp",
             phone_number="+15551234567",
@@ -97,7 +97,7 @@ def test_organizations_delete_organization():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.delete(confirm="DELETE")
+        res = pipeshub.organizations.delete_organization(confirm="DELETE")
         assert res is not None
         assert res == models.DeleteOrganizationResponse(
             success=True,
@@ -115,7 +115,7 @@ def test_organizations_upload_organization_logo():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.upload_logo(
+        res = pipeshub.organizations.upload_organization_logo(
             logo={
                 "file_name": "example.file",
                 "content": open(".speakeasy/testfiles/example.file", "rb"),
@@ -138,7 +138,7 @@ def test_organizations_get_organization_logo():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.get_logo()
+        res = pipeshub.organizations.get_organization_logo()
         assert res is not None
         assert res == models.GetOrganizationLogoResponse(
             success=True,
@@ -157,7 +157,7 @@ def test_organizations_delete_organization_logo():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.organizations.delete_logo()
+        res = pipeshub.organizations.delete_organization_logo()
         assert res is not None
         assert res == models.DeleteOrganizationLogoResponse(
             success=True,

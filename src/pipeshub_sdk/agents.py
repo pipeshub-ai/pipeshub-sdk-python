@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, Union
 class Agents(BaseSDK):
     r"""Custom AI agents with specialized capabilities and tool integrations"""
 
-    def get_all(
+    def list_agents(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -45,7 +45,7 @@ class Agents(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/agents",
+            path="/api/v1/agents",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -98,7 +98,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_async(
+    async def list_agents_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -130,7 +130,7 @@ class Agents(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/agents",
+            path="/api/v1/agents",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -183,7 +183,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create(
+    def create_agent(
         self,
         *,
         name: str,
@@ -282,7 +282,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/agents/create",
+            path="/api/v1/agents/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -338,7 +338,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_async(
+    async def create_agent_async(
         self,
         *,
         name: str,
@@ -437,7 +437,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/agents/create",
+            path="/api/v1/agents/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -493,7 +493,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_tools(
+    def list_agent_tools(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -532,7 +532,7 @@ class Agents(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/agents/tools/list",
+            path="/api/v1/agents/tools/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -585,7 +585,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_tools_async(
+    async def list_agent_tools_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -624,7 +624,7 @@ class Agents(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/agents/tools/list",
+            path="/api/v1/agents/tools/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -677,7 +677,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get(
+    def get_agent(
         self,
         *,
         agent_key: str,
@@ -712,7 +712,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/agents/{agentKey}",
+            path="/api/v1/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -765,7 +765,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_async(
+    async def get_agent_async(
         self,
         *,
         agent_key: str,
@@ -800,7 +800,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/agents/{agentKey}",
+            path="/api/v1/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -853,7 +853,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update(
+    def update_agent(
         self,
         *,
         agent_key: str,
@@ -944,7 +944,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/agents/{agentKey}",
+            path="/api/v1/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1000,7 +1000,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_async(
+    async def update_agent_async(
         self,
         *,
         agent_key: str,
@@ -1091,7 +1091,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/agents/{agentKey}",
+            path="/api/v1/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1147,7 +1147,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete(
+    def delete_agent(
         self,
         *,
         agent_key: str,
@@ -1185,7 +1185,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/agents/{agentKey}",
+            path="/api/v1/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1238,7 +1238,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_async(
+    async def delete_agent_async(
         self,
         *,
         agent_key: str,
@@ -1276,7 +1276,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/agents/{agentKey}",
+            path="/api/v1/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1329,7 +1329,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_permissions(
+    def get_agent_permissions(
         self,
         *,
         agent_key: str,
@@ -1364,7 +1364,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/agents/{agentKey}/permissions",
+            path="/api/v1/agents/{agentKey}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1419,7 +1419,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_permissions_async(
+    async def get_agent_permissions_async(
         self,
         *,
         agent_key: str,
@@ -1454,7 +1454,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/agents/{agentKey}/permissions",
+            path="/api/v1/agents/{agentKey}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1509,7 +1509,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_permissions(
+    def update_agent_permissions(
         self,
         *,
         agent_key: str,
@@ -1560,7 +1560,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/agents/{agentKey}/permissions",
+            path="/api/v1/agents/{agentKey}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1620,7 +1620,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_permissions_async(
+    async def update_agent_permissions_async(
         self,
         *,
         agent_key: str,
@@ -1671,7 +1671,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/agents/{agentKey}/permissions",
+            path="/api/v1/agents/{agentKey}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1731,7 +1731,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def share(
+    def share_agent(
         self,
         *,
         agent_key: str,
@@ -1779,7 +1779,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/agents/{agentKey}/share",
+            path="/api/v1/agents/{agentKey}/share",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1835,7 +1835,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def share_async(
+    async def share_agent_async(
         self,
         *,
         agent_key: str,
@@ -1883,7 +1883,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/agents/{agentKey}/share",
+            path="/api/v1/agents/{agentKey}/share",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1939,7 +1939,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def unshare(
+    def unshare_agent(
         self,
         *,
         agent_key: str,
@@ -1983,7 +1983,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/agents/{agentKey}/unshare",
+            path="/api/v1/agents/{agentKey}/unshare",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2039,7 +2039,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def unshare_async(
+    async def unshare_agent_async(
         self,
         *,
         agent_key: str,
@@ -2083,7 +2083,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/agents/{agentKey}/unshare",
+            path="/api/v1/agents/{agentKey}/unshare",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

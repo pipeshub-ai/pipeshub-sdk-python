@@ -1114,7 +1114,6 @@ if TYPE_CHECKING:
     )
     from .jwk import Jwk, JwkTypedDict
     from .jwks import Jwks, JwksTypedDict
-    from .jwksop import JWKS_OP_SERVERS
     from .kbpermission import (
         KBPermission,
         KBPermissionRole,
@@ -1186,8 +1185,8 @@ if TYPE_CHECKING:
         ListAgentTemplatesResponseTypedDict,
     )
     from .listconfiguredconnectorsop import (
-        ListConfiguredConnectorsConnectors,
-        ListConfiguredConnectorsConnectorsTypedDict,
+        Connectors,
+        ConnectorsTypedDict,
         ListConfiguredConnectorsRequest,
         ListConfiguredConnectorsRequestTypedDict,
         ListConfiguredConnectorsResponse,
@@ -1355,9 +1354,6 @@ if TYPE_CHECKING:
         OAuthAppWithSecretStatus,
         OAuthAppWithSecretTypedDict,
     )
-    from .oauthauthorizationservermetadataop import (
-        OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS,
-    )
     from .oauthauthorizeconsentop import (
         OauthAuthorizeConsentResponse,
         OauthAuthorizeConsentResponseTypedDict,
@@ -1405,7 +1401,6 @@ if TYPE_CHECKING:
         OAuthProtectedResourceMetadata,
         OAuthProtectedResourceMetadataTypedDict,
     )
-    from .oauthprotectedresourceop import OAUTH_PROTECTED_RESOURCE_OP_SERVERS
     from .oauthrevokerequest import (
         OAuthRevokeRequest,
         OAuthRevokeRequestTokenTypeHint,
@@ -1428,7 +1423,6 @@ if TYPE_CHECKING:
     )
     from .oncescheduleconfig import OnceScheduleConfig, OnceScheduleConfigTypedDict
     from .openidconfiguration import OpenIDConfiguration, OpenIDConfigurationTypedDict
-    from .openidconfigurationop import OPENID_CONFIGURATION_OP_SERVERS
     from .organization import (
         OnBoardingStatus,
         Organization,
@@ -2362,6 +2356,8 @@ __all__ = [
     "ConnectorToggleRequestTypedDict",
     "ConnectorType",
     "ConnectorTypeTypedDict",
+    "Connectors",
+    "ConnectorsTypedDict",
     "Consent",
     "ContentFormat",
     "Conversation",
@@ -2927,7 +2923,6 @@ __all__ = [
     "InitAuthResponseTypedDict",
     "Item",
     "ItemTypedDict",
-    "JWKS_OP_SERVERS",
     "JobStatus",
     "JobStatusTypedDict",
     "JsonrpcRequest",
@@ -2977,8 +2972,6 @@ __all__ = [
     "ListAgentTemplatesResponseTypedDict",
     "ListAgentsResponse",
     "ListAgentsResponseTypedDict",
-    "ListConfiguredConnectorsConnectors",
-    "ListConfiguredConnectorsConnectorsTypedDict",
     "ListConfiguredConnectorsRequest",
     "ListConfiguredConnectorsRequestTypedDict",
     "ListConfiguredConnectorsResponse",
@@ -3096,8 +3089,6 @@ __all__ = [
     "OAUTHConfigsOAUTHADMINCONSENT",
     "OAUTHConfigsOAUTHADMINCONSENTTypedDict",
     "OAUTHConfigsOAUTHTypedDict",
-    "OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS",
-    "OAUTH_PROTECTED_RESOURCE_OP_SERVERS",
     "OAuthAppListResponse",
     "OAuthAppListResponsePagination",
     "OAuthAppListResponsePaginationTypedDict",
@@ -3138,7 +3129,6 @@ __all__ = [
     "OAuthTokenResponseTypedDict",
     "OAuthUserInfoResponse",
     "OAuthUserInfoResponseTypedDict",
-    "OPENID_CONFIGURATION_OP_SERVERS",
     "OauthAuthorizeCodeChallengeMethod",
     "OauthAuthorizeConsentResponse",
     "OauthAuthorizeConsentResponseTypedDict",
@@ -4566,7 +4556,6 @@ _dynamic_imports: dict[str, str] = {
     "JwkTypedDict": ".jwk",
     "Jwks": ".jwks",
     "JwksTypedDict": ".jwks",
-    "JWKS_OP_SERVERS": ".jwksop",
     "KBPermission": ".kbpermission",
     "KBPermissionRole": ".kbpermission",
     "KBPermissionType": ".kbpermission",
@@ -4626,8 +4615,8 @@ _dynamic_imports: dict[str, str] = {
     "ListAgentsResponseTypedDict": ".listagentsop",
     "ListAgentTemplatesResponse": ".listagenttemplatesop",
     "ListAgentTemplatesResponseTypedDict": ".listagenttemplatesop",
-    "ListConfiguredConnectorsConnectors": ".listconfiguredconnectorsop",
-    "ListConfiguredConnectorsConnectorsTypedDict": ".listconfiguredconnectorsop",
+    "Connectors": ".listconfiguredconnectorsop",
+    "ConnectorsTypedDict": ".listconfiguredconnectorsop",
     "ListConfiguredConnectorsRequest": ".listconfiguredconnectorsop",
     "ListConfiguredConnectorsRequestTypedDict": ".listconfiguredconnectorsop",
     "ListConfiguredConnectorsResponse": ".listconfiguredconnectorsop",
@@ -4751,7 +4740,6 @@ _dynamic_imports: dict[str, str] = {
     "OAuthAppWithSecret": ".oauthappwithsecret",
     "OAuthAppWithSecretStatus": ".oauthappwithsecret",
     "OAuthAppWithSecretTypedDict": ".oauthappwithsecret",
-    "OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS": ".oauthauthorizationservermetadataop",
     "OauthAuthorizeConsentResponse": ".oauthauthorizeconsentop",
     "OauthAuthorizeConsentResponseTypedDict": ".oauthauthorizeconsentop",
     "OauthAuthorizeCodeChallengeMethod": ".oauthauthorizeop",
@@ -4782,7 +4770,6 @@ _dynamic_imports: dict[str, str] = {
     "OAuthIntrospectResponseTypedDict": ".oauthintrospectresponse",
     "OAuthProtectedResourceMetadata": ".oauthprotectedresourcemetadata",
     "OAuthProtectedResourceMetadataTypedDict": ".oauthprotectedresourcemetadata",
-    "OAUTH_PROTECTED_RESOURCE_OP_SERVERS": ".oauthprotectedresourceop",
     "OAuthRevokeRequest": ".oauthrevokerequest",
     "OAuthRevokeRequestTokenTypeHint": ".oauthrevokerequest",
     "OAuthRevokeRequestTypedDict": ".oauthrevokerequest",
@@ -4800,7 +4787,6 @@ _dynamic_imports: dict[str, str] = {
     "OnceScheduleConfigTypedDict": ".oncescheduleconfig",
     "OpenIDConfiguration": ".openidconfiguration",
     "OpenIDConfigurationTypedDict": ".openidconfiguration",
-    "OPENID_CONFIGURATION_OP_SERVERS": ".openidconfigurationop",
     "OnBoardingStatus": ".organization",
     "Organization": ".organization",
     "OrganizationAccountType": ".organization",

@@ -7,7 +7,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional
+from typing import List, Mapping, Optional, Union
 
 
 class ConfigurationManager(BaseSDK):
@@ -40,7 +40,7 @@ class ConfigurationManager(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/configurationManager/slack-bot",
+            path="/api/v1/configurationManager/slack-bot",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -122,7 +122,7 @@ class ConfigurationManager(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/configurationManager/slack-bot",
+            path="/api/v1/configurationManager/slack-bot",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -220,7 +220,7 @@ class ConfigurationManager(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/configurationManager/slack-bot",
+            path="/api/v1/configurationManager/slack-bot",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -323,7 +323,7 @@ class ConfigurationManager(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/configurationManager/slack-bot",
+            path="/api/v1/configurationManager/slack-bot",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -431,7 +431,7 @@ class ConfigurationManager(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/configurationManager/slack-bot/{configId}",
+            path="/api/v1/configurationManager/slack-bot/{configId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -543,7 +543,7 @@ class ConfigurationManager(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/configurationManager/slack-bot/{configId}",
+            path="/api/v1/configurationManager/slack-bot/{configId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -641,7 +641,7 @@ class ConfigurationManager(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/configurationManager/slack-bot/{configId}",
+            path="/api/v1/configurationManager/slack-bot/{configId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -732,7 +732,7 @@ class ConfigurationManager(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/configurationManager/slack-bot/{configId}",
+            path="/api/v1/configurationManager/slack-bot/{configId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -775,6 +775,1038 @@ class ConfigurationManager(BaseSDK):
                 models.DeleteSlackBotConfigResponse, http_res
             )
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def set_metrics_collection_push_interval(
+        self,
+        *,
+        push_interval_ms: float,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetMetricsCollectionPushIntervalResponse:
+        r"""Set metrics push interval
+
+        Configure the interval for pushing metrics to the collection server.
+
+
+        :param push_interval_ms: Push interval in milliseconds
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetMetricsCollectionPushIntervalRequest(
+            push_interval_ms=push_interval_ms,
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/api/v1/configurationManager/metricsCollection/pushInterval",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request,
+                False,
+                False,
+                "json",
+                models.SetMetricsCollectionPushIntervalRequest,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setMetricsCollectionPushInterval",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetMetricsCollectionPushIntervalResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def set_metrics_collection_push_interval_async(
+        self,
+        *,
+        push_interval_ms: float,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetMetricsCollectionPushIntervalResponse:
+        r"""Set metrics push interval
+
+        Configure the interval for pushing metrics to the collection server.
+
+
+        :param push_interval_ms: Push interval in milliseconds
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetMetricsCollectionPushIntervalRequest(
+            push_interval_ms=push_interval_ms,
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/api/v1/configurationManager/metricsCollection/pushInterval",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request,
+                False,
+                False,
+                "json",
+                models.SetMetricsCollectionPushIntervalRequest,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setMetricsCollectionPushInterval",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetMetricsCollectionPushIntervalResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def set_metrics_collection_remote_server(
+        self,
+        *,
+        server_url_: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetMetricsCollectionRemoteServerResponse:
+        r"""Set metrics remote server URL
+
+        Configure the remote server URL for metrics collection.
+
+
+        :param server_url:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetMetricsCollectionRemoteServerRequest(
+            server_url=server_url_,
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/api/v1/configurationManager/metricsCollection/serverUrl",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request,
+                False,
+                False,
+                "json",
+                models.SetMetricsCollectionRemoteServerRequest,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setMetricsCollectionRemoteServer",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetMetricsCollectionRemoteServerResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def set_metrics_collection_remote_server_async(
+        self,
+        *,
+        server_url_: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetMetricsCollectionRemoteServerResponse:
+        r"""Set metrics remote server URL
+
+        Configure the remote server URL for metrics collection.
+
+
+        :param server_url:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetMetricsCollectionRemoteServerRequest(
+            server_url=server_url_,
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/api/v1/configurationManager/metricsCollection/serverUrl",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request,
+                False,
+                False,
+                "json",
+                models.SetMetricsCollectionRemoteServerRequest,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setMetricsCollectionRemoteServer",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetMetricsCollectionRemoteServerResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_ai_models_config(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetAIModelsConfigResponse:
+        r"""Get AI models configuration
+
+        Retrieve the AI models configuration for the organization.
+
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request(
+            method="GET",
+            path="/api/v1/configurationManager/aiModelsConfig",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getAIModelsConfig",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.GetAIModelsConfigResponse, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_ai_models_config_async(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetAIModelsConfigResponse:
+        r"""Get AI models configuration
+
+        Retrieve the AI models configuration for the organization.
+
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request_async(
+            method="GET",
+            path="/api/v1/configurationManager/aiModelsConfig",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getAIModelsConfig",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.GetAIModelsConfigResponse, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def create_ai_models_config(
+        self,
+        *,
+        ocr: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        embedding: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        llm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        slm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        reasoning: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        multi_modal: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        custom_system_prompt: OptionalNullable[str] = UNSET,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.CreateAIModelsConfigResponse:
+        r"""Create AI models configuration
+
+        Create or initialize AI models configuration for the organization.
+
+
+        :param ocr:
+        :param embedding:
+        :param llm:
+        :param slm:
+        :param reasoning:
+        :param multi_modal:
+        :param custom_system_prompt:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CreateAIModelsConfigRequest(
+            ocr=utils.get_pydantic_model(
+                ocr, Optional[List[models.AIModelConfiguration]]
+            ),
+            embedding=utils.get_pydantic_model(
+                embedding, Optional[List[models.AIModelConfiguration]]
+            ),
+            llm=utils.get_pydantic_model(
+                llm, Optional[List[models.AIModelConfiguration]]
+            ),
+            slm=utils.get_pydantic_model(
+                slm, Optional[List[models.AIModelConfiguration]]
+            ),
+            reasoning=utils.get_pydantic_model(
+                reasoning, Optional[List[models.AIModelConfiguration]]
+            ),
+            multi_modal=utils.get_pydantic_model(
+                multi_modal, Optional[List[models.AIModelConfiguration]]
+            ),
+            custom_system_prompt=custom_system_prompt,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/api/v1/configurationManager/aiModelsConfig",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.CreateAIModelsConfigRequest
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createAIModelsConfig",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.CreateAIModelsConfigResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def create_ai_models_config_async(
+        self,
+        *,
+        ocr: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        embedding: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        llm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        slm: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        reasoning: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        multi_modal: Optional[
+            Union[
+                List[models.AIModelConfiguration],
+                List[models.AIModelConfigurationTypedDict],
+            ]
+        ] = None,
+        custom_system_prompt: OptionalNullable[str] = UNSET,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.CreateAIModelsConfigResponse:
+        r"""Create AI models configuration
+
+        Create or initialize AI models configuration for the organization.
+
+
+        :param ocr:
+        :param embedding:
+        :param llm:
+        :param slm:
+        :param reasoning:
+        :param multi_modal:
+        :param custom_system_prompt:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CreateAIModelsConfigRequest(
+            ocr=utils.get_pydantic_model(
+                ocr, Optional[List[models.AIModelConfiguration]]
+            ),
+            embedding=utils.get_pydantic_model(
+                embedding, Optional[List[models.AIModelConfiguration]]
+            ),
+            llm=utils.get_pydantic_model(
+                llm, Optional[List[models.AIModelConfiguration]]
+            ),
+            slm=utils.get_pydantic_model(
+                slm, Optional[List[models.AIModelConfiguration]]
+            ),
+            reasoning=utils.get_pydantic_model(
+                reasoning, Optional[List[models.AIModelConfiguration]]
+            ),
+            multi_modal=utils.get_pydantic_model(
+                multi_modal, Optional[List[models.AIModelConfiguration]]
+            ),
+            custom_system_prompt=custom_system_prompt,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/api/v1/configurationManager/aiModelsConfig",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.CreateAIModelsConfigRequest
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createAIModelsConfig",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.CreateAIModelsConfigResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_ai_models_providers(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetAIModelsProvidersResponse:
+        r"""Get AI model providers
+
+        Retrieve all available AI model providers.
+
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request(
+            method="GET",
+            path="/api/v1/configurationManager/ai-models",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getAIModelsProviders",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.GetAIModelsProvidersResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_ai_models_providers_async(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetAIModelsProvidersResponse:
+        r"""Get AI model providers
+
+        Retrieve all available AI model providers.
+
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request_async(
+            method="GET",
+            path="/api/v1/configurationManager/ai-models",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getAIModelsProviders",
+                oauth2_scopes=[],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.GetAIModelsProvidersResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
