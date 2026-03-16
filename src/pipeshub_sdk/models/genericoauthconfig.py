@@ -28,6 +28,8 @@ class GenericOAuthConfigTypedDict(TypedDict):
     r"""OAuth scopes to request"""
     redirect_uri: NotRequired[str]
     r"""OAuth redirect URI"""
+    enable_jit: NotRequired[bool]
+    r"""Enable Just-In-Time user provisioning"""
 
 
 class GenericOAuthConfig(BaseModel):
@@ -63,6 +65,9 @@ class GenericOAuthConfig(BaseModel):
     redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
     r"""OAuth redirect URI"""
 
+    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
+    r"""Enable Just-In-Time user provisioning"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -75,6 +80,7 @@ class GenericOAuthConfig(BaseModel):
                 "userInfoEndpoint",
                 "scope",
                 "redirectUri",
+                "enableJit",
             ]
         )
         serialized = handler(self)
