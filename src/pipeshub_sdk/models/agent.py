@@ -75,19 +75,19 @@ class Model(BaseModel):
         return m
 
 
-class ToolsetTypedDict(TypedDict):
+class AgentToolsetTypedDict(TypedDict):
     pass
 
 
-class Toolset(BaseModel):
+class AgentToolset(BaseModel):
     pass
 
 
-class KnowledgeTypedDict(TypedDict):
+class AgentKnowledgeTypedDict(TypedDict):
     pass
 
 
-class Knowledge(BaseModel):
+class AgentKnowledge(BaseModel):
     pass
 
 
@@ -124,9 +124,9 @@ class AgentTypedDict(TypedDict):
     r"""Soft delete flag"""
     share_with_org: NotRequired[bool]
     r"""Whether agent is shared with the organization"""
-    toolsets: NotRequired[List[ToolsetTypedDict]]
+    toolsets: NotRequired[List[AgentToolsetTypedDict]]
     r"""Toolsets attached to the agent"""
-    knowledge: NotRequired[List[KnowledgeTypedDict]]
+    knowledge: NotRequired[List[AgentKnowledgeTypedDict]]
     r"""Knowledge sources connected to the agent"""
     created_by: NotRequired[str]
     r"""User key who created the agent"""
@@ -198,10 +198,10 @@ class Agent(BaseModel):
     )
     r"""Whether agent is shared with the organization"""
 
-    toolsets: Optional[List[Toolset]] = None
+    toolsets: Optional[List[AgentToolset]] = None
     r"""Toolsets attached to the agent"""
 
-    knowledge: Optional[List[Knowledge]] = None
+    knowledge: Optional[List[AgentKnowledge]] = None
     r"""Knowledge sources connected to the agent"""
 
     created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None

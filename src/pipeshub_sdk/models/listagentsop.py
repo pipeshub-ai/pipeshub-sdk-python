@@ -2,7 +2,7 @@
 # @generated-id: c90bf329b54a
 
 from __future__ import annotations
-from .agent import Agent, AgentTypedDict
+from .agentlistitem import AgentListItem, AgentListItemTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pydantic import model_serializer
 from typing import List, Optional
@@ -14,7 +14,7 @@ class ListAgentsResponseTypedDict(TypedDict):
 
     status: NotRequired[str]
     message: NotRequired[str]
-    agents: NotRequired[List[AgentTypedDict]]
+    agents: NotRequired[List[AgentListItemTypedDict]]
 
 
 class ListAgentsResponse(BaseModel):
@@ -24,7 +24,7 @@ class ListAgentsResponse(BaseModel):
 
     message: Optional[str] = None
 
-    agents: Optional[List[Agent]] = None
+    agents: Optional[List[AgentListItem]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

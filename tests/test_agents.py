@@ -21,11 +21,6 @@ def test_agents_list_agents():
         assert res == models.ListAgentsResponse(
             status="success",
             message="Agents retrieved successfully",
-            agents=[
-                models.Agent(
-                    name="Customer Support Assistant",
-                ),
-            ],
         )
 
 
