@@ -26,7 +26,7 @@ class Google(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -57,7 +57,7 @@ class Microsoft(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -88,7 +88,7 @@ class Azuread(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -126,7 +126,7 @@ class AuthProvidersOauth(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -163,7 +163,7 @@ class AuthProviders(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

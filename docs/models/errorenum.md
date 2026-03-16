@@ -10,25 +10,16 @@ Error code. Common values:
 - `access_denied` - User denied authorization
 
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import ErrorEnum
-
-# Open enum: unrecognized values are captured as UnrecognizedStr
-value: ErrorEnum = "invalid_request"
-```
-
 
 ## Values
 
-This is an open enum. Unrecognized values will not fail type checks.
-
-- `"invalid_request"`
-- `"invalid_client"`
-- `"invalid_grant"`
-- `"unauthorized_client"`
-- `"unsupported_grant_type"`
-- `"invalid_scope"`
-- `"access_denied"`
-- `"server_error"`
+| Name                     | Value                    |
+| ------------------------ | ------------------------ |
+| `INVALID_REQUEST`        | invalid_request          |
+| `INVALID_CLIENT`         | invalid_client           |
+| `INVALID_GRANT`          | invalid_grant            |
+| `UNAUTHORIZED_CLIENT`    | unauthorized_client      |
+| `UNSUPPORTED_GRANT_TYPE` | unsupported_grant_type   |
+| `INVALID_SCOPE`          | invalid_scope            |
+| `ACCESS_DENIED`          | access_denied            |
+| `SERVER_ERROR`           | server_error             |
