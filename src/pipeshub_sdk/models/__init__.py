@@ -93,14 +93,7 @@ if TYPE_CHECKING:
         AgentCreateResponseToolsetTypedDict,
         AgentCreateResponseTypedDict,
     )
-    from .agentlistitem import (
-        AgentListItem,
-        AgentListItemKnowledge,
-        AgentListItemKnowledgeTypedDict,
-        AgentListItemToolset,
-        AgentListItemToolsetTypedDict,
-        AgentListItemTypedDict,
-    )
+    from .agentlistitem import AgentListItem, AgentListItemTypedDict
     from .aimodelconfiguration import (
         AIModelConfiguration,
         AIModelConfigurationConfiguration,
@@ -2135,10 +2128,6 @@ __all__ = [
     "AgentKnowledge",
     "AgentKnowledgeTypedDict",
     "AgentListItem",
-    "AgentListItemKnowledge",
-    "AgentListItemKnowledgeTypedDict",
-    "AgentListItemToolset",
-    "AgentListItemToolsetTypedDict",
     "AgentListItemTypedDict",
     "AgentToolset",
     "AgentToolsetTypedDict",
@@ -3669,10 +3658,6 @@ _dynamic_imports: dict[str, str] = {
     "AgentCreateResponseToolsetTypedDict": ".agentcreateresponse",
     "AgentCreateResponseTypedDict": ".agentcreateresponse",
     "AgentListItem": ".agentlistitem",
-    "AgentListItemKnowledge": ".agentlistitem",
-    "AgentListItemKnowledgeTypedDict": ".agentlistitem",
-    "AgentListItemToolset": ".agentlistitem",
-    "AgentListItemToolsetTypedDict": ".agentlistitem",
     "AgentListItemTypedDict": ".agentlistitem",
     "AIModelConfiguration": ".aimodelconfiguration",
     "AIModelConfigurationConfiguration": ".aimodelconfiguration",

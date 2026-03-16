@@ -15,22 +15,6 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class AgentListItemToolsetTypedDict(TypedDict):
-    pass
-
-
-class AgentListItemToolset(BaseModel):
-    pass
-
-
-class AgentListItemKnowledgeTypedDict(TypedDict):
-    pass
-
-
-class AgentListItemKnowledge(BaseModel):
-    pass
-
-
 class AgentListItemTypedDict(TypedDict):
     r"""Agent summary returned in list endpoints (models as compact strings)"""
 
@@ -48,8 +32,6 @@ class AgentListItemTypedDict(TypedDict):
     is_active: NotRequired[bool]
     is_deleted: NotRequired[bool]
     share_with_org: NotRequired[bool]
-    toolsets: NotRequired[List[AgentListItemToolsetTypedDict]]
-    knowledge: NotRequired[List[AgentListItemKnowledgeTypedDict]]
     created_by: NotRequired[str]
     updated_by: NotRequired[Nullable[str]]
     created_at_timestamp: NotRequired[int]
@@ -94,10 +76,6 @@ class AgentListItem(BaseModel):
         None
     )
 
-    toolsets: Optional[List[AgentListItemToolset]] = None
-
-    knowledge: Optional[List[AgentListItemKnowledge]] = None
-
     created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
 
     updated_by: Annotated[OptionalNullable[str], pydantic.Field(alias="updatedBy")] = (
@@ -141,8 +119,6 @@ class AgentListItem(BaseModel):
                 "isActive",
                 "isDeleted",
                 "shareWithOrg",
-                "toolsets",
-                "knowledge",
                 "createdBy",
                 "updatedBy",
                 "createdAtTimestamp",
