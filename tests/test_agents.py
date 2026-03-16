@@ -50,11 +50,6 @@ def test_agents_create_agent():
         assert res == models.CreateAgentResponse(
             status="success",
             message="Agent created successfully",
-            agent=models.Agent(
-                name="Customer Support Assistant",
-                user_role="OWNER",
-                access_type="INDIVIDUAL",
-            ),
         )
 
 
