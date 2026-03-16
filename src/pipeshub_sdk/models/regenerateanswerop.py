@@ -19,6 +19,7 @@ class RegenerateAnswerRequestBodyTypedDict(TypedDict):
     r"""Override model for regeneration"""
     model_name: NotRequired[str]
     chat_mode: NotRequired[str]
+    model_friendly_name: NotRequired[str]
 
 
 class RegenerateAnswerRequestBody(BaseModel):
@@ -33,15 +34,21 @@ class RegenerateAnswerRequestBody(BaseModel):
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["filters", "modelKey", "modelName", "chatMode"])
+        optional_fields = set(
+            ["filters", "modelKey", "modelName", "chatMode", "modelFriendlyName"]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -86,7 +93,7 @@ class RegenerateAnswerRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

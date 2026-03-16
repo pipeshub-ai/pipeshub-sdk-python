@@ -2,6 +2,7 @@
 # @generated-id: 2eb70a860f3a
 
 from pipeshub_sdk import Pipeshub, models
+import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -22,7 +23,6 @@ def test_agents_list_agents():
             message="Agents retrieved successfully",
             agents=[
                 models.Agent(
-                    agent_key="customer-support-agent",
                     name="Customer Support Assistant",
                 ),
             ],
@@ -49,7 +49,6 @@ def test_agents_create_agent():
                     "is_reasoning": False,
                 },
             ],
-            is_public=False,
             share_with_org=False,
         )
         assert res is not None
@@ -57,7 +56,6 @@ def test_agents_create_agent():
             status="success",
             message="Agent created successfully",
             agent=models.Agent(
-                agent_key="customer-support-agent",
                 name="Customer Support Assistant",
                 user_role="OWNER",
                 access_type="INDIVIDUAL",
@@ -65,21 +63,11 @@ def test_agents_create_agent():
         )
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step listAgentTools.test referencing operation listAgentTools not found in document`]"
+)
 def test_agents_list_agent_tools():
-    test_http_client = create_test_http_client("listAgentTools")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agents.list_agent_tools()
-        assert res is not None
-        assert res == [
-            models.AgentTool(),
-        ]
+    pass
 
 
 def test_agents_get_agent():
@@ -98,7 +86,6 @@ def test_agents_get_agent():
             status="success",
             message="Agent retrieved successfully",
             agent=models.Agent(
-                agent_key="customer-support-agent",
                 name="Customer Support Assistant",
                 user_role="OWNER",
                 access_type="INDIVIDUAL",
@@ -124,62 +111,22 @@ def test_agents_update_agent():
         )
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step getAgentPermissions.test referencing operation getAgentPermissions not found in document`]"
+)
 def test_agents_get_agent_permissions():
-    test_http_client = create_test_http_client("getAgentPermissions")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agents.get_agent_permissions(agent_key="<value>")
-        assert res is not None
-        assert res == models.GetAgentPermissionsResponse(
-            status="success",
-            message="Agent permissions retrieved successfully",
-        )
+    pass
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step shareAgent.test referencing operation shareAgent not found in document`]"
+)
 def test_agents_share_agent():
-    test_http_client = create_test_http_client("shareAgent")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agents.share_agent(
-            agent_key="<value>",
-            user_ids=[
-                "507f1f77bcf86cd799439011",
-            ],
-            access_level="read",
-        )
-        assert res is not None
-        assert res == models.Agent(
-            agent_key="customer-support-agent",
-            name="Customer Support Assistant",
-            user_role="OWNER",
-            access_type="INDIVIDUAL",
-        )
+    pass
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step unshareAgent.test referencing operation unshareAgent not found in document`]"
+)
 def test_agents_unshare_agent():
-    test_http_client = create_test_http_client("unshareAgent")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agents.unshare_agent(agent_key="<value>")
-        assert res is not None
-        assert res == models.UnshareAgentResponse(
-            status="success",
-        )
+    pass

@@ -40,7 +40,7 @@ class CreateAgentModel(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -80,7 +80,7 @@ class CreateAgentTool(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -125,7 +125,7 @@ class CreateAgentToolset(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -160,7 +160,7 @@ class CreateAgentKnowledge(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -188,8 +188,8 @@ class CreateAgentRequestTypedDict(TypedDict):
     r"""Toolsets attached to the agent (instance-aware)"""
     knowledge: NotRequired[List[CreateAgentKnowledgeTypedDict]]
     r"""Knowledge sources connected to the agent"""
-    is_public: NotRequired[bool]
-    r"""Make agent available to all org users"""
+    tags: NotRequired[List[str]]
+    r"""Tags for categorization"""
     share_with_org: NotRequired[bool]
     r"""Share agent with the organization"""
 
@@ -221,8 +221,8 @@ class CreateAgentRequest(BaseModel):
     knowledge: Optional[List[CreateAgentKnowledge]] = None
     r"""Knowledge sources connected to the agent"""
 
-    is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = False
-    r"""Make agent available to all org users"""
+    tags: Optional[List[str]] = None
+    r"""Tags for categorization"""
 
     share_with_org: Annotated[Optional[bool], pydantic.Field(alias="shareWithOrg")] = (
         False
@@ -239,7 +239,7 @@ class CreateAgentRequest(BaseModel):
                 "instructions",
                 "toolsets",
                 "knowledge",
-                "isPublic",
+                "tags",
                 "shareWithOrg",
             ]
         )
@@ -249,7 +249,7 @@ class CreateAgentRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -307,7 +307,7 @@ class CreateAgentResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

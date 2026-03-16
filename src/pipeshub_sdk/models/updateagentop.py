@@ -40,7 +40,7 @@ class UpdateAgentModel(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -80,7 +80,7 @@ class UpdateAgentTool(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -121,7 +121,7 @@ class UpdateAgentToolset(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -156,7 +156,7 @@ class UpdateAgentKnowledge(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -176,7 +176,7 @@ class UpdateAgentRequestBodyTypedDict(TypedDict):
     models: NotRequired[List[UpdateAgentModelUnionTypedDict]]
     toolsets: NotRequired[List[UpdateAgentToolsetTypedDict]]
     knowledge: NotRequired[List[UpdateAgentKnowledgeTypedDict]]
-    is_public: NotRequired[bool]
+    tags: NotRequired[List[str]]
     share_with_org: NotRequired[bool]
 
 
@@ -199,7 +199,7 @@ class UpdateAgentRequestBody(BaseModel):
 
     knowledge: Optional[List[UpdateAgentKnowledge]] = None
 
-    is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
+    tags: Optional[List[str]] = None
 
     share_with_org: Annotated[Optional[bool], pydantic.Field(alias="shareWithOrg")] = (
         None
@@ -217,7 +217,7 @@ class UpdateAgentRequestBody(BaseModel):
                 "models",
                 "toolsets",
                 "knowledge",
-                "isPublic",
+                "tags",
                 "shareWithOrg",
             ]
         )
@@ -227,7 +227,7 @@ class UpdateAgentRequestBody(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -286,7 +286,7 @@ class UpdateAgentResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

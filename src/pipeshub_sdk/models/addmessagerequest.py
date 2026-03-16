@@ -22,6 +22,8 @@ class AddMessageRequestTypedDict(TypedDict):
     r"""Display name of the model"""
     chat_mode: NotRequired[str]
     r"""Chat mode for this message"""
+    model_friendly_name: NotRequired[str]
+    r"""Friendly display name of the model"""
 
 
 class AddMessageRequest(BaseModel):
@@ -41,15 +43,22 @@ class AddMessageRequest(BaseModel):
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
     r"""Chat mode for this message"""
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Friendly display name of the model"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["filters", "modelKey", "modelName", "chatMode"])
+        optional_fields = set(
+            ["filters", "modelKey", "modelName", "chatMode", "modelFriendlyName"]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

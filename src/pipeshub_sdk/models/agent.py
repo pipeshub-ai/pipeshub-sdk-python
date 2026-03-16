@@ -2,7 +2,6 @@
 # @generated-id: 4af74ce5fd33
 
 from __future__ import annotations
-from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -14,118 +13,6 @@ import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
-
-
-class AgentModelTypedDict(TypedDict):
-    model_key: NotRequired[str]
-    model_name: NotRequired[str]
-    model_friendly_name: NotRequired[str]
-    provider: NotRequired[str]
-    is_reasoning: NotRequired[bool]
-    is_multimodal: NotRequired[bool]
-    is_default: NotRequired[bool]
-    model_type: NotRequired[str]
-    r"""Type of model (e.g., llm, slm, reasoning)"""
-
-
-class AgentModel(BaseModel):
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-
-    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-
-    model_friendly_name: Annotated[
-        Optional[str], pydantic.Field(alias="modelFriendlyName")
-    ] = None
-
-    provider: Optional[str] = None
-
-    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
-
-    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
-        None
-    )
-
-    is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
-
-    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
-    r"""Type of model (e.g., llm, slm, reasoning)"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "modelKey",
-                "modelName",
-                "modelFriendlyName",
-                "provider",
-                "isReasoning",
-                "isMultimodal",
-                "isDefault",
-                "modelType",
-            ]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ModelConfigTypedDict(TypedDict):
-    r"""AI model configuration"""
-
-    model_key: NotRequired[str]
-    temperature: NotRequired[float]
-    max_tokens: NotRequired[int]
-
-
-class ModelConfig(BaseModel):
-    r"""AI model configuration"""
-
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-
-    temperature: Optional[float] = None
-
-    max_tokens: Annotated[Optional[int], pydantic.Field(alias="maxTokens")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "temperature", "maxTokens"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class KnowledgeTypedDict(TypedDict):
-    pass
-
-
-class Knowledge(BaseModel):
-    pass
-
-
-class ToolsetTypedDict(TypedDict):
-    pass
-
-
-class Toolset(BaseModel):
-    pass
 
 
 class AgentTypedDict(TypedDict):
@@ -141,8 +28,6 @@ class AgentTypedDict(TypedDict):
     r"""Unique document key"""
     rev: NotRequired[str]
     r"""Document revision (ArangoDB)"""
-    agent_key: NotRequired[str]
-    r"""Unique identifier key for the agent"""
     name: NotRequired[str]
     r"""Display name of the agent"""
     description: NotRequired[str]
@@ -153,22 +38,10 @@ class AgentTypedDict(TypedDict):
     r"""Initial greeting shown when conversation starts"""
     instructions: NotRequired[Nullable[str]]
     r"""Additional agent execution instructions"""
-    tools: NotRequired[List[str]]
-    r"""List of tool keys the agent can use"""
-    knowledge_bases: NotRequired[List[str]]
-    r"""Knowledge bases the agent has access to"""
-    models: NotRequired[List[AgentModelTypedDict]]
-    r"""Model configuration entries"""
-    model_config_: NotRequired[ModelConfigTypedDict]
-    r"""AI model configuration"""
+    models: NotRequired[List[str]]
+    r"""Model configuration entries (string format modelKey_modelName)"""
     tags: NotRequired[List[str]]
     r"""Tags for categorization"""
-    is_public: NotRequired[bool]
-    r"""Whether agent is available to all org users"""
-    knowledge: NotRequired[List[KnowledgeTypedDict]]
-    r"""Knowledge sources connected to the agent"""
-    toolsets: NotRequired[List[ToolsetTypedDict]]
-    r"""Toolsets attached to the agent"""
     is_active: NotRequired[bool]
     r"""Whether the agent is active"""
     is_deleted: NotRequired[bool]
@@ -179,14 +52,10 @@ class AgentTypedDict(TypedDict):
     r"""User key who created the agent"""
     updated_by: NotRequired[Nullable[str]]
     r"""User key who last updated the agent"""
-    org_id: NotRequired[str]
-    r"""Organization ID"""
     created_at_timestamp: NotRequired[int]
     r"""Creation timestamp in milliseconds"""
     updated_at_timestamp: NotRequired[int]
     r"""Last update timestamp in milliseconds"""
-    created_at: NotRequired[datetime]
-    updated_at: NotRequired[datetime]
     can_view: NotRequired[bool]
     r"""Whether current user can view this agent"""
     can_share: NotRequired[bool]
@@ -217,9 +86,6 @@ class Agent(BaseModel):
     rev: Annotated[Optional[str], pydantic.Field(alias="_rev")] = None
     r"""Document revision (ArangoDB)"""
 
-    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
-    r"""Unique identifier key for the agent"""
-
     name: Optional[str] = None
     r"""Display name of the agent"""
 
@@ -235,33 +101,11 @@ class Agent(BaseModel):
     instructions: OptionalNullable[str] = UNSET
     r"""Additional agent execution instructions"""
 
-    tools: Optional[List[str]] = None
-    r"""List of tool keys the agent can use"""
-
-    knowledge_bases: Annotated[
-        Optional[List[str]], pydantic.Field(alias="knowledgeBases")
-    ] = None
-    r"""Knowledge bases the agent has access to"""
-
-    models: Optional[List[AgentModel]] = None
-    r"""Model configuration entries"""
-
-    model_config_: Annotated[
-        Optional[ModelConfig], pydantic.Field(alias="modelConfig")
-    ] = None
-    r"""AI model configuration"""
+    models: Optional[List[str]] = None
+    r"""Model configuration entries (string format modelKey_modelName)"""
 
     tags: Optional[List[str]] = None
     r"""Tags for categorization"""
-
-    is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = None
-    r"""Whether agent is available to all org users"""
-
-    knowledge: Optional[List[Knowledge]] = None
-    r"""Knowledge sources connected to the agent"""
-
-    toolsets: Optional[List[Toolset]] = None
-    r"""Toolsets attached to the agent"""
 
     is_active: Annotated[Optional[bool], pydantic.Field(alias="isActive")] = None
     r"""Whether the agent is active"""
@@ -282,9 +126,6 @@ class Agent(BaseModel):
     )
     r"""User key who last updated the agent"""
 
-    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
-    r"""Organization ID"""
-
     created_at_timestamp: Annotated[
         Optional[int], pydantic.Field(alias="createdAtTimestamp")
     ] = None
@@ -294,10 +135,6 @@ class Agent(BaseModel):
         Optional[int], pydantic.Field(alias="updatedAtTimestamp")
     ] = None
     r"""Last update timestamp in milliseconds"""
-
-    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
-
-    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
 
     can_view: Optional[bool] = None
     r"""Whether current user can view this agent"""
@@ -324,30 +161,20 @@ class Agent(BaseModel):
                 "_id",
                 "_key",
                 "_rev",
-                "agentKey",
                 "name",
                 "description",
                 "systemPrompt",
                 "startMessage",
                 "instructions",
-                "tools",
-                "knowledgeBases",
                 "models",
-                "modelConfig",
                 "tags",
-                "isPublic",
-                "knowledge",
-                "toolsets",
                 "isActive",
                 "isDeleted",
                 "shareWithOrg",
                 "createdBy",
                 "updatedBy",
-                "orgId",
                 "createdAtTimestamp",
                 "updatedAtTimestamp",
-                "createdAt",
-                "updatedAt",
                 "can_view",
                 "can_share",
                 "can_edit",
@@ -362,7 +189,7 @@ class Agent(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -379,14 +206,6 @@ class Agent(BaseModel):
         return m
 
 
-try:
-    AgentModel.model_rebuild()
-except NameError:
-    pass
-try:
-    ModelConfig.model_rebuild()
-except NameError:
-    pass
 try:
     Agent.model_rebuild()
 except NameError:

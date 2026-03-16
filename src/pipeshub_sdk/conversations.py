@@ -422,6 +422,7 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -570,6 +571,7 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1382,6 +1384,7 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1410,6 +1413,7 @@ class Conversations(BaseSDK):
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
+        :param model_friendly_name: Friendly display name of the model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1433,6 +1437,7 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
+                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -1469,7 +1474,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="addMessage",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1503,6 +1508,7 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1531,6 +1537,7 @@ class Conversations(BaseSDK):
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
+        :param model_friendly_name: Friendly display name of the model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1554,6 +1561,7 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
+                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -1590,7 +1598,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="addMessage",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1624,6 +1632,7 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1645,6 +1654,7 @@ class Conversations(BaseSDK):
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
+        :param model_friendly_name: Friendly display name of the model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1668,6 +1678,7 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
+                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -1720,6 +1731,7 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1746,6 +1758,7 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1767,6 +1780,7 @@ class Conversations(BaseSDK):
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
+        :param model_friendly_name: Friendly display name of the model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1790,6 +1804,7 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
+                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -1842,6 +1857,7 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -2696,6 +2712,7 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2724,6 +2741,7 @@ class Conversations(BaseSDK):
         :param model_key: Override model for regeneration
         :param model_name:
         :param chat_mode:
+        :param model_friendly_name:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2747,6 +2765,7 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
+                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -2803,6 +2822,7 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -2829,6 +2849,7 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2857,6 +2878,7 @@ class Conversations(BaseSDK):
         :param model_key: Override model for regeneration
         :param model_name:
         :param chat_mode:
+        :param model_friendly_name:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2880,6 +2902,7 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
+                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -2936,6 +2959,7 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)

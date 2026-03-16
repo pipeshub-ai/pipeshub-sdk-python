@@ -17,7 +17,6 @@ import weakref
 
 if TYPE_CHECKING:
     from pipeshub_sdk.agent_conversations import AgentConversations
-    from pipeshub_sdk.agent_templates import AgentTemplates
     from pipeshub_sdk.agents import Agents
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
     from pipeshub_sdk.authentication_configuration import AuthenticationConfiguration
@@ -172,8 +171,6 @@ class Pipeshub(BaseSDK):
     r"""AI-powered conversational chat management with citations and follow-up questions"""
     semantic_search: "SemanticSearch"
     r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
-    agent_templates: "AgentTemplates"
-    r"""Reusable templates for creating AI agents with predefined configurations"""
     agents: "Agents"
     r"""Custom AI agents with specialized capabilities and tool integrations"""
     agent_conversations: "AgentConversations"
@@ -309,7 +306,6 @@ class Pipeshub(BaseSDK):
         "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
-        "agent_templates": ("pipeshub_sdk.agent_templates", "AgentTemplates"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
         "agent_conversations": (
             "pipeshub_sdk.agent_conversations",
