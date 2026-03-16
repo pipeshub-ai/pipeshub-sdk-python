@@ -118,7 +118,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.CreateConversationResponse](../../models/createconversationresponse.md)**
 
 ### Errors
 

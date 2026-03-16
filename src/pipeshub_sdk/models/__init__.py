@@ -392,6 +392,12 @@ if TYPE_CHECKING:
         CreateConnectorRequestConfigTypedDict,
         CreateConnectorRequestTypedDict,
     )
+    from .createconversationop import (
+        CreateConversationMeta,
+        CreateConversationMetaTypedDict,
+        CreateConversationResponse,
+        CreateConversationResponseTypedDict,
+    )
     from .createconversationrequest import (
         CreateConversationRequest,
         CreateConversationRequestTypedDict,
@@ -2364,8 +2370,12 @@ __all__ = [
     "CreateConnectorRequestConfig",
     "CreateConnectorRequestConfigTypedDict",
     "CreateConnectorRequestTypedDict",
+    "CreateConversationMeta",
+    "CreateConversationMetaTypedDict",
     "CreateConversationRequest",
     "CreateConversationRequestTypedDict",
+    "CreateConversationResponse",
+    "CreateConversationResponseTypedDict",
     "CreateKBPermissionDetails",
     "CreateKBPermissionDetailsTypedDict",
     "CreateKBPermissionRequest",
@@ -3959,6 +3969,10 @@ _dynamic_imports: dict[str, str] = {
     "CreateConnectorRequestConfig": ".createconnectorrequest",
     "CreateConnectorRequestConfigTypedDict": ".createconnectorrequest",
     "CreateConnectorRequestTypedDict": ".createconnectorrequest",
+    "CreateConversationMeta": ".createconversationop",
+    "CreateConversationMetaTypedDict": ".createconversationop",
+    "CreateConversationResponse": ".createconversationop",
+    "CreateConversationResponseTypedDict": ".createconversationop",
     "CreateConversationRequest": ".createconversationrequest",
     "CreateConversationRequestTypedDict": ".createconversationrequest",
     "CreateKBPermissionDetails": ".createkbpermissionop",

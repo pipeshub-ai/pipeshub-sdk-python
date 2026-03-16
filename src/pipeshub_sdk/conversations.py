@@ -27,7 +27,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.Conversation:
+    ) -> models.CreateConversationResponse:
         r"""Create a new AI conversation
 
         Start a new conversation with PipesHub's AI assistant.<br><br>
@@ -138,7 +138,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.Conversation, http_res)
+            return unmarshal_json_response(models.CreateConversationResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -166,7 +166,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.Conversation:
+    ) -> models.CreateConversationResponse:
         r"""Create a new AI conversation
 
         Start a new conversation with PipesHub's AI assistant.<br><br>
@@ -277,7 +277,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.Conversation, http_res)
+            return unmarshal_json_response(models.CreateConversationResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

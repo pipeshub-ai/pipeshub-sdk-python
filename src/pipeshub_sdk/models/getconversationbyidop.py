@@ -106,6 +106,7 @@ class GetConversationByIDModelInfoTypedDict(TypedDict):
 
     model_key: NotRequired[str]
     model_name: NotRequired[str]
+    model_friendly_name: NotRequired[str]
     model_provider: NotRequired[str]
     chat_mode: NotRequired[str]
 
@@ -117,6 +118,10 @@ class GetConversationByIDModelInfo(BaseModel):
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
     model_provider: Annotated[Optional[str], pydantic.Field(alias="modelProvider")] = (
         None
     )
@@ -125,7 +130,9 @@ class GetConversationByIDModelInfo(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "modelName", "modelProvider", "chatMode"])
+        optional_fields = set(
+            ["modelKey", "modelName", "modelFriendlyName", "modelProvider", "chatMode"]
+        )
         serialized = handler(self)
         m = {}
 

@@ -32,8 +32,10 @@ def test_conversations_create_conversation_simple():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
+        assert res == models.CreateConversationResponse(
+            conversation=models.Conversation(
+                title="Q4 Financial Report Discussion",
+            ),
         )
 
 
@@ -63,8 +65,10 @@ def test_conversations_create_conversation_filtered():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
+        assert res == models.CreateConversationResponse(
+            conversation=models.Conversation(
+                title="Q4 Financial Report Discussion",
+            ),
         )
 
 
@@ -94,8 +98,10 @@ def test_conversations_create_conversation():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.Conversation(
-            title="Q4 Financial Report Discussion",
+        assert res == models.CreateConversationResponse(
+            conversation=models.Conversation(
+                title="Q4 Financial Report Discussion",
+            ),
         )
 
 
