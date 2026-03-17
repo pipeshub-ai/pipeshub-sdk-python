@@ -23,7 +23,7 @@ def test_organization_auth_config_get_auth_methods():
                     order=216367,
                     allowed_methods=[
                         models.AuthMethod(
-                            type="azureAd",
+                            type="oauth",
                         ),
                     ],
                 ),

@@ -72,7 +72,7 @@ def test_ai_models_providers_update_ai_model_provider():
         assert pipeshub is not None
 
         res = pipeshub.ai_models_providers.update_ai_model_provider(
-            model_type="reasoning",
+            model_type="embedding",
             model_key="<value>",
             provider="<value>",
             configuration=models.UpdateAIModelProviderRequestConfiguration(),
@@ -92,7 +92,7 @@ def test_ai_models_providers_delete_ai_model_provider():
         assert pipeshub is not None
 
         res = pipeshub.ai_models_providers.delete_ai_model_provider(
-            model_type="reasoning", model_key="<value>"
+            model_type="embedding", model_key="<value>"
         )
         assert res is not None
         assert res == models.DeleteAIModelProviderResponse()
@@ -109,7 +109,7 @@ def test_ai_models_providers_set_default_ai_model():
         assert pipeshub is not None
 
         res = pipeshub.ai_models_providers.set_default_ai_model(
-            model_type="ocr", model_key="<value>"
+            model_type="llm", model_key="<value>"
         )
         assert res is not None
         assert res == models.SetDefaultAIModelResponse()

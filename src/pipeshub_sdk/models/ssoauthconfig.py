@@ -12,35 +12,40 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class SSOAuthConfigTypedDict(TypedDict):
     r"""SAML SSO authentication configuration"""
 
-    entry_point: NotRequired[str]
-    r"""Identity provider SSO URL"""
     certificate: NotRequired[str]
     r"""X.509 certificate for signature validation (PEM format)"""
+    entry_point: NotRequired[str]
+    r"""Identity provider SSO URL"""
     email_key: NotRequired[str]
     r"""SAML attribute name for user email"""
+    enable_jit: NotRequired[bool]
+    r"""Enable Just-In-Time user provisioning"""
 
 
 class SSOAuthConfig(BaseModel):
     r"""SAML SSO authentication configuration"""
 
-    entry_point: Annotated[Optional[str], pydantic.Field(alias="entryPoint")] = None
-    r"""Identity provider SSO URL"""
-
     certificate: Optional[str] = None
     r"""X.509 certificate for signature validation (PEM format)"""
+
+    entry_point: Annotated[Optional[str], pydantic.Field(alias="entryPoint")] = None
+    r"""Identity provider SSO URL"""
 
     email_key: Annotated[Optional[str], pydantic.Field(alias="emailKey")] = None
     r"""SAML attribute name for user email"""
 
+    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
+    r"""Enable Just-In-Time user provisioning"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["entryPoint", "certificate", "emailKey"])
+        optional_fields = set(["certificate", "entryPoint", "emailKey", "enableJit"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

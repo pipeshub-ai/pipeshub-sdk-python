@@ -87,7 +87,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAuthMethods",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -186,7 +186,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAuthMethods",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -237,7 +237,6 @@ class OrganizationAuthConfig(BaseSDK):
         - <code>otp</code>: One-time password via email<br>
         - <code>google</code>: Google OAuth 2.0<br>
         - <code>microsoft</code>: Microsoft OAuth 2.0<br>
-        - <code>azureAd</code>: Azure Active Directory<br>
         - <code>samlSso</code>: SAML 2.0 Single Sign-On<br>
         - <code>oauth</code>: Generic OAuth 2.0 provider
         <br><br>
@@ -316,7 +315,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAuthMethod",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -371,7 +370,6 @@ class OrganizationAuthConfig(BaseSDK):
         - <code>otp</code>: One-time password via email<br>
         - <code>google</code>: Google OAuth 2.0<br>
         - <code>microsoft</code>: Microsoft OAuth 2.0<br>
-        - <code>azureAd</code>: Azure Active Directory<br>
         - <code>samlSso</code>: SAML 2.0 Single Sign-On<br>
         - <code>oauth</code>: Generic OAuth 2.0 provider
         <br><br>
@@ -450,7 +448,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAuthMethod",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -548,7 +546,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setUpAuthConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -642,7 +640,7 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setUpAuthConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

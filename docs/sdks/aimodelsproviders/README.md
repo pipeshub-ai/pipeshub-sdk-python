@@ -165,7 +165,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_providers.update_ai_model_provider(model_type="reasoning", model_key="<value>", provider="<value>", configuration=models.UpdateAIModelProviderRequestConfiguration())
+    res = pipeshub.ai_models_providers.update_ai_model_provider(model_type="embedding", model_key="<value>", provider="<value>", configuration=models.UpdateAIModelProviderRequestConfiguration())
 
     # Handle response
     print(res)
@@ -214,7 +214,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_providers.delete_ai_model_provider(model_type="reasoning", model_key="<value>")
+    res = pipeshub.ai_models_providers.delete_ai_model_provider(model_type="embedding", model_key="<value>")
 
     # Handle response
     print(res)
@@ -257,7 +257,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.ai_models_providers.set_default_ai_model(model_type="ocr", model_key="<value>")
+    res = pipeshub.ai_models_providers.set_default_ai_model(model_type="llm", model_key="<value>")
 
     # Handle response
     print(res)

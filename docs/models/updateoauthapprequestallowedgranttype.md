@@ -1,15 +1,10 @@
 # UpdateOAuthAppRequestAllowedGrantType
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import UpdateOAuthAppRequestAllowedGrantType
-value: UpdateOAuthAppRequestAllowedGrantType = "authorization_code"
-```
-
 
 ## Values
 
-- `"authorization_code"`
-- `"client_credentials"`
-- `"refresh_token"`
+| Name                 | Value                |
+| -------------------- | -------------------- |
+| `AUTHORIZATION_CODE` | authorization_code   |
+| `CLIENT_CREDENTIALS` | client_credentials   |
+| `REFRESH_TOKEN`      | refresh_token        |

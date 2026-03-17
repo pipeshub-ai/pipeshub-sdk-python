@@ -11,363 +11,15 @@ from typing import Mapping, Optional
 
 
 class AuthenticationConfiguration(BaseSDK):
-    r"""Configure authentication providers including Azure AD, Microsoft, Google OAuth, SAML SSO, and custom OAuth 2.0."""
-
-    def set_azure_ad_auth_config(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        tenant_id: Optional[str] = "common",
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ):
-        r"""Configure Azure AD authentication
-
-        Set up Azure Active Directory as an authentication provider for user login.
-
-        :param client_id: Azure AD application client ID
-        :param tenant_id: Azure AD tenant ID (use 'common' for multi-tenant)
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.AzureAdAuthConfig(
-            client_id=client_id,
-            tenant_id=tenant_id,
-        )
-
-        req = self._build_request(
-            method="POST",
-            path="/api/v1/configurationManager/authConfig/azureAd",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="*/*",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.AzureAdAuthConfig
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAzureAdAuthConfig",
-                oauth2_scopes=["config:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "*"):
-            return
-        if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_azure_ad_auth_config_async(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        tenant_id: Optional[str] = "common",
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ):
-        r"""Configure Azure AD authentication
-
-        Set up Azure Active Directory as an authentication provider for user login.
-
-        :param client_id: Azure AD application client ID
-        :param tenant_id: Azure AD tenant ID (use 'common' for multi-tenant)
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.AzureAdAuthConfig(
-            client_id=client_id,
-            tenant_id=tenant_id,
-        )
-
-        req = self._build_request_async(
-            method="POST",
-            path="/api/v1/configurationManager/authConfig/azureAd",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="*/*",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.AzureAdAuthConfig
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAzureAdAuthConfig",
-                oauth2_scopes=["config:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "403", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "*"):
-            return
-        if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def get_azure_ad_auth_config(
-        self,
-        *,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AzureAdAuthConfig:
-        r"""Get Azure AD configuration
-
-        Retrieve Azure AD authentication configuration.
-
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-        req = self._build_request(
-            method="GET",
-            path="/api/v1/configurationManager/authConfig/azureAd",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=None,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getAzureAdAuthConfig",
-                oauth2_scopes=["config:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AzureAdAuthConfig, http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_azure_ad_auth_config_async(
-        self,
-        *,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AzureAdAuthConfig:
-        r"""Get Azure AD configuration
-
-        Retrieve Azure AD authentication configuration.
-
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-        req = self._build_request_async(
-            method="GET",
-            path="/api/v1/configurationManager/authConfig/azureAd",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=None,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getAzureAdAuthConfig",
-                oauth2_scopes=["config:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AzureAdAuthConfig, http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+    r"""Configure authentication providers including Microsoft, Google OAuth, SAML SSO, and custom OAuth 2.0."""
 
     def set_microsoft_auth_config(
         self,
         *,
         client_id: Optional[str] = None,
-        tenant_id: Optional[str] = "common",
+        tenant_id: Optional[str] = None,
+        authority: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -379,6 +31,8 @@ class AuthenticationConfiguration(BaseSDK):
 
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
+        :param authority: Microsoft authority URL
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -397,6 +51,8 @@ class AuthenticationConfiguration(BaseSDK):
         request = models.MicrosoftAuthConfig(
             client_id=client_id,
             tenant_id=tenant_id,
+            authority=authority,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -461,7 +117,9 @@ class AuthenticationConfiguration(BaseSDK):
         self,
         *,
         client_id: Optional[str] = None,
-        tenant_id: Optional[str] = "common",
+        tenant_id: Optional[str] = None,
+        authority: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -473,6 +131,8 @@ class AuthenticationConfiguration(BaseSDK):
 
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
+        :param authority: Microsoft authority URL
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -491,6 +151,8 @@ class AuthenticationConfiguration(BaseSDK):
         request = models.MicrosoftAuthConfig(
             client_id=client_id,
             tenant_id=tenant_id,
+            authority=authority,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(
@@ -717,6 +379,7 @@ class AuthenticationConfiguration(BaseSDK):
         self,
         *,
         client_id: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -727,6 +390,7 @@ class AuthenticationConfiguration(BaseSDK):
         Set up Google OAuth as an authentication provider.
 
         :param client_id: Google OAuth client ID
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -744,6 +408,7 @@ class AuthenticationConfiguration(BaseSDK):
 
         request = models.GoogleAuthConfig(
             client_id=client_id,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -808,6 +473,7 @@ class AuthenticationConfiguration(BaseSDK):
         self,
         *,
         client_id: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -818,6 +484,7 @@ class AuthenticationConfiguration(BaseSDK):
         Set up Google OAuth as an authentication provider.
 
         :param client_id: Google OAuth client ID
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -835,6 +502,7 @@ class AuthenticationConfiguration(BaseSDK):
 
         request = models.GoogleAuthConfig(
             client_id=client_id,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(
@@ -1060,9 +728,10 @@ class AuthenticationConfiguration(BaseSDK):
     def set_sso_auth_config(
         self,
         *,
-        entry_point: Optional[str] = None,
         certificate: Optional[str] = None,
+        entry_point: Optional[str] = None,
         email_key: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1072,9 +741,10 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up SAML 2.0 Single Sign-On with your identity provider (Okta, OneLogin, etc.).
 
-        :param entry_point: Identity provider SSO URL
         :param certificate: X.509 certificate for signature validation (PEM format)
+        :param entry_point: Identity provider SSO URL
         :param email_key: SAML attribute name for user email
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1091,9 +761,10 @@ class AuthenticationConfiguration(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.SSOAuthConfig(
-            entry_point=entry_point,
             certificate=certificate,
+            entry_point=entry_point,
             email_key=email_key,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -1157,9 +828,10 @@ class AuthenticationConfiguration(BaseSDK):
     async def set_sso_auth_config_async(
         self,
         *,
-        entry_point: Optional[str] = None,
         certificate: Optional[str] = None,
+        entry_point: Optional[str] = None,
         email_key: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1169,9 +841,10 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up SAML 2.0 Single Sign-On with your identity provider (Okta, OneLogin, etc.).
 
-        :param entry_point: Identity provider SSO URL
         :param certificate: X.509 certificate for signature validation (PEM format)
+        :param entry_point: Identity provider SSO URL
         :param email_key: SAML attribute name for user email
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1188,9 +861,10 @@ class AuthenticationConfiguration(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.SSOAuthConfig(
-            entry_point=entry_point,
             certificate=certificate,
+            entry_point=entry_point,
             email_key=email_key,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(
@@ -1422,8 +1096,9 @@ class AuthenticationConfiguration(BaseSDK):
         authorization_url: Optional[str] = None,
         token_endpoint: Optional[str] = None,
         user_info_endpoint: Optional[str] = None,
-        scope: Optional[str] = None,
+        scope: Optional[str] = "openid email profile",
         redirect_uri: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1441,6 +1116,7 @@ class AuthenticationConfiguration(BaseSDK):
         :param user_info_endpoint: User info endpoint URL
         :param scope: OAuth scopes to request
         :param redirect_uri: OAuth redirect URI
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1465,6 +1141,7 @@ class AuthenticationConfiguration(BaseSDK):
             user_info_endpoint=user_info_endpoint,
             scope=scope,
             redirect_uri=redirect_uri,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -1534,8 +1211,9 @@ class AuthenticationConfiguration(BaseSDK):
         authorization_url: Optional[str] = None,
         token_endpoint: Optional[str] = None,
         user_info_endpoint: Optional[str] = None,
-        scope: Optional[str] = None,
+        scope: Optional[str] = "openid email profile",
         redirect_uri: Optional[str] = None,
+        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1553,6 +1231,7 @@ class AuthenticationConfiguration(BaseSDK):
         :param user_info_endpoint: User info endpoint URL
         :param scope: OAuth scopes to request
         :param redirect_uri: OAuth redirect URI
+        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1577,6 +1256,7 @@ class AuthenticationConfiguration(BaseSDK):
             user_info_endpoint=user_info_endpoint,
             scope=scope,
             redirect_uri=redirect_uri,
+            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(

@@ -26,7 +26,7 @@ class Google(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -57,7 +57,7 @@ class Microsoft(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -68,17 +68,17 @@ class Microsoft(BaseModel):
 
 class AzureadTypedDict(TypedDict):
     tenant_id: NotRequired[str]
-    r"""Azure AD tenant ID"""
+    r"""Microsoft tenant ID"""
     client_id: NotRequired[str]
-    r"""Azure AD client ID"""
+    r"""Microsoft client ID"""
 
 
 class Azuread(BaseModel):
     tenant_id: Annotated[Optional[str], pydantic.Field(alias="tenantId")] = None
-    r"""Azure AD tenant ID"""
+    r"""Microsoft tenant ID"""
 
     client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
-    r"""Azure AD client ID"""
+    r"""Microsoft client ID"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -88,7 +88,7 @@ class Azuread(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -126,7 +126,7 @@ class Oauth(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -163,7 +163,7 @@ class AuthProviders(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

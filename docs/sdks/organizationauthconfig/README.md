@@ -86,7 +86,6 @@ This allows admins to configure single or multi-factor authentication.
 - <code>otp</code>: One-time password via email<br>
 - <code>google</code>: Google OAuth 2.0<br>
 - <code>microsoft</code>: Microsoft OAuth 2.0<br>
-- <code>azureAd</code>: Azure Active Directory<br>
 - <code>samlSso</code>: SAML 2.0 Single Sign-On<br>
 - <code>oauth</code>: Generic OAuth 2.0 provider
 <br><br>

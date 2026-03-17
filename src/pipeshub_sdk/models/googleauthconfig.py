@@ -14,6 +14,8 @@ class GoogleAuthConfigTypedDict(TypedDict):
 
     client_id: NotRequired[str]
     r"""Google OAuth client ID"""
+    enable_jit: NotRequired[bool]
+    r"""Enable Just-In-Time user provisioning"""
 
 
 class GoogleAuthConfig(BaseModel):
@@ -22,15 +24,18 @@ class GoogleAuthConfig(BaseModel):
     client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
     r"""Google OAuth client ID"""
 
+    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
+    r"""Enable Just-In-Time user provisioning"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["clientId"])
+        optional_fields = set(["clientId", "enableJit"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

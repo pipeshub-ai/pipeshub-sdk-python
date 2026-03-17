@@ -10,7 +10,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class OAuthCredentialsTypedDict(TypedDict):
-    r"""Credentials for OAuth authentication (Microsoft, Azure AD, generic OAuth)"""
+    r"""Credentials for OAuth authentication (Microsoft, generic OAuth)"""
 
     access_token: str
     r"""OAuth access token"""
@@ -19,7 +19,7 @@ class OAuthCredentialsTypedDict(TypedDict):
 
 
 class OAuthCredentials(BaseModel):
-    r"""Credentials for OAuth authentication (Microsoft, Azure AD, generic OAuth)"""
+    r"""Credentials for OAuth authentication (Microsoft, generic OAuth)"""
 
     access_token: Annotated[str, pydantic.Field(alias="accessToken")]
     r"""OAuth access token"""
@@ -35,7 +35,7 @@ class OAuthCredentials(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

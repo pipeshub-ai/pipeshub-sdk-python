@@ -8,9 +8,5 @@ from typing import Literal
 ModelType = Literal[
     "llm",
     "embedding",
-    "ocr",
-    "slm",
-    "reasoning",
-    "multiModal",
 ]
 r"""Type of AI model"""

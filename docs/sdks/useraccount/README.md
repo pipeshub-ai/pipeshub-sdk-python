@@ -80,7 +80,6 @@ Requires a valid session token from <code>/initAuth</code>.
 - <code>otp</code>: <code>{ "credentials": { "otp": "123456" } }</code> (6-digit code, valid for 10 minutes)<br>
 - <code>google</code>: <code>{ "credentials": "google-id-token-string" }</code><br>
 - <code>microsoft</code>: <code>{ "credentials": { "accessToken": "...", "idToken": "..." } }</code><br>
-- <code>azureAd</code>: <code>{ "credentials": { "accessToken": "...", "idToken": "..." } }</code><br>
 - <code>oauth</code>: <code>{ "credentials": { "accessToken": "...", "idToken": "..." } }</code><br>
 - <code>samlSso</code>: Handled via redirect flow (use <code>/saml/signIn</code> instead)
 <br><br>

@@ -2,6 +2,7 @@
 # @generated-id: ef559b6d88ce
 
 from pipeshub_sdk import Pipeshub, models
+import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -17,27 +18,14 @@ def test_authentication_configuration_get_sso_auth_config():
 
         res = pipeshub.authentication_configuration.get_sso_auth_config()
         assert res is not None
-        assert res == models.SSOAuthConfig(
-            entry_point="https://idp.example.com/sso/saml",
-            email_key="email",
-        )
+        assert res == models.SSOAuthConfig()
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step getAzureAdAuthConfig.test referencing operation getAzureAdAuthConfig not found in document`]"
+)
 def test_authentication_configuration_get_azure_ad_auth_config():
-    test_http_client = create_test_http_client("getAzureAdAuthConfig")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.authentication_configuration.get_azure_ad_auth_config()
-        assert res is not None
-        assert res == models.AzureAdAuthConfig(
-            client_id="12345678-1234-1234-1234-123456789abc",
-        )
+    pass
 
 
 def test_authentication_configuration_get_generic_o_auth_config():
@@ -52,10 +40,7 @@ def test_authentication_configuration_get_generic_o_auth_config():
 
         res = pipeshub.authentication_configuration.get_generic_o_auth_config()
         assert res is not None
-        assert res == models.GenericOAuthConfig(
-            provider_name="Custom OAuth Provider",
-            scope="openid profile email",
-        )
+        assert res == models.GenericOAuthConfig()
 
 
 def test_authentication_configuration_get_microsoft_auth_config():
@@ -71,7 +56,7 @@ def test_authentication_configuration_get_microsoft_auth_config():
         res = pipeshub.authentication_configuration.get_microsoft_auth_config()
         assert res is not None
         assert res == models.MicrosoftAuthConfig(
-            client_id="12345678-1234-1234-1234-123456789abc",
+            authority="https://login.microsoftonline.com/{tenantId}",
         )
 
 
@@ -87,6 +72,4 @@ def test_authentication_configuration_get_google_auth_config():
 
         res = pipeshub.authentication_configuration.get_google_auth_config()
         assert res is not None
-        assert res == models.GoogleAuthConfig(
-            client_id="123456789-abc.apps.googleusercontent.com",
-        )
+        assert res == models.GoogleAuthConfig()

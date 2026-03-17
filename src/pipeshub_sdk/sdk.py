@@ -202,7 +202,7 @@ class Pipeshub(BaseSDK):
     smtp_configuration: "SMTPConfiguration"
     r"""Configure SMTP email server for sending notifications and invitations."""
     authentication_configuration: "AuthenticationConfiguration"
-    r"""Configure authentication providers including Azure AD, Microsoft, Google OAuth, SAML SSO, and custom OAuth 2.0."""
+    r"""Configure authentication providers including Microsoft, Google OAuth, SAML SSO, and custom OAuth 2.0."""
     ai_models_providers: "AIModelsProviders"
     r"""Manage individual AI model providers - add, update, delete, and set defaults."""
     public_ur_ls: "PublicURLs"

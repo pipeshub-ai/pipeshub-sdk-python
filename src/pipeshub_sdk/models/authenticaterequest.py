@@ -18,7 +18,6 @@ Method = Literal[
     "password",
     "google",
     "microsoft",
-    "azureAd",
     "oauth",
 ]
 r"""Authentication method to use"""
@@ -49,7 +48,6 @@ class AuthenticateRequestTypedDict(TypedDict):
     - `otp`: `{ otp: \"123456\" }` (6-digit code)
     - `google`: `\"google-id-token-string\"`
     - `microsoft`: `{ accessToken: \"...\", idToken: \"...\" }`
-    - `azureAd`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `oauth`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `samlSso`: handled via redirect flow
 
@@ -72,7 +70,6 @@ class AuthenticateRequest(BaseModel):
     - `otp`: `{ otp: \"123456\" }` (6-digit code)
     - `google`: `\"google-id-token-string\"`
     - `microsoft`: `{ accessToken: \"...\", idToken: \"...\" }`
-    - `azureAd`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `oauth`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `samlSso`: handled via redirect flow
 
@@ -100,7 +97,7 @@ class AuthenticateRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

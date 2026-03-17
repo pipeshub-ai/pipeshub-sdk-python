@@ -5,6 +5,7 @@ from __future__ import annotations
 from .citationreference import CitationReference, CitationReferenceTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
+from .referencedataitem import ReferenceDataItem, ReferenceDataItemTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
@@ -78,21 +79,13 @@ class MessageModelInfo(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-class ReferenceDatumTypedDict(TypedDict):
-    pass
-
-
-class ReferenceDatum(BaseModel):
-    pass
 
 
 class MessageMetadataTypedDict(TypedDict):
@@ -133,7 +126,7 @@ class MessageMetadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -175,7 +168,7 @@ class MessageTypedDict(TypedDict):
     r"""User feedback on this message"""
     model_info: NotRequired[MessageModelInfoTypedDict]
     r"""Model information for this message"""
-    reference_data: NotRequired[List[ReferenceDatumTypedDict]]
+    reference_data: NotRequired[List[ReferenceDataItemTypedDict]]
     r"""Reference data associated with this message"""
     metadata: NotRequired[MessageMetadataTypedDict]
     created_at: NotRequired[datetime]
@@ -233,7 +226,7 @@ class Message(BaseModel):
     r"""Model information for this message"""
 
     reference_data: Annotated[
-        Optional[List[ReferenceDatum]], pydantic.Field(alias="referenceData")
+        Optional[List[ReferenceDataItem]], pydantic.Field(alias="referenceData")
     ] = None
     r"""Reference data associated with this message"""
 
@@ -267,7 +260,7 @@ class Message(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

@@ -148,7 +148,6 @@ if TYPE_CHECKING:
         OauthTypedDict,
     )
     from .authstep import AuthStep, AuthStepTypedDict
-    from .azureadauthconfig import AzureAdAuthConfig, AzureAdAuthConfigTypedDict
     from .bulkinviteusersop import (
         BulkInviteUsersRequest,
         BulkInviteUsersRequestTypedDict,
@@ -1217,8 +1216,6 @@ if TYPE_CHECKING:
         MessageModelInfoTypedDict,
         MessageTypeEnum,
         MessageTypedDict,
-        ReferenceDatum,
-        ReferenceDatumTypedDict,
     )
     from .messagefeedback import (
         Category,
@@ -1388,6 +1385,11 @@ if TYPE_CHECKING:
         RecordsResponseFilters,
         RecordsResponseFiltersTypedDict,
         RecordsResponseTypedDict,
+    )
+    from .referencedataitem import (
+        ReferenceDataItem,
+        ReferenceDataItemType,
+        ReferenceDataItemTypedDict,
     )
     from .refreshtokenop import RefreshTokenSecurity, RefreshTokenSecurityTypedDict
     from .refreshtokenresponse import (
@@ -2058,8 +2060,6 @@ __all__ = [
     "AuthenticateResponseTypedDict",
     "AuthenticateToolsetInstanceRequest",
     "AuthenticateToolsetInstanceRequestTypedDict",
-    "AzureAdAuthConfig",
-    "AzureAdAuthConfigTypedDict",
     "Azuread",
     "AzureadTypedDict",
     "Breadcrumb",
@@ -2970,8 +2970,9 @@ __all__ = [
     "RecordsResponseFilters",
     "RecordsResponseFiltersTypedDict",
     "RecordsResponseTypedDict",
-    "ReferenceDatum",
-    "ReferenceDatumTypedDict",
+    "ReferenceDataItem",
+    "ReferenceDataItemType",
+    "ReferenceDataItemTypedDict",
     "RefreshTokenResponse",
     "RefreshTokenResponseTypedDict",
     "RefreshTokenSecurity",
@@ -3539,8 +3540,6 @@ _dynamic_imports: dict[str, str] = {
     "OauthTypedDict": ".authproviders",
     "AuthStep": ".authstep",
     "AuthStepTypedDict": ".authstep",
-    "AzureAdAuthConfig": ".azureadauthconfig",
-    "AzureAdAuthConfigTypedDict": ".azureadauthconfig",
     "BulkInviteUsersRequest": ".bulkinviteusersop",
     "BulkInviteUsersRequestTypedDict": ".bulkinviteusersop",
     "BulkInviteUsersResponse": ".bulkinviteusersop",
@@ -4356,8 +4355,6 @@ _dynamic_imports: dict[str, str] = {
     "MessageModelInfoTypedDict": ".message",
     "MessageTypeEnum": ".message",
     "MessageTypedDict": ".message",
-    "ReferenceDatum": ".message",
-    "ReferenceDatumTypedDict": ".message",
     "Category": ".messagefeedback",
     "CitationFeedback": ".messagefeedback",
     "CitationFeedbackTypedDict": ".messagefeedback",
@@ -4483,6 +4480,9 @@ _dynamic_imports: dict[str, str] = {
     "RecordsResponseFilters": ".recordsresponse",
     "RecordsResponseFiltersTypedDict": ".recordsresponse",
     "RecordsResponseTypedDict": ".recordsresponse",
+    "ReferenceDataItem": ".referencedataitem",
+    "ReferenceDataItemType": ".referencedataitem",
+    "ReferenceDataItemTypedDict": ".referencedataitem",
     "RefreshTokenSecurity": ".refreshtokenop",
     "RefreshTokenSecurityTypedDict": ".refreshtokenop",
     "RefreshTokenResponse": ".refreshtokenresponse",
