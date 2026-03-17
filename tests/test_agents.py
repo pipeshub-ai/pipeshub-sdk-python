@@ -50,30 +50,6 @@ def test_agents_create_agent():
         assert res == models.CreateAgentResponse(
             status="success",
             message="Agent created successfully",
-            agent=models.AgentCreateResponse(
-                toolsets=[
-                    models.AgentToolset(
-                        name="github",
-                        display_name="GitHub Integration",
-                        type="app",
-                        tools=[
-                            models.AgentTool(
-                                name="create_issue",
-                                full_name="github.create_issue",
-                                toolset_name="github",
-                                description="Create a new issue in a repository.",
-                            ),
-                        ],
-                    ),
-                ],
-                knowledge=[
-                    models.AgentKnowledge(
-                        name="Box",
-                        type="Box",
-                        display_name="Box",
-                    ),
-                ],
-            ),
         )
 
 
@@ -101,28 +77,6 @@ def test_agents_get_agent():
             message="Agent retrieved successfully",
             agent=models.Agent(
                 name="Customer Support Assistant",
-                toolsets=[
-                    models.AgentToolset(
-                        name="github",
-                        display_name="GitHub Integration",
-                        type="app",
-                        tools=[
-                            models.AgentTool(
-                                name="create_issue",
-                                full_name="github.create_issue",
-                                toolset_name="github",
-                                description="Create a new issue in a repository.",
-                            ),
-                        ],
-                    ),
-                ],
-                knowledge=[
-                    models.AgentKnowledge(
-                        name="Box",
-                        type="Box",
-                        display_name="Box",
-                    ),
-                ],
                 user_role="OWNER",
                 access_type="INDIVIDUAL",
             ),

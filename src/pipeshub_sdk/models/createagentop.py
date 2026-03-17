@@ -12,7 +12,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
@@ -40,7 +40,7 @@ class CreateAgentModel(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -80,7 +80,7 @@ class CreateAgentTool(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -125,7 +125,7 @@ class CreateAgentToolset(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -134,54 +134,23 @@ class CreateAgentToolset(BaseModel):
         return m
 
 
-class CreateAgentFiltersTypedDict(TypedDict):
-    record_groups: NotRequired[List[str]]
-    records: NotRequired[List[str]]
-
-
-class CreateAgentFilters(BaseModel):
-    record_groups: Annotated[
-        Optional[List[str]], pydantic.Field(alias="recordGroups")
-    ] = None
-
-    records: Optional[List[str]] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["recordGroups", "records"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-CreateAgentFiltersUnionTypedDict = TypeAliasType(
-    "CreateAgentFiltersUnionTypedDict", Union[CreateAgentFiltersTypedDict, str]
+CreateAgentFiltersTypedDict = TypeAliasType(
+    "CreateAgentFiltersTypedDict", Union[Dict[str, Any], str]
 )
 
 
-CreateAgentFiltersUnion = TypeAliasType(
-    "CreateAgentFiltersUnion", Union[CreateAgentFilters, str]
-)
+CreateAgentFilters = TypeAliasType("CreateAgentFilters", Union[Dict[str, Any], str])
 
 
 class CreateAgentKnowledgeTypedDict(TypedDict):
     connector_id: NotRequired[str]
-    filters: NotRequired[CreateAgentFiltersUnionTypedDict]
+    filters: NotRequired[CreateAgentFiltersTypedDict]
 
 
 class CreateAgentKnowledge(BaseModel):
     connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
 
-    filters: Optional[CreateAgentFiltersUnion] = None
+    filters: Optional[CreateAgentFilters] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -191,7 +160,7 @@ class CreateAgentKnowledge(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -280,7 +249,7 @@ class CreateAgentRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -330,7 +299,7 @@ class CreateAgentResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -357,10 +326,6 @@ except NameError:
     pass
 try:
     CreateAgentToolset.model_rebuild()
-except NameError:
-    pass
-try:
-    CreateAgentFilters.model_rebuild()
 except NameError:
     pass
 try:

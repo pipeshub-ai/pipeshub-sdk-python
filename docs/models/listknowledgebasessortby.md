@@ -2,12 +2,17 @@
 
 Field to sort by
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListKnowledgeBasesSortBy
+value: ListKnowledgeBasesSortBy = "name"
+```
+
 
 ## Values
 
-| Name                   | Value                  |
-| ---------------------- | ---------------------- |
-| `NAME`                 | name                   |
-| `CREATED_AT_TIMESTAMP` | createdAtTimestamp     |
-| `UPDATED_AT_TIMESTAMP` | updatedAtTimestamp     |
-| `USER_ROLE`            | userRole               |
+- `"name"`
+- `"createdAtTimestamp"`
+- `"updatedAtTimestamp"`
+- `"userRole"`

@@ -1,6 +1,6 @@
 # AgentConversation
 
-A conversation with a specific AI agent (full detail with messages).
+A conversation with a specific AI agent.
 
 
 
@@ -14,7 +14,7 @@ A conversation with a specific AI agent (full detail with messages).
 | `created_at`                                                                             | [date](https://docs.python.org/3/library/datetime.html#date-objects)                     | :heavy_minus_sign:                                                                       | N/A                                                                                      |
 | `is_shared`                                                                              | *Optional[bool]*                                                                         | :heavy_minus_sign:                                                                       | N/A                                                                                      |
 | `shared_with`                                                                            | List[[models.AgentConversationSharedWith](../models/agentconversationsharedwith.md)]     | :heavy_minus_sign:                                                                       | N/A                                                                                      |
-| `status`                                                                                 | [Optional[models.AgentConversationStatus]](../models/agentconversationstatus.md)         | :heavy_minus_sign:                                                                       | Conversation status                                                                      |
+| `status`                                                                                 | *Optional[str]*                                                                          | :heavy_minus_sign:                                                                       | Conversation status (e.g., Complete, INPROGRESS, FAILED)                                 |
 | `messages`                                                                               | List[[models.Message](../models/message.md)]                                             | :heavy_minus_sign:                                                                       | N/A                                                                                      |
 | `model_info`                                                                             | [Optional[models.AgentConversationModelInfo]](../models/agentconversationmodelinfo.md)   | :heavy_minus_sign:                                                                       | N/A                                                                                      |
 | `pagination`                                                                             | [Optional[models.AgentConversationPagination]](../models/agentconversationpagination.md) | :heavy_minus_sign:                                                                       | N/A                                                                                      |

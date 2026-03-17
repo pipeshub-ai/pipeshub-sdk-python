@@ -78,6 +78,9 @@ class Pipeshub(BaseSDK):
     ## Authentication
     Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
 
+    ## Base URLs
+    All endpoints use the `/api/v1` prefix unless otherwise noted.
+
     """
 
     user_account: "UserAccount"
@@ -413,6 +416,9 @@ class Pipeshub(BaseSDK):
             if url_params is not None:
                 server_url = utils.template_url(server_url, url_params)
         server_defaults: List[Dict[str, str]] = [
+            {
+                "instance_url": instance_url or "https://app.pipeshub.com",
+            },
             {
                 "instance_url": instance_url or "https://app.pipeshub.com",
             },

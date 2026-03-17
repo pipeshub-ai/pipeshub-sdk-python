@@ -10,21 +10,32 @@ from pipeshub_sdk.types import (
     UNSET_SENTINEL,
 )
 import pydantic
-from pydantic import model_serializer
-from typing import Optional
+from pydantic import ConfigDict, model_serializer
+from typing import Any, Dict, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AIModelProviderConfigConfigurationTypedDict(TypedDict):
+    r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
+
     model: NotRequired[str]
     r"""Model name(s)"""
     api_key: NotRequired[str]
     r"""API key for the model"""
     endpoint: NotRequired[str]
     r"""Endpoint URL for the model"""
+    model_friendly_name: NotRequired[str]
+    r"""Human-readable display name for the model"""
 
 
 class AIModelProviderConfigConfiguration(BaseModel):
+    r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
+
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
+
     model: Optional[str] = None
     r"""Model name(s)"""
 
@@ -34,19 +45,35 @@ class AIModelProviderConfigConfiguration(BaseModel):
     endpoint: Optional[str] = None
     r"""Endpoint URL for the model"""
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Human-readable display name for the model"""
+
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["model", "apiKey", "endpoint"])
+        optional_fields = set(["model", "apiKey", "endpoint", "modelFriendlyName"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
 
         return m
 
@@ -55,6 +82,7 @@ class AIModelProviderConfigTypedDict(TypedDict):
     provider: str
     r"""AI provider name"""
     configuration: AIModelProviderConfigConfigurationTypedDict
+    r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
     is_multimodal: NotRequired[bool]
     r"""Whether the model supports multimodal input"""
     is_reasoning: NotRequired[bool]
@@ -65,6 +93,8 @@ class AIModelProviderConfigTypedDict(TypedDict):
     r"""Context length for the model"""
     model_key: NotRequired[str]
     r"""Unique identifier for this model configuration"""
+    model_friendly_name: NotRequired[str]
+    r"""Human-readable display name for the model"""
 
 
 class AIModelProviderConfig(BaseModel):
@@ -72,6 +102,7 @@ class AIModelProviderConfig(BaseModel):
     r"""AI provider name"""
 
     configuration: AIModelProviderConfigConfiguration
+    r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
 
     is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
         False
@@ -92,10 +123,22 @@ class AIModelProviderConfig(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""Unique identifier for this model configuration"""
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Human-readable display name for the model"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["isMultimodal", "isReasoning", "isDefault", "contextLength", "modelKey"]
+            [
+                "isMultimodal",
+                "isReasoning",
+                "isDefault",
+                "contextLength",
+                "modelKey",
+                "modelFriendlyName",
+            ]
         )
         nullable_fields = set(["contextLength"])
         serialized = handler(self)
@@ -103,7 +146,7 @@ class AIModelProviderConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

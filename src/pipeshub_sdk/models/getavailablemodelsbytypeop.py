@@ -29,7 +29,13 @@ class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     model_key: NotRequired[str]
     provider: NotRequired[str]
     model: NotRequired[str]
+    model_name: NotRequired[str]
+    r"""Model name"""
+    model_type: NotRequired[str]
+    r"""Type of model (e.g., llm, embedding)"""
     is_default: NotRequired[bool]
+    is_multimodal: NotRequired[bool]
+    is_reasoning: NotRequired[bool]
 
 
 class GetAvailableModelsByTypeModel(BaseModel):
@@ -39,17 +45,40 @@ class GetAvailableModelsByTypeModel(BaseModel):
 
     model: Optional[str] = None
 
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+    r"""Model name"""
+
+    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
+    r"""Type of model (e.g., llm, embedding)"""
+
     is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
+
+    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
+        None
+    )
+
+    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "provider", "model", "isDefault"])
+        optional_fields = set(
+            [
+                "modelKey",
+                "provider",
+                "model",
+                "modelName",
+                "modelType",
+                "isDefault",
+                "isMultimodal",
+                "isReasoning",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -83,7 +112,7 @@ class GetAvailableModelsByTypeResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

@@ -12,38 +12,35 @@ from pipeshub_sdk.types import (
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
 class UpdateAgentModelTypedDict(TypedDict):
     model_key: NotRequired[str]
-    r"""Unique model key"""
     model_name: NotRequired[str]
-    r"""Model name"""
+    provider: NotRequired[str]
     is_reasoning: NotRequired[bool]
-    r"""Whether this is a reasoning model"""
 
 
 class UpdateAgentModel(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-    r"""Unique model key"""
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-    r"""Model name"""
+
+    provider: Optional[str] = None
 
     is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
-    r"""Whether this is a reasoning model"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "modelName", "isReasoning"])
+        optional_fields = set(["modelKey", "modelName", "provider", "isReasoning"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -63,33 +60,27 @@ UpdateAgentModelUnion = TypeAliasType(
 
 
 class UpdateAgentToolTypedDict(TypedDict):
-    name: str
-    r"""Tool name"""
+    name: NotRequired[str]
     full_name: NotRequired[str]
-    r"""Fully qualified name (toolsetName.toolName)"""
     description: NotRequired[str]
-    r"""What the tool does"""
 
 
 class UpdateAgentTool(BaseModel):
-    name: str
-    r"""Tool name"""
+    name: Optional[str] = None
 
     full_name: Annotated[Optional[str], pydantic.Field(alias="fullName")] = None
-    r"""Fully qualified name (toolsetName.toolName)"""
 
     description: Optional[str] = None
-    r"""What the tool does"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["fullName", "description"])
+        optional_fields = set(["name", "fullName", "description"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -99,48 +90,38 @@ class UpdateAgentTool(BaseModel):
 
 
 class UpdateAgentToolsetTypedDict(TypedDict):
-    name: str
-    r"""Toolset identifier name (lowercased)"""
+    name: NotRequired[str]
     display_name: NotRequired[str]
-    r"""Human-readable display name"""
     type: NotRequired[str]
-    r"""Type of toolset"""
     instance_id: NotRequired[str]
-    r"""Admin-created instance UUID"""
     instance_name: NotRequired[str]
-    r"""Instance name"""
     tools: NotRequired[List[UpdateAgentToolTypedDict]]
 
 
 class UpdateAgentToolset(BaseModel):
-    name: str
-    r"""Toolset identifier name (lowercased)"""
+    name: Optional[str] = None
 
     display_name: Annotated[Optional[str], pydantic.Field(alias="displayName")] = None
-    r"""Human-readable display name"""
 
-    type: Optional[str] = "app"
-    r"""Type of toolset"""
+    type: Optional[str] = None
 
     instance_id: Annotated[Optional[str], pydantic.Field(alias="instanceId")] = None
-    r"""Admin-created instance UUID"""
 
     instance_name: Annotated[Optional[str], pydantic.Field(alias="instanceName")] = None
-    r"""Instance name"""
 
     tools: Optional[List[UpdateAgentTool]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["displayName", "type", "instanceId", "instanceName", "tools"]
+            ["name", "displayName", "type", "instanceId", "instanceName", "tools"]
         )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -149,70 +130,33 @@ class UpdateAgentToolset(BaseModel):
         return m
 
 
-class UpdateAgentFiltersTypedDict(TypedDict):
-    record_groups: NotRequired[List[str]]
-    records: NotRequired[List[str]]
-
-
-class UpdateAgentFilters(BaseModel):
-    record_groups: Annotated[
-        Optional[List[str]], pydantic.Field(alias="recordGroups")
-    ] = None
-
-    records: Optional[List[str]] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["recordGroups", "records"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-UpdateAgentFiltersUnionTypedDict = TypeAliasType(
-    "UpdateAgentFiltersUnionTypedDict", Union[UpdateAgentFiltersTypedDict, str]
+UpdateAgentFiltersTypedDict = TypeAliasType(
+    "UpdateAgentFiltersTypedDict", Union[Dict[str, Any], str]
 )
-r"""Filter criteria (JSON object or JSON string)"""
 
 
-UpdateAgentFiltersUnion = TypeAliasType(
-    "UpdateAgentFiltersUnion", Union[UpdateAgentFilters, str]
-)
-r"""Filter criteria (JSON object or JSON string)"""
+UpdateAgentFilters = TypeAliasType("UpdateAgentFilters", Union[Dict[str, Any], str])
 
 
 class UpdateAgentKnowledgeTypedDict(TypedDict):
-    connector_id: str
-    r"""ID of the connector providing this knowledge"""
-    filters: NotRequired[UpdateAgentFiltersUnionTypedDict]
-    r"""Filter criteria (JSON object or JSON string)"""
+    connector_id: NotRequired[str]
+    filters: NotRequired[UpdateAgentFiltersTypedDict]
 
 
 class UpdateAgentKnowledge(BaseModel):
-    connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
-    r"""ID of the connector providing this knowledge"""
+    connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
 
-    filters: Optional[UpdateAgentFiltersUnion] = None
-    r"""Filter criteria (JSON object or JSON string)"""
+    filters: Optional[UpdateAgentFilters] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["filters"])
+        optional_fields = set(["connectorId", "filters"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -222,7 +166,7 @@ class UpdateAgentKnowledge(BaseModel):
 
 
 class UpdateAgentRequestBodyTypedDict(TypedDict):
-    r"""All fields are optional. Only provided fields will be updated."""
+    r"""Request body for Update agent"""
 
     name: NotRequired[str]
     description: NotRequired[str]
@@ -230,18 +174,14 @@ class UpdateAgentRequestBodyTypedDict(TypedDict):
     start_message: NotRequired[str]
     instructions: NotRequired[Nullable[str]]
     models: NotRequired[List[UpdateAgentModelUnionTypedDict]]
-    r"""At least one model required, at least one must be a reasoning model. Accepts objects or compact strings."""
     toolsets: NotRequired[List[UpdateAgentToolsetTypedDict]]
-    r"""Replaces all existing toolsets. Empty array removes all toolsets."""
     knowledge: NotRequired[List[UpdateAgentKnowledgeTypedDict]]
-    r"""Replaces all existing knowledge sources. Empty array removes all."""
     tags: NotRequired[List[str]]
     share_with_org: NotRequired[bool]
-    r"""Share agent with the organization"""
 
 
 class UpdateAgentRequestBody(BaseModel):
-    r"""All fields are optional. Only provided fields will be updated."""
+    r"""Request body for Update agent"""
 
     name: Optional[str] = None
 
@@ -254,20 +194,16 @@ class UpdateAgentRequestBody(BaseModel):
     instructions: OptionalNullable[str] = UNSET
 
     models: Optional[List[UpdateAgentModelUnion]] = None
-    r"""At least one model required, at least one must be a reasoning model. Accepts objects or compact strings."""
 
     toolsets: Optional[List[UpdateAgentToolset]] = None
-    r"""Replaces all existing toolsets. Empty array removes all toolsets."""
 
     knowledge: Optional[List[UpdateAgentKnowledge]] = None
-    r"""Replaces all existing knowledge sources. Empty array removes all."""
 
     tags: Optional[List[str]] = None
 
     share_with_org: Annotated[Optional[bool], pydantic.Field(alias="shareWithOrg")] = (
         None
     )
-    r"""Share agent with the organization"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -291,7 +227,7 @@ class UpdateAgentRequestBody(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -350,7 +286,7 @@ class UpdateAgentResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -369,10 +305,6 @@ except NameError:
     pass
 try:
     UpdateAgentToolset.model_rebuild()
-except NameError:
-    pass
-try:
-    UpdateAgentFilters.model_rebuild()
 except NameError:
     pass
 try:

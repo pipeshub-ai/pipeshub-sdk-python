@@ -3,13 +3,11 @@
 
 from __future__ import annotations
 from .agentconversation import AgentConversation, AgentConversationTypedDict
-from .conversationfilters import ConversationFilters, ConversationFiltersTypedDict
-from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import Any, Dict, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -32,70 +30,32 @@ class GetAgentConversationRequest(BaseModel):
     ]
 
 
-class GetAgentConversationMetaTypedDict(TypedDict):
-    request_id: NotRequired[str]
-    timestamp: NotRequired[datetime]
-    duration: NotRequired[int]
-    conversation_id: NotRequired[str]
-    message_count: NotRequired[int]
-
-
-class GetAgentConversationMeta(BaseModel):
-    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
-
-    timestamp: Optional[datetime] = None
-
-    duration: Optional[int] = None
-
-    conversation_id: Annotated[
-        Optional[str], pydantic.Field(alias="conversationId")
-    ] = None
-
-    message_count: Annotated[Optional[int], pydantic.Field(alias="messageCount")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            ["requestId", "timestamp", "duration", "conversationId", "messageCount"]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
 class GetAgentConversationResponseTypedDict(TypedDict):
     r"""Agent conversation details"""
 
     conversation: NotRequired[AgentConversationTypedDict]
-    r"""A conversation with a specific AI agent (full detail with messages).
+    r"""A conversation with a specific AI agent.
 
     """
-    filters: NotRequired[ConversationFiltersTypedDict]
-    r"""Applied and available filters for conversation endpoints"""
-    meta: NotRequired[GetAgentConversationMetaTypedDict]
+    filters: NotRequired[Dict[str, Any]]
+    r"""Applied and available filters"""
+    meta: NotRequired[Dict[str, Any]]
+    r"""Request metadata"""
 
 
 class GetAgentConversationResponse(BaseModel):
     r"""Agent conversation details"""
 
     conversation: Optional[AgentConversation] = None
-    r"""A conversation with a specific AI agent (full detail with messages).
+    r"""A conversation with a specific AI agent.
 
     """
 
-    filters: Optional[ConversationFilters] = None
-    r"""Applied and available filters for conversation endpoints"""
+    filters: Optional[Dict[str, Any]] = None
+    r"""Applied and available filters"""
 
-    meta: Optional[GetAgentConversationMeta] = None
+    meta: Optional[Dict[str, Any]] = None
+    r"""Request metadata"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -105,16 +65,10 @@ class GetAgentConversationResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-try:
-    GetAgentConversationMeta.model_rebuild()
-except NameError:
-    pass

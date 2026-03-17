@@ -716,11 +716,11 @@ class Agents(BaseSDK):
         :param system_prompt:
         :param start_message:
         :param instructions:
-        :param models: At least one model required, at least one must be a reasoning model. Accepts objects or compact strings.
-        :param toolsets: Replaces all existing toolsets. Empty array removes all toolsets.
-        :param knowledge: Replaces all existing knowledge sources. Empty array removes all.
+        :param models:
+        :param toolsets:
+        :param knowledge:
         :param tags:
-        :param share_with_org: Share agent with the organization
+        :param share_with_org:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -863,11 +863,11 @@ class Agents(BaseSDK):
         :param system_prompt:
         :param start_message:
         :param instructions:
-        :param models: At least one model required, at least one must be a reasoning model. Accepts objects or compact strings.
-        :param toolsets: Replaces all existing toolsets. Empty array removes all toolsets.
-        :param knowledge: Replaces all existing knowledge sources. Empty array removes all.
+        :param models:
+        :param toolsets:
+        :param knowledge:
         :param tags:
-        :param share_with_org: Share agent with the organization
+        :param share_with_org:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
