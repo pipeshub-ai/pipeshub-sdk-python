@@ -94,8 +94,8 @@ class AIModelProviderConfigConfiguration(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-            serialized.pop(k, serialized.pop(n, None))
+            val = serialized.get(k)
+            serialized.pop(k, None)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -174,7 +174,86 @@ class AIModelProviderConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
+
+class AIModelProviderConfigInputTypedDict(TypedDict):
+    provider: Provider
+    r"""AI provider name"""
+    configuration: AIModelProviderConfigConfigurationTypedDict
+    r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
+    is_multimodal: NotRequired[bool]
+    r"""Whether the model supports multimodal input"""
+    is_reasoning: NotRequired[bool]
+    r"""Whether the model supports reasoning"""
+    is_default: NotRequired[bool]
+    r"""Whether this should be the default model"""
+    context_length: NotRequired[Nullable[int]]
+    r"""Context length for the model"""
+    model_friendly_name: NotRequired[str]
+    r"""Human-readable display name for the model"""
+
+
+class AIModelProviderConfigInput(BaseModel):
+    provider: Provider
+    r"""AI provider name"""
+
+    configuration: AIModelProviderConfigConfiguration
+    r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
+
+    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
+        False
+    )
+    r"""Whether the model supports multimodal input"""
+
+    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = False
+    r"""Whether the model supports reasoning"""
+
+    is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = False
+    r"""Whether this should be the default model"""
+
+    context_length: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="contextLength")
+    ] = UNSET
+    r"""Context length for the model"""
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Human-readable display name for the model"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "isMultimodal",
+                "isReasoning",
+                "isDefault",
+                "contextLength",
+                "modelFriendlyName",
+            ]
+        )
+        nullable_fields = set(["contextLength"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -197,5 +276,9 @@ except NameError:
     pass
 try:
     AIModelProviderConfig.model_rebuild()
+except NameError:
+    pass
+try:
+    AIModelProviderConfigInput.model_rebuild()
 except NameError:
     pass

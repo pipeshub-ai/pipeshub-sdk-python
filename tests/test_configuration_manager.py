@@ -79,7 +79,9 @@ def test_configuration_manager_create_slack_bot_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.configuration_manager.create_slack_bot_config(request={})
+        res = pipeshub.configuration_manager.create_slack_bot_config(
+            name="<value>", bot_token="<value>", signing_secret="<value>"
+        )
         assert res is not None
         assert res == models.CreateSlackBotConfigResponse()
 
@@ -95,7 +97,10 @@ def test_configuration_manager_update_slack_bot_config():
         assert pipeshub is not None
 
         res = pipeshub.configuration_manager.update_slack_bot_config(
-            config_id="<id>", body={}
+            config_id="<id>",
+            name="<value>",
+            bot_token="<value>",
+            signing_secret="<value>",
         )
         assert res is not None
         assert res == models.UpdateSlackBotConfigResponse()
@@ -128,7 +133,7 @@ def test_configuration_manager_get_ai_models_config():
 
         res = pipeshub.configuration_manager.get_ai_models_config()
         assert res is not None
-        assert res == models.GetAIModelsConfigResponse()
+        assert res == models.AIModelsConfig()
 
 
 def test_configuration_manager_create_ai_models_config():
@@ -141,6 +146,6 @@ def test_configuration_manager_create_ai_models_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.configuration_manager.create_ai_models_config(request={})
+        res = pipeshub.configuration_manager.create_ai_models_config()
         assert res is not None
         assert res == models.CreateAIModelsConfigResponse()

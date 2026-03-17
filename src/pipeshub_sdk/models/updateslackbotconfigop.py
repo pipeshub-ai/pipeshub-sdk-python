@@ -2,7 +2,13 @@
 # @generated-id: a50ce4e98ca5
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+)
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
 from pydantic import model_serializer
@@ -13,9 +19,55 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class UpdateSlackBotConfigRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
+    name: str
+    r"""Bot display name"""
+    bot_token: str
+    r"""Slack bot token"""
+    signing_secret: str
+    r"""Slack signing secret"""
+    agent_id: NotRequired[Nullable[str]]
+    r"""Associated agent ID"""
+
 
 class UpdateSlackBotConfigRequestBody(BaseModel):
     r"""Request payload"""
+
+    name: str
+    r"""Bot display name"""
+
+    bot_token: Annotated[str, pydantic.Field(alias="botToken")]
+    r"""Slack bot token"""
+
+    signing_secret: Annotated[str, pydantic.Field(alias="signingSecret")]
+    r"""Slack signing secret"""
+
+    agent_id: Annotated[OptionalNullable[str], pydantic.Field(alias="agentId")] = UNSET
+    r"""Associated agent ID"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["agentId"])
+        nullable_fields = set(["agentId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
 
 
 class UpdateSlackBotConfigRequestTypedDict(TypedDict):
@@ -57,10 +109,16 @@ class UpdateSlackBotConfigResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+try:
+    UpdateSlackBotConfigRequestBody.model_rebuild()
+except NameError:
+    pass

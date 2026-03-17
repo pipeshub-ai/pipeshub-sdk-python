@@ -2,15 +2,10 @@
 
 Type of AI model
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import ModelType
-value: ModelType = "llm"
-```
-
 
 ## Values
 
-- `"llm"`
-- `"embedding"`
+| Name        | Value       |
+| ----------- | ----------- |
+| `LLM`       | llm         |
+| `EMBEDDING` | embedding   |

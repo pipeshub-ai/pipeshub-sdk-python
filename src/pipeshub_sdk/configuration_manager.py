@@ -4,10 +4,10 @@
 from .basesdk import BaseSDK
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import BaseModel, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional, Union, cast
+from typing import List, Mapping, Optional, Union
 
 
 class ConfigurationManager(BaseSDK):
@@ -68,7 +68,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getSlackBotConfigs",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -150,7 +150,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getSlackBotConfigs",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -178,10 +178,10 @@ class ConfigurationManager(BaseSDK):
     def create_slack_bot_config(
         self,
         *,
-        request: Union[
-            models.CreateSlackBotConfigRequest,
-            models.CreateSlackBotConfigRequestTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -192,7 +192,10 @@ class ConfigurationManager(BaseSDK):
         Create a new Slack bot configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param name: Bot display name
+        :param bot_token: Slack bot token
+        :param signing_secret: Slack signing secret
+        :param agent_id: Associated agent ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -208,9 +211,12 @@ class ConfigurationManager(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateSlackBotConfigRequest)
-        request = cast(models.CreateSlackBotConfigRequest, request)
+        request = models.CreateSlackBotConfigRequest(
+            name=name,
+            bot_token=bot_token,
+            signing_secret=signing_secret,
+            agent_id=agent_id,
+        )
 
         req = self._build_request(
             method="POST",
@@ -245,7 +251,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createSlackBotConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -275,10 +281,10 @@ class ConfigurationManager(BaseSDK):
     async def create_slack_bot_config_async(
         self,
         *,
-        request: Union[
-            models.CreateSlackBotConfigRequest,
-            models.CreateSlackBotConfigRequestTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -289,7 +295,10 @@ class ConfigurationManager(BaseSDK):
         Create a new Slack bot configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param name: Bot display name
+        :param bot_token: Slack bot token
+        :param signing_secret: Slack signing secret
+        :param agent_id: Associated agent ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -305,9 +314,12 @@ class ConfigurationManager(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateSlackBotConfigRequest)
-        request = cast(models.CreateSlackBotConfigRequest, request)
+        request = models.CreateSlackBotConfigRequest(
+            name=name,
+            bot_token=bot_token,
+            signing_secret=signing_secret,
+            agent_id=agent_id,
+        )
 
         req = self._build_request_async(
             method="POST",
@@ -342,7 +354,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createSlackBotConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -373,10 +385,10 @@ class ConfigurationManager(BaseSDK):
         self,
         *,
         config_id: str,
-        body: Union[
-            models.UpdateSlackBotConfigRequestBody,
-            models.UpdateSlackBotConfigRequestBodyTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -388,7 +400,10 @@ class ConfigurationManager(BaseSDK):
 
 
         :param config_id:
-        :param body: Request payload
+        :param name: Bot display name
+        :param bot_token: Slack bot token
+        :param signing_secret: Slack signing secret
+        :param agent_id: Associated agent ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -406,7 +421,12 @@ class ConfigurationManager(BaseSDK):
 
         request = models.UpdateSlackBotConfigRequest(
             config_id=config_id,
-            body=utils.get_pydantic_model(body, models.UpdateSlackBotConfigRequestBody),
+            body=models.UpdateSlackBotConfigRequestBody(
+                name=name,
+                bot_token=bot_token,
+                signing_secret=signing_secret,
+                agent_id=agent_id,
+            ),
         )
 
         req = self._build_request(
@@ -446,7 +466,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateSlackBotConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -477,10 +497,10 @@ class ConfigurationManager(BaseSDK):
         self,
         *,
         config_id: str,
-        body: Union[
-            models.UpdateSlackBotConfigRequestBody,
-            models.UpdateSlackBotConfigRequestBodyTypedDict,
-        ],
+        name: str,
+        bot_token: str,
+        signing_secret: str,
+        agent_id: OptionalNullable[str] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -492,7 +512,10 @@ class ConfigurationManager(BaseSDK):
 
 
         :param config_id:
-        :param body: Request payload
+        :param name: Bot display name
+        :param bot_token: Slack bot token
+        :param signing_secret: Slack signing secret
+        :param agent_id: Associated agent ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -510,7 +533,12 @@ class ConfigurationManager(BaseSDK):
 
         request = models.UpdateSlackBotConfigRequest(
             config_id=config_id,
-            body=utils.get_pydantic_model(body, models.UpdateSlackBotConfigRequestBody),
+            body=models.UpdateSlackBotConfigRequestBody(
+                name=name,
+                bot_token=bot_token,
+                signing_secret=signing_secret,
+                agent_id=agent_id,
+            ),
         )
 
         req = self._build_request_async(
@@ -550,7 +578,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateSlackBotConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -641,7 +669,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteSlackBotConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -732,7 +760,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteSlackBotConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -830,7 +858,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionPushInterval",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -928,7 +956,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionPushInterval",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1026,7 +1054,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionRemoteServer",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1124,7 +1152,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionRemoteServer",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1158,7 +1186,7 @@ class ConfigurationManager(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetAIModelsConfigResponse:
+    ) -> models.AIModelsConfig:
         r"""Get AI models configuration
 
         Retrieve the AI models configuration for the organization.
@@ -1208,7 +1236,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1219,7 +1247,7 @@ class ConfigurationManager(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetAIModelsConfigResponse, http_res)
+            return unmarshal_json_response(models.AIModelsConfig, http_res)
         if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1240,7 +1268,7 @@ class ConfigurationManager(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetAIModelsConfigResponse:
+    ) -> models.AIModelsConfig:
         r"""Get AI models configuration
 
         Retrieve the AI models configuration for the organization.
@@ -1290,7 +1318,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1301,7 +1329,7 @@ class ConfigurationManager(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetAIModelsConfigResponse, http_res)
+            return unmarshal_json_response(models.AIModelsConfig, http_res)
         if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1318,10 +1346,42 @@ class ConfigurationManager(BaseSDK):
     def create_ai_models_config(
         self,
         *,
-        request: Union[
-            models.CreateAIModelsConfigRequest,
-            models.CreateAIModelsConfigRequestTypedDict,
-        ],
+        llm: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        embedding: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        ocr: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        slm: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        reasoning: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        multi_modal: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1332,7 +1392,12 @@ class ConfigurationManager(BaseSDK):
         Create or initialize AI models configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param llm:
+        :param embedding:
+        :param ocr:
+        :param slm:
+        :param reasoning:
+        :param multi_modal:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1348,9 +1413,26 @@ class ConfigurationManager(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateAIModelsConfigRequest)
-        request = cast(models.CreateAIModelsConfigRequest, request)
+        request = models.AIModelsConfigInput(
+            llm=utils.get_pydantic_model(
+                llm, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            embedding=utils.get_pydantic_model(
+                embedding, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            ocr=utils.get_pydantic_model(
+                ocr, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            slm=utils.get_pydantic_model(
+                slm, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            reasoning=utils.get_pydantic_model(
+                reasoning, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            multi_modal=utils.get_pydantic_model(
+                multi_modal, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+        )
 
         req = self._build_request(
             method="POST",
@@ -1366,7 +1448,7 @@ class ConfigurationManager(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateAIModelsConfigRequest
+                request, False, False, "json", models.AIModelsConfigInput
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -1385,7 +1467,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createAIModelsConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1415,10 +1497,42 @@ class ConfigurationManager(BaseSDK):
     async def create_ai_models_config_async(
         self,
         *,
-        request: Union[
-            models.CreateAIModelsConfigRequest,
-            models.CreateAIModelsConfigRequestTypedDict,
-        ],
+        llm: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        embedding: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        ocr: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        slm: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        reasoning: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
+        multi_modal: Optional[
+            Union[
+                List[models.AIModelProviderConfigInput],
+                List[models.AIModelProviderConfigInputTypedDict],
+            ]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1429,7 +1543,12 @@ class ConfigurationManager(BaseSDK):
         Create or initialize AI models configuration for the organization.
 
 
-        :param request: The request object to send.
+        :param llm:
+        :param embedding:
+        :param ocr:
+        :param slm:
+        :param reasoning:
+        :param multi_modal:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1445,9 +1564,26 @@ class ConfigurationManager(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.CreateAIModelsConfigRequest)
-        request = cast(models.CreateAIModelsConfigRequest, request)
+        request = models.AIModelsConfigInput(
+            llm=utils.get_pydantic_model(
+                llm, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            embedding=utils.get_pydantic_model(
+                embedding, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            ocr=utils.get_pydantic_model(
+                ocr, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            slm=utils.get_pydantic_model(
+                slm, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            reasoning=utils.get_pydantic_model(
+                reasoning, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+            multi_modal=utils.get_pydantic_model(
+                multi_modal, Optional[List[models.AIModelProviderConfigInput]]
+            ),
+        )
 
         req = self._build_request_async(
             method="POST",
@@ -1463,7 +1599,7 @@ class ConfigurationManager(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateAIModelsConfigRequest
+                request, False, False, "json", models.AIModelsConfigInput
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -1482,7 +1618,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createAIModelsConfig",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1566,7 +1702,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsProviders",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1650,7 +1786,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsProviders",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

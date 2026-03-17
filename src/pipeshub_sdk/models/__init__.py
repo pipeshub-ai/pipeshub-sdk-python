@@ -91,6 +91,8 @@ if TYPE_CHECKING:
         AIModelProviderConfig,
         AIModelProviderConfigConfiguration,
         AIModelProviderConfigConfigurationTypedDict,
+        AIModelProviderConfigInput,
+        AIModelProviderConfigInputTypedDict,
         AIModelProviderConfigTypedDict,
         Provider,
     )
@@ -102,6 +104,7 @@ if TYPE_CHECKING:
         DetailsTypedDict,
     )
     from .aimodelsconfig import AIModelsConfig, AIModelsConfigTypedDict
+    from .aimodelsconfig_input import AIModelsConfigInput, AIModelsConfigInputTypedDict
     from .apptype import AppType
     from .archiveconversationop import (
         ArchiveConversationRequest,
@@ -304,8 +307,6 @@ if TYPE_CHECKING:
         CreateAgentToolsetTypedDict,
     )
     from .createaimodelsconfigop import (
-        CreateAIModelsConfigRequest,
-        CreateAIModelsConfigRequestTypedDict,
         CreateAIModelsConfigResponse,
         CreateAIModelsConfigResponseTypedDict,
     )
@@ -592,10 +593,6 @@ if TYPE_CHECKING:
         GetAgentRequestTypedDict,
         GetAgentResponse,
         GetAgentResponseTypedDict,
-    )
-    from .getaimodelsconfigop import (
-        GetAIModelsConfigResponse,
-        GetAIModelsConfigResponseTypedDict,
     )
     from .getaimodelsprovidersop import (
         GetAIModelsProvidersResponse,
@@ -1985,11 +1982,15 @@ __all__ = [
     "AIModelProviderConfig",
     "AIModelProviderConfigConfiguration",
     "AIModelProviderConfigConfigurationTypedDict",
+    "AIModelProviderConfigInput",
+    "AIModelProviderConfigInputTypedDict",
     "AIModelProviderConfigTypedDict",
     "AIModelProviderResponse",
     "AIModelProviderResponseStatus",
     "AIModelProviderResponseTypedDict",
     "AIModelsConfig",
+    "AIModelsConfigInput",
+    "AIModelsConfigInputTypedDict",
     "AIModelsConfigTypedDict",
     "Access",
     "AccessTypedDict",
@@ -2164,8 +2165,6 @@ __all__ = [
     "CountsTypedDict",
     "CrawlingJobData",
     "CrawlingJobDataTypedDict",
-    "CreateAIModelsConfigRequest",
-    "CreateAIModelsConfigRequestTypedDict",
     "CreateAIModelsConfigResponse",
     "CreateAIModelsConfigResponseTypedDict",
     "CreateAgentFilters",
@@ -2400,8 +2399,6 @@ __all__ = [
     "GenerateLoginOtpResponseTypedDict",
     "GenericOAuthConfig",
     "GenericOAuthConfigTypedDict",
-    "GetAIModelsConfigResponse",
-    "GetAIModelsConfigResponseTypedDict",
     "GetAIModelsProvidersResponse",
     "GetAIModelsProvidersResponseTypedDict",
     "GetAgentConversationMeta",
@@ -3529,6 +3526,8 @@ _dynamic_imports: dict[str, str] = {
     "AIModelProviderConfig": ".aimodelproviderconfig",
     "AIModelProviderConfigConfiguration": ".aimodelproviderconfig",
     "AIModelProviderConfigConfigurationTypedDict": ".aimodelproviderconfig",
+    "AIModelProviderConfigInput": ".aimodelproviderconfig",
+    "AIModelProviderConfigInputTypedDict": ".aimodelproviderconfig",
     "AIModelProviderConfigTypedDict": ".aimodelproviderconfig",
     "Provider": ".aimodelproviderconfig",
     "AIModelProviderResponse": ".aimodelproviderresponse",
@@ -3538,6 +3537,8 @@ _dynamic_imports: dict[str, str] = {
     "DetailsTypedDict": ".aimodelproviderresponse",
     "AIModelsConfig": ".aimodelsconfig",
     "AIModelsConfigTypedDict": ".aimodelsconfig",
+    "AIModelsConfigInput": ".aimodelsconfig_input",
+    "AIModelsConfigInputTypedDict": ".aimodelsconfig_input",
     "AppType": ".apptype",
     "ArchiveConversationRequest": ".archiveconversationop",
     "ArchiveConversationRequestTypedDict": ".archiveconversationop",
@@ -3711,8 +3712,6 @@ _dynamic_imports: dict[str, str] = {
     "CreateAgentToolTypedDict": ".createagentop",
     "CreateAgentToolset": ".createagentop",
     "CreateAgentToolsetTypedDict": ".createagentop",
-    "CreateAIModelsConfigRequest": ".createaimodelsconfigop",
-    "CreateAIModelsConfigRequestTypedDict": ".createaimodelsconfigop",
     "CreateAIModelsConfigResponse": ".createaimodelsconfigop",
     "CreateAIModelsConfigResponseTypedDict": ".createaimodelsconfigop",
     "CreateConnectorInstanceResponse": ".createconnectorinstanceop",
@@ -3919,8 +3918,6 @@ _dynamic_imports: dict[str, str] = {
     "GetAgentRequestTypedDict": ".getagentop",
     "GetAgentResponse": ".getagentop",
     "GetAgentResponseTypedDict": ".getagentop",
-    "GetAIModelsConfigResponse": ".getaimodelsconfigop",
-    "GetAIModelsConfigResponseTypedDict": ".getaimodelsconfigop",
     "GetAIModelsProvidersResponse": ".getaimodelsprovidersop",
     "GetAIModelsProvidersResponseTypedDict": ".getaimodelsprovidersop",
     "GetAllConversationsFilters": ".getallconversationsop",
