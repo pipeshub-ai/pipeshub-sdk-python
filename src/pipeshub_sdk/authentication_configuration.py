@@ -24,7 +24,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetMicrosoftAuthConfigResponse:
         r"""Configure Microsoft authentication
 
         Set up Microsoft account as an authentication provider.
@@ -65,7 +65,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -98,8 +98,10 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetMicrosoftAuthConfigResponse, http_res
+            )
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -124,7 +126,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetMicrosoftAuthConfigResponse:
         r"""Configure Microsoft authentication
 
         Set up Microsoft account as an authentication provider.
@@ -165,7 +167,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -198,8 +200,10 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetMicrosoftAuthConfigResponse, http_res
+            )
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -384,7 +388,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetGoogleAuthConfigResponse:
         r"""Configure Google authentication
 
         Set up Google OAuth as an authentication provider.
@@ -421,7 +425,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -454,8 +458,8 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetGoogleAuthConfigResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -478,7 +482,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetGoogleAuthConfigResponse:
         r"""Configure Google authentication
 
         Set up Google OAuth as an authentication provider.
@@ -515,7 +519,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -548,8 +552,8 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetGoogleAuthConfigResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -736,7 +740,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetSsoAuthConfigResponse:
         r"""Configure SAML SSO authentication
 
         Set up SAML 2.0 Single Sign-On with your identity provider (Okta, OneLogin, etc.).
@@ -777,7 +781,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -810,8 +814,8 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetSsoAuthConfigResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -836,7 +840,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetSsoAuthConfigResponse:
         r"""Configure SAML SSO authentication
 
         Set up SAML 2.0 Single Sign-On with your identity provider (Okta, OneLogin, etc.).
@@ -877,7 +881,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -910,8 +914,8 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetSsoAuthConfigResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1103,7 +1107,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetOAuthConfigResponse:
         r"""Configure generic OAuth provider
 
         Set up a custom OAuth 2.0 authentication provider.
@@ -1154,7 +1158,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -1187,8 +1191,8 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetOAuthConfigResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1218,7 +1222,7 @@ class AuthenticationConfiguration(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetOAuthConfigResponse:
         r"""Configure generic OAuth provider
 
         Set up a custom OAuth 2.0 authentication provider.
@@ -1269,7 +1273,7 @@ class AuthenticationConfiguration(BaseSDK):
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -1302,8 +1306,8 @@ class AuthenticationConfiguration(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetOAuthConfigResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

@@ -73,3 +73,75 @@ def test_authentication_configuration_get_google_auth_config():
         res = pipeshub.authentication_configuration.get_google_auth_config()
         assert res is not None
         assert res == models.GoogleAuthConfig()
+
+
+def test_authentication_configuration_set_microsoft_auth_config():
+    test_http_client = create_test_http_client("setMicrosoftAuthConfig")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.authentication_configuration.set_microsoft_auth_config(
+            authority="https://login.microsoftonline.com/{tenantId}"
+        )
+        assert res is not None
+        assert res == models.SetMicrosoftAuthConfigResponse(
+            message="Microsoft Auth config created successfully",
+        )
+
+
+def test_authentication_configuration_set_google_auth_config():
+    test_http_client = create_test_http_client("setGoogleAuthConfig")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.authentication_configuration.set_google_auth_config()
+        assert res is not None
+        assert res == models.SetGoogleAuthConfigResponse(
+            message="Google Auth config created successfully",
+        )
+
+
+def test_authentication_configuration_set_sso_auth_config():
+    test_http_client = create_test_http_client("setSsoAuthConfig")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.authentication_configuration.set_sso_auth_config()
+        assert res is not None
+        assert res == models.SetSsoAuthConfigResponse(
+            message="SSO Auth config created successfully",
+        )
+
+
+def test_authentication_configuration_set_o_auth_config():
+    test_http_client = create_test_http_client("setOAuthConfig")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.authentication_configuration.set_o_auth_config(
+            scope="openid email profile"
+        )
+        assert res is not None
+        assert res == models.SetOAuthConfigResponse(
+            message="OAuth config created successfully",
+        )

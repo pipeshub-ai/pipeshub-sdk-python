@@ -2,11 +2,16 @@
 
 Field to sort by
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListAgentConversationsSortBy
+value: ListAgentConversationsSortBy = "createdAt"
+```
+
 
 ## Values
 
-| Name               | Value              |
-| ------------------ | ------------------ |
-| `CREATED_AT`       | createdAt          |
-| `LAST_ACTIVITY_AT` | lastActivityAt     |
-| `TITLE`            | title              |
+- `"createdAt"`
+- `"lastActivityAt"`
+- `"title"`

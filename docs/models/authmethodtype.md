@@ -9,14 +9,23 @@ Type of authentication method:
 - `oauth`: Generic OAuth 2.0 provider
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AuthMethodType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: AuthMethodType = "samlSso"
+```
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `SAML_SSO`  | samlSso     |
-| `OTP`       | otp         |
-| `PASSWORD`  | password    |
-| `GOOGLE`    | google      |
-| `MICROSOFT` | microsoft   |
-| `OAUTH`     | oauth       |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"samlSso"`
+- `"otp"`
+- `"password"`
+- `"google"`
+- `"microsoft"`
+- `"oauth"`

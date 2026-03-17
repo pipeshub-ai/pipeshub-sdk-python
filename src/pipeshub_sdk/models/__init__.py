@@ -1561,6 +1561,10 @@ if TYPE_CHECKING:
         SetDefaultAIModelResponseTypedDict,
         SetDefaultAIModelStatus,
     )
+    from .setgoogleauthconfigop import (
+        SetGoogleAuthConfigResponse,
+        SetGoogleAuthConfigResponseTypedDict,
+    )
     from .setmetricscollectionpushintervalop import (
         SetMetricsCollectionPushIntervalRequest,
         SetMetricsCollectionPushIntervalRequestTypedDict,
@@ -1573,9 +1577,21 @@ if TYPE_CHECKING:
         SetMetricsCollectionRemoteServerResponse,
         SetMetricsCollectionRemoteServerResponseTypedDict,
     )
+    from .setmicrosoftauthconfigop import (
+        SetMicrosoftAuthConfigResponse,
+        SetMicrosoftAuthConfigResponseTypedDict,
+    )
+    from .setoauthconfigop import (
+        SetOAuthConfigResponse,
+        SetOAuthConfigResponseTypedDict,
+    )
     from .setplatformsettingsop import (
         SetPlatformSettingsRequest,
         SetPlatformSettingsRequestTypedDict,
+    )
+    from .setssoauthconfigop import (
+        SetSsoAuthConfigResponse,
+        SetSsoAuthConfigResponseTypedDict,
     )
     from .setupauthconfigop import (
         SetUpAuthConfigRequest,
@@ -3105,6 +3121,8 @@ __all__ = [
     "SetDefaultAIModelResponse",
     "SetDefaultAIModelResponseTypedDict",
     "SetDefaultAIModelStatus",
+    "SetGoogleAuthConfigResponse",
+    "SetGoogleAuthConfigResponseTypedDict",
     "SetMetricsCollectionPushIntervalRequest",
     "SetMetricsCollectionPushIntervalRequestTypedDict",
     "SetMetricsCollectionPushIntervalResponse",
@@ -3113,8 +3131,14 @@ __all__ = [
     "SetMetricsCollectionRemoteServerRequestTypedDict",
     "SetMetricsCollectionRemoteServerResponse",
     "SetMetricsCollectionRemoteServerResponseTypedDict",
+    "SetMicrosoftAuthConfigResponse",
+    "SetMicrosoftAuthConfigResponseTypedDict",
+    "SetOAuthConfigResponse",
+    "SetOAuthConfigResponseTypedDict",
     "SetPlatformSettingsRequest",
     "SetPlatformSettingsRequestTypedDict",
+    "SetSsoAuthConfigResponse",
+    "SetSsoAuthConfigResponseTypedDict",
     "SetUpAuthConfigRequest",
     "SetUpAuthConfigRequestTypedDict",
     "SetUpAuthConfigResponse",
@@ -4599,6 +4623,8 @@ _dynamic_imports: dict[str, str] = {
     "SetDefaultAIModelResponse": ".setdefaultaimodelop",
     "SetDefaultAIModelResponseTypedDict": ".setdefaultaimodelop",
     "SetDefaultAIModelStatus": ".setdefaultaimodelop",
+    "SetGoogleAuthConfigResponse": ".setgoogleauthconfigop",
+    "SetGoogleAuthConfigResponseTypedDict": ".setgoogleauthconfigop",
     "SetMetricsCollectionPushIntervalRequest": ".setmetricscollectionpushintervalop",
     "SetMetricsCollectionPushIntervalRequestTypedDict": ".setmetricscollectionpushintervalop",
     "SetMetricsCollectionPushIntervalResponse": ".setmetricscollectionpushintervalop",
@@ -4607,8 +4633,14 @@ _dynamic_imports: dict[str, str] = {
     "SetMetricsCollectionRemoteServerRequestTypedDict": ".setmetricscollectionremoteserverop",
     "SetMetricsCollectionRemoteServerResponse": ".setmetricscollectionremoteserverop",
     "SetMetricsCollectionRemoteServerResponseTypedDict": ".setmetricscollectionremoteserverop",
+    "SetMicrosoftAuthConfigResponse": ".setmicrosoftauthconfigop",
+    "SetMicrosoftAuthConfigResponseTypedDict": ".setmicrosoftauthconfigop",
+    "SetOAuthConfigResponse": ".setoauthconfigop",
+    "SetOAuthConfigResponseTypedDict": ".setoauthconfigop",
     "SetPlatformSettingsRequest": ".setplatformsettingsop",
     "SetPlatformSettingsRequestTypedDict": ".setplatformsettingsop",
+    "SetSsoAuthConfigResponse": ".setssoauthconfigop",
+    "SetSsoAuthConfigResponseTypedDict": ".setssoauthconfigop",
     "SetUpAuthConfigRequest": ".setupauthconfigop",
     "SetUpAuthConfigRequestTypedDict": ".setupauthconfigop",
     "SetUpAuthConfigResponse": ".setupauthconfigop",

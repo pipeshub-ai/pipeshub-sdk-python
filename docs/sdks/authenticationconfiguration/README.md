@@ -33,9 +33,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.authentication_configuration.set_microsoft_auth_config(authority="https://login.microsoftonline.com/{tenantId}")
+    res = pipeshub.authentication_configuration.set_microsoft_auth_config(authority="https://login.microsoftonline.com/{tenantId}")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -48,6 +49,10 @@ with Pipeshub(
 | `authority`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft authority URL                                             | https://login.microsoftonline.com/{tenantId}                        |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |                                                                     |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.SetMicrosoftAuthConfigResponse](../../models/setmicrosoftauthconfigresponse.md)**
 
 ### Errors
 
@@ -114,9 +119,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.authentication_configuration.set_google_auth_config()
+    res = pipeshub.authentication_configuration.set_google_auth_config()
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -127,6 +133,10 @@ with Pipeshub(
 | `client_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Google OAuth client ID                                              |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.SetGoogleAuthConfigResponse](../../models/setgoogleauthconfigresponse.md)**
 
 ### Errors
 
@@ -193,9 +203,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.authentication_configuration.set_sso_auth_config()
+    res = pipeshub.authentication_configuration.set_sso_auth_config()
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -208,6 +219,10 @@ with Pipeshub(
 | `email_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | SAML attribute name for user email                                  |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.SetSsoAuthConfigResponse](../../models/setssoauthconfigresponse.md)**
 
 ### Errors
 
@@ -274,9 +289,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.authentication_configuration.set_o_auth_config(scope="openid email profile")
+    res = pipeshub.authentication_configuration.set_o_auth_config(scope="openid email profile")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -294,6 +310,10 @@ with Pipeshub(
 | `redirect_uri`                                                      | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | OAuth redirect URI                                                  |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.SetOAuthConfigResponse](../../models/setoauthconfigresponse.md)**
 
 ### Errors
 
