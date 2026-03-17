@@ -11,18 +11,20 @@ from pipeshub_sdk.types import (
     UNSET_SENTINEL,
 )
 import pydantic
-from pydantic import model_serializer
-from typing import Optional
+from pydantic import ConfigDict, model_serializer
+from typing import Any, Dict, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Keys vary by provider."""
 
     model: NotRequired[str]
     r"""Model name/identifier"""
     api_key: NotRequired[str]
     r"""API key for the provider"""
+    model_friendly_name: NotRequired[str]
+    r"""Human-readable display name for the model"""
     endpoint: NotRequired[str]
     r"""Custom endpoint URL (for Azure, self-hosted)"""
     organization_id: NotRequired[str]
@@ -38,13 +40,23 @@ class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
 
 
 class AddAIModelProviderRequestConfiguration(BaseModel):
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Keys vary by provider."""
+
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
 
     model: Optional[str] = None
     r"""Model name/identifier"""
 
     api_key: Annotated[Optional[str], pydantic.Field(alias="apiKey")] = None
     r"""API key for the provider"""
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Human-readable display name for the model"""
 
     endpoint: Optional[str] = None
     r"""Custom endpoint URL (for Azure, self-hosted)"""
@@ -72,12 +84,21 @@ class AddAIModelProviderRequestConfiguration(BaseModel):
     region: Optional[str] = None
     r"""AWS region (Bedrock)"""
 
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
             [
                 "model",
                 "apiKey",
+                "modelFriendlyName",
                 "endpoint",
                 "organizationId",
                 "deploymentName",
@@ -91,11 +112,14 @@ class AddAIModelProviderRequestConfiguration(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
+            serialized.pop(k, None)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
 
         return m
 
@@ -108,7 +132,7 @@ class AddAIModelProviderRequestTypedDict(TypedDict):
     provider: str
     r"""Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)"""
     configuration: AddAIModelProviderRequestConfigurationTypedDict
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Keys vary by provider."""
     is_multimodal: NotRequired[bool]
     r"""Whether the model supports multimodal inputs"""
     is_reasoning: NotRequired[bool]
@@ -129,7 +153,7 @@ class AddAIModelProviderRequest(BaseModel):
     r"""Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)"""
 
     configuration: AddAIModelProviderRequestConfiguration
-    r"""Provider-specific configuration"""
+    r"""Provider-specific configuration. Keys vary by provider."""
 
     is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
         False
@@ -158,7 +182,7 @@ class AddAIModelProviderRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

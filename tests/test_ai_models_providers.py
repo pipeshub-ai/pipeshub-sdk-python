@@ -50,9 +50,9 @@ def test_ai_models_providers_add_ai_model_provider():
         res = pipeshub.ai_models_providers.add_ai_model_provider(
             model_type="embedding",
             provider="cohere",
-            configuration={
-                "model": "gpt-4",
-            },
+            configuration=models.AddAIModelProviderRequestConfiguration(
+                model="gpt-4",
+            ),
             is_multimodal=False,
             is_reasoning=False,
             is_default=False,
