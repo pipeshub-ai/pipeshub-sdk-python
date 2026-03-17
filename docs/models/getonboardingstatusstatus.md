@@ -2,11 +2,20 @@
 
 Current onboarding status
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetOnboardingStatusStatus
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: GetOnboardingStatusStatus = "configured"
+```
+
 
 ## Values
 
-| Name             | Value            |
-| ---------------- | ---------------- |
-| `CONFIGURED`     | configured       |
-| `NOT_CONFIGURED` | notConfigured    |
-| `SKIPPED`        | skipped          |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"configured"`
+- `"notConfigured"`
+- `"skipped"`

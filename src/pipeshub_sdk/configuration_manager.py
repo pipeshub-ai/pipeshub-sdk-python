@@ -68,7 +68,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getSlackBotConfigs",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -150,7 +150,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getSlackBotConfigs",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -245,7 +245,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createSlackBotConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -342,7 +342,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createSlackBotConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -446,7 +446,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateSlackBotConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -550,7 +550,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateSlackBotConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -641,7 +641,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteSlackBotConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -732,7 +732,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteSlackBotConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -762,7 +762,7 @@ class ConfigurationManager(BaseSDK):
     def set_metrics_collection_push_interval(
         self,
         *,
-        push_interval: Optional[int] = None,
+        push_interval_ms: int,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -773,7 +773,7 @@ class ConfigurationManager(BaseSDK):
         Configure the interval for pushing metrics to the collection server.
 
 
-        :param push_interval: Push interval in seconds
+        :param push_interval_ms: Push interval in milliseconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -790,7 +790,7 @@ class ConfigurationManager(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.SetMetricsCollectionPushIntervalRequest(
-            push_interval=push_interval,
+            push_interval_ms=push_interval_ms,
         )
 
         req = self._build_request(
@@ -830,7 +830,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionPushInterval",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -860,7 +860,7 @@ class ConfigurationManager(BaseSDK):
     async def set_metrics_collection_push_interval_async(
         self,
         *,
-        push_interval: Optional[int] = None,
+        push_interval_ms: int,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -871,7 +871,7 @@ class ConfigurationManager(BaseSDK):
         Configure the interval for pushing metrics to the collection server.
 
 
-        :param push_interval: Push interval in seconds
+        :param push_interval_ms: Push interval in milliseconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -888,7 +888,7 @@ class ConfigurationManager(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.SetMetricsCollectionPushIntervalRequest(
-            push_interval=push_interval,
+            push_interval_ms=push_interval_ms,
         )
 
         req = self._build_request_async(
@@ -928,7 +928,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionPushInterval",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -958,7 +958,7 @@ class ConfigurationManager(BaseSDK):
     def set_metrics_collection_remote_server(
         self,
         *,
-        server_url_: Optional[str] = None,
+        server_url_: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1026,7 +1026,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionRemoteServer",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1056,7 +1056,7 @@ class ConfigurationManager(BaseSDK):
     async def set_metrics_collection_remote_server_async(
         self,
         *,
-        server_url_: Optional[str] = None,
+        server_url_: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1124,7 +1124,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setMetricsCollectionRemoteServer",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1208,7 +1208,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1290,7 +1290,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1385,7 +1385,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createAIModelsConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1482,7 +1482,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createAIModelsConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1566,7 +1566,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsProviders",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1650,7 +1650,7 @@ class ConfigurationManager(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAIModelsProviders",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

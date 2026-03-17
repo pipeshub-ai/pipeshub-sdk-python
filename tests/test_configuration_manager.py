@@ -30,7 +30,9 @@ def test_configuration_manager_set_metrics_collection_push_interval():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.configuration_manager.set_metrics_collection_push_interval()
+        res = pipeshub.configuration_manager.set_metrics_collection_push_interval(
+            push_interval_ms=394545
+        )
         assert res is not None
         assert res == models.SetMetricsCollectionPushIntervalResponse()
 
@@ -45,7 +47,9 @@ def test_configuration_manager_set_metrics_collection_remote_server():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.configuration_manager.set_metrics_collection_remote_server()
+        res = pipeshub.configuration_manager.set_metrics_collection_remote_server(
+            server_url_="https://exhausted-perp.net/"
+        )
         assert res is not None
         assert res == models.SetMetricsCollectionRemoteServerResponse()
 

@@ -2,27 +2,36 @@
 
 AI provider name
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import Provider
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: Provider = "anthropic"
+```
+
 
 ## Values
 
-| Name                    | Value                   |
-| ----------------------- | ----------------------- |
-| `ANTHROPIC`             | anthropic               |
-| `BEDROCK`               | bedrock                 |
-| `AZURE_AI`              | azureAI                 |
-| `AZURE_OPEN_AI`         | azureOpenAI             |
-| `COHERE`                | cohere                  |
-| `FIREWORKS`             | fireworks               |
-| `GEMINI`                | gemini                  |
-| `GROQ`                  | groq                    |
-| `HUGGING_FACE`          | huggingFace             |
-| `JINA_AI`               | jinaAI                  |
-| `MISTRAL`               | mistral                 |
-| `OLLAMA`                | ollama                  |
-| `OPEN_AI`               | openAI                  |
-| `OPEN_AI_COMPATIBLE`    | openAICompatible        |
-| `SENTENCE_TRANSFORMERS` | sentenceTransformers    |
-| `TOGETHER`              | together                |
-| `VERTEX_AI`             | vertexAI                |
-| `VOYAGE`                | voyage                  |
-| `XAI`                   | xai                     |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"anthropic"`
+- `"bedrock"`
+- `"azureAI"`
+- `"azureOpenAI"`
+- `"cohere"`
+- `"fireworks"`
+- `"gemini"`
+- `"groq"`
+- `"huggingFace"`
+- `"jinaAI"`
+- `"mistral"`
+- `"ollama"`
+- `"openAI"`
+- `"openAICompatible"`
+- `"sentenceTransformers"`
+- `"together"`
+- `"vertexAI"`
+- `"voyage"`
+- `"xai"`

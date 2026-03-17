@@ -205,7 +205,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.set_metrics_collection_push_interval()
+    res = pipeshub.configuration_manager.set_metrics_collection_push_interval(push_interval_ms=394545)
 
     # Handle response
     print(res)
@@ -216,7 +216,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `push_interval`                                                     | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Push interval in seconds                                            |
+| `push_interval_ms`                                                  | *int*                                                               | :heavy_check_mark:                                                  | Push interval in milliseconds                                       |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
@@ -248,7 +248,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.set_metrics_collection_remote_server()
+    res = pipeshub.configuration_manager.set_metrics_collection_remote_server(server_url_="https://exhausted-perp.net/")
 
     # Handle response
     print(res)
@@ -259,7 +259,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `server_url`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `server_url`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
