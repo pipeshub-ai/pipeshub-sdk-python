@@ -46,6 +46,55 @@ ContentFormat = Union[
 r"""Format of the content for rendering"""
 
 
+class MessageModelInfoTypedDict(TypedDict):
+    r"""Model information for this message"""
+
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    chat_mode: NotRequired[str]
+    model_friendly_name: NotRequired[str]
+
+
+class MessageModelInfo(BaseModel):
+    r"""Model information for this message"""
+
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["modelKey", "modelName", "chatMode", "modelFriendlyName"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ReferenceDatumTypedDict(TypedDict):
+    pass
+
+
+class ReferenceDatum(BaseModel):
+    pass
+
+
 class MessageMetadataTypedDict(TypedDict):
     processing_time_ms: NotRequired[float]
     r"""Time taken to generate response in milliseconds"""
@@ -124,6 +173,10 @@ class MessageTypedDict(TypedDict):
     r"""Suggested follow-up questions"""
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     r"""User feedback on this message"""
+    model_info: NotRequired[MessageModelInfoTypedDict]
+    r"""Model information for this message"""
+    reference_data: NotRequired[List[ReferenceDatumTypedDict]]
+    r"""Reference data associated with this message"""
     metadata: NotRequired[MessageMetadataTypedDict]
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
@@ -174,6 +227,16 @@ class Message(BaseModel):
     feedback: Optional[List[MessageFeedback]] = None
     r"""User feedback on this message"""
 
+    model_info: Annotated[
+        Optional[MessageModelInfo], pydantic.Field(alias="modelInfo")
+    ] = None
+    r"""Model information for this message"""
+
+    reference_data: Annotated[
+        Optional[List[ReferenceDatum]], pydantic.Field(alias="referenceData")
+    ] = None
+    r"""Reference data associated with this message"""
+
     metadata: Optional[MessageMetadata] = None
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
@@ -192,6 +255,8 @@ class Message(BaseModel):
                 "confidence",
                 "followUpQuestions",
                 "feedback",
+                "modelInfo",
+                "referenceData",
                 "metadata",
                 "createdAt",
                 "updatedAt",
@@ -211,6 +276,10 @@ class Message(BaseModel):
         return m
 
 
+try:
+    MessageModelInfo.model_rebuild()
+except NameError:
+    pass
 try:
     MessageMetadata.model_rebuild()
 except NameError:
