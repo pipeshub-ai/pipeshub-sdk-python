@@ -28,7 +28,6 @@ class GetAvailableModelsByTypeRequest(BaseModel):
 class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     model_key: NotRequired[str]
     provider: NotRequired[str]
-    model: NotRequired[str]
     model_name: NotRequired[str]
     r"""Model name"""
     model_type: NotRequired[str]
@@ -44,8 +43,6 @@ class GetAvailableModelsByTypeModel(BaseModel):
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
 
     provider: Optional[str] = None
-
-    model: Optional[str] = None
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
     r"""Model name"""
@@ -72,7 +69,6 @@ class GetAvailableModelsByTypeModel(BaseModel):
             [
                 "modelKey",
                 "provider",
-                "model",
                 "modelName",
                 "modelType",
                 "isDefault",
