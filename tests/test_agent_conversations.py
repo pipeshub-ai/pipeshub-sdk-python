@@ -63,11 +63,7 @@ def test_agent_conversations_create_agent_conversation():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.CreateAgentConversationResponse(
-            conversation=models.AgentConversation(
-                conversation_source="agent_chat",
-            ),
-        )
+        assert res == models.CreateAgentConversationResponse()
 
 
 def test_agent_conversations_get_agent_conversation():
@@ -84,11 +80,7 @@ def test_agent_conversations_get_agent_conversation():
             agent_key="<value>", conversation_id="<value>"
         )
         assert res is not None
-        assert res == models.GetAgentConversationResponse(
-            conversation=models.AgentConversation(
-                conversation_source="agent_chat",
-            ),
-        )
+        assert res == models.GetAgentConversationResponse()
 
 
 def test_agent_conversations_add_agent_message():
@@ -108,11 +100,7 @@ def test_agent_conversations_add_agent_message():
             timezone="Asia/Calcutta",
         )
         assert res is not None
-        assert res == models.AddAgentMessageResponse(
-            conversation=models.AgentConversation(
-                conversation_source="agent_chat",
-            ),
-        )
+        assert res == models.AddAgentMessageResponse()
 
 
 def test_agent_conversations_delete_agent_conversation():

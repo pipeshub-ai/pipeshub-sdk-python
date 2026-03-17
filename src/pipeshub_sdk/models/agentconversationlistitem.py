@@ -59,11 +59,11 @@ class AgentConversationListItemSharedWith(BaseModel):
     pass
 
 
-class AgentConversationListItemConversationErrorTypedDict(TypedDict):
+class ConversationErrorTypedDict(TypedDict):
     pass
 
 
-class AgentConversationListItemConversationError(BaseModel):
+class ConversationError(BaseModel):
     pass
 
 
@@ -93,9 +93,7 @@ class AgentConversationListItemTypedDict(TypedDict):
     conversation_source: NotRequired[str]
     r"""Source of the conversation"""
     shared_with: NotRequired[List[AgentConversationListItemSharedWithTypedDict]]
-    conversation_errors: NotRequired[
-        List[AgentConversationListItemConversationErrorTypedDict]
-    ]
+    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
     is_owner: NotRequired[bool]
@@ -154,8 +152,7 @@ class AgentConversationListItem(BaseModel):
     ] = None
 
     conversation_errors: Annotated[
-        Optional[List[AgentConversationListItemConversationError]],
-        pydantic.Field(alias="conversationErrors"),
+        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
     ] = None
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
