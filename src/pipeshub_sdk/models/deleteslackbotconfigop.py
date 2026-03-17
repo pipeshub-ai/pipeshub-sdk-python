@@ -25,17 +25,20 @@ class DeleteSlackBotConfigRequest(BaseModel):
 class DeleteSlackBotConfigResponseTypedDict(TypedDict):
     r"""Slack bot config deleted"""
 
+    status: NotRequired[str]
     message: NotRequired[str]
 
 
 class DeleteSlackBotConfigResponse(BaseModel):
     r"""Slack bot config deleted"""
 
+    status: Optional[str] = None
+
     message: Optional[str] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message"])
+        optional_fields = set(["status", "message"])
         serialized = handler(self)
         m = {}
 

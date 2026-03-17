@@ -2,6 +2,7 @@
 # @generated-id: a50ce4e98ca5
 
 from __future__ import annotations
+from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -90,20 +91,86 @@ class UpdateSlackBotConfigRequest(BaseModel):
     r"""Request payload"""
 
 
+class UpdateSlackBotConfigConfigTypedDict(TypedDict):
+    id: NotRequired[str]
+    name: NotRequired[str]
+    agent_id: NotRequired[Nullable[str]]
+    bot_token: NotRequired[str]
+    signing_secret: NotRequired[str]
+    created_at: NotRequired[datetime]
+    updated_at: NotRequired[datetime]
+
+
+class UpdateSlackBotConfigConfig(BaseModel):
+    id: Optional[str] = None
+
+    name: Optional[str] = None
+
+    agent_id: Annotated[OptionalNullable[str], pydantic.Field(alias="agentId")] = UNSET
+
+    bot_token: Annotated[Optional[str], pydantic.Field(alias="botToken")] = None
+
+    signing_secret: Annotated[Optional[str], pydantic.Field(alias="signingSecret")] = (
+        None
+    )
+
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "id",
+                "name",
+                "agentId",
+                "botToken",
+                "signingSecret",
+                "createdAt",
+                "updatedAt",
+            ]
+        )
+        nullable_fields = set(["agentId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
+
 class UpdateSlackBotConfigResponseTypedDict(TypedDict):
     r"""Slack bot config updated"""
 
-    message: NotRequired[str]
+    status: NotRequired[str]
+    config: NotRequired[UpdateSlackBotConfigConfigTypedDict]
 
 
 class UpdateSlackBotConfigResponse(BaseModel):
     r"""Slack bot config updated"""
 
-    message: Optional[str] = None
+    status: Optional[str] = None
+
+    config: Optional[UpdateSlackBotConfigConfig] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message"])
+        optional_fields = set(["status", "config"])
         serialized = handler(self)
         m = {}
 
@@ -120,5 +187,9 @@ class UpdateSlackBotConfigResponse(BaseModel):
 
 try:
     UpdateSlackBotConfigRequestBody.model_rebuild()
+except NameError:
+    pass
+try:
+    UpdateSlackBotConfigConfig.model_rebuild()
 except NameError:
     pass
