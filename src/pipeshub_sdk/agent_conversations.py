@@ -2,7 +2,7 @@
 # @generated-id: 3dc119d98ba9
 
 from .basesdk import BaseSDK
-from datetime import datetime
+from datetime import date, datetime
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
@@ -20,6 +20,15 @@ class AgentConversations(BaseSDK):
         agent_key: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
+        shared: Optional[bool] = None,
+        tags: Optional[str] = None,
+        min_messages: Optional[int] = None,
+        search: Optional[str] = None,
+        sort_by: Optional[models.ListAgentConversationsSortBy] = "lastActivityAt",
+        sort_order: Optional[models.ListAgentConversationsSortOrder] = "desc",
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        message_type: Optional[models.ListAgentConversationsMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -36,6 +45,15 @@ class AgentConversations(BaseSDK):
         :param agent_key: Agent identifier
         :param page: Page number
         :param limit: Items per page
+        :param shared: Filter by shared status
+        :param tags: Filter by tags
+        :param min_messages: Filter by minimum number of messages
+        :param search: Search in conversation title and messages
+        :param sort_by: Field to sort by
+        :param sort_order: Sort order
+        :param start_date: Filter by creation date range start (ISO 8601)
+        :param end_date: Filter by creation date range end (ISO 8601)
+        :param message_type: Filter by message type
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -55,6 +73,15 @@ class AgentConversations(BaseSDK):
             agent_key=agent_key,
             page=page,
             limit=limit,
+            shared=shared,
+            tags=tags,
+            min_messages=min_messages,
+            search=search,
+            sort_by=sort_by,
+            sort_order=sort_order,
+            start_date=start_date,
+            end_date=end_date,
+            message_type=message_type,
         )
 
         req = self._build_request(
@@ -120,6 +147,15 @@ class AgentConversations(BaseSDK):
         agent_key: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
+        shared: Optional[bool] = None,
+        tags: Optional[str] = None,
+        min_messages: Optional[int] = None,
+        search: Optional[str] = None,
+        sort_by: Optional[models.ListAgentConversationsSortBy] = "lastActivityAt",
+        sort_order: Optional[models.ListAgentConversationsSortOrder] = "desc",
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        message_type: Optional[models.ListAgentConversationsMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -136,6 +172,15 @@ class AgentConversations(BaseSDK):
         :param agent_key: Agent identifier
         :param page: Page number
         :param limit: Items per page
+        :param shared: Filter by shared status
+        :param tags: Filter by tags
+        :param min_messages: Filter by minimum number of messages
+        :param search: Search in conversation title and messages
+        :param sort_by: Field to sort by
+        :param sort_order: Sort order
+        :param start_date: Filter by creation date range start (ISO 8601)
+        :param end_date: Filter by creation date range end (ISO 8601)
+        :param message_type: Filter by message type
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -155,6 +200,15 @@ class AgentConversations(BaseSDK):
             agent_key=agent_key,
             page=page,
             limit=limit,
+            shared=shared,
+            tags=tags,
+            min_messages=min_messages,
+            search=search,
+            sort_by=sort_by,
+            sort_order=sort_order,
+            start_date=start_date,
+            end_date=end_date,
+            message_type=message_type,
         )
 
         req = self._build_request_async(

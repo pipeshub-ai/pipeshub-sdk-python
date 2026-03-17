@@ -1,0 +1,11 @@
+# ListAgentConversationsFilters
+
+Applied and available filters
+
+
+## Fields
+
+| Field                                                                                                                  | Type                                                                                                                   | Required                                                                                                               | Description                                                                                                            |
+| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `applied`                                                                                                              | [Optional[models.ListAgentConversationsApplied]](../models/listagentconversationsapplied.md)                           | :heavy_minus_sign:                                                                                                     | N/A                                                                                                                    |
+| `available`                                                                                                            | Dict[str, *Any*]                                                                                                       | :heavy_minus_sign:                                                                                                     | Available filter options including shared, tags, minMessages, search, pagination, sorting, dateFilters, messageFilters |

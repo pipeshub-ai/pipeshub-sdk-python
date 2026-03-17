@@ -34,7 +34,7 @@ class GetAgentConversationResponseTypedDict(TypedDict):
     r"""Agent conversation details"""
 
     conversation: NotRequired[AgentConversationTypedDict]
-    r"""A conversation with a specific AI agent.
+    r"""A conversation with a specific AI agent (full detail with messages).
 
     """
     filters: NotRequired[Dict[str, Any]]
@@ -47,7 +47,7 @@ class GetAgentConversationResponse(BaseModel):
     r"""Agent conversation details"""
 
     conversation: Optional[AgentConversation] = None
-    r"""A conversation with a specific AI agent.
+    r"""A conversation with a specific AI agent (full detail with messages).
 
     """
 

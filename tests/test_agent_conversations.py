@@ -16,18 +16,26 @@ def test_agent_conversations_list_agent_conversations():
         assert pipeshub is not None
 
         res = pipeshub.agent_conversations.list_agent_conversations(
-            agent_key="<value>", page=1, limit=20
+            agent_key="<value>",
+            page=1,
+            limit=20,
+            sort_by="lastActivityAt",
+            sort_order="desc",
         )
         assert res is not None
         assert res == models.ListAgentConversationsResponse(
             conversations=[
-                models.Conversation(
+                models.AgentConversationListItem(
                     title="Q4 Financial Report Discussion",
+                    is_shared=False,
+                    is_archived=False,
                 ),
             ],
             shared_with_me_conversations=[
-                models.Conversation(
+                models.AgentConversationListItem(
                     title="Q4 Financial Report Discussion",
+                    is_shared=False,
+                    is_archived=False,
                 ),
             ],
         )
@@ -55,7 +63,11 @@ def test_agent_conversations_create_agent_conversation():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.CreateAgentConversationResponse()
+        assert res == models.CreateAgentConversationResponse(
+            conversation=models.AgentConversation(
+                conversation_source="agent_chat",
+            ),
+        )
 
 
 def test_agent_conversations_get_agent_conversation():
@@ -72,7 +84,11 @@ def test_agent_conversations_get_agent_conversation():
             agent_key="<value>", conversation_id="<value>"
         )
         assert res is not None
-        assert res == models.GetAgentConversationResponse()
+        assert res == models.GetAgentConversationResponse(
+            conversation=models.AgentConversation(
+                conversation_source="agent_chat",
+            ),
+        )
 
 
 def test_agent_conversations_add_agent_message():
@@ -92,7 +108,11 @@ def test_agent_conversations_add_agent_message():
             timezone="Asia/Calcutta",
         )
         assert res is not None
-        assert res == models.AddAgentMessageResponse()
+        assert res == models.AddAgentMessageResponse(
+            conversation=models.AgentConversation(
+                conversation_source="agent_chat",
+            ),
+        )
 
 
 def test_agent_conversations_delete_agent_conversation():

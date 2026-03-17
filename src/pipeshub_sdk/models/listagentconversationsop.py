@@ -2,14 +2,44 @@
 # @generated-id: 638b708fa221
 
 from __future__ import annotations
-from .conversation import Conversation, ConversationTypedDict
-from datetime import datetime
+from .agentconversationlistitem import (
+    AgentConversationListItem,
+    AgentConversationListItemTypedDict,
+)
+from datetime import date, datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+ListAgentConversationsSortBy = Literal[
+    "createdAt",
+    "lastActivityAt",
+    "title",
+    "messageType",
+    "content",
+]
+r"""Field to sort by"""
+
+
+ListAgentConversationsSortOrder = Literal[
+    "asc",
+    "desc",
+]
+r"""Sort order"""
+
+
+ListAgentConversationsMessageType = Literal[
+    "user_query",
+    "bot_response",
+    "error",
+    "feedback",
+    "system",
+]
+r"""Filter by message type"""
 
 
 class ListAgentConversationsRequestTypedDict(TypedDict):
@@ -19,6 +49,24 @@ class ListAgentConversationsRequestTypedDict(TypedDict):
     r"""Page number"""
     limit: NotRequired[int]
     r"""Items per page"""
+    shared: NotRequired[bool]
+    r"""Filter by shared status"""
+    tags: NotRequired[str]
+    r"""Filter by tags"""
+    min_messages: NotRequired[int]
+    r"""Filter by minimum number of messages"""
+    search: NotRequired[str]
+    r"""Search in conversation title and messages"""
+    sort_by: NotRequired[ListAgentConversationsSortBy]
+    r"""Field to sort by"""
+    sort_order: NotRequired[ListAgentConversationsSortOrder]
+    r"""Sort order"""
+    start_date: NotRequired[date]
+    r"""Filter by creation date range start (ISO 8601)"""
+    end_date: NotRequired[date]
+    r"""Filter by creation date range end (ISO 8601)"""
+    message_type: NotRequired[ListAgentConversationsMessageType]
+    r"""Filter by message type"""
 
 
 class ListAgentConversationsRequest(BaseModel):
@@ -41,9 +89,83 @@ class ListAgentConversationsRequest(BaseModel):
     ] = 20
     r"""Items per page"""
 
+    shared: Annotated[
+        Optional[bool],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by shared status"""
+
+    tags: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by tags"""
+
+    min_messages: Annotated[
+        Optional[int],
+        pydantic.Field(alias="minMessages"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by minimum number of messages"""
+
+    search: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Search in conversation title and messages"""
+
+    sort_by: Annotated[
+        Optional[ListAgentConversationsSortBy],
+        pydantic.Field(alias="sortBy"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = "lastActivityAt"
+    r"""Field to sort by"""
+
+    sort_order: Annotated[
+        Optional[ListAgentConversationsSortOrder],
+        pydantic.Field(alias="sortOrder"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = "desc"
+    r"""Sort order"""
+
+    start_date: Annotated[
+        Optional[date],
+        pydantic.Field(alias="startDate"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by creation date range start (ISO 8601)"""
+
+    end_date: Annotated[
+        Optional[date],
+        pydantic.Field(alias="endDate"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by creation date range end (ISO 8601)"""
+
+    message_type: Annotated[
+        Optional[ListAgentConversationsMessageType],
+        pydantic.Field(alias="messageType"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by message type"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["page", "limit"])
+        optional_fields = set(
+            [
+                "page",
+                "limit",
+                "shared",
+                "tags",
+                "minMessages",
+                "search",
+                "sortBy",
+                "sortOrder",
+                "startDate",
+                "endDate",
+                "messageType",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
@@ -99,6 +221,66 @@ class ListAgentConversationsPagination(BaseModel):
         return m
 
 
+class ListAgentConversationsAppliedTypedDict(TypedDict):
+    filters: NotRequired[List[str]]
+    values: NotRequired[Dict[str, Any]]
+
+
+class ListAgentConversationsApplied(BaseModel):
+    filters: Optional[List[str]] = None
+
+    values: Optional[Dict[str, Any]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["filters", "values"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ListAgentConversationsFiltersTypedDict(TypedDict):
+    r"""Applied and available filters"""
+
+    applied: NotRequired[ListAgentConversationsAppliedTypedDict]
+    available: NotRequired[Dict[str, Any]]
+    r"""Available filter options including shared, tags, minMessages, search, pagination, sorting, dateFilters, messageFilters"""
+
+
+class ListAgentConversationsFilters(BaseModel):
+    r"""Applied and available filters"""
+
+    applied: Optional[ListAgentConversationsApplied] = None
+
+    available: Optional[Dict[str, Any]] = None
+    r"""Available filter options including shared, tags, minMessages, search, pagination, sorting, dateFilters, messageFilters"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["applied", "available"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class ListAgentConversationsMetaTypedDict(TypedDict):
     request_id: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -132,10 +314,10 @@ class ListAgentConversationsMeta(BaseModel):
 class ListAgentConversationsResponseTypedDict(TypedDict):
     r"""List of agent conversations"""
 
-    conversations: NotRequired[List[ConversationTypedDict]]
-    shared_with_me_conversations: NotRequired[List[ConversationTypedDict]]
+    conversations: NotRequired[List[AgentConversationListItemTypedDict]]
+    shared_with_me_conversations: NotRequired[List[AgentConversationListItemTypedDict]]
     pagination: NotRequired[ListAgentConversationsPaginationTypedDict]
-    filters: NotRequired[Dict[str, Any]]
+    filters: NotRequired[ListAgentConversationsFiltersTypedDict]
     r"""Applied and available filters"""
     meta: NotRequired[ListAgentConversationsMetaTypedDict]
 
@@ -143,15 +325,16 @@ class ListAgentConversationsResponseTypedDict(TypedDict):
 class ListAgentConversationsResponse(BaseModel):
     r"""List of agent conversations"""
 
-    conversations: Optional[List[Conversation]] = None
+    conversations: Optional[List[AgentConversationListItem]] = None
 
     shared_with_me_conversations: Annotated[
-        Optional[List[Conversation]], pydantic.Field(alias="sharedWithMeConversations")
+        Optional[List[AgentConversationListItem]],
+        pydantic.Field(alias="sharedWithMeConversations"),
     ] = None
 
     pagination: Optional[ListAgentConversationsPagination] = None
 
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[ListAgentConversationsFilters] = None
     r"""Applied and available filters"""
 
     meta: Optional[ListAgentConversationsMeta] = None
