@@ -4,9 +4,10 @@
 from __future__ import annotations
 from .aimodelproviderconfig import AIModelProviderConfig, AIModelProviderConfigTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AIModelsConfigTypedDict(TypedDict):
@@ -14,6 +15,10 @@ class AIModelsConfigTypedDict(TypedDict):
 
     llm: NotRequired[List[AIModelProviderConfigTypedDict]]
     embedding: NotRequired[List[AIModelProviderConfigTypedDict]]
+    ocr: NotRequired[List[AIModelProviderConfigTypedDict]]
+    slm: NotRequired[List[AIModelProviderConfigTypedDict]]
+    reasoning: NotRequired[List[AIModelProviderConfigTypedDict]]
+    multi_modal: NotRequired[List[AIModelProviderConfigTypedDict]]
 
 
 class AIModelsConfig(BaseModel):
@@ -23,18 +28,36 @@ class AIModelsConfig(BaseModel):
 
     embedding: Optional[List[AIModelProviderConfig]] = None
 
+    ocr: Optional[List[AIModelProviderConfig]] = None
+
+    slm: Optional[List[AIModelProviderConfig]] = None
+
+    reasoning: Optional[List[AIModelProviderConfig]] = None
+
+    multi_modal: Annotated[
+        Optional[List[AIModelProviderConfig]], pydantic.Field(alias="multiModal")
+    ] = None
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["llm", "embedding"])
+        optional_fields = set(
+            ["llm", "embedding", "ocr", "slm", "reasoning", "multiModal"]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+try:
+    AIModelsConfig.model_rebuild()
+except NameError:
+    pass

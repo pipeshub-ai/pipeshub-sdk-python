@@ -1,13 +1,8 @@
 # JsonrpcResponse
 
-## Example Usage
-
-```python
-from pipeshub_sdk.models import JsonrpcResponse
-value: JsonrpcResponse = "2.0"
-```
-
 
 ## Values
 
-- `"2.0"`
+| Name        | Value       |
+| ----------- | ----------- |
+| `TWO_DOT_0` | 2.0         |
