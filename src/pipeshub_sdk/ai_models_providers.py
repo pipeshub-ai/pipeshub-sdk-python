@@ -373,7 +373,7 @@ class AIModelsProviders(BaseSDK):
         self,
         *,
         model_type: models.ModelType,
-        provider: models.AddAIModelProviderRequestProvider,
+        provider: str,
         configuration: Union[
             models.AddAIModelProviderRequestConfiguration,
             models.AddAIModelProviderRequestConfigurationTypedDict,
@@ -392,15 +392,8 @@ class AIModelsProviders(BaseSDK):
         Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
         :param model_type: Type of AI model
-        :param provider: Provider name
-        :param configuration: Provider-specific configuration. Required fields vary by provider:<br>
-            <ul>
-            <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
-            <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
-            <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
-            <li><b>Ollama/self-hosted:</b> model, endpoint</li>
-            </ul>
-
+        :param provider: Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)
+        :param configuration: Provider-specific configuration
         :param is_multimodal: Whether the model supports multimodal inputs
         :param is_reasoning: Whether this is a reasoning model
         :param is_default: Set as default model for this type
@@ -475,7 +468,7 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "application/json"):
+        if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.AIModelProviderResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -494,7 +487,7 @@ class AIModelsProviders(BaseSDK):
         self,
         *,
         model_type: models.ModelType,
-        provider: models.AddAIModelProviderRequestProvider,
+        provider: str,
         configuration: Union[
             models.AddAIModelProviderRequestConfiguration,
             models.AddAIModelProviderRequestConfigurationTypedDict,
@@ -513,15 +506,8 @@ class AIModelsProviders(BaseSDK):
         Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
         :param model_type: Type of AI model
-        :param provider: Provider name
-        :param configuration: Provider-specific configuration. Required fields vary by provider:<br>
-            <ul>
-            <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
-            <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
-            <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
-            <li><b>Ollama/self-hosted:</b> model, endpoint</li>
-            </ul>
-
+        :param provider: Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)
+        :param configuration: Provider-specific configuration
         :param is_multimodal: Whether the model supports multimodal inputs
         :param is_reasoning: Whether this is a reasoning model
         :param is_default: Set as default model for this type
@@ -596,7 +582,7 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "application/json"):
+        if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.AIModelProviderResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -915,7 +901,7 @@ class AIModelsProviders(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteAIModelProvider",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1006,7 +992,7 @@ class AIModelsProviders(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteAIModelProvider",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

@@ -2,12 +2,11 @@
 # @generated-id: dce7b3b42c5e
 
 from __future__ import annotations
-from .connectorinstance import ConnectorInstance, ConnectorInstanceTypedDict
 from .connectorpagination import ConnectorPagination, ConnectorPaginationTypedDict
 from .connectorscope import ConnectorScope
+from .connectortype import ConnectorType, ConnectorTypeTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, QueryParamMetadata
-import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
@@ -57,61 +56,7 @@ class GetConnectorRegistryRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class GetConnectorRegistryScopeCountsTypedDict(TypedDict):
-    personal: NotRequired[int]
-    team: NotRequired[int]
-
-
-class GetConnectorRegistryScopeCounts(BaseModel):
-    personal: Optional[int] = None
-
-    team: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["personal", "team"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class RegistryCountsByScopeTypedDict(TypedDict):
-    personal: NotRequired[int]
-    team: NotRequired[int]
-
-
-class RegistryCountsByScope(BaseModel):
-    personal: Optional[int] = None
-
-    team: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["personal", "team"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -124,11 +69,9 @@ class GetConnectorRegistryResponseTypedDict(TypedDict):
     r"""Connector registry retrieved"""
 
     success: NotRequired[bool]
-    connectors: NotRequired[List[ConnectorInstanceTypedDict]]
+    connectors: NotRequired[List[ConnectorTypeTypedDict]]
     pagination: NotRequired[ConnectorPaginationTypedDict]
     r"""Pagination information for connector lists"""
-    scope_counts: NotRequired[GetConnectorRegistryScopeCountsTypedDict]
-    registry_counts_by_scope: NotRequired[RegistryCountsByScopeTypedDict]
 
 
 class GetConnectorRegistryResponse(BaseModel):
@@ -136,45 +79,23 @@ class GetConnectorRegistryResponse(BaseModel):
 
     success: Optional[bool] = None
 
-    connectors: Optional[List[ConnectorInstance]] = None
+    connectors: Optional[List[ConnectorType]] = None
 
     pagination: Optional[ConnectorPagination] = None
     r"""Pagination information for connector lists"""
 
-    scope_counts: Annotated[
-        Optional[GetConnectorRegistryScopeCounts], pydantic.Field(alias="scopeCounts")
-    ] = None
-
-    registry_counts_by_scope: Annotated[
-        Optional[RegistryCountsByScope], pydantic.Field(alias="registryCountsByScope")
-    ] = None
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "success",
-                "connectors",
-                "pagination",
-                "scopeCounts",
-                "registryCountsByScope",
-            ]
-        )
+        optional_fields = set(["success", "connectors", "pagination"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-try:
-    GetConnectorRegistryResponse.model_rebuild()
-except NameError:
-    pass

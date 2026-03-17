@@ -28,10 +28,6 @@ class GetAvailableModelsByTypeRequest(BaseModel):
 class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     model_key: NotRequired[str]
     provider: NotRequired[str]
-    model_type: NotRequired[str]
-    model_name: NotRequired[str]
-    is_multimodal: NotRequired[bool]
-    is_reasoning: NotRequired[bool]
     model: NotRequired[str]
     is_default: NotRequired[bool]
 
@@ -41,40 +37,19 @@ class GetAvailableModelsByTypeModel(BaseModel):
 
     provider: Optional[str] = None
 
-    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
-
-    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-
-    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
-        None
-    )
-
-    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
-
     model: Optional[str] = None
 
     is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "modelKey",
-                "provider",
-                "modelType",
-                "modelName",
-                "isMultimodal",
-                "isReasoning",
-                "model",
-                "isDefault",
-            ]
-        )
+        optional_fields = set(["modelKey", "provider", "model", "isDefault"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -108,7 +83,7 @@ class GetAvailableModelsByTypeResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

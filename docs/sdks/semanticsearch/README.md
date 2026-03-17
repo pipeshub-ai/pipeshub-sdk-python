@@ -85,11 +85,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.search(query="company vacation policy", filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, limit=10)
+    res = pipeshub.semantic_search.search(query="company vacation policy", limit=10)
 
     # Handle response
     print(res)
@@ -246,7 +242,7 @@ with Pipeshub(
 
 ### Response
 
-**[List[models.SearchResult]](../../models/.md)**
+**[models.SearchResult](../../models/searchresult.md)**
 
 ### Errors
 
@@ -316,9 +312,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.share_search(search_id="<value>", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ])
+    res = pipeshub.semantic_search.share_search(search_id="<value>")
 
     # Handle response
     print(res)
@@ -327,11 +321,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |                                                                     |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -362,9 +356,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.unshare_search(search_id="<value>", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ])
+    res = pipeshub.semantic_search.unshare_search(search_id="<value>")
 
     # Handle response
     print(res)
@@ -373,11 +365,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |                                                                     |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `search_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Unique search identifier                                            |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 

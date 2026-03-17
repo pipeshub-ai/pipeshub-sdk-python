@@ -50,11 +50,6 @@ def test_agent_conversations_create_agent_conversation():
                 "507f1f77bcf86cd799439011",
                 "507f1f77bcf86cd799439012",
             ],
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
             model_key="gpt-4-turbo",
             model_name="GPT-4 Turbo",
             chat_mode="balanced",
@@ -94,11 +89,6 @@ def test_agent_conversations_add_agent_message():
             agent_key="<value>",
             conversation_id="<value>",
             query="Can you elaborate on the revenue trends?",
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
             timezone="Asia/Calcutta",
         )
         assert res is not None

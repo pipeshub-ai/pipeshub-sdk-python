@@ -18,7 +18,7 @@ SelectedStrategy = Literal[
 r"""Sync strategy: MANUAL (user-triggered), SCHEDULED (interval/cron), WEBHOOK (event-driven), REALTIME (WebSocket)"""
 
 
-class ConnectorSyncConfigScheduledConfigTypedDict(TypedDict):
+class ScheduledConfigTypedDict(TypedDict):
     r"""Configuration for scheduled sync strategy"""
 
     interval_minutes: NotRequired[int]
@@ -29,7 +29,7 @@ class ConnectorSyncConfigScheduledConfigTypedDict(TypedDict):
     r"""Timezone for scheduled sync"""
 
 
-class ConnectorSyncConfigScheduledConfig(BaseModel):
+class ScheduledConfig(BaseModel):
     r"""Configuration for scheduled sync strategy"""
 
     interval_minutes: Annotated[
@@ -53,7 +53,7 @@ class ConnectorSyncConfigScheduledConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -62,7 +62,7 @@ class ConnectorSyncConfigScheduledConfig(BaseModel):
         return m
 
 
-class ConnectorSyncConfigWebhookConfigTypedDict(TypedDict):
+class WebhookConfigTypedDict(TypedDict):
     r"""Configuration for webhook-based sync"""
 
     webhook_url: NotRequired[str]
@@ -71,7 +71,7 @@ class ConnectorSyncConfigWebhookConfigTypedDict(TypedDict):
     r"""Subscribed event types"""
 
 
-class ConnectorSyncConfigWebhookConfig(BaseModel):
+class WebhookConfig(BaseModel):
     r"""Configuration for webhook-based sync"""
 
     webhook_url: Annotated[Optional[str], pydantic.Field(alias="webhookUrl")] = None
@@ -88,7 +88,7 @@ class ConnectorSyncConfigWebhookConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -102,9 +102,9 @@ class ConnectorSyncConfigTypedDict(TypedDict):
 
     selected_strategy: NotRequired[SelectedStrategy]
     r"""Sync strategy: MANUAL (user-triggered), SCHEDULED (interval/cron), WEBHOOK (event-driven), REALTIME (WebSocket)"""
-    scheduled_config: NotRequired[ConnectorSyncConfigScheduledConfigTypedDict]
+    scheduled_config: NotRequired[ScheduledConfigTypedDict]
     r"""Configuration for scheduled sync strategy"""
-    webhook_config: NotRequired[ConnectorSyncConfigWebhookConfigTypedDict]
+    webhook_config: NotRequired[WebhookConfigTypedDict]
     r"""Configuration for webhook-based sync"""
     values: NotRequired[Dict[str, Any]]
     r"""Sync setting values specific to the connector"""
@@ -121,14 +121,12 @@ class ConnectorSyncConfig(BaseModel):
     r"""Sync strategy: MANUAL (user-triggered), SCHEDULED (interval/cron), WEBHOOK (event-driven), REALTIME (WebSocket)"""
 
     scheduled_config: Annotated[
-        Optional[ConnectorSyncConfigScheduledConfig],
-        pydantic.Field(alias="scheduledConfig"),
+        Optional[ScheduledConfig], pydantic.Field(alias="scheduledConfig")
     ] = None
     r"""Configuration for scheduled sync strategy"""
 
     webhook_config: Annotated[
-        Optional[ConnectorSyncConfigWebhookConfig],
-        pydantic.Field(alias="webhookConfig"),
+        Optional[WebhookConfig], pydantic.Field(alias="webhookConfig")
     ] = None
     r"""Configuration for webhook-based sync"""
 
@@ -156,7 +154,7 @@ class ConnectorSyncConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -166,11 +164,11 @@ class ConnectorSyncConfig(BaseModel):
 
 
 try:
-    ConnectorSyncConfigScheduledConfig.model_rebuild()
+    ScheduledConfig.model_rebuild()
 except NameError:
     pass
 try:
-    ConnectorSyncConfigWebhookConfig.model_rebuild()
+    WebhookConfig.model_rebuild()
 except NameError:
     pass
 try:

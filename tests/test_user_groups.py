@@ -21,7 +21,11 @@ def test_user_groups_create_user_group():
             description="All engineering department members",
         )
         assert res is not None
-        assert res == models.UserGroup()
+        assert res == models.UserGroup(
+            type="standard",
+            name="<value>",
+            org_id="<value>",
+        )
 
 
 def test_user_groups_get_all_user_groups():
@@ -36,9 +40,9 @@ def test_user_groups_get_all_user_groups():
 
         res = pipeshub.user_groups.get_all_user_groups()
         assert res is not None
-        assert res == [
-            models.UserGroup(),
-        ]
+        assert res == models.GetAllUserGroupsResponse(
+            success=True,
+        )
 
 
 def test_user_groups_get_user_group_by_id():
@@ -55,7 +59,11 @@ def test_user_groups_get_user_group_by_id():
             group_id="507f1f77bcf86cd799439011"
         )
         assert res is not None
-        assert res == models.UserGroup()
+        assert res == models.UserGroup(
+            type="custom",
+            name="<value>",
+            org_id="<value>",
+        )
 
 
 def test_user_groups_update_user_group():
@@ -74,7 +82,11 @@ def test_user_groups_update_user_group():
             description="All engineering and DevOps members",
         )
         assert res is not None
-        assert res == models.UserGroup()
+        assert res == models.UserGroup(
+            type="admin",
+            name="<value>",
+            org_id="<value>",
+        )
 
 
 def test_user_groups_delete_user_group():
@@ -108,9 +120,7 @@ def test_user_groups_add_users_to_group():
         assert pipeshub is not None
 
         res = pipeshub.user_groups.add_users_to_group(
-            group_ids=[
-                "507f1f77bcf86cd799439011",
-            ],
+            group_id="507f1f77bcf86cd799439011",
             user_ids=[
                 "507f1f77bcf86cd799439012",
                 "507f1f77bcf86cd799439013",
@@ -136,9 +146,7 @@ def test_user_groups_remove_users_from_group():
         assert pipeshub is not None
 
         res = pipeshub.user_groups.remove_users_from_group(
-            group_ids=[
-                "507f1f77bcf86cd799439011",
-            ],
+            group_id="507f1f77bcf86cd799439011",
             user_ids=[
                 "507f1f77bcf86cd799439012",
             ],
@@ -165,9 +173,9 @@ def test_user_groups_get_groups_for_user():
             user_id="507f1f77bcf86cd799439012"
         )
         assert res is not None
-        assert res == [
-            models.UserGroup(),
-        ]
+        assert res == models.GetGroupsForUserResponse(
+            success=True,
+        )
 
 
 def test_user_groups_get_users_in_group():
@@ -199,6 +207,4 @@ def test_user_groups_get_group_statistics():
 
         res = pipeshub.user_groups.get_group_statistics()
         assert res is not None
-        assert res == [
-            models.GetGroupStatisticsResponse(),
-        ]
+        assert res == models.GetGroupStatisticsResponse()

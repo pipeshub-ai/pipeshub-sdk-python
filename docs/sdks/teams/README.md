@@ -444,9 +444,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.add_users_to_team(team_id="507f1f77bcf86cd799439011", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ])
+    res = pipeshub.teams.add_users_to_team(team_id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -455,11 +453,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -490,9 +488,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.remove_user_from_team(team_id="<id>", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ])
+    res = pipeshub.teams.remove_user_from_team(team_id="<id>")
 
     # Handle response
     print(res)
@@ -501,11 +497,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `team_id`                                                           | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `user_id`                                                           | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -536,12 +532,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.teams.update_team_users_permissions(team_id="<id>", user_roles=[
-        {
-            "user_id": "507f1f77bcf86cd799439011",
-            "role": "member",
-        },
-    ])
+    res = pipeshub.teams.update_team_users_permissions(team_id="<id>", body={})
 
     # Handle response
     print(res)
@@ -553,9 +544,7 @@ with Pipeshub(
 | Parameter                                                                                             | Type                                                                                                  | Required                                                                                              | Description                                                                                           |
 | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `team_id`                                                                                             | *str*                                                                                                 | :heavy_check_mark:                                                                                    | N/A                                                                                                   |
-| `user_ids`                                                                                            | List[*str*]                                                                                           | :heavy_minus_sign:                                                                                    | User IDs (legacy format)                                                                              |
-| `role`                                                                                                | *Optional[str]*                                                                                       | :heavy_minus_sign:                                                                                    | Role to assign (legacy format)                                                                        |
-| `user_roles`                                                                                          | List[[models.UpdateTeamUsersPermissionsUserRole](../../models/updateteamuserspermissionsuserrole.md)] | :heavy_minus_sign:                                                                                    | User-role pairs (new format)                                                                          |
+| `body`                                                                                                | [models.UpdateTeamUsersPermissionsRequestBody](../../models/updateteamuserspermissionsrequestbody.md) | :heavy_check_mark:                                                                                    | Request payload                                                                                       |
 | `retries`                                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                      | :heavy_minus_sign:                                                                                    | Configuration to override the default retry behavior of the client.                                   |
 
 ### Response

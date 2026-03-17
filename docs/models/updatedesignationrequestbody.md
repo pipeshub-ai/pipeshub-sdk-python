@@ -5,6 +5,6 @@ Request payload
 
 ## Fields
 
-| Field              | Type               | Required           | Description        | Example            |
-| ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
-| `designation`      | *str*              | :heavy_check_mark: | N/A                | Senior Engineer    |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `designation`      | *Optional[str]*    | :heavy_minus_sign: | N/A                |

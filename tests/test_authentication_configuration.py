@@ -72,7 +72,6 @@ def test_authentication_configuration_get_microsoft_auth_config():
         assert res is not None
         assert res == models.MicrosoftAuthConfig(
             client_id="12345678-1234-1234-1234-123456789abc",
-            authority="https://login.microsoftonline.com/common",
         )
 
 

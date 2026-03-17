@@ -2,13 +2,7 @@
 # @generated-id: 370c7ce0876e
 
 from __future__ import annotations
-from pipeshub_sdk.types import (
-    BaseModel,
-    Nullable,
-    OptionalNullable,
-    UNSET,
-    UNSET_SENTINEL,
-)
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
 from typing import Optional
@@ -22,20 +16,10 @@ class ConnectorPaginationTypedDict(TypedDict):
     r"""Current page number"""
     limit: NotRequired[int]
     r"""Items per page"""
-    search: NotRequired[Nullable[str]]
-    r"""Applied search query"""
-    total_count: NotRequired[int]
+    total: NotRequired[int]
     r"""Total number of items"""
-    total_pages: NotRequired[int]
-    r"""Total number of pages"""
-    has_prev: NotRequired[bool]
-    r"""Whether a previous page exists"""
-    has_next: NotRequired[bool]
-    r"""Whether a next page exists"""
-    prev_page: NotRequired[int]
-    r"""Previous page number"""
-    next_page: NotRequired[int]
-    r"""Next page number"""
+    has_more: NotRequired[bool]
+    r"""Whether more pages exist"""
 
 
 class ConnectorPagination(BaseModel):
@@ -47,60 +31,24 @@ class ConnectorPagination(BaseModel):
     limit: Optional[int] = None
     r"""Items per page"""
 
-    search: OptionalNullable[str] = UNSET
-    r"""Applied search query"""
-
-    total_count: Annotated[Optional[int], pydantic.Field(alias="totalCount")] = None
+    total: Optional[int] = None
     r"""Total number of items"""
 
-    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
-    r"""Total number of pages"""
-
-    has_prev: Annotated[Optional[bool], pydantic.Field(alias="hasPrev")] = None
-    r"""Whether a previous page exists"""
-
-    has_next: Annotated[Optional[bool], pydantic.Field(alias="hasNext")] = None
-    r"""Whether a next page exists"""
-
-    prev_page: Annotated[Optional[int], pydantic.Field(alias="prevPage")] = None
-    r"""Previous page number"""
-
-    next_page: Annotated[Optional[int], pydantic.Field(alias="nextPage")] = None
-    r"""Next page number"""
+    has_more: Annotated[Optional[bool], pydantic.Field(alias="hasMore")] = None
+    r"""Whether more pages exist"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "page",
-                "limit",
-                "search",
-                "totalCount",
-                "totalPages",
-                "hasPrev",
-                "hasNext",
-                "prevPage",
-                "nextPage",
-            ]
-        )
-        nullable_fields = set(["search"])
+        optional_fields = set(["page", "limit", "total", "hasMore"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-            is_nullable_and_explicitly_set = (
-                k in nullable_fields
-                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
-            )
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
-                if (
-                    val is not None
-                    or k not in optional_fields
-                    or is_nullable_and_explicitly_set
-                ):
+                if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m

@@ -52,7 +52,6 @@ def test_ai_models_providers_add_ai_model_provider():
             provider="cohere",
             configuration={
                 "model": "gpt-4",
-                "api_key": "sk-example-key",
             },
             is_multimodal=False,
             is_reasoning=False,

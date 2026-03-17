@@ -5,44 +5,30 @@ from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ReindexFailedRecordsRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    app: str
-    r"""Connector type name"""
-    connector_id: str
-    r"""Connector instance ID"""
-    status_filters: NotRequired[List[str]]
-    r"""Optional status filters"""
+    connector_id: NotRequired[str]
 
 
 class ReindexFailedRecordsRequest(BaseModel):
     r"""Request payload"""
 
-    app: str
-    r"""Connector type name"""
-
-    connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
-    r"""Connector instance ID"""
-
-    status_filters: Annotated[
-        Optional[List[str]], pydantic.Field(alias="statusFilters")
-    ] = None
-    r"""Optional status filters"""
+    connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["statusFilters"])
+        optional_fields = set(["connectorId"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -70,7 +56,7 @@ class ReindexFailedRecordsResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

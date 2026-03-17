@@ -12,7 +12,6 @@ ConnectorAuthType = Union[
         "OAUTH_ADMIN_CONSENT",
         "API_TOKEN",
         "USERNAME_PASSWORD",
-        "BASIC_AUTH",
         "NONE",
     ],
     UnrecognizedStr,
@@ -23,7 +22,6 @@ r"""Authentication method required by the connector:<br>
 <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
 <li><code>API_TOKEN</code> - API key or token authentication</li>
 <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
-<li><code>BASIC_AUTH</code> - Basic authentication (username/password)</li>
 <li><code>NONE</code> - No authentication required</li>
 </ul>
 

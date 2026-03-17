@@ -8,7 +8,7 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Literal, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -130,7 +130,7 @@ class GetKBRecordsRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -171,7 +171,7 @@ class GetKBRecordsContainer(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -209,7 +209,7 @@ class GetKBRecordsCounts(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -269,7 +269,7 @@ class GetKBRecordsUserPermission(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -310,13 +310,21 @@ class GetKBRecordsPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+class GetKBRecordsFiltersTypedDict(TypedDict):
+    r"""Applied and available filters"""
+
+
+class GetKBRecordsFilters(BaseModel):
+    r"""Applied and available filters"""
 
 
 class GetKBRecordsResponseTypedDict(TypedDict):
@@ -333,7 +341,7 @@ class GetKBRecordsResponseTypedDict(TypedDict):
     pagination_mode: NotRequired[str]
     user_permission: NotRequired[GetKBRecordsUserPermissionTypedDict]
     pagination: NotRequired[GetKBRecordsPaginationTypedDict]
-    filters: NotRequired[Dict[str, Any]]
+    filters: NotRequired[GetKBRecordsFiltersTypedDict]
     r"""Applied and available filters"""
 
 
@@ -368,7 +376,7 @@ class GetKBRecordsResponse(BaseModel):
 
     pagination: Optional[GetKBRecordsPagination] = None
 
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[GetKBRecordsFilters] = None
     r"""Applied and available filters"""
 
     @model_serializer(mode="wrap")
@@ -394,7 +402,7 @@ class GetKBRecordsResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

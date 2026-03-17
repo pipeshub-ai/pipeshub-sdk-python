@@ -228,7 +228,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.UpdateKnowledgeBaseResponse](../../models/updateknowledgebaseresponse.md)**
+**[models.KnowledgeBase](../../models/knowledgebase.md)**
 
 ### Errors
 
@@ -307,7 +307,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.reindex_failed_records(app="GOOGLE_DRIVE", connector_id="507f1f77bcf86cd799439011")
+    res = pipeshub.knowledge_bases.reindex_failed_records()
 
     # Handle response
     print(res)
@@ -316,12 +316,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `app`                                                               | *str*                                                               | :heavy_check_mark:                                                  | Connector type name                                                 | GOOGLE_DRIVE                                                        |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               | 507f1f77bcf86cd799439011                                            |
-| `status_filters`                                                    | List[*str*]                                                         | :heavy_minus_sign:                                                  | Optional status filters                                             |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `connector_id`                                                      | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -352,7 +350,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.move_record(kb_id="702f8ff0-0a01-4354-b592-eea268f40f25", record_id="<id>", new_parent_id="folder-abc123")
+    res = pipeshub.knowledge_bases.move_record(kb_id="702f8ff0-0a01-4354-b592-eea268f40f25", record_id="<id>", body={})
 
     # Handle response
     print(res)
@@ -372,7 +370,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_bases.move_record(kb_id="8bdbd4fc-ec2e-4e15-8a88-ae59a5b4bad2", record_id="<id>", new_parent_id=None)
+    res = pipeshub.knowledge_bases.move_record(kb_id="8bdbd4fc-ec2e-4e15-8a88-ae59a5b4bad2", record_id="<id>", body={})
 
     # Handle response
     print(res)
@@ -381,12 +379,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `new_parent_id`                                                     | *Nullable[str]*                                                     | :heavy_check_mark:                                                  | ID of the new parent folder, or null for root                       | folder-abc123                                                       |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                             | Type                                                                  | Required                                                              | Description                                                           |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `kb_id`                                                               | *str*                                                                 | :heavy_check_mark:                                                    | N/A                                                                   |
+| `record_id`                                                           | *str*                                                                 | :heavy_check_mark:                                                    | N/A                                                                   |
+| `body`                                                                | [models.MoveRecordRequestBody](../../models/moverecordrequestbody.md) | :heavy_check_mark:                                                    | Request payload                                                       |
+| `retries`                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)      | :heavy_minus_sign:                                                    | Configuration to override the default retry behavior of the client.   |
 
 ### Response
 

@@ -7,7 +7,6 @@ from .connectorpagination import ConnectorPagination, ConnectorPaginationTypedDi
 from .connectorscope import ConnectorScope
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, QueryParamMetadata
-import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
@@ -53,34 +52,7 @@ class ListConnectorInstancesRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ListConnectorInstancesScopeCountsTypedDict(TypedDict):
-    personal: NotRequired[int]
-    team: NotRequired[int]
-
-
-class ListConnectorInstancesScopeCounts(BaseModel):
-    personal: Optional[int] = None
-
-    team: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["personal", "team"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -96,7 +68,6 @@ class ListConnectorInstancesResponseTypedDict(TypedDict):
     connectors: NotRequired[List[ConnectorInstanceTypedDict]]
     pagination: NotRequired[ConnectorPaginationTypedDict]
     r"""Pagination information for connector lists"""
-    scope_counts: NotRequired[ListConnectorInstancesScopeCountsTypedDict]
 
 
 class ListConnectorInstancesResponse(BaseModel):
@@ -109,28 +80,18 @@ class ListConnectorInstancesResponse(BaseModel):
     pagination: Optional[ConnectorPagination] = None
     r"""Pagination information for connector lists"""
 
-    scope_counts: Annotated[
-        Optional[ListConnectorInstancesScopeCounts], pydantic.Field(alias="scopeCounts")
-    ] = None
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "connectors", "pagination", "scopeCounts"])
+        optional_fields = set(["success", "connectors", "pagination"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-try:
-    ListConnectorInstancesResponse.model_rebuild()
-except NameError:
-    pass

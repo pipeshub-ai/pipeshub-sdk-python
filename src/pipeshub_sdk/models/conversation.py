@@ -34,7 +34,6 @@ class ConversationModelInfoTypedDict(TypedDict):
 
     model_key: NotRequired[str]
     model_name: NotRequired[str]
-    model_friendly_name: NotRequired[str]
     model_provider: NotRequired[str]
     chat_mode: NotRequired[str]
 
@@ -46,10 +45,6 @@ class ConversationModelInfo(BaseModel):
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
 
-    model_friendly_name: Annotated[
-        Optional[str], pydantic.Field(alias="modelFriendlyName")
-    ] = None
-
     model_provider: Annotated[Optional[str], pydantic.Field(alias="modelProvider")] = (
         None
     )
@@ -58,70 +53,19 @@ class ConversationModelInfo(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            ["modelKey", "modelName", "modelFriendlyName", "modelProvider", "chatMode"]
-        )
+        optional_fields = set(["modelKey", "modelName", "modelProvider", "chatMode"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-ConversationSharedWithAccessLevel = Union[
-    Literal[
-        "read",
-        "write",
-    ],
-    UnrecognizedStr,
-]
-
-
-class ConversationSharedWithTypedDict(TypedDict):
-    id: NotRequired[str]
-    user_id: NotRequired[str]
-    access_level: NotRequired[ConversationSharedWithAccessLevel]
-
-
-class ConversationSharedWith(BaseModel):
-    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
-
-    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
-
-    access_level: Annotated[
-        Optional[ConversationSharedWithAccessLevel], pydantic.Field(alias="accessLevel")
-    ] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["_id", "userId", "accessLevel"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConversationErrorTypedDict(TypedDict):
-    pass
-
-
-class ConversationError(BaseModel):
-    pass
 
 
 ConversationAccessLevel = Union[
@@ -131,117 +75,29 @@ ConversationAccessLevel = Union[
     ],
     UnrecognizedStr,
 ]
-r"""Current user's access level"""
 
 
-class ConversationMessageRangeTypedDict(TypedDict):
-    start: NotRequired[int]
-    end: NotRequired[int]
+class ConversationSharedWithTypedDict(TypedDict):
+    user_id: NotRequired[str]
+    access_level: NotRequired[ConversationAccessLevel]
 
 
-class ConversationMessageRange(BaseModel):
-    start: Optional[int] = None
+class ConversationSharedWith(BaseModel):
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
-    end: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["start", "end"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConversationPaginationTypedDict(TypedDict):
-    r"""Message pagination info"""
-
-    page: NotRequired[int]
-    limit: NotRequired[int]
-    total_count: NotRequired[int]
-    total_pages: NotRequired[int]
-    has_next_page: NotRequired[bool]
-    has_prev_page: NotRequired[bool]
-    message_range: NotRequired[ConversationMessageRangeTypedDict]
-
-
-class ConversationPagination(BaseModel):
-    r"""Message pagination info"""
-
-    page: Optional[int] = None
-
-    limit: Optional[int] = None
-
-    total_count: Annotated[Optional[int], pydantic.Field(alias="totalCount")] = None
-
-    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
-
-    has_next_page: Annotated[Optional[bool], pydantic.Field(alias="hasNextPage")] = None
-
-    has_prev_page: Annotated[Optional[bool], pydantic.Field(alias="hasPrevPage")] = None
-
-    message_range: Annotated[
-        Optional[ConversationMessageRange], pydantic.Field(alias="messageRange")
+    access_level: Annotated[
+        Optional[ConversationAccessLevel], pydantic.Field(alias="accessLevel")
     ] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "page",
-                "limit",
-                "totalCount",
-                "totalPages",
-                "hasNextPage",
-                "hasPrevPage",
-                "messageRange",
-            ]
-        )
+        optional_fields = set(["userId", "accessLevel"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConversationAccessTypedDict(TypedDict):
-    r"""Current user's access info"""
-
-    is_owner: NotRequired[bool]
-    access_level: NotRequired[str]
-
-
-class ConversationAccess(BaseModel):
-    r"""Current user's access info"""
-
-    is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
-
-    access_level: Annotated[Optional[str], pydantic.Field(alias="accessLevel")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["isOwner", "accessLevel"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -295,26 +151,8 @@ class ConversationTypedDict(TypedDict):
     r"""Whether this conversation is archived"""
     archived_by: NotRequired[str]
     r"""User who archived this conversation"""
-    agent_key: NotRequired[str]
-    r"""Agent key if this is an agent conversation"""
-    is_deleted: NotRequired[bool]
-    r"""Whether this conversation is soft-deleted"""
-    conversation_source: NotRequired[str]
-    r"""Source of the conversation (e.g., agent_chat, search)"""
-    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
-    r"""Errors encountered during conversation"""
-    is_owner: NotRequired[bool]
-    r"""Whether the current user owns this conversation"""
-    access_level: NotRequired[ConversationAccessLevel]
-    r"""Current user's access level"""
-    pagination: NotRequired[ConversationPaginationTypedDict]
-    r"""Message pagination info"""
-    access: NotRequired[ConversationAccessTypedDict]
-    r"""Current user's access info"""
     last_activity_at: NotRequired[int]
     r"""Unix timestamp of last activity"""
-    v: NotRequired[int]
-    r"""Document version (MongoDB)"""
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -382,43 +220,10 @@ class Conversation(BaseModel):
     archived_by: Annotated[Optional[str], pydantic.Field(alias="archivedBy")] = None
     r"""User who archived this conversation"""
 
-    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
-    r"""Agent key if this is an agent conversation"""
-
-    is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = False
-    r"""Whether this conversation is soft-deleted"""
-
-    conversation_source: Annotated[
-        Optional[str], pydantic.Field(alias="conversationSource")
-    ] = None
-    r"""Source of the conversation (e.g., agent_chat, search)"""
-
-    conversation_errors: Annotated[
-        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
-    ] = None
-    r"""Errors encountered during conversation"""
-
-    is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
-    r"""Whether the current user owns this conversation"""
-
-    access_level: Annotated[
-        Optional[ConversationAccessLevel], pydantic.Field(alias="accessLevel")
-    ] = None
-    r"""Current user's access level"""
-
-    pagination: Optional[ConversationPagination] = None
-    r"""Message pagination info"""
-
-    access: Optional[ConversationAccess] = None
-    r"""Current user's access info"""
-
     last_activity_at: Annotated[
         Optional[int], pydantic.Field(alias="lastActivityAt")
     ] = None
     r"""Unix timestamp of last activity"""
-
-    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
-    r"""Document version (MongoDB)"""
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
@@ -442,16 +247,7 @@ class Conversation(BaseModel):
                 "sharedWith",
                 "isArchived",
                 "archivedBy",
-                "agentKey",
-                "isDeleted",
-                "conversationSource",
-                "conversationErrors",
-                "isOwner",
-                "accessLevel",
-                "pagination",
-                "access",
                 "lastActivityAt",
-                "__v",
                 "createdAt",
                 "updatedAt",
             ]
@@ -461,7 +257,7 @@ class Conversation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -476,14 +272,6 @@ except NameError:
     pass
 try:
     ConversationSharedWith.model_rebuild()
-except NameError:
-    pass
-try:
-    ConversationPagination.model_rebuild()
-except NameError:
-    pass
-try:
-    ConversationAccess.model_rebuild()
 except NameError:
     pass
 try:

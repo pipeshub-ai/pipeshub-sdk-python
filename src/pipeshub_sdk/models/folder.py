@@ -10,16 +10,16 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class FolderTypedDict(TypedDict):
+    name: str
+    r"""Name of the folder"""
+    kb_id: str
+    r"""Knowledge base ID"""
+    org_id: str
+    r"""Organization ID"""
     id: NotRequired[str]
     r"""Unique folder identifier"""
-    name: NotRequired[str]
-    r"""Name of the folder"""
     parent_id: NotRequired[str]
     r"""Parent folder or KB ID"""
-    kb_id: NotRequired[str]
-    r"""Knowledge base ID"""
-    org_id: NotRequired[str]
-    r"""Organization ID"""
     created_at_timestamp: NotRequired[int]
     r"""Creation timestamp"""
     updated_at_timestamp: NotRequired[int]
@@ -29,20 +29,20 @@ class FolderTypedDict(TypedDict):
 
 
 class Folder(BaseModel):
+    name: str
+    r"""Name of the folder"""
+
+    kb_id: Annotated[str, pydantic.Field(alias="kbId")]
+    r"""Knowledge base ID"""
+
+    org_id: Annotated[str, pydantic.Field(alias="orgId")]
+    r"""Organization ID"""
+
     id: Optional[str] = None
     r"""Unique folder identifier"""
 
-    name: Optional[str] = None
-    r"""Name of the folder"""
-
     parent_id: Annotated[Optional[str], pydantic.Field(alias="parentId")] = None
     r"""Parent folder or KB ID"""
-
-    kb_id: Annotated[Optional[str], pydantic.Field(alias="kbId")] = None
-    r"""Knowledge base ID"""
-
-    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
-    r"""Organization ID"""
 
     created_at_timestamp: Annotated[
         Optional[int], pydantic.Field(alias="createdAtTimestamp")
@@ -60,23 +60,14 @@ class Folder(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            [
-                "id",
-                "name",
-                "parentId",
-                "kbId",
-                "orgId",
-                "createdAtTimestamp",
-                "updatedAtTimestamp",
-                "isDeleted",
-            ]
+            ["id", "parentId", "createdAtTimestamp", "updatedAtTimestamp", "isDeleted"]
         )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

@@ -3,13 +3,10 @@
 
 from __future__ import annotations
 from .sharerequest import ShareRequest, ShareRequestTypedDict
-from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
-from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 
 class ShareConversationRequestTypedDict(TypedDict):
@@ -30,116 +27,3 @@ class ShareConversationRequest(BaseModel):
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
     r"""Request payload"""
-
-
-class ShareConversationSharedWithTypedDict(TypedDict):
-    id: NotRequired[str]
-    user_id: NotRequired[str]
-    access_level: NotRequired[str]
-
-
-class ShareConversationSharedWith(BaseModel):
-    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
-
-    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
-
-    access_level: Annotated[Optional[str], pydantic.Field(alias="accessLevel")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["_id", "userId", "accessLevel"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ShareConversationMetaTypedDict(TypedDict):
-    request_id: NotRequired[str]
-    timestamp: NotRequired[datetime]
-    duration: NotRequired[int]
-
-
-class ShareConversationMeta(BaseModel):
-    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
-
-    timestamp: Optional[datetime] = None
-
-    duration: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["requestId", "timestamp", "duration"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ShareConversationResponseTypedDict(TypedDict):
-    r"""Conversation shared successfully"""
-
-    id: NotRequired[str]
-    is_shared: NotRequired[bool]
-    shared_with: NotRequired[List[ShareConversationSharedWithTypedDict]]
-    meta: NotRequired[ShareConversationMetaTypedDict]
-
-
-class ShareConversationResponse(BaseModel):
-    r"""Conversation shared successfully"""
-
-    id: Optional[str] = None
-
-    is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = None
-
-    shared_with: Annotated[
-        Optional[List[ShareConversationSharedWith]], pydantic.Field(alias="sharedWith")
-    ] = None
-
-    meta: Optional[ShareConversationMeta] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["id", "isShared", "sharedWith", "meta"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-try:
-    ShareConversationSharedWith.model_rebuild()
-except NameError:
-    pass
-try:
-    ShareConversationMeta.model_rebuild()
-except NameError:
-    pass
-try:
-    ShareConversationResponse.model_rebuild()
-except NameError:
-    pass

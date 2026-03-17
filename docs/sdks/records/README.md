@@ -410,7 +410,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.StreamRecordBufferResponse](../../models/streamrecordbufferresponse.md)**
+**[httpx.Response](../../models/.md)**
 
 ### Errors
 

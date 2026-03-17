@@ -15,15 +15,7 @@ def test_semantic_search_search_simple():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.semantic_search.search(
-            query="company vacation policy",
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
-            limit=10,
-        )
+        res = pipeshub.semantic_search.search(query="company vacation policy", limit=10)
         assert res is not None
         assert res == models.SearchResult()
 
@@ -62,13 +54,7 @@ def test_semantic_search_search():
         assert pipeshub is not None
 
         res = pipeshub.semantic_search.search(
-            query="employee onboarding procedures",
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
-            limit=10,
+            query="employee onboarding procedures", limit=10
         )
         assert res is not None
         assert res == models.SearchResult()
@@ -118,9 +104,7 @@ def test_semantic_search_get_search_by_id():
 
         res = pipeshub.semantic_search.get_search_by_id(search_id="<value>")
         assert res is not None
-        assert res == [
-            models.SearchResult(),
-        ]
+        assert res == models.SearchResult()
 
 
 def test_semantic_search_delete_search_by_id():
@@ -150,12 +134,7 @@ def test_semantic_search_share_search():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.semantic_search.share_search(
-            search_id="<value>",
-            user_ids=[
-                "507f1f77bcf86cd799439011",
-            ],
-        )
+        res = pipeshub.semantic_search.share_search(search_id="<value>")
         assert res is not None
         assert res == models.ShareSearchResponse(
             message="Search shared successfully",
@@ -172,12 +151,7 @@ def test_semantic_search_unshare_search():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.semantic_search.unshare_search(
-            search_id="<value>",
-            user_ids=[
-                "507f1f77bcf86cd799439011",
-            ],
-        )
+        res = pipeshub.semantic_search.unshare_search(search_id="<value>")
         assert res is not None
         assert res == models.UnshareSearchResponse(
             message="Search unshared successfully",

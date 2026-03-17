@@ -2,62 +2,13 @@
 # @generated-id: 43c97645b0aa
 
 from __future__ import annotations
-from .aimodelconfiguration import AIModelConfiguration, AIModelConfigurationTypedDict
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-import pydantic
-from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from pipeshub_sdk.types import BaseModel
+from typing_extensions import TypedDict
 
 
 class GetAIModelsConfigResponseTypedDict(TypedDict):
     r"""AI models config retrieved"""
 
-    ocr: NotRequired[List[AIModelConfigurationTypedDict]]
-    embedding: NotRequired[List[AIModelConfigurationTypedDict]]
-    slm: NotRequired[List[AIModelConfigurationTypedDict]]
-    llm: NotRequired[List[AIModelConfigurationTypedDict]]
-    reasoning: NotRequired[List[AIModelConfigurationTypedDict]]
-    multi_modal: NotRequired[List[AIModelConfigurationTypedDict]]
-
 
 class GetAIModelsConfigResponse(BaseModel):
     r"""AI models config retrieved"""
-
-    ocr: Optional[List[AIModelConfiguration]] = None
-
-    embedding: Optional[List[AIModelConfiguration]] = None
-
-    slm: Optional[List[AIModelConfiguration]] = None
-
-    llm: Optional[List[AIModelConfiguration]] = None
-
-    reasoning: Optional[List[AIModelConfiguration]] = None
-
-    multi_modal: Annotated[
-        Optional[List[AIModelConfiguration]], pydantic.Field(alias="multiModal")
-    ] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            ["ocr", "embedding", "slm", "llm", "reasoning", "multiModal"]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-try:
-    GetAIModelsConfigResponse.model_rebuild()
-except NameError:
-    pass

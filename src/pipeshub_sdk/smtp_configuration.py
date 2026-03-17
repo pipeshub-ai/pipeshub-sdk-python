@@ -16,11 +16,11 @@ class SMTPConfiguration(BaseSDK):
     def create_smtp_config(
         self,
         *,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
+        host: str,
+        port: int,
+        from_email: str,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        from_email: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -41,9 +41,9 @@ class SMTPConfiguration(BaseSDK):
 
         :param host: SMTP server hostname or IP address
         :param port: SMTP server port. Common ports are 25 (unencrypted), 465 (SSL), 587 (TLS/STARTTLS)
+        :param from_email: Default sender email address that appears in the \"From\" field of outgoing emails
         :param username: SMTP authentication username. Usually an email address for services like Gmail, SendGrid, etc.
         :param password: SMTP authentication password or app-specific password. For Gmail, use an App Password instead of your account password.
-        :param from_email: Default sender email address that appears in the \"From\" field of outgoing emails
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -128,11 +128,11 @@ class SMTPConfiguration(BaseSDK):
     async def create_smtp_config_async(
         self,
         *,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
+        host: str,
+        port: int,
+        from_email: str,
         username: Optional[str] = None,
         password: Optional[str] = None,
-        from_email: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -153,9 +153,9 @@ class SMTPConfiguration(BaseSDK):
 
         :param host: SMTP server hostname or IP address
         :param port: SMTP server port. Common ports are 25 (unencrypted), 465 (SSL), 587 (TLS/STARTTLS)
+        :param from_email: Default sender email address that appears in the \"From\" field of outgoing emails
         :param username: SMTP authentication username. Usually an email address for services like Gmail, SendGrid, etc.
         :param password: SMTP authentication password or app-specific password. For Gmail, use an App Password instead of your account password.
-        :param from_email: Default sender email address that appears in the \"From\" field of outgoing emails
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds

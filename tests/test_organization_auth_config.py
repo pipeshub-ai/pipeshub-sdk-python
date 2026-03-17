@@ -57,15 +57,12 @@ def test_organization_auth_config_update_auth_method():
         assert pipeshub is not None
 
         res = pipeshub.organization_auth_config.update_auth_method(
-            auth_method=[
+            auth_methods=[
                 {
-                    "order": 1,
+                    "order": 195644,
                     "allowed_methods": [
                         {
-                            "type": "password",
-                        },
-                        {
-                            "type": "google",
+                            "type": "samlSso",
                         },
                     ],
                 },

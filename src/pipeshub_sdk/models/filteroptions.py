@@ -20,13 +20,13 @@ FilterOptionsType = Union[
 r"""Filter input type"""
 
 
-class FilterOptionsOptionTypedDict(TypedDict):
+class OptionTypedDict(TypedDict):
     id: NotRequired[str]
     value: NotRequired[str]
     label: NotRequired[str]
 
 
-class FilterOptionsOption(BaseModel):
+class Option(BaseModel):
     id: Optional[str] = None
 
     value: Optional[str] = None
@@ -41,7 +41,7 @@ class FilterOptionsOption(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -57,7 +57,7 @@ class FilterTypedDict(TypedDict):
     r"""Display label"""
     type: NotRequired[FilterOptionsType]
     r"""Filter input type"""
-    options: NotRequired[List[FilterOptionsOptionTypedDict]]
+    options: NotRequired[List[OptionTypedDict]]
     dynamic: NotRequired[bool]
     r"""Whether options are loaded dynamically"""
 
@@ -72,7 +72,7 @@ class Filter(BaseModel):
     type: Optional[FilterOptionsType] = None
     r"""Filter input type"""
 
-    options: Optional[List[FilterOptionsOption]] = None
+    options: Optional[List[Option]] = None
 
     dynamic: Optional[bool] = None
     r"""Whether options are loaded dynamically"""
@@ -85,7 +85,7 @@ class Filter(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -113,7 +113,7 @@ class FilterOptions(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

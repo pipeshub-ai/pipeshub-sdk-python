@@ -29,7 +29,7 @@ class ConnectorFiltersConfigSync(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -38,13 +38,13 @@ class ConnectorFiltersConfigSync(BaseModel):
         return m
 
 
-class ConnectorFiltersConfigIndexingTypedDict(TypedDict):
+class IndexingTypedDict(TypedDict):
     r"""Indexing filter selections"""
 
     values: NotRequired[Dict[str, Any]]
 
 
-class ConnectorFiltersConfigIndexing(BaseModel):
+class Indexing(BaseModel):
     r"""Indexing filter selections"""
 
     values: Optional[Dict[str, Any]] = None
@@ -57,7 +57,7 @@ class ConnectorFiltersConfigIndexing(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -71,7 +71,7 @@ class ConnectorFiltersConfigTypedDict(TypedDict):
 
     sync: NotRequired[ConnectorFiltersConfigSyncTypedDict]
     r"""Sync filter selections"""
-    indexing: NotRequired[ConnectorFiltersConfigIndexingTypedDict]
+    indexing: NotRequired[IndexingTypedDict]
     r"""Indexing filter selections"""
 
 
@@ -81,7 +81,7 @@ class ConnectorFiltersConfig(BaseModel):
     sync: Optional[ConnectorFiltersConfigSync] = None
     r"""Sync filter selections"""
 
-    indexing: Optional[ConnectorFiltersConfigIndexing] = None
+    indexing: Optional[Indexing] = None
     r"""Indexing filter selections"""
 
     @model_serializer(mode="wrap")
@@ -92,7 +92,7 @@ class ConnectorFiltersConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

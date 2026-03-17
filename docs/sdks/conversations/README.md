@@ -92,11 +92,7 @@ with Pipeshub(
     res = pipeshub.conversations.create_conversation(query="What is our company's vacation policy?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
 
     # Handle response
     print(res)
@@ -118,7 +114,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.CreateConversationResponse](../../models/createconversationresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -170,11 +166,7 @@ with Pipeshub(
     res = pipeshub.conversations.stream_chat(query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
 
     with res as event_stream:
         for event in event_stream:
@@ -446,11 +438,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.add_message(conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, timezone="Asia/Calcutta")
+    res = pipeshub.conversations.add_message(conversation_id="<value>", query="Can you elaborate on the revenue trends?", timezone="Asia/Calcutta")
 
     # Handle response
     print(res)
@@ -475,7 +463,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.AddMessageResponse](../../models/addmessageresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -507,11 +495,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.add_message_stream(conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, timezone="Asia/Calcutta")
+    res = pipeshub.conversations.add_message_stream(conversation_id="<value>", query="Can you elaborate on the revenue trends?", timezone="Asia/Calcutta")
 
     with res as event_stream:
         for event in event_stream:
@@ -596,7 +580,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.ShareConversationResponse](../../models/shareconversationresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -648,7 +632,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.UpdateConversationTitleResponse](../../models/updateconversationtitleresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -696,7 +680,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.ArchiveConversationResponse](../../models/archiveconversationresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -741,7 +725,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.UnarchiveConversationResponse](../../models/unarchiveconversationresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -782,14 +766,12 @@ with Pipeshub(
 
     res = pipeshub.conversations.regenerate_answer(conversation_id="<value>", message_id="<value>", filters={
         "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
+
         ],
     })
 
-    with res as event_stream:
-        for event in event_stream:
-            # handle event
-            print(event, flush=True)
+    # Handle response
+    print(res)
 
 ```
 
@@ -803,12 +785,11 @@ with Pipeshub(
 | `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override model for regeneration                                     |
 | `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
 | `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `model_friendly_name`                                               | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[Union[eventstreaming.EventStream[models.SSEEvent], eventstreaming.EventStreamAsync[models.SSEEvent]]](../../models/.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -858,27 +839,21 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                     | Type                                                                          | Required                                                                      | Description                                                                   |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `conversation_id`                                                             | *str*                                                                         | :heavy_check_mark:                                                            | N/A                                                                           |
-| `message_id`                                                                  | *str*                                                                         | :heavy_check_mark:                                                            | N/A                                                                           |
-| `is_helpful`                                                                  | *Optional[bool]*                                                              | :heavy_minus_sign:                                                            | Overall helpfulness rating                                                    |
-| `ratings`                                                                     | [Optional[models.Ratings]](../../models/ratings.md)                           | :heavy_minus_sign:                                                            | N/A                                                                           |
-| `categories`                                                                  | List[[models.Category](../../models/category.md)]                             | :heavy_minus_sign:                                                            | Categories of issues identified                                               |
-| `comments`                                                                    | [Optional[models.Comments]](../../models/comments.md)                         | :heavy_minus_sign:                                                            | N/A                                                                           |
-| `citation_feedback`                                                           | List[[models.CitationFeedback](../../models/citationfeedback.md)]             | :heavy_minus_sign:                                                            | Feedback on individual citations                                              |
-| `follow_up_questions_helpful`                                                 | *Optional[bool]*                                                              | :heavy_minus_sign:                                                            | Were the suggested follow-up questions helpful                                |
-| `feedback_provider`                                                           | *Optional[str]*                                                               | :heavy_minus_sign:                                                            | User ID who provided feedback                                                 |
-| `timestamp`                                                                   | *Optional[int]*                                                               | :heavy_minus_sign:                                                            | Feedback timestamp in milliseconds                                            |
-| `metrics`                                                                     | [Optional[models.Metrics]](../../models/metrics.md)                           | :heavy_minus_sign:                                                            | Feedback metrics                                                              |
-| `unused_follow_up_questions`                                                  | List[[models.UnusedFollowUpQuestion](../../models/unusedfollowupquestion.md)] | :heavy_minus_sign:                                                            | Follow-up questions not used                                                  |
-| `source`                                                                      | *Optional[str]*                                                               | :heavy_minus_sign:                                                            | Source of feedback (e.g., user)                                               |
-| `revisions`                                                                   | List[[models.Revision](../../models/revision.md)]                             | :heavy_minus_sign:                                                            | Feedback revisions                                                            |
-| `retries`                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)              | :heavy_minus_sign:                                                            | Configuration to override the default retry behavior of the client.           |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `message_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `is_helpful`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Overall helpfulness rating                                          |
+| `ratings`                                                           | [Optional[models.Ratings]](../../models/ratings.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `categories`                                                        | List[[models.Category](../../models/category.md)]                   | :heavy_minus_sign:                                                  | Categories of issues identified                                     |
+| `comments`                                                          | [Optional[models.Comments]](../../models/comments.md)               | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `citation_feedback`                                                 | List[[models.CitationFeedback](../../models/citationfeedback.md)]   | :heavy_minus_sign:                                                  | Feedback on individual citations                                    |
+| `follow_up_questions_helpful`                                       | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Were the suggested follow-up questions helpful                      |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.UpdateMessageFeedbackResponse](../../models/updatemessagefeedbackresponse.md)**
+**[models.Conversation](../../models/conversation.md)**
 
 ### Errors
 
@@ -916,11 +891,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 | [<br/>"507f1f77bcf86cd799439011"<br/>]                              |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `team_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 

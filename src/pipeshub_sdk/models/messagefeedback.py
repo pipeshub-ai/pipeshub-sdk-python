@@ -41,7 +41,7 @@ class Ratings(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -92,7 +92,7 @@ class Comments(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -127,62 +127,13 @@ class CitationFeedback(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-class MetricsTypedDict(TypedDict):
-    r"""Feedback metrics"""
-
-    time_to_feedback: NotRequired[int]
-    user_agent: NotRequired[str]
-
-
-class Metrics(BaseModel):
-    r"""Feedback metrics"""
-
-    time_to_feedback: Annotated[
-        Optional[int], pydantic.Field(alias="timeToFeedback")
-    ] = None
-
-    user_agent: Annotated[Optional[str], pydantic.Field(alias="userAgent")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["timeToFeedback", "userAgent"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class UnusedFollowUpQuestionTypedDict(TypedDict):
-    pass
-
-
-class UnusedFollowUpQuestion(BaseModel):
-    pass
-
-
-class RevisionTypedDict(TypedDict):
-    pass
-
-
-class Revision(BaseModel):
-    pass
 
 
 class MessageFeedbackTypedDict(TypedDict):
@@ -201,18 +152,6 @@ class MessageFeedbackTypedDict(TypedDict):
     r"""Feedback on individual citations"""
     follow_up_questions_helpful: NotRequired[bool]
     r"""Were the suggested follow-up questions helpful"""
-    feedback_provider: NotRequired[str]
-    r"""User ID who provided feedback"""
-    timestamp: NotRequired[int]
-    r"""Feedback timestamp in milliseconds"""
-    metrics: NotRequired[MetricsTypedDict]
-    r"""Feedback metrics"""
-    unused_follow_up_questions: NotRequired[List[UnusedFollowUpQuestionTypedDict]]
-    r"""Follow-up questions not used"""
-    source: NotRequired[str]
-    r"""Source of feedback (e.g., user)"""
-    revisions: NotRequired[List[RevisionTypedDict]]
-    r"""Feedback revisions"""
 
 
 class MessageFeedback(BaseModel):
@@ -241,29 +180,6 @@ class MessageFeedback(BaseModel):
     ] = None
     r"""Were the suggested follow-up questions helpful"""
 
-    feedback_provider: Annotated[
-        Optional[str], pydantic.Field(alias="feedbackProvider")
-    ] = None
-    r"""User ID who provided feedback"""
-
-    timestamp: Optional[int] = None
-    r"""Feedback timestamp in milliseconds"""
-
-    metrics: Optional[Metrics] = None
-    r"""Feedback metrics"""
-
-    unused_follow_up_questions: Annotated[
-        Optional[List[UnusedFollowUpQuestion]],
-        pydantic.Field(alias="unusedFollowUpQuestions"),
-    ] = None
-    r"""Follow-up questions not used"""
-
-    source: Optional[str] = None
-    r"""Source of feedback (e.g., user)"""
-
-    revisions: Optional[List[Revision]] = None
-    r"""Feedback revisions"""
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -274,12 +190,6 @@ class MessageFeedback(BaseModel):
                 "comments",
                 "citationFeedback",
                 "followUpQuestionsHelpful",
-                "feedbackProvider",
-                "timestamp",
-                "metrics",
-                "unusedFollowUpQuestions",
-                "source",
-                "revisions",
             ]
         )
         serialized = handler(self)
@@ -287,7 +197,7 @@ class MessageFeedback(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -298,10 +208,6 @@ class MessageFeedback(BaseModel):
 
 try:
     CitationFeedback.model_rebuild()
-except NameError:
-    pass
-try:
-    Metrics.model_rebuild()
 except NameError:
     pass
 try:

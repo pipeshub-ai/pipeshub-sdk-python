@@ -1,11 +1,9 @@
 # ConnectorConfigFilters
 
-Filter configuration
+Filter selections for data scope
 
 
 ## Fields
 
-| Field                                                                                      | Type                                                                                       | Required                                                                                   | Description                                                                                |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `sync`                                                                                     | [Optional[models.ConnectorConfigFiltersSync]](../models/connectorconfigfilterssync.md)     | :heavy_minus_sign:                                                                         | Sync filter configuration                                                                  |
-| `values`                                                                                   | [Optional[models.ConnectorConfigFiltersValues]](../models/connectorconfigfiltersvalues.md) | :heavy_minus_sign:                                                                         | Filter values (varies per connector)                                                       |
+| Field       | Type        | Required    | Description |
+| ----------- | ----------- | ----------- | ----------- |

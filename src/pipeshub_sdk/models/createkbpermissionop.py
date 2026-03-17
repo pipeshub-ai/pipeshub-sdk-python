@@ -24,10 +24,10 @@ r"""Permission role to grant"""
 class CreateKBPermissionRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    user_ids: List[str]
-    r"""User IDs to grant permission (at least one of userIds or teamIds required)"""
     role: CreateKBPermissionRole
     r"""Permission role to grant"""
+    user_ids: NotRequired[List[str]]
+    r"""User IDs to grant permission"""
     team_ids: NotRequired[List[str]]
     r"""Team IDs to grant permission"""
 
@@ -35,24 +35,24 @@ class CreateKBPermissionRequestBodyTypedDict(TypedDict):
 class CreateKBPermissionRequestBody(BaseModel):
     r"""Request payload"""
 
-    user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
-    r"""User IDs to grant permission (at least one of userIds or teamIds required)"""
-
     role: CreateKBPermissionRole
     r"""Permission role to grant"""
+
+    user_ids: Annotated[Optional[List[str]], pydantic.Field(alias="userIds")] = None
+    r"""User IDs to grant permission"""
 
     team_ids: Annotated[Optional[List[str]], pydantic.Field(alias="teamIds")] = None
     r"""Team IDs to grant permission"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["teamIds"])
+        optional_fields = set(["userIds", "teamIds"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -81,58 +81,25 @@ class CreateKBPermissionRequest(BaseModel):
     r"""Request payload"""
 
 
-class CreateKBPermissionDetailsTypedDict(TypedDict):
-    pass
-
-
-class CreateKBPermissionDetails(BaseModel):
-    pass
-
-
 class PermissionResultTypedDict(TypedDict):
-    success: NotRequired[bool]
     granted_count: NotRequired[int]
-    granted_users: NotRequired[List[str]]
-    granted_teams: NotRequired[List[str]]
-    role: NotRequired[str]
-    details: NotRequired[CreateKBPermissionDetailsTypedDict]
+    updated_count: NotRequired[int]
 
 
 class PermissionResult(BaseModel):
-    success: Optional[bool] = None
-
     granted_count: Annotated[Optional[int], pydantic.Field(alias="grantedCount")] = None
 
-    granted_users: Annotated[
-        Optional[List[str]], pydantic.Field(alias="grantedUsers")
-    ] = None
-
-    granted_teams: Annotated[
-        Optional[List[str]], pydantic.Field(alias="grantedTeams")
-    ] = None
-
-    role: Optional[str] = None
-
-    details: Optional[CreateKBPermissionDetails] = None
+    updated_count: Annotated[Optional[int], pydantic.Field(alias="updatedCount")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "success",
-                "grantedCount",
-                "grantedUsers",
-                "grantedTeams",
-                "role",
-                "details",
-            ]
-        )
+        optional_fields = set(["grantedCount", "updatedCount"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -165,7 +132,7 @@ class CreateKBPermissionResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

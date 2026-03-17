@@ -12,15 +12,31 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class SetMetricsCollectionPushIntervalRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    push_interval_ms: float
-    r"""Push interval in milliseconds"""
+    push_interval: NotRequired[int]
+    r"""Push interval in seconds"""
 
 
 class SetMetricsCollectionPushIntervalRequest(BaseModel):
     r"""Request payload"""
 
-    push_interval_ms: Annotated[float, pydantic.Field(alias="pushIntervalMs")]
-    r"""Push interval in milliseconds"""
+    push_interval: Annotated[Optional[int], pydantic.Field(alias="pushInterval")] = None
+    r"""Push interval in seconds"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["pushInterval"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class SetMetricsCollectionPushIntervalResponseTypedDict(TypedDict):
@@ -42,7 +58,7 @@ class SetMetricsCollectionPushIntervalResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

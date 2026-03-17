@@ -9,7 +9,7 @@ from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class MetadataTypedDict(TypedDict):
+class SearchResultItemMetadataTypedDict(TypedDict):
     r"""Additional metadata about the source"""
 
     record_id: NotRequired[str]
@@ -19,7 +19,7 @@ class MetadataTypedDict(TypedDict):
     mime_type: NotRequired[str]
 
 
-class Metadata(BaseModel):
+class SearchResultItemMetadata(BaseModel):
     r"""Additional metadata about the source"""
 
     record_id: Annotated[Optional[str], pydantic.Field(alias="recordId")] = None
@@ -44,7 +44,7 @@ class Metadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -62,7 +62,7 @@ class SearchResultItemTypedDict(TypedDict):
     r"""Index of this chunk within the source document"""
     citation_type: NotRequired[str]
     r"""Type of citation/source"""
-    metadata: NotRequired[MetadataTypedDict]
+    metadata: NotRequired[SearchResultItemMetadataTypedDict]
     r"""Additional metadata about the source"""
     score: NotRequired[float]
     r"""Relevance score (higher is more relevant)"""
@@ -80,7 +80,7 @@ class SearchResultItem(BaseModel):
     citation_type: Annotated[Optional[str], pydantic.Field(alias="citationType")] = None
     r"""Type of citation/source"""
 
-    metadata: Optional[Metadata] = None
+    metadata: Optional[SearchResultItemMetadata] = None
     r"""Additional metadata about the source"""
 
     score: Optional[float] = None
@@ -96,7 +96,7 @@ class SearchResultItem(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -106,7 +106,7 @@ class SearchResultItem(BaseModel):
 
 
 try:
-    Metadata.model_rebuild()
+    SearchResultItemMetadata.model_rebuild()
 except NameError:
     pass
 try:

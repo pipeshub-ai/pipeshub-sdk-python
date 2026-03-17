@@ -15,13 +15,7 @@ def test_permissions_sdk_create_kb_permission():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.permissions.create_kb_permission(
-            kb_id="<id>",
-            user_ids=[
-                "507f1f77bcf86cd799439011",
-            ],
-            role="OWNER",
-        )
+        res = pipeshub.permissions.create_kb_permission(kb_id="<id>", role="OWNER")
         assert res is not None
         assert res == models.CreateKBPermissionResponse()
 

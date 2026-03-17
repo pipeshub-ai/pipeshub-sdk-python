@@ -7,7 +7,7 @@ from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -43,13 +43,21 @@ class GetArchivedConversationsPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+class GetArchivedConversationsFiltersTypedDict(TypedDict):
+    r"""Applied and available filters"""
+
+
+class GetArchivedConversationsFilters(BaseModel):
+    r"""Applied and available filters"""
 
 
 class SummaryTypedDict(TypedDict):
@@ -69,7 +77,7 @@ class Summary(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -99,7 +107,7 @@ class GetArchivedConversationsMeta(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -113,7 +121,7 @@ class GetArchivedConversationsResponseTypedDict(TypedDict):
 
     conversations: NotRequired[List[ConversationTypedDict]]
     pagination: NotRequired[GetArchivedConversationsPaginationTypedDict]
-    filters: NotRequired[Dict[str, Any]]
+    filters: NotRequired[GetArchivedConversationsFiltersTypedDict]
     r"""Applied and available filters"""
     summary: NotRequired[SummaryTypedDict]
     meta: NotRequired[GetArchivedConversationsMetaTypedDict]
@@ -126,7 +134,7 @@ class GetArchivedConversationsResponse(BaseModel):
 
     pagination: Optional[GetArchivedConversationsPagination] = None
 
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[GetArchivedConversationsFilters] = None
     r"""Applied and available filters"""
 
     summary: Optional[Summary] = None
@@ -143,7 +151,7 @@ class GetArchivedConversationsResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

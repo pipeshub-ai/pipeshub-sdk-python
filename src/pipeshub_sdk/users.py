@@ -357,7 +357,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -487,7 +487,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1333,7 +1333,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserEmailById",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1439,7 +1439,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserEmailById",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1756,7 +1756,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1883,7 +1883,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1989,7 +1989,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2097,7 +2097,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2196,7 +2196,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="removeUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2291,7 +2291,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="removeUserDisplayPicture",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2653,7 +2653,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="resendUserInvite",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -2765,7 +2765,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="resendUserInvite",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3121,7 +3121,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="unblockUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3229,7 +3229,7 @@ class Users(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="unblockUser",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3261,7 +3261,7 @@ class Users(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.GetAllUsersWithGroupsResponse]:
+    ) -> models.GetAllUsersWithGroupsResponse:
         r"""Get all users with groups
 
         Retrieve all users in the organization along with their group memberships.
@@ -3323,7 +3323,7 @@ class Users(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
-                List[models.GetAllUsersWithGroupsResponse], http_res
+                models.GetAllUsersWithGroupsResponse, http_res
             )
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -3345,7 +3345,7 @@ class Users(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.GetAllUsersWithGroupsResponse]:
+    ) -> models.GetAllUsersWithGroupsResponse:
         r"""Get all users with groups
 
         Retrieve all users in the organization along with their group memberships.
@@ -3407,7 +3407,7 @@ class Users(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
-                List[models.GetAllUsersWithGroupsResponse], http_res
+                models.GetAllUsersWithGroupsResponse, http_res
             )
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -3425,18 +3425,18 @@ class Users(BaseSDK):
     def get_users_by_ids(
         self,
         *,
-        user_ids: List[str],
+        ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.GetUsersByIdsResponse]:
+    ) -> models.GetUsersByIdsResponse:
         r"""Get users by IDs
 
         Retrieve multiple users by their IDs in a single request.
 
 
-        :param user_ids:
+        :param ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3453,7 +3453,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.GetUsersByIdsRequest(
-            user_ids=user_ids,
+            ids=ids,
         )
 
         req = self._build_request(
@@ -3500,7 +3500,7 @@ class Users(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.GetUsersByIdsResponse], http_res)
+            return unmarshal_json_response(models.GetUsersByIdsResponse, http_res)
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -3517,18 +3517,18 @@ class Users(BaseSDK):
     async def get_users_by_ids_async(
         self,
         *,
-        user_ids: List[str],
+        ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> List[models.GetUsersByIdsResponse]:
+    ) -> models.GetUsersByIdsResponse:
         r"""Get users by IDs
 
         Retrieve multiple users by their IDs in a single request.
 
 
-        :param user_ids:
+        :param ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3545,7 +3545,7 @@ class Users(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.GetUsersByIdsRequest(
-            user_ids=user_ids,
+            ids=ids,
         )
 
         req = self._build_request_async(
@@ -3592,7 +3592,7 @@ class Users(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(List[models.GetUsersByIdsResponse], http_res)
+            return unmarshal_json_response(models.GetUsersByIdsResponse, http_res)
         if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -3610,7 +3610,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        full_name: str,
+        full_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3707,7 +3707,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        full_name: str,
+        full_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3804,7 +3804,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        first_name: str,
+        first_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3901,7 +3901,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        first_name: str,
+        first_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3998,7 +3998,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        last_name: str,
+        last_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4095,7 +4095,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        last_name: str,
+        last_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4192,7 +4192,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        designation: str,
+        designation: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4289,7 +4289,7 @@ class Users(BaseSDK):
         self,
         *,
         id: str,
-        designation: str,
+        designation: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,

@@ -6,78 +6,16 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
-
-
-class UpdateTeamUsersPermissionsUserRoleTypedDict(TypedDict):
-    user_id: NotRequired[str]
-    role: NotRequired[str]
-
-
-class UpdateTeamUsersPermissionsUserRole(BaseModel):
-    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
-
-    role: Optional[str] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["userId", "role"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
 
 
 class UpdateTeamUsersPermissionsRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    user_ids: NotRequired[List[str]]
-    r"""User IDs (legacy format)"""
-    role: NotRequired[str]
-    r"""Role to assign (legacy format)"""
-    user_roles: NotRequired[List[UpdateTeamUsersPermissionsUserRoleTypedDict]]
-    r"""User-role pairs (new format)"""
-
 
 class UpdateTeamUsersPermissionsRequestBody(BaseModel):
     r"""Request payload"""
-
-    user_ids: Annotated[Optional[List[str]], pydantic.Field(alias="userIds")] = None
-    r"""User IDs (legacy format)"""
-
-    role: Optional[str] = None
-    r"""Role to assign (legacy format)"""
-
-    user_roles: Annotated[
-        Optional[List[UpdateTeamUsersPermissionsUserRole]],
-        pydantic.Field(alias="userRoles"),
-    ] = None
-    r"""User-role pairs (new format)"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["userIds", "role", "userRoles"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
 
 
 class UpdateTeamUsersPermissionsRequestTypedDict(TypedDict):
@@ -119,20 +57,10 @@ class UpdateTeamUsersPermissionsResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-try:
-    UpdateTeamUsersPermissionsUserRole.model_rebuild()
-except NameError:
-    pass
-try:
-    UpdateTeamUsersPermissionsRequestBody.model_rebuild()
-except NameError:
-    pass

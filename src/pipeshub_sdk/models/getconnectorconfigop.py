@@ -2,7 +2,7 @@
 # @generated-id: 857891170e9b
 
 from __future__ import annotations
-from .connectorinstance import ConnectorInstance, ConnectorInstanceTypedDict
+from .connectorconfig import ConnectorConfig, ConnectorConfigTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
@@ -27,11 +27,8 @@ class GetConnectorConfigResponseTypedDict(TypedDict):
     r"""Configuration retrieved"""
 
     success: NotRequired[bool]
-    config: NotRequired[ConnectorInstanceTypedDict]
-    r"""A configured connector instance. Represents an active or configured
-    connection to an external service.
-
-    """
+    config: NotRequired[ConnectorConfigTypedDict]
+    r"""Configuration for a connector instance including auth, sync, and filter settings"""
 
 
 class GetConnectorConfigResponse(BaseModel):
@@ -39,11 +36,8 @@ class GetConnectorConfigResponse(BaseModel):
 
     success: Optional[bool] = None
 
-    config: Optional[ConnectorInstance] = None
-    r"""A configured connector instance. Represents an active or configured
-    connection to an external service.
-
-    """
+    config: Optional[ConnectorConfig] = None
+    r"""Configuration for a connector instance including auth, sync, and filter settings"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -53,7 +47,7 @@ class GetConnectorConfigResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

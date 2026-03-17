@@ -26,7 +26,7 @@ class Google(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -57,7 +57,7 @@ class Microsoft(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -88,7 +88,7 @@ class Azuread(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -97,7 +97,7 @@ class Azuread(BaseModel):
         return m
 
 
-class AuthProvidersOauthTypedDict(TypedDict):
+class OauthTypedDict(TypedDict):
     provider_name: NotRequired[str]
     r"""Custom OAuth provider name"""
     client_id: NotRequired[str]
@@ -106,7 +106,7 @@ class AuthProvidersOauthTypedDict(TypedDict):
     r"""OAuth authorization URL"""
 
 
-class AuthProvidersOauth(BaseModel):
+class Oauth(BaseModel):
     provider_name: Annotated[Optional[str], pydantic.Field(alias="providerName")] = None
     r"""Custom OAuth provider name"""
 
@@ -126,7 +126,7 @@ class AuthProvidersOauth(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -141,7 +141,7 @@ class AuthProvidersTypedDict(TypedDict):
     google: NotRequired[GoogleTypedDict]
     microsoft: NotRequired[MicrosoftTypedDict]
     azuread: NotRequired[AzureadTypedDict]
-    oauth: NotRequired[AuthProvidersOauthTypedDict]
+    oauth: NotRequired[OauthTypedDict]
 
 
 class AuthProviders(BaseModel):
@@ -153,7 +153,7 @@ class AuthProviders(BaseModel):
 
     azuread: Optional[Azuread] = None
 
-    oauth: Optional[AuthProvidersOauth] = None
+    oauth: Optional[Oauth] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -163,7 +163,7 @@ class AuthProviders(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -185,6 +185,6 @@ try:
 except NameError:
     pass
 try:
-    AuthProvidersOauth.model_rebuild()
+    Oauth.model_rebuild()
 except NameError:
     pass

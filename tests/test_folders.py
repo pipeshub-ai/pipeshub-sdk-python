@@ -19,7 +19,11 @@ def test_folders_create_root_folder():
             kb_id="<id>", folder_name="Project Documents"
         )
         assert res is not None
-        assert res == models.Folder()
+        assert res == models.Folder(
+            name="<value>",
+            kb_id="<id>",
+            org_id="<id>",
+        )
 
 
 def test_folders_get_folder_contents():
@@ -81,9 +85,10 @@ def test_folders_update_folder():
             kb_id="<id>", folder_id="<id>", folder_name="<value>"
         )
         assert res is not None
-        assert res == models.UpdateFolderResponse(
-            success=True,
-            message="Folder updated successfully",
+        assert res == models.Folder(
+            name="<value>",
+            kb_id="<id>",
+            org_id="<id>",
         )
 
 
@@ -148,4 +153,8 @@ def test_folders_create_subfolder():
             kb_id="<id>", folder_id="<id>", folder_name="<value>"
         )
         assert res is not None
-        assert res == models.Folder()
+        assert res == models.Folder(
+            name="<value>",
+            kb_id="<id>",
+            org_id="<id>",
+        )

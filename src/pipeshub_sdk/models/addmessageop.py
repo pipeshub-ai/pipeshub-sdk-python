@@ -3,14 +3,10 @@
 
 from __future__ import annotations
 from .addmessagerequest import AddMessageRequest, AddMessageRequestTypedDict
-from .conversation import Conversation, ConversationTypedDict
-from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
-from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 
 class AddMessageRequestRequestTypedDict(TypedDict):
@@ -33,90 +29,3 @@ class AddMessageRequestRequest(BaseModel):
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
     r"""Request payload"""
-
-
-class AddMessageMetaTypedDict(TypedDict):
-    request_id: NotRequired[str]
-    timestamp: NotRequired[datetime]
-    duration: NotRequired[int]
-    records_used: NotRequired[int]
-
-
-class AddMessageMeta(BaseModel):
-    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
-
-    timestamp: Optional[datetime] = None
-
-    duration: Optional[int] = None
-
-    records_used: Annotated[Optional[int], pydantic.Field(alias="recordsUsed")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["requestId", "timestamp", "duration", "recordsUsed"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class AddMessageResponseTypedDict(TypedDict):
-    r"""Message added and response generated"""
-
-    conversation: NotRequired[ConversationTypedDict]
-    r"""A conversation represents a chat session between a user and the AI.
-    Conversations maintain context across multiple messages and can be
-    shared, archived, and organized.
-
-    """
-    records_used: NotRequired[int]
-    meta: NotRequired[AddMessageMetaTypedDict]
-
-
-class AddMessageResponse(BaseModel):
-    r"""Message added and response generated"""
-
-    conversation: Optional[Conversation] = None
-    r"""A conversation represents a chat session between a user and the AI.
-    Conversations maintain context across multiple messages and can be
-    shared, archived, and organized.
-
-    """
-
-    records_used: Annotated[Optional[int], pydantic.Field(alias="recordsUsed")] = None
-
-    meta: Optional[AddMessageMeta] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["conversation", "recordsUsed", "meta"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-try:
-    AddMessageMeta.model_rebuild()
-except NameError:
-    pass
-try:
-    AddMessageResponse.model_rebuild()
-except NameError:
-    pass

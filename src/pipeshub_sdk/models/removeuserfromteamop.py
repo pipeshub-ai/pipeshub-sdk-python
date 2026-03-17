@@ -6,20 +6,36 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class RemoveUserFromTeamRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    user_ids: List[str]
+    user_id: NotRequired[str]
 
 
 class RemoveUserFromTeamRequestBody(BaseModel):
     r"""Request payload"""
 
-    user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["userId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class RemoveUserFromTeamRequestTypedDict(TypedDict):
@@ -61,7 +77,7 @@ class RemoveUserFromTeamResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

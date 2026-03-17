@@ -47,7 +47,7 @@ class UploadRecordsToKBFile(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -61,11 +61,8 @@ class UploadRecordsToKBRequestBodyTypedDict(TypedDict):
 
     files: List[UploadRecordsToKBFileTypedDict]
     r"""Files to upload (max 1000)"""
-    files_metadata: str
-    r"""JSON array with file_path and last_modified (epoch ms) for each file.
-    Must have one entry per uploaded file.
-
-    """
+    files_metadata: NotRequired[str]
+    r"""JSON array with file_path and last_modified for each file"""
     is_versioned: NotRequired[bool]
     r"""Enable version tracking"""
     record_type: NotRequired[str]
@@ -81,11 +78,8 @@ class UploadRecordsToKBRequestBody(BaseModel):
     ]
     r"""Files to upload (max 1000)"""
 
-    files_metadata: Annotated[str, FieldMetadata(multipart=True)]
-    r"""JSON array with file_path and last_modified (epoch ms) for each file.
-    Must have one entry per uploaded file.
-
-    """
+    files_metadata: Annotated[Optional[str], FieldMetadata(multipart=True)] = None
+    r"""JSON array with file_path and last_modified for each file"""
 
     is_versioned: Annotated[
         Optional[bool],
@@ -101,13 +95,13 @@ class UploadRecordsToKBRequestBody(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["isVersioned", "recordType"])
+        optional_fields = set(["files_metadata", "isVersioned", "recordType"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

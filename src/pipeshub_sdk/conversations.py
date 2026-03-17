@@ -28,7 +28,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateConversationResponse:
+    ) -> models.Conversation:
         r"""Create a new AI conversation
 
         Start a new conversation with PipesHub's AI assistant.<br><br>
@@ -139,7 +139,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.CreateConversationResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -167,7 +167,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateConversationResponse:
+    ) -> models.Conversation:
         r"""Create a new AI conversation
 
         Start a new conversation with PipesHub's AI assistant.<br><br>
@@ -278,7 +278,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models.CreateConversationResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -423,7 +423,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -572,7 +571,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1393,7 +1391,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AddMessageResponse:
+    ) -> models.Conversation:
         r"""Add message to conversation
 
         Add a follow-up message to an existing conversation.<br><br>
@@ -1484,7 +1482,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="addMessage",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1495,7 +1493,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AddMessageResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1526,7 +1524,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AddMessageResponse:
+    ) -> models.Conversation:
         r"""Add message to conversation
 
         Add a follow-up message to an existing conversation.<br><br>
@@ -1617,7 +1615,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="addMessage",
-                oauth2_scopes=None,
+                oauth2_scopes=[],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1628,7 +1626,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AddMessageResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1759,7 +1757,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1894,7 +1891,6 @@ class Conversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
-                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1922,7 +1918,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ShareConversationResponse:
+    ) -> models.Conversation:
         r"""Share conversation with users
 
         Share a conversation with other users in your organization.<br><br>
@@ -2014,7 +2010,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.ShareConversationResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2038,7 +2034,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ShareConversationResponse:
+    ) -> models.Conversation:
         r"""Share conversation with users
 
         Share a conversation with other users in your organization.<br><br>
@@ -2130,7 +2126,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.ShareConversationResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2153,7 +2149,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateConversationTitleResponse:
+    ) -> models.Conversation:
         r"""Update conversation title
 
         Update the title of a conversation.<br><br>
@@ -2239,9 +2235,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateConversationTitleResponse, http_res
-            )
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2264,7 +2258,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateConversationTitleResponse:
+    ) -> models.Conversation:
         r"""Update conversation title
 
         Update the title of a conversation.<br><br>
@@ -2350,9 +2344,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateConversationTitleResponse, http_res
-            )
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2374,7 +2366,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ArchiveConversationResponse:
+    ) -> models.Conversation:
         r"""Archive conversation
 
         Archive a conversation to hide it from the main list.<br><br>
@@ -2446,7 +2438,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.ArchiveConversationResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2468,7 +2460,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.ArchiveConversationResponse:
+    ) -> models.Conversation:
         r"""Archive conversation
 
         Archive a conversation to hide it from the main list.<br><br>
@@ -2540,7 +2532,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.ArchiveConversationResponse, http_res)
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2562,7 +2554,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UnarchiveConversationResponse:
+    ) -> models.Conversation:
         r"""Unarchive conversation
 
         Restore an archived conversation to the active list.<br><br>
@@ -2631,9 +2623,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UnarchiveConversationResponse, http_res
-            )
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2655,7 +2645,7 @@ class Conversations(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UnarchiveConversationResponse:
+    ) -> models.Conversation:
         r"""Unarchive conversation
 
         Restore an archived conversation to the active list.<br><br>
@@ -2724,9 +2714,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UnarchiveConversationResponse, http_res
-            )
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2749,12 +2737,11 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> eventstreaming.EventStream[models.SSEEvent]:
+    ) -> models.Conversation:
         r"""Regenerate AI response
 
         Regenerate the AI response for a specific message.<br><br>
@@ -2778,7 +2765,6 @@ class Conversations(BaseSDK):
         :param model_key: Override model for regeneration
         :param model_name:
         :param chat_mode:
-        :param model_friendly_name:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2802,7 +2788,6 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -2816,7 +2801,7 @@ class Conversations(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="text/event-stream",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -2850,17 +2835,11 @@ class Conversations(BaseSDK):
             ),
             request=req,
             error_status_codes=["400", "401", "404", "4XX", "5XX"],
-            stream=True,
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "text/event-stream"):
-            return eventstreaming.EventStream(
-                http_res,
-                lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
-                client_ref=self,
-                data_required=False,
-            )
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2872,10 +2851,7 @@ class Conversations(BaseSDK):
                 "API error occurred", http_res, http_res_text
             )
 
-        http_res_text = utils.stream_to_text(http_res)
-        raise errors.PipeshubDefaultError(
-            "Unexpected response received", http_res, http_res_text
-        )
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     async def regenerate_answer_async(
         self,
@@ -2886,12 +2862,11 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> eventstreaming.EventStreamAsync[models.SSEEvent]:
+    ) -> models.Conversation:
         r"""Regenerate AI response
 
         Regenerate the AI response for a specific message.<br><br>
@@ -2915,7 +2890,6 @@ class Conversations(BaseSDK):
         :param model_key: Override model for regeneration
         :param model_name:
         :param chat_mode:
-        :param model_friendly_name:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2939,7 +2913,6 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
             ),
         )
 
@@ -2953,7 +2926,7 @@ class Conversations(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="text/event-stream",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -2987,17 +2960,11 @@ class Conversations(BaseSDK):
             ),
             request=req,
             error_status_codes=["400", "401", "404", "4XX", "5XX"],
-            stream=True,
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "text/event-stream"):
-            return eventstreaming.EventStreamAsync(
-                http_res,
-                lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
-                client_ref=self,
-                data_required=False,
-            )
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -3009,10 +2976,7 @@ class Conversations(BaseSDK):
                 "API error occurred", http_res, http_res_text
             )
 
-        http_res_text = await utils.stream_to_text_async(http_res)
-        raise errors.PipeshubDefaultError(
-            "Unexpected response received", http_res, http_res_text
-        )
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     def update_message_feedback(
         self,
@@ -3027,24 +2991,11 @@ class Conversations(BaseSDK):
             Union[List[models.CitationFeedback], List[models.CitationFeedbackTypedDict]]
         ] = None,
         follow_up_questions_helpful: Optional[bool] = None,
-        feedback_provider: Optional[str] = None,
-        timestamp: Optional[int] = None,
-        metrics: Optional[Union[models.Metrics, models.MetricsTypedDict]] = None,
-        unused_follow_up_questions: Optional[
-            Union[
-                List[models.UnusedFollowUpQuestion],
-                List[models.UnusedFollowUpQuestionTypedDict],
-            ]
-        ] = None,
-        source: Optional[str] = None,
-        revisions: Optional[
-            Union[List[models.Revision], List[models.RevisionTypedDict]]
-        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateMessageFeedbackResponse:
+    ) -> models.Conversation:
         r"""Submit feedback on AI response
 
         Provide feedback on an AI-generated response.<br><br>
@@ -3072,12 +3023,6 @@ class Conversations(BaseSDK):
         :param comments:
         :param citation_feedback: Feedback on individual citations
         :param follow_up_questions_helpful: Were the suggested follow-up questions helpful
-        :param feedback_provider: User ID who provided feedback
-        :param timestamp: Feedback timestamp in milliseconds
-        :param metrics: Feedback metrics
-        :param unused_follow_up_questions: Follow-up questions not used
-        :param source: Source of feedback (e.g., user)
-        :param revisions: Feedback revisions
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3105,17 +3050,6 @@ class Conversations(BaseSDK):
                     citation_feedback, Optional[List[models.CitationFeedback]]
                 ),
                 follow_up_questions_helpful=follow_up_questions_helpful,
-                feedback_provider=feedback_provider,
-                timestamp=timestamp,
-                metrics=utils.get_pydantic_model(metrics, Optional[models.Metrics]),
-                unused_follow_up_questions=utils.get_pydantic_model(
-                    unused_follow_up_questions,
-                    Optional[List[models.UnusedFollowUpQuestion]],
-                ),
-                source=source,
-                revisions=utils.get_pydantic_model(
-                    revisions, Optional[List[models.Revision]]
-                ),
             ),
         )
 
@@ -3163,9 +3097,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateMessageFeedbackResponse, http_res
-            )
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -3192,24 +3124,11 @@ class Conversations(BaseSDK):
             Union[List[models.CitationFeedback], List[models.CitationFeedbackTypedDict]]
         ] = None,
         follow_up_questions_helpful: Optional[bool] = None,
-        feedback_provider: Optional[str] = None,
-        timestamp: Optional[int] = None,
-        metrics: Optional[Union[models.Metrics, models.MetricsTypedDict]] = None,
-        unused_follow_up_questions: Optional[
-            Union[
-                List[models.UnusedFollowUpQuestion],
-                List[models.UnusedFollowUpQuestionTypedDict],
-            ]
-        ] = None,
-        source: Optional[str] = None,
-        revisions: Optional[
-            Union[List[models.Revision], List[models.RevisionTypedDict]]
-        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateMessageFeedbackResponse:
+    ) -> models.Conversation:
         r"""Submit feedback on AI response
 
         Provide feedback on an AI-generated response.<br><br>
@@ -3237,12 +3156,6 @@ class Conversations(BaseSDK):
         :param comments:
         :param citation_feedback: Feedback on individual citations
         :param follow_up_questions_helpful: Were the suggested follow-up questions helpful
-        :param feedback_provider: User ID who provided feedback
-        :param timestamp: Feedback timestamp in milliseconds
-        :param metrics: Feedback metrics
-        :param unused_follow_up_questions: Follow-up questions not used
-        :param source: Source of feedback (e.g., user)
-        :param revisions: Feedback revisions
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3270,17 +3183,6 @@ class Conversations(BaseSDK):
                     citation_feedback, Optional[List[models.CitationFeedback]]
                 ),
                 follow_up_questions_helpful=follow_up_questions_helpful,
-                feedback_provider=feedback_provider,
-                timestamp=timestamp,
-                metrics=utils.get_pydantic_model(metrics, Optional[models.Metrics]),
-                unused_follow_up_questions=utils.get_pydantic_model(
-                    unused_follow_up_questions,
-                    Optional[List[models.UnusedFollowUpQuestion]],
-                ),
-                source=source,
-                revisions=utils.get_pydantic_model(
-                    revisions, Optional[List[models.Revision]]
-                ),
             ),
         )
 
@@ -3328,9 +3230,7 @@ class Conversations(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.UpdateMessageFeedbackResponse, http_res
-            )
+            return unmarshal_json_response(models.Conversation, http_res)
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -3348,7 +3248,8 @@ class Conversations(BaseSDK):
         self,
         *,
         conversation_id: str,
-        user_ids: List[str],
+        user_ids: Optional[List[str]] = None,
+        team_ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3361,6 +3262,7 @@ class Conversations(BaseSDK):
 
         :param conversation_id:
         :param user_ids:
+        :param team_ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3380,6 +3282,7 @@ class Conversations(BaseSDK):
             conversation_id=conversation_id,
             body=models.UnshareConversationByIDRequestBody(
                 user_ids=user_ids,
+                team_ids=team_ids,
             ),
         )
 
@@ -3389,7 +3292,7 @@ class Conversations(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -3397,11 +3300,11 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
-                False,
+                True,
                 "json",
-                models.UnshareConversationByIDRequestBody,
+                Optional[models.UnshareConversationByIDRequestBody],
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -3451,7 +3354,8 @@ class Conversations(BaseSDK):
         self,
         *,
         conversation_id: str,
-        user_ids: List[str],
+        user_ids: Optional[List[str]] = None,
+        team_ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3464,6 +3368,7 @@ class Conversations(BaseSDK):
 
         :param conversation_id:
         :param user_ids:
+        :param team_ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3483,6 +3388,7 @@ class Conversations(BaseSDK):
             conversation_id=conversation_id,
             body=models.UnshareConversationByIDRequestBody(
                 user_ids=user_ids,
+                team_ids=team_ids,
             ),
         )
 
@@ -3492,7 +3398,7 @@ class Conversations(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -3500,11 +3406,11 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
+                request.body if request is not None else None,
                 False,
-                False,
+                True,
                 "json",
-                models.UnshareConversationByIDRequestBody,
+                Optional[models.UnshareConversationByIDRequestBody],
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,

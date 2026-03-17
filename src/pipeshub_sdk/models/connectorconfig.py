@@ -4,431 +4,75 @@
 from __future__ import annotations
 from .connectorauthtype import ConnectorAuthType
 from .connectorscope import ConnectorScope
-from pipeshub_sdk.types import (
-    BaseModel,
-    Nullable,
-    OptionalNullable,
-    UNSET,
-    UNSET_SENTINEL,
-)
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class ConnectorConfigAuthValuesTypedDict(TypedDict):
-    r"""Auth field values (varies per connector)"""
-
-    api_key: NotRequired[str]
-    base_url: NotRequired[str]
-    username: NotRequired[str]
-    password: NotRequired[str]
+class AuthTypedDict(TypedDict):
+    r"""Authentication configuration (sensitive data redacted)"""
 
 
-class ConnectorConfigAuthValues(BaseModel):
-    r"""Auth field values (varies per connector)"""
-
-    api_key: Annotated[Optional[str], pydantic.Field(alias="apiKey")] = None
-
-    base_url: Annotated[Optional[str], pydantic.Field(alias="baseUrl")] = None
-
-    username: Optional[str] = None
-
-    password: Optional[str] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["apiKey", "baseUrl", "username", "password"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigAuthTypedDict(TypedDict):
-    r"""Authentication configuration"""
-
-    oauth_instance_name: NotRequired[str]
-    auth_type: NotRequired[str]
-    oauth_config_id: NotRequired[str]
-    connector_type: NotRequired[str]
-    authorize_url: NotRequired[str]
-    token_url: NotRequired[str]
-    scopes: NotRequired[List[str]]
-    redirect_uri: NotRequired[str]
-    connector_scope: NotRequired[str]
-    values: NotRequired[ConnectorConfigAuthValuesTypedDict]
-    r"""Auth field values (varies per connector)"""
-
-
-class ConnectorConfigAuth(BaseModel):
-    r"""Authentication configuration"""
-
-    oauth_instance_name: Annotated[
-        Optional[str], pydantic.Field(alias="oauthInstanceName")
-    ] = None
-
-    auth_type: Annotated[Optional[str], pydantic.Field(alias="authType")] = None
-
-    oauth_config_id: Annotated[Optional[str], pydantic.Field(alias="oauthConfigId")] = (
-        None
-    )
-
-    connector_type: Annotated[Optional[str], pydantic.Field(alias="connectorType")] = (
-        None
-    )
-
-    authorize_url: Annotated[Optional[str], pydantic.Field(alias="authorizeUrl")] = None
-
-    token_url: Annotated[Optional[str], pydantic.Field(alias="tokenUrl")] = None
-
-    scopes: Optional[List[str]] = None
-
-    redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
-
-    connector_scope: Annotated[
-        Optional[str], pydantic.Field(alias="connectorScope")
-    ] = None
-
-    values: Optional[ConnectorConfigAuthValues] = None
-    r"""Auth field values (varies per connector)"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "oauthInstanceName",
-                "authType",
-                "oauthConfigId",
-                "connectorType",
-                "authorizeUrl",
-                "tokenUrl",
-                "scopes",
-                "redirectUri",
-                "connectorScope",
-                "values",
-            ]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigScheduledConfigTypedDict(TypedDict):
-    r"""Scheduled sync configuration"""
-
-    interval_minutes: NotRequired[int]
-    cron_expression: NotRequired[str]
-    timezone: NotRequired[str]
-
-
-class ConnectorConfigScheduledConfig(BaseModel):
-    r"""Scheduled sync configuration"""
-
-    interval_minutes: Annotated[
-        Optional[int], pydantic.Field(alias="intervalMinutes")
-    ] = None
-
-    cron_expression: Annotated[
-        Optional[str], pydantic.Field(alias="cronExpression")
-    ] = None
-
-    timezone: Optional[str] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["intervalMinutes", "cronExpression", "timezone"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigWebhookConfigTypedDict(TypedDict):
-    r"""Webhook configuration"""
-
-    events: NotRequired[List[str]]
-    supported: NotRequired[bool]
-    webhook_url: NotRequired[str]
-
-
-class ConnectorConfigWebhookConfig(BaseModel):
-    r"""Webhook configuration"""
-
-    events: Optional[List[str]] = None
-
-    supported: Optional[bool] = None
-
-    webhook_url: Annotated[Optional[str], pydantic.Field(alias="webhookUrl")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["events", "supported", "webhookUrl"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+class Auth(BaseModel):
+    r"""Authentication configuration (sensitive data redacted)"""
 
 
 class ConnectorConfigSyncTypedDict(TypedDict):
-    r"""Sync configuration"""
-
-    selected_strategy: NotRequired[str]
-    r"""Selected sync strategy"""
-    scheduled_config: NotRequired[ConnectorConfigScheduledConfigTypedDict]
-    r"""Scheduled sync configuration"""
-    webhook_config: NotRequired[ConnectorConfigWebhookConfigTypedDict]
-    r"""Webhook configuration"""
+    r"""Sync configuration (schedule, options)"""
 
 
 class ConnectorConfigSync(BaseModel):
-    r"""Sync configuration"""
-
-    selected_strategy: Annotated[
-        Optional[str], pydantic.Field(alias="selectedStrategy")
-    ] = None
-    r"""Selected sync strategy"""
-
-    scheduled_config: Annotated[
-        Optional[ConnectorConfigScheduledConfig],
-        pydantic.Field(alias="scheduledConfig"),
-    ] = None
-    r"""Scheduled sync configuration"""
-
-    webhook_config: Annotated[
-        Optional[ConnectorConfigWebhookConfig], pydantic.Field(alias="webhookConfig")
-    ] = None
-    r"""Webhook configuration"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["selectedStrategy", "scheduledConfig", "webhookConfig"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigSyncValuesTypedDict(TypedDict):
-    r"""Sync filter values"""
-
-    file_types: NotRequired[List[str]]
-    folders: NotRequired[List[str]]
-    include_shared: NotRequired[bool]
-
-
-class ConnectorConfigSyncValues(BaseModel):
-    r"""Sync filter values"""
-
-    file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
-
-    folders: Optional[List[str]] = None
-
-    include_shared: Annotated[Optional[bool], pydantic.Field(alias="includeShared")] = (
-        None
-    )
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["fileTypes", "folders", "includeShared"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigFiltersSyncTypedDict(TypedDict):
-    r"""Sync filter configuration"""
-
-    values: NotRequired[ConnectorConfigSyncValuesTypedDict]
-    r"""Sync filter values"""
-
-
-class ConnectorConfigFiltersSync(BaseModel):
-    r"""Sync filter configuration"""
-
-    values: Optional[ConnectorConfigSyncValues] = None
-    r"""Sync filter values"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["values"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigFolderTypedDict(TypedDict):
-    id: NotRequired[str]
-    name: NotRequired[str]
-
-
-class ConnectorConfigFolder(BaseModel):
-    id: Optional[str] = None
-
-    name: Optional[str] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["id", "name"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ConnectorConfigFiltersValuesTypedDict(TypedDict):
-    r"""Filter values (varies per connector)"""
-
-    file_types: NotRequired[List[str]]
-    folders: NotRequired[List[ConnectorConfigFolderTypedDict]]
-    modified_after: NotRequired[str]
-
-
-class ConnectorConfigFiltersValues(BaseModel):
-    r"""Filter values (varies per connector)"""
-
-    file_types: Annotated[Optional[List[str]], pydantic.Field(alias="fileTypes")] = None
-
-    folders: Optional[List[ConnectorConfigFolder]] = None
-
-    modified_after: Annotated[Optional[str], pydantic.Field(alias="modifiedAfter")] = (
-        None
-    )
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["fileTypes", "folders", "modifiedAfter"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    r"""Sync configuration (schedule, options)"""
 
 
 class ConnectorConfigFiltersTypedDict(TypedDict):
-    r"""Filter configuration"""
-
-    sync: NotRequired[ConnectorConfigFiltersSyncTypedDict]
-    r"""Sync filter configuration"""
-    values: NotRequired[ConnectorConfigFiltersValuesTypedDict]
-    r"""Filter values (varies per connector)"""
+    r"""Filter selections for data scope"""
 
 
 class ConnectorConfigFilters(BaseModel):
-    r"""Filter configuration"""
+    r"""Filter selections for data scope"""
 
-    sync: Optional[ConnectorConfigFiltersSync] = None
-    r"""Sync filter configuration"""
 
-    values: Optional[ConnectorConfigFiltersValues] = None
-    r"""Filter values (varies per connector)"""
+class ConnectorConfigConfigTypedDict(TypedDict):
+    r"""Configuration sections"""
+
+    auth: NotRequired[AuthTypedDict]
+    r"""Authentication configuration (sensitive data redacted)"""
+    sync: NotRequired[ConnectorConfigSyncTypedDict]
+    r"""Sync configuration (schedule, options)"""
+    filters: NotRequired[ConnectorConfigFiltersTypedDict]
+    r"""Filter selections for data scope"""
+
+
+class ConnectorConfigConfig(BaseModel):
+    r"""Configuration sections"""
+
+    auth: Optional[Auth] = None
+    r"""Authentication configuration (sensitive data redacted)"""
+
+    sync: Optional[ConnectorConfigSync] = None
+    r"""Sync configuration (schedule, options)"""
+
+    filters: Optional[ConnectorConfigFilters] = None
+    r"""Filter selections for data scope"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["sync", "values"])
+        optional_fields = set(["auth", "sync", "filters"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-class ConnectorConfigCredentialsTypedDict(TypedDict):
-    r"""Credential details"""
-
-
-class ConnectorConfigCredentials(BaseModel):
-    r"""Credential details"""
-
-
-class ConnectorConfigOauthTypedDict(TypedDict):
-    r"""OAuth configuration"""
-
-
-class ConnectorConfigOauth(BaseModel):
-    r"""OAuth configuration"""
 
 
 class ConnectorConfigTypedDict(TypedDict):
@@ -447,7 +91,6 @@ class ConnectorConfigTypedDict(TypedDict):
     <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
     <li><code>API_TOKEN</code> - API key or token authentication</li>
     <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
-    <li><code>BASIC_AUTH</code> - Basic authentication (username/password)</li>
     <li><code>NONE</code> - No authentication required</li>
     </ul>
 
@@ -460,16 +103,8 @@ class ConnectorConfigTypedDict(TypedDict):
     </ul>
 
     """
-    auth: NotRequired[ConnectorConfigAuthTypedDict]
-    r"""Authentication configuration"""
-    sync: NotRequired[ConnectorConfigSyncTypedDict]
-    r"""Sync configuration"""
-    filters: NotRequired[ConnectorConfigFiltersTypedDict]
-    r"""Filter configuration"""
-    credentials: NotRequired[Nullable[ConnectorConfigCredentialsTypedDict]]
-    r"""Credential details"""
-    oauth: NotRequired[Nullable[ConnectorConfigOauthTypedDict]]
-    r"""OAuth configuration"""
+    config: NotRequired[ConnectorConfigConfigTypedDict]
+    r"""Configuration sections"""
     base_url: NotRequired[str]
     r"""Base URL for self-hosted instances"""
     is_active: NotRequired[bool]
@@ -500,7 +135,6 @@ class ConnectorConfig(BaseModel):
     <li><code>OAUTH_ADMIN_CONSENT</code> - Admin OAuth with org-wide consent</li>
     <li><code>API_TOKEN</code> - API key or token authentication</li>
     <li><code>USERNAME_PASSWORD</code> - Username/password credentials</li>
-    <li><code>BASIC_AUTH</code> - Basic authentication (username/password)</li>
     <li><code>NONE</code> - No authentication required</li>
     </ul>
 
@@ -515,20 +149,8 @@ class ConnectorConfig(BaseModel):
 
     """
 
-    auth: Optional[ConnectorConfigAuth] = None
-    r"""Authentication configuration"""
-
-    sync: Optional[ConnectorConfigSync] = None
-    r"""Sync configuration"""
-
-    filters: Optional[ConnectorConfigFilters] = None
-    r"""Filter configuration"""
-
-    credentials: OptionalNullable[ConnectorConfigCredentials] = UNSET
-    r"""Credential details"""
-
-    oauth: OptionalNullable[ConnectorConfigOauth] = UNSET
-    r"""OAuth configuration"""
+    config: Optional[ConnectorConfigConfig] = None
+    r"""Configuration sections"""
 
     base_url: Annotated[Optional[str], pydantic.Field(alias="baseUrl")] = None
     r"""Base URL for self-hosted instances"""
@@ -552,68 +174,27 @@ class ConnectorConfig(BaseModel):
                 "instanceName",
                 "authType",
                 "scope",
-                "auth",
-                "sync",
-                "filters",
-                "credentials",
-                "oauth",
+                "config",
                 "baseUrl",
                 "isActive",
                 "isConfigured",
                 "isAuthenticated",
             ]
         )
-        nullable_fields = set(["credentials", "oauth"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-            is_nullable_and_explicitly_set = (
-                k in nullable_fields
-                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
-            )
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
-                if (
-                    val is not None
-                    or k not in optional_fields
-                    or is_nullable_and_explicitly_set
-                ):
+                if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
 
 
-try:
-    ConnectorConfigAuthValues.model_rebuild()
-except NameError:
-    pass
-try:
-    ConnectorConfigAuth.model_rebuild()
-except NameError:
-    pass
-try:
-    ConnectorConfigScheduledConfig.model_rebuild()
-except NameError:
-    pass
-try:
-    ConnectorConfigWebhookConfig.model_rebuild()
-except NameError:
-    pass
-try:
-    ConnectorConfigSync.model_rebuild()
-except NameError:
-    pass
-try:
-    ConnectorConfigSyncValues.model_rebuild()
-except NameError:
-    pass
-try:
-    ConnectorConfigFiltersValues.model_rebuild()
-except NameError:
-    pass
 try:
     ConnectorConfig.model_rebuild()
 except NameError:

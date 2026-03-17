@@ -30,12 +30,7 @@ def test_connector_sdk_reindex_record():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.connector.reindex_record(record_id="<id>", depth=0, force=False)
-        assert res is not None
-        assert res == models.ReindexRecordResponse(
-            success=True,
-            message="Reindex initiated for record rec-abc123",
-        )
+        pipeshub.connector.reindex_record(record_id="<id>", depth=-1)
 
 
 def test_connector_sdk_reindex_record_group():
@@ -48,14 +43,7 @@ def test_connector_sdk_reindex_record_group():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.connector.reindex_record_group(
-            record_group_id="<id>", depth=0, force=False
-        )
-        assert res is not None
-        assert res == models.ReindexRecordGroupResponse(
-            success=True,
-            message="Reindex initiated for record group grp-abc123 with depth 0",
-        )
+        pipeshub.connector.reindex_record_group(record_group_id="<id>", depth=-1)
 
 
 def test_connector_sdk_resync_connector():
@@ -68,8 +56,6 @@ def test_connector_sdk_resync_connector():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.connector.resync_connector(
-            connector_name="GOOGLE_DRIVE", connector_id="<id>", full_sync=False
+        pipeshub.connector.resync_connector(
+            connector_name="GOOGLE_DRIVE", connector_id="<id>"
         )
-        assert res is not None
-        assert res == models.ResyncConnectorResponse()

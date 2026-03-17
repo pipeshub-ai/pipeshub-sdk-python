@@ -368,8 +368,6 @@ class AuthenticationConfiguration(BaseSDK):
         *,
         client_id: Optional[str] = None,
         tenant_id: Optional[str] = "common",
-        authority: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -381,8 +379,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
-        :param authority: Microsoft authority URL
-        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -401,8 +397,6 @@ class AuthenticationConfiguration(BaseSDK):
         request = models.MicrosoftAuthConfig(
             client_id=client_id,
             tenant_id=tenant_id,
-            authority=authority,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -468,8 +462,6 @@ class AuthenticationConfiguration(BaseSDK):
         *,
         client_id: Optional[str] = None,
         tenant_id: Optional[str] = "common",
-        authority: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -481,8 +473,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
-        :param authority: Microsoft authority URL
-        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -501,8 +491,6 @@ class AuthenticationConfiguration(BaseSDK):
         request = models.MicrosoftAuthConfig(
             client_id=client_id,
             tenant_id=tenant_id,
-            authority=authority,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(
@@ -729,7 +717,6 @@ class AuthenticationConfiguration(BaseSDK):
         self,
         *,
         client_id: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -740,7 +727,6 @@ class AuthenticationConfiguration(BaseSDK):
         Set up Google OAuth as an authentication provider.
 
         :param client_id: Google OAuth client ID
-        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -758,7 +744,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         request = models.GoogleAuthConfig(
             client_id=client_id,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -823,7 +808,6 @@ class AuthenticationConfiguration(BaseSDK):
         self,
         *,
         client_id: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -834,7 +818,6 @@ class AuthenticationConfiguration(BaseSDK):
         Set up Google OAuth as an authentication provider.
 
         :param client_id: Google OAuth client ID
-        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -852,7 +835,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         request = models.GoogleAuthConfig(
             client_id=client_id,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(
@@ -1081,7 +1063,6 @@ class AuthenticationConfiguration(BaseSDK):
         entry_point: Optional[str] = None,
         certificate: Optional[str] = None,
         email_key: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1094,7 +1075,6 @@ class AuthenticationConfiguration(BaseSDK):
         :param entry_point: Identity provider SSO URL
         :param certificate: X.509 certificate for signature validation (PEM format)
         :param email_key: SAML attribute name for user email
-        :param enable_jit: Enable Just-In-Time user provisioning via SAML
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1114,7 +1094,6 @@ class AuthenticationConfiguration(BaseSDK):
             entry_point=entry_point,
             certificate=certificate,
             email_key=email_key,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -1181,7 +1160,6 @@ class AuthenticationConfiguration(BaseSDK):
         entry_point: Optional[str] = None,
         certificate: Optional[str] = None,
         email_key: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1194,7 +1172,6 @@ class AuthenticationConfiguration(BaseSDK):
         :param entry_point: Identity provider SSO URL
         :param certificate: X.509 certificate for signature validation (PEM format)
         :param email_key: SAML attribute name for user email
-        :param enable_jit: Enable Just-In-Time user provisioning via SAML
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1214,7 +1191,6 @@ class AuthenticationConfiguration(BaseSDK):
             entry_point=entry_point,
             certificate=certificate,
             email_key=email_key,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(
@@ -1448,7 +1424,6 @@ class AuthenticationConfiguration(BaseSDK):
         user_info_endpoint: Optional[str] = None,
         scope: Optional[str] = None,
         redirect_uri: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1466,7 +1441,6 @@ class AuthenticationConfiguration(BaseSDK):
         :param user_info_endpoint: User info endpoint URL
         :param scope: OAuth scopes to request
         :param redirect_uri: OAuth redirect URI
-        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1491,7 +1465,6 @@ class AuthenticationConfiguration(BaseSDK):
             user_info_endpoint=user_info_endpoint,
             scope=scope,
             redirect_uri=redirect_uri,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request(
@@ -1563,7 +1536,6 @@ class AuthenticationConfiguration(BaseSDK):
         user_info_endpoint: Optional[str] = None,
         scope: Optional[str] = None,
         redirect_uri: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1581,7 +1553,6 @@ class AuthenticationConfiguration(BaseSDK):
         :param user_info_endpoint: User info endpoint URL
         :param scope: OAuth scopes to request
         :param redirect_uri: OAuth redirect URI
-        :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1606,7 +1577,6 @@ class AuthenticationConfiguration(BaseSDK):
             user_info_endpoint=user_info_endpoint,
             scope=scope,
             redirect_uri=redirect_uri,
-            enable_jit=enable_jit,
         )
 
         req = self._build_request_async(

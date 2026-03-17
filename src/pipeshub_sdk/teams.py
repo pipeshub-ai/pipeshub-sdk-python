@@ -1527,7 +1527,7 @@ class Teams(BaseSDK):
         self,
         *,
         team_id: str,
-        user_ids: List[str],
+        user_ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1624,7 +1624,7 @@ class Teams(BaseSDK):
         self,
         *,
         team_id: str,
-        user_ids: List[str],
+        user_ids: Optional[List[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1721,7 +1721,7 @@ class Teams(BaseSDK):
         self,
         *,
         team_id: str,
-        user_ids: List[str],
+        user_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1733,7 +1733,7 @@ class Teams(BaseSDK):
 
 
         :param team_id:
-        :param user_ids:
+        :param user_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1752,7 +1752,7 @@ class Teams(BaseSDK):
         request = models.RemoveUserFromTeamRequest(
             team_id=team_id,
             body=models.RemoveUserFromTeamRequestBody(
-                user_ids=user_ids,
+                user_id=user_id,
             ),
         )
 
@@ -1818,7 +1818,7 @@ class Teams(BaseSDK):
         self,
         *,
         team_id: str,
-        user_ids: List[str],
+        user_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1830,7 +1830,7 @@ class Teams(BaseSDK):
 
 
         :param team_id:
-        :param user_ids:
+        :param user_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1849,7 +1849,7 @@ class Teams(BaseSDK):
         request = models.RemoveUserFromTeamRequest(
             team_id=team_id,
             body=models.RemoveUserFromTeamRequestBody(
-                user_ids=user_ids,
+                user_id=user_id,
             ),
         )
 
@@ -1915,14 +1915,10 @@ class Teams(BaseSDK):
         self,
         *,
         team_id: str,
-        user_ids: Optional[List[str]] = None,
-        role: Optional[str] = None,
-        user_roles: Optional[
-            Union[
-                List[models.UpdateTeamUsersPermissionsUserRole],
-                List[models.UpdateTeamUsersPermissionsUserRoleTypedDict],
-            ]
-        ] = None,
+        body: Union[
+            models.UpdateTeamUsersPermissionsRequestBody,
+            models.UpdateTeamUsersPermissionsRequestBodyTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1934,9 +1930,7 @@ class Teams(BaseSDK):
 
 
         :param team_id:
-        :param user_ids: User IDs (legacy format)
-        :param role: Role to assign (legacy format)
-        :param user_roles: User-role pairs (new format)
+        :param body: Request payload
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1954,13 +1948,8 @@ class Teams(BaseSDK):
 
         request = models.UpdateTeamUsersPermissionsRequest(
             team_id=team_id,
-            body=models.UpdateTeamUsersPermissionsRequestBody(
-                user_ids=user_ids,
-                role=role,
-                user_roles=utils.get_pydantic_model(
-                    user_roles,
-                    Optional[List[models.UpdateTeamUsersPermissionsUserRole]],
-                ),
+            body=utils.get_pydantic_model(
+                body, models.UpdateTeamUsersPermissionsRequestBody
             ),
         )
 
@@ -2032,14 +2021,10 @@ class Teams(BaseSDK):
         self,
         *,
         team_id: str,
-        user_ids: Optional[List[str]] = None,
-        role: Optional[str] = None,
-        user_roles: Optional[
-            Union[
-                List[models.UpdateTeamUsersPermissionsUserRole],
-                List[models.UpdateTeamUsersPermissionsUserRoleTypedDict],
-            ]
-        ] = None,
+        body: Union[
+            models.UpdateTeamUsersPermissionsRequestBody,
+            models.UpdateTeamUsersPermissionsRequestBodyTypedDict,
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2051,9 +2036,7 @@ class Teams(BaseSDK):
 
 
         :param team_id:
-        :param user_ids: User IDs (legacy format)
-        :param role: Role to assign (legacy format)
-        :param user_roles: User-role pairs (new format)
+        :param body: Request payload
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2071,13 +2054,8 @@ class Teams(BaseSDK):
 
         request = models.UpdateTeamUsersPermissionsRequest(
             team_id=team_id,
-            body=models.UpdateTeamUsersPermissionsRequestBody(
-                user_ids=user_ids,
-                role=role,
-                user_roles=utils.get_pydantic_model(
-                    user_roles,
-                    Optional[List[models.UpdateTeamUsersPermissionsUserRole]],
-                ),
+            body=utils.get_pydantic_model(
+                body, models.UpdateTeamUsersPermissionsRequestBody
             ),
         )
 

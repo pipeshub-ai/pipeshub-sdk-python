@@ -4,10 +4,10 @@
 from .basesdk import BaseSDK
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import List, Mapping, Optional
+from typing import Mapping, Optional, Union
 
 
 class KnowledgeBases(BaseSDK):
@@ -668,7 +668,7 @@ class KnowledgeBases(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateKnowledgeBaseResponse:
+    ) -> models.KnowledgeBase:
         r"""Update knowledge base
 
         Update a knowledge base's name.<br><br>
@@ -752,7 +752,7 @@ class KnowledgeBases(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateKnowledgeBaseResponse, http_res)
+            return unmarshal_json_response(models.KnowledgeBase, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -775,7 +775,7 @@ class KnowledgeBases(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateKnowledgeBaseResponse:
+    ) -> models.KnowledgeBase:
         r"""Update knowledge base
 
         Update a knowledge base's name.<br><br>
@@ -859,7 +859,7 @@ class KnowledgeBases(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateKnowledgeBaseResponse, http_res)
+            return unmarshal_json_response(models.KnowledgeBase, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1072,9 +1072,7 @@ class KnowledgeBases(BaseSDK):
     def reindex_failed_records(
         self,
         *,
-        app: str,
-        connector_id: str,
-        status_filters: Optional[List[str]] = None,
+        connector_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1085,9 +1083,7 @@ class KnowledgeBases(BaseSDK):
         Trigger reindexing of records that previously failed to index for a specific connector.
 
 
-        :param app: Connector type name
-        :param connector_id: Connector instance ID
-        :param status_filters: Optional status filters
+        :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1104,9 +1100,7 @@ class KnowledgeBases(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.ReindexFailedRecordsRequest(
-            app=app,
             connector_id=connector_id,
-            status_filters=status_filters,
         )
 
         req = self._build_request(
@@ -1172,9 +1166,7 @@ class KnowledgeBases(BaseSDK):
     async def reindex_failed_records_async(
         self,
         *,
-        app: str,
-        connector_id: str,
-        status_filters: Optional[List[str]] = None,
+        connector_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1185,9 +1177,7 @@ class KnowledgeBases(BaseSDK):
         Trigger reindexing of records that previously failed to index for a specific connector.
 
 
-        :param app: Connector type name
-        :param connector_id: Connector instance ID
-        :param status_filters: Optional status filters
+        :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1204,9 +1194,7 @@ class KnowledgeBases(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.ReindexFailedRecordsRequest(
-            app=app,
             connector_id=connector_id,
-            status_filters=status_filters,
         )
 
         req = self._build_request_async(
@@ -1274,7 +1262,9 @@ class KnowledgeBases(BaseSDK):
         *,
         kb_id: str,
         record_id: str,
-        new_parent_id: Nullable[str],
+        body: Union[
+            models.MoveRecordRequestBody, models.MoveRecordRequestBodyTypedDict
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1287,7 +1277,7 @@ class KnowledgeBases(BaseSDK):
 
         :param kb_id:
         :param record_id:
-        :param new_parent_id: ID of the new parent folder, or null for root
+        :param body: Request payload
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1306,9 +1296,7 @@ class KnowledgeBases(BaseSDK):
         request = models.MoveRecordRequest(
             kb_id=kb_id,
             record_id=record_id,
-            body=models.MoveRecordRequestBody(
-                new_parent_id=new_parent_id,
-            ),
+            body=utils.get_pydantic_model(body, models.MoveRecordRequestBody),
         )
 
         req = self._build_request(
@@ -1374,7 +1362,9 @@ class KnowledgeBases(BaseSDK):
         *,
         kb_id: str,
         record_id: str,
-        new_parent_id: Nullable[str],
+        body: Union[
+            models.MoveRecordRequestBody, models.MoveRecordRequestBodyTypedDict
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1387,7 +1377,7 @@ class KnowledgeBases(BaseSDK):
 
         :param kb_id:
         :param record_id:
-        :param new_parent_id: ID of the new parent folder, or null for root
+        :param body: Request payload
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1406,9 +1396,7 @@ class KnowledgeBases(BaseSDK):
         request = models.MoveRecordRequest(
             kb_id=kb_id,
             record_id=record_id,
-            body=models.MoveRecordRequestBody(
-                new_parent_id=new_parent_id,
-            ),
+            body=utils.get_pydantic_model(body, models.MoveRecordRequestBody),
         )
 
         req = self._build_request_async(

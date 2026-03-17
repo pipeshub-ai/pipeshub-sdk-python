@@ -200,7 +200,7 @@ def test_crawling_jobs_schedule_crawling_job_one_time_sync():
                 "schedule_type": "once",
                 "is_enabled": True,
                 "timezone": "UTC",
-                "scheduled_time": parse_datetime("2027-12-25T10:00:00Z"),
+                "scheduled_time": parse_datetime("2024-12-25T10:00:00Z"),
             },
             priority=1,
             max_retries=3,

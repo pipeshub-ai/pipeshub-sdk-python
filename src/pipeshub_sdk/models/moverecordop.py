@@ -2,7 +2,7 @@
 # @generated-id: a7f8021fa50d
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel, Nullable, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
 from pydantic import model_serializer
@@ -13,29 +13,9 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class MoveRecordRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    new_parent_id: Nullable[str]
-    r"""ID of the new parent folder, or null for root"""
-
 
 class MoveRecordRequestBody(BaseModel):
     r"""Request payload"""
-
-    new_parent_id: Annotated[Nullable[str], pydantic.Field(alias="newParentId")]
-    r"""ID of the new parent folder, or null for root"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                m[k] = val
-
-        return m
 
 
 class MoveRecordRequestTypedDict(TypedDict):
@@ -84,16 +64,10 @@ class MoveRecordResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-try:
-    MoveRecordRequestBody.model_rebuild()
-except NameError:
-    pass

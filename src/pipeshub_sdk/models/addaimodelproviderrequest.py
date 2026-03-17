@@ -12,43 +12,12 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Literal, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-AddAIModelProviderRequestProvider = Literal[
-    "anthropic",
-    "bedrock",
-    "azureAI",
-    "azureOpenAI",
-    "cohere",
-    "deepseek",
-    "fireworks",
-    "google",
-    "groq",
-    "huggingFace",
-    "mistral",
-    "ollama",
-    "openAI",
-    "openRouter",
-    "togetherAI",
-    "voyageAI",
-    "azureDI",
-    "ocrmypdf",
-]
-r"""Provider name"""
-
-
 class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
-    r"""Provider-specific configuration. Required fields vary by provider:<br>
-    <ul>
-    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
-    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
-    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
-    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
-    </ul>
-
-    """
+    r"""Provider-specific configuration"""
 
     model: NotRequired[str]
     r"""Model name/identifier"""
@@ -69,15 +38,7 @@ class AddAIModelProviderRequestConfigurationTypedDict(TypedDict):
 
 
 class AddAIModelProviderRequestConfiguration(BaseModel):
-    r"""Provider-specific configuration. Required fields vary by provider:<br>
-    <ul>
-    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
-    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
-    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
-    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
-    </ul>
-
-    """
+    r"""Provider-specific configuration"""
 
     model: Optional[str] = None
     r"""Model name/identifier"""
@@ -130,7 +91,7 @@ class AddAIModelProviderRequestConfiguration(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -144,18 +105,10 @@ class AddAIModelProviderRequestTypedDict(TypedDict):
 
     model_type: ModelType
     r"""Type of AI model"""
-    provider: AddAIModelProviderRequestProvider
-    r"""Provider name"""
+    provider: str
+    r"""Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)"""
     configuration: AddAIModelProviderRequestConfigurationTypedDict
-    r"""Provider-specific configuration. Required fields vary by provider:<br>
-    <ul>
-    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
-    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
-    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
-    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
-    </ul>
-
-    """
+    r"""Provider-specific configuration"""
     is_multimodal: NotRequired[bool]
     r"""Whether the model supports multimodal inputs"""
     is_reasoning: NotRequired[bool]
@@ -172,19 +125,11 @@ class AddAIModelProviderRequest(BaseModel):
     model_type: Annotated[ModelType, pydantic.Field(alias="modelType")]
     r"""Type of AI model"""
 
-    provider: AddAIModelProviderRequestProvider
-    r"""Provider name"""
+    provider: str
+    r"""Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)"""
 
     configuration: AddAIModelProviderRequestConfiguration
-    r"""Provider-specific configuration. Required fields vary by provider:<br>
-    <ul>
-    <li><b>OpenAI/Anthropic/Cohere/etc:</b> model, apiKey</li>
-    <li><b>Azure OpenAI:</b> model, apiKey, endpoint, deploymentName</li>
-    <li><b>AWS Bedrock:</b> model, awsAccessKeyId, awsAccessSecretKey, region</li>
-    <li><b>Ollama/self-hosted:</b> model, endpoint</li>
-    </ul>
-
-    """
+    r"""Provider-specific configuration"""
 
     is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
         False
@@ -213,7 +158,7 @@ class AddAIModelProviderRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

@@ -1,10 +1,9 @@
 # SyncSchema
 
-Filter field definitions
+JSON Schema for sync configuration
 
 
 ## Fields
 
-| Field                                                                          | Type                                                                           | Required                                                                       | Description                                                                    |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| `fields`                                                                       | List[[models.ConnectorFieldDefinition](../models/connectorfielddefinition.md)] | :heavy_minus_sign:                                                             | N/A                                                                            |
+| Field       | Type        | Required    | Description |
+| ----------- | ----------- | ----------- | ----------- |

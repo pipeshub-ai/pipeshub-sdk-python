@@ -75,7 +75,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.create_slack_bot_config(name="PipesHub Bot", bot_token="xoxb-example-token", signing_secret="abc123signingsecret")
+    res = pipeshub.configuration_manager.create_slack_bot_config(request={})
 
     # Handle response
     print(res)
@@ -84,13 +84,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `name`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot display name                                              | PipesHub Bot                                                        |
-| `bot_token`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot OAuth token                                               | xoxb-example-token                                                  |
-| `signing_secret`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Slack app signing secret                                            | abc123signingsecret                                                 |
-| `agent_id`                                                          | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Optional agent ID to link to this bot                               |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `request`                                                                         | [models.CreateSlackBotConfigRequest](../../models/createslackbotconfigrequest.md) | :heavy_check_mark:                                                                | The request object to use for the request.                                        |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
 
 ### Response
 
@@ -121,7 +118,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.update_slack_bot_config(config_id="<id>", name="PipesHub Bot", bot_token="xoxb-example-token", signing_secret="abc123signingsecret")
+    res = pipeshub.configuration_manager.update_slack_bot_config(config_id="<id>", body={})
 
     # Handle response
     print(res)
@@ -130,14 +127,11 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `config_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `name`                                                              | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot display name                                              | PipesHub Bot                                                        |
-| `bot_token`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Slack Bot OAuth token                                               | xoxb-example-token                                                  |
-| `signing_secret`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Slack app signing secret                                            | abc123signingsecret                                                 |
-| `agent_id`                                                          | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Optional agent ID to link to this bot                               |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                                 | Type                                                                                      | Required                                                                                  | Description                                                                               |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `config_id`                                                                               | *str*                                                                                     | :heavy_check_mark:                                                                        | N/A                                                                                       |
+| `body`                                                                                    | [models.UpdateSlackBotConfigRequestBody](../../models/updateslackbotconfigrequestbody.md) | :heavy_check_mark:                                                                        | Request payload                                                                           |
+| `retries`                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                          | :heavy_minus_sign:                                                                        | Configuration to override the default retry behavior of the client.                       |
 
 ### Response
 
@@ -211,7 +205,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.set_metrics_collection_push_interval(push_interval_ms=60000)
+    res = pipeshub.configuration_manager.set_metrics_collection_push_interval()
 
     # Handle response
     print(res)
@@ -220,10 +214,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `push_interval_ms`                                                  | *float*                                                             | :heavy_check_mark:                                                  | Push interval in milliseconds                                       | 60000                                                               |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `push_interval`                                                     | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Push interval in seconds                                            |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -254,7 +248,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.set_metrics_collection_remote_server(server_url_="https://metrics-collector.example.com/collect-metrics")
+    res = pipeshub.configuration_manager.set_metrics_collection_remote_server()
 
     # Handle response
     print(res)
@@ -263,10 +257,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `server_url`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 | https://metrics-collector.example.com/collect-metrics               |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `server_url`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -339,56 +333,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.configuration_manager.create_ai_models_config(ocr=[
-        {
-            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-            "provider": "openAI",
-            "configuration": {
-                "model": "gpt-4o",
-            },
-        },
-    ], embedding=[
-        {
-            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-            "provider": "openAI",
-            "configuration": {
-                "model": "gpt-4o",
-            },
-        },
-    ], llm=[
-        {
-            "provider": "groq",
-            "configuration": {
-                "model": "gpt-4o",
-                "api_key": "sk-example",
-            },
-            "is_default": True,
-        },
-    ], slm=[
-        {
-            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-            "provider": "openAI",
-            "configuration": {
-                "model": "gpt-4o",
-            },
-        },
-    ], reasoning=[
-        {
-            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-            "provider": "openAI",
-            "configuration": {
-                "model": "gpt-4o",
-            },
-        },
-    ], multi_modal=[
-        {
-            "model_key": "5ede6150-da0e-46b1-9220-c3dc8dacd6cd",
-            "provider": "openAI",
-            "configuration": {
-                "model": "gpt-4o",
-            },
-        },
-    ])
+    res = pipeshub.configuration_manager.create_ai_models_config(request={})
 
     # Handle response
     print(res)
@@ -397,16 +342,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                 | Type                                                                      | Required                                                                  | Description                                                               |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `ocr`                                                                     | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `embedding`                                                               | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `llm`                                                                     | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `slm`                                                                     | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `reasoning`                                                               | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `multi_modal`                                                             | List[[models.AIModelConfiguration](../../models/aimodelconfiguration.md)] | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `custom_system_prompt`                                                    | *OptionalNullable[str]*                                                   | :heavy_minus_sign:                                                        | N/A                                                                       |
-| `retries`                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)          | :heavy_minus_sign:                                                        | Configuration to override the default retry behavior of the client.       |
+| Parameter                                                                         | Type                                                                              | Required                                                                          | Description                                                                       |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `request`                                                                         | [models.CreateAIModelsConfigRequest](../../models/createaimodelsconfigrequest.md) | :heavy_check_mark:                                                                | The request object to use for the request.                                        |
+| `retries`                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                  | :heavy_minus_sign:                                                                | Configuration to override the default retry behavior of the client.               |
 
 ### Response
 

@@ -2,13 +2,10 @@
 # @generated-id: d12895f62eb7
 
 from __future__ import annotations
-from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 
 class ArchiveConversationRequestTypedDict(TypedDict):
@@ -21,90 +18,3 @@ class ArchiveConversationRequest(BaseModel):
         pydantic.Field(alias="conversationId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-
-
-class ArchiveConversationMetaTypedDict(TypedDict):
-    request_id: NotRequired[str]
-    timestamp: NotRequired[datetime]
-    duration: NotRequired[int]
-
-
-class ArchiveConversationMeta(BaseModel):
-    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
-
-    timestamp: Optional[datetime] = None
-
-    duration: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["requestId", "timestamp", "duration"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class ArchiveConversationResponseTypedDict(TypedDict):
-    r"""Conversation archived successfully"""
-
-    id: NotRequired[str]
-    message: NotRequired[str]
-    status: NotRequired[str]
-    archived_by: NotRequired[str]
-    archived_at: NotRequired[datetime]
-    meta: NotRequired[ArchiveConversationMetaTypedDict]
-
-
-class ArchiveConversationResponse(BaseModel):
-    r"""Conversation archived successfully"""
-
-    id: Optional[str] = None
-
-    message: Optional[str] = None
-
-    status: Optional[str] = None
-
-    archived_by: Annotated[Optional[str], pydantic.Field(alias="archivedBy")] = None
-
-    archived_at: Annotated[Optional[datetime], pydantic.Field(alias="archivedAt")] = (
-        None
-    )
-
-    meta: Optional[ArchiveConversationMeta] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            ["id", "message", "status", "archivedBy", "archivedAt", "meta"]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-try:
-    ArchiveConversationMeta.model_rebuild()
-except NameError:
-    pass
-try:
-    ArchiveConversationResponse.model_rebuild()
-except NameError:
-    pass

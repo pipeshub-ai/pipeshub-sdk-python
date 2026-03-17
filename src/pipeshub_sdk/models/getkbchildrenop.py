@@ -8,7 +8,7 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Literal, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -130,7 +130,7 @@ class GetKBChildrenRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -171,7 +171,7 @@ class GetKBChildrenContainer(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -209,7 +209,7 @@ class GetKBChildrenCounts(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -269,7 +269,7 @@ class GetKBChildrenUserPermission(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -310,13 +310,21 @@ class GetKBChildrenPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+class GetKBChildrenFiltersTypedDict(TypedDict):
+    r"""Applied and available filters"""
+
+
+class GetKBChildrenFilters(BaseModel):
+    r"""Applied and available filters"""
 
 
 class GetKBChildrenResponseTypedDict(TypedDict):
@@ -333,7 +341,7 @@ class GetKBChildrenResponseTypedDict(TypedDict):
     pagination_mode: NotRequired[str]
     user_permission: NotRequired[GetKBChildrenUserPermissionTypedDict]
     pagination: NotRequired[GetKBChildrenPaginationTypedDict]
-    filters: NotRequired[Dict[str, Any]]
+    filters: NotRequired[GetKBChildrenFiltersTypedDict]
     r"""Applied and available filters"""
 
 
@@ -369,7 +377,7 @@ class GetKBChildrenResponse(BaseModel):
 
     pagination: Optional[GetKBChildrenPagination] = None
 
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[GetKBChildrenFilters] = None
     r"""Applied and available filters"""
 
     @model_serializer(mode="wrap")
@@ -395,7 +403,7 @@ class GetKBChildrenResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

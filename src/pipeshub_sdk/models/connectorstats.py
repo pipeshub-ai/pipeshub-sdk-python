@@ -29,7 +29,7 @@ class Stats(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -46,7 +46,7 @@ class ByRecordType(BaseModel):
     pass
 
 
-class ConnectorStatsDataTypedDict(TypedDict):
+class DataTypedDict(TypedDict):
     org_id: NotRequired[str]
     connector_id: NotRequired[str]
     origin: NotRequired[str]
@@ -54,7 +54,7 @@ class ConnectorStatsDataTypedDict(TypedDict):
     by_record_type: NotRequired[List[ByRecordTypeTypedDict]]
 
 
-class ConnectorStatsData(BaseModel):
+class Data(BaseModel):
     org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
 
     connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
@@ -77,7 +77,7 @@ class ConnectorStatsData(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -90,7 +90,7 @@ class ConnectorStatsTypedDict(TypedDict):
     r"""Statistics for a connector's records"""
 
     success: NotRequired[bool]
-    data: NotRequired[ConnectorStatsDataTypedDict]
+    data: NotRequired[DataTypedDict]
 
 
 class ConnectorStats(BaseModel):
@@ -98,7 +98,7 @@ class ConnectorStats(BaseModel):
 
     success: Optional[bool] = None
 
-    data: Optional[ConnectorStatsData] = None
+    data: Optional[Data] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -108,7 +108,7 @@ class ConnectorStats(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -122,6 +122,6 @@ try:
 except NameError:
     pass
 try:
-    ConnectorStatsData.model_rebuild()
+    Data.model_rebuild()
 except NameError:
     pass

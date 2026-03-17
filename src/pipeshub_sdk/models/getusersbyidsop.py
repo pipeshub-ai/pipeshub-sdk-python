@@ -2,33 +2,74 @@
 # @generated-id: c4ec13657aee
 
 from __future__ import annotations
-from pipeshub_sdk.types import BaseModel
-import pydantic
-from typing import List
-from typing_extensions import Annotated, TypedDict
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pydantic import model_serializer
+from typing import List, Optional
+from typing_extensions import NotRequired, TypedDict
 
 
 class GetUsersByIdsRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    user_ids: List[str]
+    ids: NotRequired[List[str]]
 
 
 class GetUsersByIdsRequest(BaseModel):
     r"""Request payload"""
 
-    user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
+    ids: Optional[List[str]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["ids"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class GetUsersByIdsDataTypedDict(TypedDict):
+    pass
+
+
+class GetUsersByIdsData(BaseModel):
+    pass
 
 
 class GetUsersByIdsResponseTypedDict(TypedDict):
-    pass
+    r"""Users retrieved successfully"""
+
+    success: NotRequired[bool]
+    data: NotRequired[List[GetUsersByIdsDataTypedDict]]
 
 
 class GetUsersByIdsResponse(BaseModel):
-    pass
+    r"""Users retrieved successfully"""
 
+    success: Optional[bool] = None
 
-try:
-    GetUsersByIdsRequest.model_rebuild()
-except NameError:
-    pass
+    data: Optional[List[GetUsersByIdsData]] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["success", "data"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

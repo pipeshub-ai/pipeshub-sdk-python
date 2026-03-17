@@ -2,6 +2,7 @@
 # @generated-id: 57333ca3baea
 
 from __future__ import annotations
+from .connectorinstance import ConnectorInstance, ConnectorInstanceTypedDict
 from .connectortogglerequest import (
     ConnectorToggleRequest,
     ConnectorToggleRequestTypedDict,
@@ -39,6 +40,11 @@ class ToggleConnectorResponseTypedDict(TypedDict):
 
     success: NotRequired[bool]
     message: NotRequired[str]
+    connector: NotRequired[ConnectorInstanceTypedDict]
+    r"""A configured connector instance. Represents an active or configured
+    connection to an external service.
+
+    """
 
 
 class ToggleConnectorResponse(BaseModel):
@@ -48,15 +54,21 @@ class ToggleConnectorResponse(BaseModel):
 
     message: Optional[str] = None
 
+    connector: Optional[ConnectorInstance] = None
+    r"""A configured connector instance. Represents an active or configured
+    connection to an external service.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "message"])
+        optional_fields = set(["success", "message", "connector"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

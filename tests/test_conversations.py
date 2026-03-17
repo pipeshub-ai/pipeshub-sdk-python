@@ -2,7 +2,6 @@
 # @generated-id: d42a9e2d3cc5
 
 from pipeshub_sdk import Pipeshub, models
-import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -22,20 +21,13 @@ def test_conversations_create_conversation_simple():
                 "507f1f77bcf86cd799439011",
                 "507f1f77bcf86cd799439012",
             ],
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
             model_key="gpt-4-turbo",
             model_name="GPT-4 Turbo",
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.CreateConversationResponse(
-            conversation=models.Conversation(
-                title="Q4 Financial Report Discussion",
-            ),
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
         )
 
 
@@ -65,10 +57,8 @@ def test_conversations_create_conversation_filtered():
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.CreateConversationResponse(
-            conversation=models.Conversation(
-                title="Q4 Financial Report Discussion",
-            ),
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
         )
 
 
@@ -88,20 +78,13 @@ def test_conversations_create_conversation():
                 "507f1f77bcf86cd799439011",
                 "507f1f77bcf86cd799439012",
             ],
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
             model_key="gpt-4-turbo",
             model_name="GPT-4 Turbo",
             chat_mode="balanced",
         )
         assert res is not None
-        assert res == models.CreateConversationResponse(
-            conversation=models.Conversation(
-                title="Q4 Financial Report Discussion",
-            ),
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
         )
 
 
@@ -171,9 +154,7 @@ def test_conversations_get_conversation_by_id():
         )
         assert res is not None
         assert res == models.GetConversationByIDResponse(
-            conversation=models.Conversation(
-                title="Q4 Financial Report Discussion",
-            ),
+            title="Q4 Financial Report Discussion",
         )
 
 
@@ -191,7 +172,9 @@ def test_conversations_delete_conversation_by_id():
             conversation_id="<value>"
         )
         assert res is not None
-        assert res == models.DeleteConversationByIDResponse()
+        assert res == models.DeleteConversationByIDResponse(
+            message="Conversation deleted successfully",
+        )
 
 
 def test_conversations_add_message():
@@ -207,18 +190,11 @@ def test_conversations_add_message():
         res = pipeshub.conversations.add_message(
             conversation_id="<value>",
             query="Can you elaborate on the revenue trends?",
-            filters={
-                "apps": [
-                    "550e8400-e29b-41d4-a716-446655440000",
-                ],
-            },
             timezone="Asia/Calcutta",
         )
         assert res is not None
-        assert res == models.AddMessageResponse(
-            conversation=models.Conversation(
-                title="Q4 Financial Report Discussion",
-            ),
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
         )
 
 
@@ -240,7 +216,9 @@ def test_conversations_share_conversation():
             access_level="read",
         )
         assert res is not None
-        assert res == models.ShareConversationResponse()
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
+        )
 
 
 def test_conversations_update_conversation_title():
@@ -257,10 +235,8 @@ def test_conversations_update_conversation_title():
             conversation_id="<value>", title="Q4 Sales Analysis Discussion"
         )
         assert res is not None
-        assert res == models.UpdateConversationTitleResponse(
-            conversation=models.Conversation(
-                title="Q4 Financial Report Discussion",
-            ),
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
         )
 
 
@@ -276,7 +252,9 @@ def test_conversations_archive_conversation():
 
         res = pipeshub.conversations.archive_conversation(conversation_id="<value>")
         assert res is not None
-        assert res == models.ArchiveConversationResponse()
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
+        )
 
 
 def test_conversations_unarchive_conversation():
@@ -291,14 +269,32 @@ def test_conversations_unarchive_conversation():
 
         res = pipeshub.conversations.unarchive_conversation(conversation_id="<value>")
         assert res is not None
-        assert res == models.UnarchiveConversationResponse()
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
+        )
 
 
-@pytest.mark.skip(
-    reason="incomplete test found please make sure to address the following errors: [`workflow step regenerateAnswer.test referencing operation regenerateAnswer is not currently supported`]"
-)
 def test_conversations_regenerate_answer():
-    pass
+    test_http_client = create_test_http_client("regenerateAnswer")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.conversations.regenerate_answer(
+            conversation_id="<value>",
+            message_id="<value>",
+            filters={
+                "apps": [],
+            },
+        )
+        assert res is not None
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
+        )
 
 
 def test_conversations_update_message_feedback():
@@ -315,7 +311,9 @@ def test_conversations_update_message_feedback():
             conversation_id="<value>", message_id="<value>"
         )
         assert res is not None
-        assert res == models.UpdateMessageFeedbackResponse()
+        assert res == models.Conversation(
+            title="Q4 Financial Report Discussion",
+        )
 
 
 def test_conversations_unshare_conversation_by_id():

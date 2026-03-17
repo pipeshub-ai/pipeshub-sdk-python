@@ -40,7 +40,7 @@ class AgentConversationModelInfo(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -49,12 +49,12 @@ class AgentConversationModelInfo(BaseModel):
         return m
 
 
-class AgentConversationMessageRangeTypedDict(TypedDict):
+class MessageRangeTypedDict(TypedDict):
     start: NotRequired[int]
     end: NotRequired[int]
 
 
-class AgentConversationMessageRange(BaseModel):
+class MessageRange(BaseModel):
     start: Optional[int] = None
 
     end: Optional[int] = None
@@ -67,7 +67,7 @@ class AgentConversationMessageRange(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -83,7 +83,7 @@ class AgentConversationPaginationTypedDict(TypedDict):
     total_pages: NotRequired[int]
     has_next_page: NotRequired[bool]
     has_prev_page: NotRequired[bool]
-    message_range: NotRequired[AgentConversationMessageRangeTypedDict]
+    message_range: NotRequired[MessageRangeTypedDict]
 
 
 class AgentConversationPagination(BaseModel):
@@ -100,7 +100,7 @@ class AgentConversationPagination(BaseModel):
     has_prev_page: Annotated[Optional[bool], pydantic.Field(alias="hasPrevPage")] = None
 
     message_range: Annotated[
-        Optional[AgentConversationMessageRange], pydantic.Field(alias="messageRange")
+        Optional[MessageRange], pydantic.Field(alias="messageRange")
     ] = None
 
     @model_serializer(mode="wrap")
@@ -121,7 +121,7 @@ class AgentConversationPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -130,12 +130,12 @@ class AgentConversationPagination(BaseModel):
         return m
 
 
-class AgentConversationAccessTypedDict(TypedDict):
+class AccessTypedDict(TypedDict):
     is_owner: NotRequired[bool]
     access_level: NotRequired[str]
 
 
-class AgentConversationAccess(BaseModel):
+class Access(BaseModel):
     is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
 
     access_level: Annotated[Optional[str], pydantic.Field(alias="accessLevel")] = None
@@ -148,7 +148,7 @@ class AgentConversationAccess(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -173,7 +173,7 @@ class AgentConversationTypedDict(TypedDict):
     messages: NotRequired[List[MessageTypedDict]]
     model_info: NotRequired[AgentConversationModelInfoTypedDict]
     pagination: NotRequired[AgentConversationPaginationTypedDict]
-    access: NotRequired[AgentConversationAccessTypedDict]
+    access: NotRequired[AccessTypedDict]
 
 
 class AgentConversation(BaseModel):
@@ -206,7 +206,7 @@ class AgentConversation(BaseModel):
 
     pagination: Optional[AgentConversationPagination] = None
 
-    access: Optional[AgentConversationAccess] = None
+    access: Optional[Access] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -230,7 +230,7 @@ class AgentConversation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -248,7 +248,7 @@ try:
 except NameError:
     pass
 try:
-    AgentConversationAccess.model_rebuild()
+    Access.model_rebuild()
 except NameError:
     pass
 try:

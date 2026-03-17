@@ -12,20 +12,20 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class RemoveUsersFromGroupRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    group_ids: List[str]
-    r"""Array of group IDs to remove users from"""
+    group_id: str
+    r"""ID of the group to remove users from"""
     user_ids: List[str]
-    r"""Array of user IDs to remove from the groups"""
+    r"""Array of user IDs to remove from the group"""
 
 
 class RemoveUsersFromGroupRequest(BaseModel):
     r"""Request payload"""
 
-    group_ids: Annotated[List[str], pydantic.Field(alias="groupIds")]
-    r"""Array of group IDs to remove users from"""
+    group_id: Annotated[str, pydantic.Field(alias="groupId")]
+    r"""ID of the group to remove users from"""
 
     user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
-    r"""Array of user IDs to remove from the groups"""
+    r"""Array of user IDs to remove from the group"""
 
 
 class RemoveUsersFromGroupResponseTypedDict(TypedDict):
@@ -53,7 +53,7 @@ class RemoveUsersFromGroupResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

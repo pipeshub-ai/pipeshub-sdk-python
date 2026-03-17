@@ -19,7 +19,9 @@ def test_knowledge_bases_create_knowledge_base():
             kb_name="Product Documentation"
         )
         assert res is not None
-        assert res == models.KnowledgeBase()
+        assert res == models.KnowledgeBase(
+            name="<value>",
+        )
 
 
 def test_knowledge_bases_list_knowledge_bases():
@@ -57,7 +59,9 @@ def test_knowledge_bases_get_knowledge_base():
             kb_id="kb_550e8400-e29b-41d4-a716"
         )
         assert res is not None
-        assert res == models.KnowledgeBase()
+        assert res == models.KnowledgeBase(
+            name="<value>",
+        )
 
 
 def test_knowledge_bases_update_knowledge_base():
@@ -74,9 +78,8 @@ def test_knowledge_bases_update_knowledge_base():
             kb_id="<id>", kb_name="Updated Documentation Hub"
         )
         assert res is not None
-        assert res == models.UpdateKnowledgeBaseResponse(
-            success=True,
-            message="Knowledge base updated successfully",
+        assert res == models.KnowledgeBase(
+            name="<value>",
         )
 
 
@@ -108,9 +111,7 @@ def test_knowledge_bases_reindex_failed_records():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.knowledge_bases.reindex_failed_records(
-            app="GOOGLE_DRIVE", connector_id="507f1f77bcf86cd799439011"
-        )
+        res = pipeshub.knowledge_bases.reindex_failed_records()
         assert res is not None
         assert res == models.ReindexFailedRecordsResponse(
             message="Reindex of failed records triggered",
@@ -128,9 +129,7 @@ def test_knowledge_bases_move_record():
         assert pipeshub is not None
 
         res = pipeshub.knowledge_bases.move_record(
-            kb_id="03bbd815-933b-4f49-9822-7811537c4ddc",
-            record_id="<id>",
-            new_parent_id="folder-abc123",
+            kb_id="03bbd815-933b-4f49-9822-7811537c4ddc", record_id="<id>", body={}
         )
         assert res is not None
         assert res == models.MoveRecordResponse()

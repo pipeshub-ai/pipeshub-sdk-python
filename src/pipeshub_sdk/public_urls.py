@@ -16,7 +16,7 @@ class PublicURLs(BaseSDK):
     def set_frontend_public_url(
         self,
         *,
-        url: Optional[str] = None,
+        url: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -107,7 +107,7 @@ class PublicURLs(BaseSDK):
     async def set_frontend_public_url_async(
         self,
         *,
-        url: Optional[str] = None,
+        url: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -360,7 +360,7 @@ class PublicURLs(BaseSDK):
     def set_connector_public_url(
         self,
         *,
-        url: Optional[str] = None,
+        url: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -451,7 +451,7 @@ class PublicURLs(BaseSDK):
     async def set_connector_public_url_async(
         self,
         *,
-        url: Optional[str] = None,
+        url: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,

@@ -21,7 +21,7 @@ def test_connector_registry_get_connector_registry():
         assert res is not None
         assert res == models.GetConnectorRegistryResponse(
             connectors=[
-                models.ConnectorInstance(),
+                models.ConnectorType(),
             ],
         )
 
@@ -40,6 +40,4 @@ def test_connector_registry_get_connector_schema():
             connector_type="google-drive"
         )
         assert res is not None
-        assert res == models.GetConnectorSchemaResponse(
-            success=True,
-        )
+        assert res == models.GetConnectorSchemaResponse()

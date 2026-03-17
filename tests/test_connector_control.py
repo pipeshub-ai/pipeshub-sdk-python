@@ -19,4 +19,12 @@ def test_connector_control_toggle_connector():
             connector_id="<id>", type_="sync"
         )
         assert res is not None
-        assert res == models.ToggleConnectorResponse()
+        assert res == models.ToggleConnectorResponse(
+            message="Sync enabled successfully",
+            connector=models.ConnectorInstance(
+                connector_id="conn_abc123",
+                connector_type="google-drive",
+                instance_name="Company Google Drive",
+                scope="team",
+            ),
+        )

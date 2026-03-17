@@ -2,6 +2,8 @@
 # @generated-id: c91fa0cbc93e
 
 from __future__ import annotations
+from .agentknowledge import AgentKnowledge, AgentKnowledgeTypedDict
+from .agenttoolset import AgentToolset, AgentToolsetTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -13,22 +15,6 @@ import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
-
-
-class AgentCreateResponseToolsetTypedDict(TypedDict):
-    pass
-
-
-class AgentCreateResponseToolset(BaseModel):
-    pass
-
-
-class AgentCreateResponseKnowledgeTypedDict(TypedDict):
-    pass
-
-
-class AgentCreateResponseKnowledge(BaseModel):
-    pass
 
 
 class AgentCreateResponseTypedDict(TypedDict):
@@ -48,8 +34,8 @@ class AgentCreateResponseTypedDict(TypedDict):
     created_at_timestamp: NotRequired[int]
     updated_at_timestamp: NotRequired[int]
     is_deleted: NotRequired[bool]
-    toolsets: NotRequired[List[AgentCreateResponseToolsetTypedDict]]
-    knowledge: NotRequired[List[AgentCreateResponseKnowledgeTypedDict]]
+    toolsets: NotRequired[List[AgentToolsetTypedDict]]
+    knowledge: NotRequired[List[AgentKnowledgeTypedDict]]
 
 
 class AgentCreateResponse(BaseModel):
@@ -89,9 +75,9 @@ class AgentCreateResponse(BaseModel):
 
     is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = None
 
-    toolsets: Optional[List[AgentCreateResponseToolset]] = None
+    toolsets: Optional[List[AgentToolset]] = None
 
-    knowledge: Optional[List[AgentCreateResponseKnowledge]] = None
+    knowledge: Optional[List[AgentKnowledge]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -121,7 +107,7 @@ class AgentCreateResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

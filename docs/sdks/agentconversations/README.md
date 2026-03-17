@@ -88,11 +88,7 @@ with Pipeshub(
     res = pipeshub.agent_conversations.create_agent_conversation(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
 
     # Handle response
     print(res)
@@ -147,11 +143,7 @@ with Pipeshub(
     res = pipeshub.agent_conversations.stream_agent_conversation(agent_key="<value>", query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
 
     with res as event_stream:
         for event in event_stream:
@@ -288,11 +280,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.add_agent_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, timezone="Asia/Calcutta")
+    res = pipeshub.agent_conversations.add_agent_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", timezone="Asia/Calcutta")
 
     # Handle response
     print(res)
@@ -344,11 +332,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.agent_conversations.stream_agent_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", filters={
-        "apps": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, timezone="Asia/Calcutta")
+    res = pipeshub.agent_conversations.stream_agent_message(agent_key="<value>", conversation_id="<value>", query="Can you elaborate on the revenue trends?", timezone="Asia/Calcutta")
 
     with res as event_stream:
         for event in event_stream:

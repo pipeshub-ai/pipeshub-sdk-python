@@ -12,20 +12,20 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class AddUsersToGroupRequestTypedDict(TypedDict):
     r"""Request payload"""
 
-    group_ids: List[str]
-    r"""Array of group IDs to add users to"""
+    group_id: str
+    r"""ID of the group to add users to"""
     user_ids: List[str]
-    r"""Array of user IDs to add to the groups"""
+    r"""Array of user IDs to add to the group"""
 
 
 class AddUsersToGroupRequest(BaseModel):
     r"""Request payload"""
 
-    group_ids: Annotated[List[str], pydantic.Field(alias="groupIds")]
-    r"""Array of group IDs to add users to"""
+    group_id: Annotated[str, pydantic.Field(alias="groupId")]
+    r"""ID of the group to add users to"""
 
     user_ids: Annotated[List[str], pydantic.Field(alias="userIds")]
-    r"""Array of user IDs to add to the groups"""
+    r"""Array of user IDs to add to the group"""
 
 
 class AddUsersToGroupResponseTypedDict(TypedDict):
@@ -58,7 +58,7 @@ class AddUsersToGroupResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

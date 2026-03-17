@@ -7,7 +7,7 @@ from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -43,13 +43,21 @@ class GetAllConversationsPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+class GetAllConversationsFiltersTypedDict(TypedDict):
+    r"""Applied and available filters"""
+
+
+class GetAllConversationsFilters(BaseModel):
+    r"""Applied and available filters"""
 
 
 class GetAllConversationsMetaTypedDict(TypedDict):
@@ -73,7 +81,7 @@ class GetAllConversationsMeta(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -88,7 +96,7 @@ class GetAllConversationsResponseTypedDict(TypedDict):
     conversations: NotRequired[List[ConversationTypedDict]]
     shared_with_me_conversations: NotRequired[List[ConversationTypedDict]]
     pagination: NotRequired[GetAllConversationsPaginationTypedDict]
-    filters: NotRequired[Dict[str, Any]]
+    filters: NotRequired[GetAllConversationsFiltersTypedDict]
     r"""Applied and available filters"""
     meta: NotRequired[GetAllConversationsMetaTypedDict]
 
@@ -104,7 +112,7 @@ class GetAllConversationsResponse(BaseModel):
 
     pagination: Optional[GetAllConversationsPagination] = None
 
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[GetAllConversationsFilters] = None
     r"""Applied and available filters"""
 
     meta: Optional[GetAllConversationsMeta] = None
@@ -125,7 +133,7 @@ class GetAllConversationsResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

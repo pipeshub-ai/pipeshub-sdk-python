@@ -2,13 +2,13 @@
 # @generated-id: 608d91b0ff11
 
 from __future__ import annotations
-from .conversation import Conversation, ConversationTypedDict
+from .message import Message, MessageTypedDict
 from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, Literal, Optional
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -74,7 +74,7 @@ class GetConversationByIDRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -83,38 +83,128 @@ class GetConversationByIDRequest(BaseModel):
         return m
 
 
-class GetConversationByIDMetaTypedDict(TypedDict):
-    request_id: NotRequired[str]
-    timestamp: NotRequired[datetime]
-    duration: NotRequired[int]
-    message_count: NotRequired[int]
-    conversation_id: NotRequired[str]
+GetConversationByIDStatus = Union[
+    Literal[
+        "INPROGRESS",
+        "COMPLETED",
+        "FAILED",
+    ],
+    UnrecognizedStr,
+]
+r"""Current status of the conversation:
+<ul>
+<li><code>INPROGRESS</code> - AI is processing</li>
+<li><code>COMPLETED</code> - Response ready</li>
+<li><code>FAILED</code> - Error occurred</li>
+</ul>
+
+"""
 
 
-class GetConversationByIDMeta(BaseModel):
-    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+class GetConversationByIDModelInfoTypedDict(TypedDict):
+    r"""AI model configuration used"""
 
-    timestamp: Optional[datetime] = None
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    model_provider: NotRequired[str]
+    chat_mode: NotRequired[str]
 
-    duration: Optional[int] = None
 
-    message_count: Annotated[Optional[int], pydantic.Field(alias="messageCount")] = None
+class GetConversationByIDModelInfo(BaseModel):
+    r"""AI model configuration used"""
 
-    conversation_id: Annotated[
-        Optional[str], pydantic.Field(alias="conversationId")
-    ] = None
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    model_provider: Annotated[Optional[str], pydantic.Field(alias="modelProvider")] = (
+        None
+    )
+
+    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            ["requestId", "timestamp", "duration", "messageCount", "conversationId"]
-        )
+        optional_fields = set(["modelKey", "modelName", "modelProvider", "chatMode"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+GetConversationByIDAccessLevel = Union[
+    Literal[
+        "read",
+        "write",
+    ],
+    UnrecognizedStr,
+]
+
+
+class GetConversationByIDSharedWithTypedDict(TypedDict):
+    user_id: NotRequired[str]
+    access_level: NotRequired[GetConversationByIDAccessLevel]
+
+
+class GetConversationByIDSharedWith(BaseModel):
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+
+    access_level: Annotated[
+        Optional[GetConversationByIDAccessLevel], pydantic.Field(alias="accessLevel")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["userId", "accessLevel"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class GetConversationByIDPaginationTypedDict(TypedDict):
+    page: NotRequired[int]
+    limit: NotRequired[int]
+    total_messages: NotRequired[int]
+    total_pages: NotRequired[int]
+
+
+class GetConversationByIDPagination(BaseModel):
+    page: Optional[int] = None
+
+    limit: Optional[int] = None
+
+    total_messages: Annotated[Optional[int], pydantic.Field(alias="totalMessages")] = (
+        None
+    )
+
+    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["page", "limit", "totalMessages", "totalPages"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -124,43 +214,162 @@ class GetConversationByIDMeta(BaseModel):
 
 
 class GetConversationByIDResponseTypedDict(TypedDict):
-    r"""Conversation with paginated messages"""
-
-    conversation: NotRequired[ConversationTypedDict]
     r"""A conversation represents a chat session between a user and the AI.
     Conversations maintain context across multiple messages and can be
     shared, archived, and organized.
 
     """
-    filters: NotRequired[Dict[str, Any]]
-    r"""Applied and available filters"""
-    meta: NotRequired[GetConversationByIDMetaTypedDict]
+
+    id: NotRequired[str]
+    r"""Unique conversation identifier"""
+    user_id: NotRequired[str]
+    r"""ID of the user who owns this conversation"""
+    org_id: NotRequired[str]
+    r"""Organization this conversation belongs to"""
+    title: NotRequired[str]
+    r"""Conversation title, auto-generated from first query
+    or manually updated
+
+    """
+    initiator: NotRequired[str]
+    r"""User who started the conversation"""
+    messages: NotRequired[List[MessageTypedDict]]
+    r"""All messages in this conversation"""
+    status: NotRequired[GetConversationByIDStatus]
+    r"""Current status of the conversation:
+    <ul>
+    <li><code>INPROGRESS</code> - AI is processing</li>
+    <li><code>COMPLETED</code> - Response ready</li>
+    <li><code>FAILED</code> - Error occurred</li>
+    </ul>
+
+    """
+    fail_reason: NotRequired[str]
+    r"""Error description if status is FAILED"""
+    model_info: NotRequired[GetConversationByIDModelInfoTypedDict]
+    r"""AI model configuration used"""
+    is_shared: NotRequired[bool]
+    r"""Whether this conversation is shared with others"""
+    share_link: NotRequired[str]
+    r"""Shareable link if conversation is shared"""
+    shared_with: NotRequired[List[GetConversationByIDSharedWithTypedDict]]
+    r"""Users this conversation is shared with"""
+    is_archived: NotRequired[bool]
+    r"""Whether this conversation is archived"""
+    archived_by: NotRequired[str]
+    r"""User who archived this conversation"""
+    last_activity_at: NotRequired[int]
+    r"""Unix timestamp of last activity"""
+    created_at: NotRequired[datetime]
+    updated_at: NotRequired[datetime]
+    pagination: NotRequired[GetConversationByIDPaginationTypedDict]
 
 
 class GetConversationByIDResponse(BaseModel):
-    r"""Conversation with paginated messages"""
-
-    conversation: Optional[Conversation] = None
     r"""A conversation represents a chat session between a user and the AI.
     Conversations maintain context across multiple messages and can be
     shared, archived, and organized.
 
     """
 
-    filters: Optional[Dict[str, Any]] = None
-    r"""Applied and available filters"""
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Unique conversation identifier"""
 
-    meta: Optional[GetConversationByIDMeta] = None
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+    r"""ID of the user who owns this conversation"""
+
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
+    r"""Organization this conversation belongs to"""
+
+    title: Optional[str] = None
+    r"""Conversation title, auto-generated from first query
+    or manually updated
+
+    """
+
+    initiator: Optional[str] = None
+    r"""User who started the conversation"""
+
+    messages: Optional[List[Message]] = None
+    r"""All messages in this conversation"""
+
+    status: Optional[GetConversationByIDStatus] = None
+    r"""Current status of the conversation:
+    <ul>
+    <li><code>INPROGRESS</code> - AI is processing</li>
+    <li><code>COMPLETED</code> - Response ready</li>
+    <li><code>FAILED</code> - Error occurred</li>
+    </ul>
+
+    """
+
+    fail_reason: Annotated[Optional[str], pydantic.Field(alias="failReason")] = None
+    r"""Error description if status is FAILED"""
+
+    model_info: Annotated[
+        Optional[GetConversationByIDModelInfo], pydantic.Field(alias="modelInfo")
+    ] = None
+    r"""AI model configuration used"""
+
+    is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = False
+    r"""Whether this conversation is shared with others"""
+
+    share_link: Annotated[Optional[str], pydantic.Field(alias="shareLink")] = None
+    r"""Shareable link if conversation is shared"""
+
+    shared_with: Annotated[
+        Optional[List[GetConversationByIDSharedWith]],
+        pydantic.Field(alias="sharedWith"),
+    ] = None
+    r"""Users this conversation is shared with"""
+
+    is_archived: Annotated[Optional[bool], pydantic.Field(alias="isArchived")] = False
+    r"""Whether this conversation is archived"""
+
+    archived_by: Annotated[Optional[str], pydantic.Field(alias="archivedBy")] = None
+    r"""User who archived this conversation"""
+
+    last_activity_at: Annotated[
+        Optional[int], pydantic.Field(alias="lastActivityAt")
+    ] = None
+    r"""Unix timestamp of last activity"""
+
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
+
+    pagination: Optional[GetConversationByIDPagination] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["conversation", "filters", "meta"])
+        optional_fields = set(
+            [
+                "_id",
+                "userId",
+                "orgId",
+                "title",
+                "initiator",
+                "messages",
+                "status",
+                "failReason",
+                "modelInfo",
+                "isShared",
+                "shareLink",
+                "sharedWith",
+                "isArchived",
+                "archivedBy",
+                "lastActivityAt",
+                "createdAt",
+                "updatedAt",
+                "pagination",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
+            val = serialized.get(k)
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -170,6 +379,18 @@ class GetConversationByIDResponse(BaseModel):
 
 
 try:
-    GetConversationByIDMeta.model_rebuild()
+    GetConversationByIDModelInfo.model_rebuild()
+except NameError:
+    pass
+try:
+    GetConversationByIDSharedWith.model_rebuild()
+except NameError:
+    pass
+try:
+    GetConversationByIDPagination.model_rebuild()
+except NameError:
+    pass
+try:
+    GetConversationByIDResponse.model_rebuild()
 except NameError:
     pass

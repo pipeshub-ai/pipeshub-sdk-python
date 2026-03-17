@@ -34,25 +34,19 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector.reindex_record(record_id="rec-abc123", depth=0, force=False)
+    pipeshub.connector.reindex_record(record_id="<id>", depth=-1)
 
-    # Handle response
-    print(res)
+    # Use the SDK ...
 
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 | rec-abc123                                                          |
-| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Processing depth (-1 for unlimited, 0 for only this record)         |                                                                     |
-| `force`                                                             | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Force reindexing even if already indexed                            |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.ReindexRecordResponse](../../models/reindexrecordresponse.md)**
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Processing depth (-1 for unlimited)                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Errors
 
@@ -81,25 +75,19 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector.reindex_record_group(record_group_id="grp-abc123", depth=0, force=False)
+    pipeshub.connector.reindex_record_group(record_group_id="<id>", depth=-1)
 
-    # Handle response
-    print(res)
+    # Use the SDK ...
 
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_group_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Folder ID or KB ID                                                  | grp-abc123                                                          |
-| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Processing depth (-1 for unlimited, 0 for direct records only)      |                                                                     |
-| `force`                                                             | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Force reindexing even if already indexed                            |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.ReindexRecordGroupResponse](../../models/reindexrecordgroupresponse.md)**
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_group_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Folder ID or KB ID                                                  |
+| `depth`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Errors
 
@@ -129,10 +117,9 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector.resync_connector(connector_name="GOOGLE_DRIVE", connector_id="<id>", full_sync=False)
+    pipeshub.connector.resync_connector(connector_name="GOOGLE_DRIVE", connector_id="<id>")
 
-    # Handle response
-    print(res)
+    # Use the SDK ...
 
 ```
 
@@ -141,13 +128,8 @@ with Pipeshub(
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `connector_name`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Connector type name                                                 | GOOGLE_DRIVE                                                        |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               | conn-abc123                                                         |
-| `full_sync`                                                         | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Whether to perform a full sync                                      |                                                                     |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               |                                                                     |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.ResyncConnectorResponse](../../models/resyncconnectorresponse.md)**
 
 ### Errors
 

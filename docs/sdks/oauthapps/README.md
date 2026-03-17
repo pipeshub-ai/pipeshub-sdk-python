@@ -147,7 +147,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.CreateOAuthAppResponse](../../models/createoauthappresponse.md)**
+**[models.OAuthAppWithSecret](../../models/oauthappwithsecret.md)**
 
 ### Errors
 
@@ -543,7 +543,7 @@ with Pipeshub(
 
 ### Response
 
-**[models.ListOAuthAppTokensResponse](../../models/listoauthapptokensresponse.md)**
+**[List[models.OAuthTokenListItem]](../../models/.md)**
 
 ### Errors
 

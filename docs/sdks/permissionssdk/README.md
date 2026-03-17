@@ -42,9 +42,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.permissions.create_kb_permission(kb_id="<id>", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ], role="OWNER")
+    res = pipeshub.permissions.create_kb_permission(kb_id="<id>", role="OWNER")
 
     # Handle response
     print(res)
@@ -53,13 +51,13 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                  | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `kb_id`                                                                    | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        |                                                                            |
-| `user_ids`                                                                 | List[*str*]                                                                | :heavy_check_mark:                                                         | User IDs to grant permission (at least one of userIds or teamIds required) | [<br/>"507f1f77bcf86cd799439011"<br/>]                                     |
-| `role`                                                                     | [models.CreateKBPermissionRole](../../models/createkbpermissionrole.md)    | :heavy_check_mark:                                                         | Permission role to grant                                                   | READER                                                                     |
-| `team_ids`                                                                 | List[*str*]                                                                | :heavy_minus_sign:                                                         | Team IDs to grant permission                                               |                                                                            |
-| `retries`                                                                  | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)           | :heavy_minus_sign:                                                         | Configuration to override the default retry behavior of the client.        |                                                                            |
+| Parameter                                                               | Type                                                                    | Required                                                                | Description                                                             |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `kb_id`                                                                 | *str*                                                                   | :heavy_check_mark:                                                      | N/A                                                                     |
+| `role`                                                                  | [models.CreateKBPermissionRole](../../models/createkbpermissionrole.md) | :heavy_check_mark:                                                      | Permission role to grant                                                |
+| `user_ids`                                                              | List[*str*]                                                             | :heavy_minus_sign:                                                      | User IDs to grant permission                                            |
+| `team_ids`                                                              | List[*str*]                                                             | :heavy_minus_sign:                                                      | Team IDs to grant permission                                            |
+| `retries`                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)        | :heavy_minus_sign:                                                      | Configuration to override the default retry behavior of the client.     |
 
 ### Response
 

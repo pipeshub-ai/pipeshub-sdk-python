@@ -1,12 +1,9 @@
 # ConnectorConfigSync
 
-Sync configuration
+Sync configuration (schedule, options)
 
 
 ## Fields
 
-| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
-| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `selected_strategy`                                                                            | *Optional[str]*                                                                                | :heavy_minus_sign:                                                                             | Selected sync strategy                                                                         |
-| `scheduled_config`                                                                             | [Optional[models.ConnectorConfigScheduledConfig]](../models/connectorconfigscheduledconfig.md) | :heavy_minus_sign:                                                                             | Scheduled sync configuration                                                                   |
-| `webhook_config`                                                                               | [Optional[models.ConnectorConfigWebhookConfig]](../models/connectorconfigwebhookconfig.md)     | :heavy_minus_sign:                                                                             | Webhook configuration                                                                          |
+| Field       | Type        | Required    | Description |
+| ----------- | ----------- | ----------- | ----------- |

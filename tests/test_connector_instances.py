@@ -86,20 +86,10 @@ def test_connector_instances_create_connector_instance_google_drive():
         assert res is not None
         assert res == models.CreateConnectorInstanceResponse(
             connector=models.ConnectorInstance(
-                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
-                name="Nextcloud",
-                type="Nextcloud",
-                app_group="Cloud Storage",
-                supported_auth_types=[
-                    "BASIC_AUTH",
-                ],
-                app_categories=[
-                    "Storage",
-                    "Collaboration",
-                ],
-                icon_path="/assets/icons/connectors/nextcloud.svg",
+                connector_id="conn_abc123",
+                connector_type="google-drive",
+                instance_name="Company Google Drive",
                 scope="team",
-                auth_type="BASIC_AUTH",
             ),
         )
 
@@ -162,20 +152,10 @@ def test_connector_instances_create_connector_instance_confluence():
         assert res is not None
         assert res == models.CreateConnectorInstanceResponse(
             connector=models.ConnectorInstance(
-                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
-                name="Nextcloud",
-                type="Nextcloud",
-                app_group="Cloud Storage",
-                supported_auth_types=[
-                    "BASIC_AUTH",
-                ],
-                app_categories=[
-                    "Storage",
-                    "Collaboration",
-                ],
-                icon_path="/assets/icons/connectors/nextcloud.svg",
+                connector_id="conn_abc123",
+                connector_type="google-drive",
+                instance_name="Company Google Drive",
                 scope="team",
-                auth_type="BASIC_AUTH",
             ),
         )
 
@@ -238,20 +218,10 @@ def test_connector_instances_create_connector_instance():
         assert res is not None
         assert res == models.CreateConnectorInstanceResponse(
             connector=models.ConnectorInstance(
-                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
-                name="Nextcloud",
-                type="Nextcloud",
-                app_group="Cloud Storage",
-                supported_auth_types=[
-                    "BASIC_AUTH",
-                ],
-                app_categories=[
-                    "Storage",
-                    "Collaboration",
-                ],
-                icon_path="/assets/icons/connectors/nextcloud.svg",
+                connector_id="conn_abc123",
+                connector_type="google-drive",
+                instance_name="Company Google Drive",
                 scope="team",
-                auth_type="BASIC_AUTH",
             ),
         )
 
@@ -313,13 +283,9 @@ def test_connector_instances_list_configured_connectors():
         )
         assert res is not None
         assert res == models.ListConfiguredConnectorsResponse(
-            connectors=models.Connectors(
-                connectors=[
-                    models.ConnectorInstance(
-                        scope="team",
-                    ),
-                ],
-            ),
+            connectors=[
+                models.ConnectorInstance(),
+            ],
         )
 
 
@@ -362,20 +328,10 @@ def test_connector_instances_get_connector_instance():
         assert res is not None
         assert res == models.GetConnectorInstanceResponse(
             connector=models.ConnectorInstance(
-                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
-                name="Nextcloud",
-                type="Nextcloud",
-                app_group="Cloud Storage",
-                supported_auth_types=[
-                    "BASIC_AUTH",
-                ],
-                app_categories=[
-                    "Storage",
-                    "Collaboration",
-                ],
-                icon_path="/assets/icons/connectors/nextcloud.svg",
+                connector_id="conn_abc123",
+                connector_type="google-drive",
+                instance_name="Company Google Drive",
                 scope="team",
-                auth_type="BASIC_AUTH",
             ),
         )
 
@@ -413,19 +369,9 @@ def test_connector_instances_update_connector_name():
         assert res is not None
         assert res == models.UpdateConnectorNameResponse(
             connector=models.ConnectorInstance(
-                key="a65f61ca-3039-4f01-911d-9c7d2c31ceaa",
-                name="Nextcloud",
-                type="Nextcloud",
-                app_group="Cloud Storage",
-                supported_auth_types=[
-                    "BASIC_AUTH",
-                ],
-                app_categories=[
-                    "Storage",
-                    "Collaboration",
-                ],
-                icon_path="/assets/icons/connectors/nextcloud.svg",
+                connector_id="conn_abc123",
+                connector_type="google-drive",
+                instance_name="Company Google Drive",
                 scope="team",
-                auth_type="BASIC_AUTH",
             ),
         )
