@@ -13,7 +13,7 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-MessageType = Union[
+MessageTypeEnum = Union[
     Literal[
         "user_query",
         "bot_response",
@@ -78,7 +78,7 @@ class MessageModelInfo(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -133,7 +133,7 @@ class MessageMetadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -150,7 +150,7 @@ class MessageTypedDict(TypedDict):
 
     id: NotRequired[str]
     r"""Unique message identifier"""
-    message_type: NotRequired[MessageType]
+    message_type: NotRequired[MessageTypeEnum]
     r"""Type of message:
     <ul>
     <li><code>user_query</code> - User's question or input</li>
@@ -192,7 +192,7 @@ class Message(BaseModel):
     r"""Unique message identifier"""
 
     message_type: Annotated[
-        Optional[MessageType], pydantic.Field(alias="messageType")
+        Optional[MessageTypeEnum], pydantic.Field(alias="messageType")
     ] = None
     r"""Type of message:
     <ul>
@@ -267,7 +267,7 @@ class Message(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

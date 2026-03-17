@@ -3,12 +3,13 @@
 
 from __future__ import annotations
 from .agentconversation import AgentConversation, AgentConversationTypedDict
+from .conversationfilters import ConversationFilters, ConversationFiltersTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -29,66 +30,6 @@ class GetAgentConversationRequest(BaseModel):
         pydantic.Field(alias="conversationId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-
-
-class GetAgentConversationAppliedTypedDict(TypedDict):
-    filters: NotRequired[List[str]]
-    values: NotRequired[Dict[str, Any]]
-
-
-class GetAgentConversationApplied(BaseModel):
-    filters: Optional[List[str]] = None
-
-    values: Optional[Dict[str, Any]] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["filters", "values"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class GetAgentConversationFiltersTypedDict(TypedDict):
-    r"""Applied and available filters"""
-
-    applied: NotRequired[GetAgentConversationAppliedTypedDict]
-    available: NotRequired[Dict[str, Any]]
-    r"""Available filter options including shared, tags, minMessages, search, pagination, sorting, dateFilters, messageFilters"""
-
-
-class GetAgentConversationFilters(BaseModel):
-    r"""Applied and available filters"""
-
-    applied: Optional[GetAgentConversationApplied] = None
-
-    available: Optional[Dict[str, Any]] = None
-    r"""Available filter options including shared, tags, minMessages, search, pagination, sorting, dateFilters, messageFilters"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["applied", "available"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
 
 
 class GetAgentConversationMetaTypedDict(TypedDict):
@@ -122,7 +63,7 @@ class GetAgentConversationMeta(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -138,8 +79,8 @@ class GetAgentConversationResponseTypedDict(TypedDict):
     r"""A conversation with a specific AI agent (full detail with messages).
 
     """
-    filters: NotRequired[GetAgentConversationFiltersTypedDict]
-    r"""Applied and available filters"""
+    filters: NotRequired[ConversationFiltersTypedDict]
+    r"""Applied and available filters for conversation endpoints"""
     meta: NotRequired[GetAgentConversationMetaTypedDict]
 
 
@@ -151,8 +92,8 @@ class GetAgentConversationResponse(BaseModel):
 
     """
 
-    filters: Optional[GetAgentConversationFilters] = None
-    r"""Applied and available filters"""
+    filters: Optional[ConversationFilters] = None
+    r"""Applied and available filters for conversation endpoints"""
 
     meta: Optional[GetAgentConversationMeta] = None
 
@@ -164,7 +105,7 @@ class GetAgentConversationResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

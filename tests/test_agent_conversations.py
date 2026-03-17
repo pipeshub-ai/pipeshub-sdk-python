@@ -2,6 +2,7 @@
 # @generated-id: 2635a75f448b
 
 from pipeshub_sdk import Pipeshub, models
+import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -41,29 +42,11 @@ def test_agent_conversations_list_agent_conversations():
         )
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step createAgentConversation.test referencing operation createAgentConversation not found in document`]"
+)
 def test_agent_conversations_create_agent_conversation():
-    test_http_client = create_test_http_client("createAgentConversation")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agent_conversations.create_agent_conversation(
-            agent_key="<value>",
-            query="What are the key findings from our Q4 financial report?",
-            record_ids=[
-                "507f1f77bcf86cd799439011",
-                "507f1f77bcf86cd799439012",
-            ],
-            model_key="gpt-4-turbo",
-            model_name="GPT-4 Turbo",
-            chat_mode="balanced",
-        )
-        assert res is not None
-        assert res == models.CreateAgentConversationResponse()
+    pass
 
 
 def test_agent_conversations_get_agent_conversation():
@@ -83,24 +66,11 @@ def test_agent_conversations_get_agent_conversation():
         assert res == models.GetAgentConversationResponse()
 
 
+@pytest.mark.skip(
+    reason="incomplete test found please make sure to address the following errors: [`workflow step addAgentMessage.test referencing operation addAgentMessage not found in document`]"
+)
 def test_agent_conversations_add_agent_message():
-    test_http_client = create_test_http_client("addAgentMessage")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.agent_conversations.add_agent_message(
-            agent_key="<value>",
-            conversation_id="<value>",
-            query="Can you elaborate on the revenue trends?",
-            timezone="Asia/Calcutta",
-        )
-        assert res is not None
-        assert res == models.AddAgentMessageResponse()
+    pass
 
 
 def test_agent_conversations_delete_agent_conversation():

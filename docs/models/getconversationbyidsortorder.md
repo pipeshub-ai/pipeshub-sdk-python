@@ -2,10 +2,15 @@
 
 Sort direction
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetConversationByIDSortOrder
+value: GetConversationByIDSortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

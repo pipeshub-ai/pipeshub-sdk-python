@@ -10,13 +10,22 @@ Authentication method required by the connector:<br>
 </ul>
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ConnectorAuthType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: ConnectorAuthType = "OAUTH"
+```
+
 
 ## Values
 
-| Name                  | Value                 |
-| --------------------- | --------------------- |
-| `OAUTH`               | OAUTH                 |
-| `OAUTH_ADMIN_CONSENT` | OAUTH_ADMIN_CONSENT   |
-| `API_TOKEN`           | API_TOKEN             |
-| `USERNAME_PASSWORD`   | USERNAME_PASSWORD     |
-| `NONE`                | NONE                  |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"OAUTH"`
+- `"OAUTH_ADMIN_CONSENT"`
+- `"API_TOKEN"`
+- `"USERNAME_PASSWORD"`
+- `"NONE"`

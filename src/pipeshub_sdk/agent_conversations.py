@@ -20,15 +20,11 @@ class AgentConversations(BaseSDK):
         agent_key: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        shared: Optional[bool] = None,
-        tags: Optional[str] = None,
-        min_messages: Optional[int] = None,
         search: Optional[str] = None,
         sort_by: Optional[models.ListAgentConversationsSortBy] = "lastActivityAt",
         sort_order: Optional[models.ListAgentConversationsSortOrder] = "desc",
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
-        message_type: Optional[models.ListAgentConversationsMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -45,15 +41,11 @@ class AgentConversations(BaseSDK):
         :param agent_key: Agent identifier
         :param page: Page number
         :param limit: Items per page
-        :param shared: Filter by shared status
-        :param tags: Filter by tags
-        :param min_messages: Filter by minimum number of messages
-        :param search: Search in conversation title and messages
+        :param search: Search in conversation title and message content
         :param sort_by: Field to sort by
         :param sort_order: Sort order
         :param start_date: Filter by creation date range start (ISO 8601)
         :param end_date: Filter by creation date range end (ISO 8601)
-        :param message_type: Filter by message type
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -73,15 +65,11 @@ class AgentConversations(BaseSDK):
             agent_key=agent_key,
             page=page,
             limit=limit,
-            shared=shared,
-            tags=tags,
-            min_messages=min_messages,
             search=search,
             sort_by=sort_by,
             sort_order=sort_order,
             start_date=start_date,
             end_date=end_date,
-            message_type=message_type,
         )
 
         req = self._build_request(
@@ -147,15 +135,11 @@ class AgentConversations(BaseSDK):
         agent_key: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        shared: Optional[bool] = None,
-        tags: Optional[str] = None,
-        min_messages: Optional[int] = None,
         search: Optional[str] = None,
         sort_by: Optional[models.ListAgentConversationsSortBy] = "lastActivityAt",
         sort_order: Optional[models.ListAgentConversationsSortOrder] = "desc",
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
-        message_type: Optional[models.ListAgentConversationsMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -172,15 +156,11 @@ class AgentConversations(BaseSDK):
         :param agent_key: Agent identifier
         :param page: Page number
         :param limit: Items per page
-        :param shared: Filter by shared status
-        :param tags: Filter by tags
-        :param min_messages: Filter by minimum number of messages
-        :param search: Search in conversation title and messages
+        :param search: Search in conversation title and message content
         :param sort_by: Field to sort by
         :param sort_order: Sort order
         :param start_date: Filter by creation date range start (ISO 8601)
         :param end_date: Filter by creation date range end (ISO 8601)
-        :param message_type: Filter by message type
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -200,15 +180,11 @@ class AgentConversations(BaseSDK):
             agent_key=agent_key,
             page=page,
             limit=limit,
-            shared=shared,
-            tags=tags,
-            min_messages=min_messages,
             search=search,
             sort_by=sort_by,
             sort_order=sort_order,
             start_date=start_date,
             end_date=end_date,
-            message_type=message_type,
         )
 
         req = self._build_request_async(
@@ -256,262 +232,6 @@ class AgentConversations(BaseSDK):
                 models.ListAgentConversationsResponse, http_res
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def create_agent_conversation(
-        self,
-        *,
-        agent_key: str,
-        query: str,
-        record_ids: Optional[List[str]] = None,
-        departments: Optional[List[str]] = None,
-        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
-        model_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateAgentConversationResponse:
-        r"""Create agent conversation
-
-        Start a new conversation with an agent.<br><br>
-        <b>Overview:</b><br>
-        Creates a conversation using the agent's configuration including
-        its system prompt, tools, and knowledge base access.
-
-
-        :param agent_key:
-        :param query: The user's question or prompt to start the conversation.
-            Supports natural language queries of any complexity.
-
-        :param record_ids: Limit the AI's knowledge scope to specific records/documents.
-            When provided, only these records will be searched for context.
-
-        :param departments: Filter by department IDs to scope the search
-        :param filters:
-        :param model_key: Identifier for the AI model configuration to use.
-            Available models depend on organization settings.
-
-        :param model_name: Display name of the AI model
-        :param chat_mode: Chat mode affecting response behavior.
-            Different modes optimize for different use cases.
-
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.CreateAgentConversationRequest(
-            agent_key=agent_key,
-            body=models.CreateConversationRequest(
-                query=query,
-                record_ids=record_ids,
-                departments=departments,
-                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
-                model_key=model_key,
-                model_name=model_name,
-                chat_mode=chat_mode,
-            ),
-        )
-
-        req = self._build_request(
-            method="POST",
-            path="/api/v1/agents/{agentKey}/conversations",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.CreateConversationRequest
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="createAgentConversation",
-                oauth2_scopes=["agent:execute"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(
-                models.CreateAgentConversationResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def create_agent_conversation_async(
-        self,
-        *,
-        agent_key: str,
-        query: str,
-        record_ids: Optional[List[str]] = None,
-        departments: Optional[List[str]] = None,
-        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
-        model_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.CreateAgentConversationResponse:
-        r"""Create agent conversation
-
-        Start a new conversation with an agent.<br><br>
-        <b>Overview:</b><br>
-        Creates a conversation using the agent's configuration including
-        its system prompt, tools, and knowledge base access.
-
-
-        :param agent_key:
-        :param query: The user's question or prompt to start the conversation.
-            Supports natural language queries of any complexity.
-
-        :param record_ids: Limit the AI's knowledge scope to specific records/documents.
-            When provided, only these records will be searched for context.
-
-        :param departments: Filter by department IDs to scope the search
-        :param filters:
-        :param model_key: Identifier for the AI model configuration to use.
-            Available models depend on organization settings.
-
-        :param model_name: Display name of the AI model
-        :param chat_mode: Chat mode affecting response behavior.
-            Different modes optimize for different use cases.
-
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.CreateAgentConversationRequest(
-            agent_key=agent_key,
-            body=models.CreateConversationRequest(
-                query=query,
-                record_ids=record_ids,
-                departments=departments,
-                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
-                model_key=model_key,
-                model_name=model_name,
-                chat_mode=chat_mode,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="POST",
-            path="/api/v1/agents/{agentKey}/conversations",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.CreateConversationRequest
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="createAgentConversation",
-                oauth2_scopes=["agent:execute"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["400", "401", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(
-                models.CreateAgentConversationResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -640,6 +360,7 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -773,6 +494,7 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1162,252 +884,6 @@ class AgentConversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def add_agent_message(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        query: str,
-        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
-        model_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        timezone: Optional[str] = None,
-        current_time: Optional[datetime] = None,
-        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AddAgentMessageResponse:
-        r"""Add message to agent conversation
-
-        Add a follow-up message to an agent conversation.
-
-        :param agent_key:
-        :param conversation_id:
-        :param query: The follow-up question or message content
-        :param filters:
-        :param model_key: Override the model for this specific message
-        :param model_name: Display name of the model
-        :param chat_mode: Chat mode for this message
-        :param model_friendly_name: Friendly display name of the model
-        :param timezone: User's timezone
-        :param current_time: Current time in ISO 8601 format
-        :param tools: Tools available for this message
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.AddAgentMessageRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models.AddMessageRequest(
-                query=query,
-                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
-                model_key=model_key,
-                model_name=model_name,
-                chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
-                timezone=timezone,
-                current_time=current_time,
-                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
-            ),
-        )
-
-        req = self._build_request(
-            method="POST",
-            path="/api/v1/agents/{agentKey}/conversations/{conversationId}/messages",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.AddMessageRequest
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="addAgentMessage",
-                oauth2_scopes=["agent:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AddAgentMessageResponse, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def add_agent_message_async(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        query: str,
-        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
-        model_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        timezone: Optional[str] = None,
-        current_time: Optional[datetime] = None,
-        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.AddAgentMessageResponse:
-        r"""Add message to agent conversation
-
-        Add a follow-up message to an agent conversation.
-
-        :param agent_key:
-        :param conversation_id:
-        :param query: The follow-up question or message content
-        :param filters:
-        :param model_key: Override the model for this specific message
-        :param model_name: Display name of the model
-        :param chat_mode: Chat mode for this message
-        :param model_friendly_name: Friendly display name of the model
-        :param timezone: User's timezone
-        :param current_time: Current time in ISO 8601 format
-        :param tools: Tools available for this message
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.AddAgentMessageRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models.AddMessageRequest(
-                query=query,
-                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
-                model_key=model_key,
-                model_name=model_name,
-                chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
-                timezone=timezone,
-                current_time=current_time,
-                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
-            ),
-        )
-
-        req = self._build_request_async(
-            method="POST",
-            path="/api/v1/agents/{agentKey}/conversations/{conversationId}/messages",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.AddMessageRequest
-            ),
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="addAgentMessage",
-                oauth2_scopes=["agent:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.AddAgentMessageResponse, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
     def stream_agent_message(
         self,
         *,
@@ -1522,6 +998,7 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1653,6 +1130,7 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -1776,6 +1254,7 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1899,6 +1378,7 @@ class AgentConversations(BaseSDK):
                 http_res,
                 lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
