@@ -18,7 +18,11 @@ def test_authentication_configuration_get_sso_auth_config():
 
         res = pipeshub.authentication_configuration.get_sso_auth_config()
         assert res is not None
-        assert res == models.SSOAuthConfig()
+        assert res == models.SSOAuthConfig(
+            certificate="<value>",
+            entry_point="https://left-swanling.net/",
+            email_key="<value>",
+        )
 
 
 @pytest.mark.skip(
@@ -40,7 +44,16 @@ def test_authentication_configuration_get_generic_o_auth_config():
 
         res = pipeshub.authentication_configuration.get_generic_o_auth_config()
         assert res is not None
-        assert res == models.GenericOAuthConfig()
+        assert res == models.GenericOAuthConfig(
+            provider_name="<value>",
+            client_id="<id>",
+            client_secret="<value>",
+            authorization_url="https://pertinent-icebreaker.org",
+            token_endpoint="https://apt-bid.org/",
+            user_info_endpoint="https://uniform-reporter.info/",
+            scope="openid email profile",
+            redirect_uri="https://misguided-stitcher.com/",
+        )
 
 
 def test_authentication_configuration_get_microsoft_auth_config():
@@ -56,6 +69,7 @@ def test_authentication_configuration_get_microsoft_auth_config():
         res = pipeshub.authentication_configuration.get_microsoft_auth_config()
         assert res is not None
         assert res == models.MicrosoftAuthConfig(
+            client_id="<id>",
             authority="https://login.microsoftonline.com/{tenantId}",
         )
 
@@ -72,7 +86,9 @@ def test_authentication_configuration_get_google_auth_config():
 
         res = pipeshub.authentication_configuration.get_google_auth_config()
         assert res is not None
-        assert res == models.GoogleAuthConfig()
+        assert res == models.GoogleAuthConfig(
+            client_id="<id>",
+        )
 
 
 def test_authentication_configuration_set_microsoft_auth_config():
@@ -86,7 +102,7 @@ def test_authentication_configuration_set_microsoft_auth_config():
         assert pipeshub is not None
 
         res = pipeshub.authentication_configuration.set_microsoft_auth_config(
-            authority="https://login.microsoftonline.com/{tenantId}"
+            client_id="<id>", tenant_id="common", enable_jit=False
         )
         assert res is not None
         assert res == models.SetMicrosoftAuthConfigResponse(
@@ -104,7 +120,9 @@ def test_authentication_configuration_set_google_auth_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.authentication_configuration.set_google_auth_config()
+        res = pipeshub.authentication_configuration.set_google_auth_config(
+            client_id="<id>", enable_jit=True
+        )
         assert res is not None
         assert res == models.SetGoogleAuthConfigResponse(
             message="Google Auth config created successfully",
@@ -121,7 +139,12 @@ def test_authentication_configuration_set_sso_auth_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.authentication_configuration.set_sso_auth_config()
+        res = pipeshub.authentication_configuration.set_sso_auth_config(
+            certificate="<value>",
+            entry_point="https://unwieldy-sprinkles.name",
+            email_key="<value>",
+            enable_jit=True,
+        )
         assert res is not None
         assert res == models.SetSsoAuthConfigResponse(
             message="SSO Auth config created successfully",
@@ -139,7 +162,15 @@ def test_authentication_configuration_set_o_auth_config():
         assert pipeshub is not None
 
         res = pipeshub.authentication_configuration.set_o_auth_config(
-            scope="openid email profile"
+            provider_name="<value>",
+            client_id="<id>",
+            client_secret="<value>",
+            authorization_url="https://squeaky-ad.org",
+            token_endpoint="https://rapid-cruelty.name/",
+            user_info_endpoint="https://far-flung-habit.net",
+            scope="openid email profile",
+            redirect_uri="https://questionable-straw.biz",
+            enable_jit=True,
         )
         assert res is not None
         assert res == models.SetOAuthConfigResponse(

@@ -33,7 +33,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.authentication_configuration.set_microsoft_auth_config(authority="https://login.microsoftonline.com/{tenantId}")
+    res = pipeshub.authentication_configuration.set_microsoft_auth_config(client_id="<id>", tenant_id="common", enable_jit=False)
 
     # Handle response
     print(res)
@@ -42,13 +42,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `client_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft application client ID                                     |                                                                     |
-| `tenant_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft tenant ID                                                 |                                                                     |
-| `authority`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft authority URL                                             | https://login.microsoftonline.com/{tenantId}                        |
-| `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `client_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Microsoft application client ID                                     |
+| `tenant_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Microsoft tenant ID                                                 |
+| `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
@@ -119,7 +118,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.authentication_configuration.set_google_auth_config()
+    res = pipeshub.authentication_configuration.set_google_auth_config(client_id="<id>", enable_jit=True)
 
     # Handle response
     print(res)
@@ -130,7 +129,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `client_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Google OAuth client ID                                              |
+| `client_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Google OAuth client ID                                              |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
@@ -203,7 +202,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.authentication_configuration.set_sso_auth_config()
+    res = pipeshub.authentication_configuration.set_sso_auth_config(certificate="<value>", entry_point="https://unwieldy-sprinkles.name", email_key="<value>", enable_jit=True)
 
     # Handle response
     print(res)
@@ -214,9 +213,9 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `certificate`                                                       | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | X.509 certificate for signature validation (PEM format)             |
-| `entry_point`                                                       | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Identity provider SSO URL                                           |
-| `email_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | SAML attribute name for user email                                  |
+| `certificate`                                                       | *str*                                                               | :heavy_check_mark:                                                  | X.509 certificate for signature validation (PEM format)             |
+| `entry_point`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Identity provider SSO URL                                           |
+| `email_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | SAML attribute name for user email                                  |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
@@ -289,7 +288,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.authentication_configuration.set_o_auth_config(scope="openid email profile")
+    res = pipeshub.authentication_configuration.set_o_auth_config(provider_name="<value>", client_id="<id>", client_secret="<value>", authorization_url="https://squeaky-ad.org", token_endpoint="https://rapid-cruelty.name/", user_info_endpoint="https://far-flung-habit.net", scope="openid email profile", redirect_uri="https://questionable-straw.biz", enable_jit=True)
 
     # Handle response
     print(res)
@@ -300,14 +299,14 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `provider_name`                                                     | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Display name for the OAuth provider                                 |
-| `client_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | OAuth client ID                                                     |
-| `client_secret`                                                     | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | OAuth client secret                                                 |
-| `authorization_url`                                                 | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Authorization endpoint URL                                          |
-| `token_endpoint`                                                    | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Token endpoint URL                                                  |
-| `user_info_endpoint`                                                | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | User info endpoint URL                                              |
-| `scope`                                                             | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | OAuth scopes to request                                             |
-| `redirect_uri`                                                      | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | OAuth redirect URI                                                  |
+| `provider_name`                                                     | *str*                                                               | :heavy_check_mark:                                                  | Display name for the OAuth provider                                 |
+| `client_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | OAuth client ID                                                     |
+| `client_secret`                                                     | *str*                                                               | :heavy_check_mark:                                                  | OAuth client secret                                                 |
+| `authorization_url`                                                 | *str*                                                               | :heavy_check_mark:                                                  | Authorization endpoint URL                                          |
+| `token_endpoint`                                                    | *str*                                                               | :heavy_check_mark:                                                  | Token endpoint URL                                                  |
+| `user_info_endpoint`                                                | *str*                                                               | :heavy_check_mark:                                                  | User info endpoint URL                                              |
+| `scope`                                                             | *str*                                                               | :heavy_check_mark:                                                  | OAuth scopes to request                                             |
+| `redirect_uri`                                                      | *str*                                                               | :heavy_check_mark:                                                  | OAuth redirect URI                                                  |
 | `enable_jit`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Enable Just-In-Time user provisioning                               |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 

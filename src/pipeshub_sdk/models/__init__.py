@@ -1233,6 +1233,10 @@ if TYPE_CHECKING:
         MetricsCollectionConfigTypedDict,
     )
     from .microsoftauthconfig import MicrosoftAuthConfig, MicrosoftAuthConfigTypedDict
+    from .microsoftauthconfig_input import (
+        MicrosoftAuthConfigInput,
+        MicrosoftAuthConfigInputTypedDict,
+    )
     from .modeltype import ModelType
     from .monthlyscheduleconfig import (
         MonthlyScheduleConfig,
@@ -2856,6 +2860,8 @@ __all__ = [
     "MetricsCollectionConfigTypedDict",
     "Microsoft",
     "MicrosoftAuthConfig",
+    "MicrosoftAuthConfigInput",
+    "MicrosoftAuthConfigInputTypedDict",
     "MicrosoftAuthConfigTypedDict",
     "MicrosoftTypedDict",
     "MinMessages",
@@ -4392,6 +4398,8 @@ _dynamic_imports: dict[str, str] = {
     "MetricsCollectionConfigTypedDict": ".metricscollectionconfig",
     "MicrosoftAuthConfig": ".microsoftauthconfig",
     "MicrosoftAuthConfigTypedDict": ".microsoftauthconfig",
+    "MicrosoftAuthConfigInput": ".microsoftauthconfig_input",
+    "MicrosoftAuthConfigInputTypedDict": ".microsoftauthconfig_input",
     "ModelType": ".modeltype",
     "MonthlyScheduleConfig": ".monthlyscheduleconfig",
     "MonthlyScheduleConfigTypedDict": ".monthlyscheduleconfig",

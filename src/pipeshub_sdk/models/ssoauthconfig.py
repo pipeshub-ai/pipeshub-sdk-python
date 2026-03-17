@@ -12,11 +12,11 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class SSOAuthConfigTypedDict(TypedDict):
     r"""SAML SSO authentication configuration"""
 
-    certificate: NotRequired[str]
+    certificate: str
     r"""X.509 certificate for signature validation (PEM format)"""
-    entry_point: NotRequired[str]
+    entry_point: str
     r"""Identity provider SSO URL"""
-    email_key: NotRequired[str]
+    email_key: str
     r"""SAML attribute name for user email"""
     enable_jit: NotRequired[bool]
     r"""Enable Just-In-Time user provisioning"""
@@ -25,21 +25,21 @@ class SSOAuthConfigTypedDict(TypedDict):
 class SSOAuthConfig(BaseModel):
     r"""SAML SSO authentication configuration"""
 
-    certificate: Optional[str] = None
+    certificate: str
     r"""X.509 certificate for signature validation (PEM format)"""
 
-    entry_point: Annotated[Optional[str], pydantic.Field(alias="entryPoint")] = None
+    entry_point: Annotated[str, pydantic.Field(alias="entryPoint")]
     r"""Identity provider SSO URL"""
 
-    email_key: Annotated[Optional[str], pydantic.Field(alias="emailKey")] = None
+    email_key: Annotated[str, pydantic.Field(alias="emailKey")]
     r"""SAML attribute name for user email"""
 
-    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
+    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = True
     r"""Enable Just-In-Time user provisioning"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["certificate", "entryPoint", "emailKey", "enableJit"])
+        optional_fields = set(["enableJit"])
         serialized = handler(self)
         m = {}
 

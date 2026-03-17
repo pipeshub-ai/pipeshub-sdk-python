@@ -16,10 +16,9 @@ class AuthenticationConfiguration(BaseSDK):
     def set_microsoft_auth_config(
         self,
         *,
-        client_id: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        authority: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        client_id: str,
+        tenant_id: Optional[str] = "common",
+        enable_jit: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -31,7 +30,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
-        :param authority: Microsoft authority URL
         :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -48,10 +46,9 @@ class AuthenticationConfiguration(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.MicrosoftAuthConfig(
+        request = models.MicrosoftAuthConfigInput(
             client_id=client_id,
             tenant_id=tenant_id,
-            authority=authority,
             enable_jit=enable_jit,
         )
 
@@ -69,7 +66,7 @@ class AuthenticationConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.MicrosoftAuthConfig
+                request, False, False, "json", models.MicrosoftAuthConfigInput
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -118,10 +115,9 @@ class AuthenticationConfiguration(BaseSDK):
     async def set_microsoft_auth_config_async(
         self,
         *,
-        client_id: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        authority: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        client_id: str,
+        tenant_id: Optional[str] = "common",
+        enable_jit: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -133,7 +129,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
-        :param authority: Microsoft authority URL
         :param enable_jit: Enable Just-In-Time user provisioning
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -150,10 +145,9 @@ class AuthenticationConfiguration(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.MicrosoftAuthConfig(
+        request = models.MicrosoftAuthConfigInput(
             client_id=client_id,
             tenant_id=tenant_id,
-            authority=authority,
             enable_jit=enable_jit,
         )
 
@@ -171,7 +165,7 @@ class AuthenticationConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.MicrosoftAuthConfig
+                request, False, False, "json", models.MicrosoftAuthConfigInput
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -382,8 +376,8 @@ class AuthenticationConfiguration(BaseSDK):
     def set_google_auth_config(
         self,
         *,
-        client_id: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        client_id: str,
+        enable_jit: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -476,8 +470,8 @@ class AuthenticationConfiguration(BaseSDK):
     async def set_google_auth_config_async(
         self,
         *,
-        client_id: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        client_id: str,
+        enable_jit: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -732,10 +726,10 @@ class AuthenticationConfiguration(BaseSDK):
     def set_sso_auth_config(
         self,
         *,
-        certificate: Optional[str] = None,
-        entry_point: Optional[str] = None,
-        email_key: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        certificate: str,
+        entry_point: str,
+        email_key: str,
+        enable_jit: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -832,10 +826,10 @@ class AuthenticationConfiguration(BaseSDK):
     async def set_sso_auth_config_async(
         self,
         *,
-        certificate: Optional[str] = None,
-        entry_point: Optional[str] = None,
-        email_key: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        certificate: str,
+        entry_point: str,
+        email_key: str,
+        enable_jit: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1094,15 +1088,15 @@ class AuthenticationConfiguration(BaseSDK):
     def set_o_auth_config(
         self,
         *,
-        provider_name: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        authorization_url: Optional[str] = None,
-        token_endpoint: Optional[str] = None,
-        user_info_endpoint: Optional[str] = None,
-        scope: Optional[str] = "openid email profile",
-        redirect_uri: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        provider_name: str,
+        client_id: str,
+        client_secret: str,
+        authorization_url: str,
+        token_endpoint: str,
+        user_info_endpoint: str,
+        scope: str,
+        redirect_uri: str,
+        enable_jit: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1209,15 +1203,15 @@ class AuthenticationConfiguration(BaseSDK):
     async def set_o_auth_config_async(
         self,
         *,
-        provider_name: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        authorization_url: Optional[str] = None,
-        token_endpoint: Optional[str] = None,
-        user_info_endpoint: Optional[str] = None,
-        scope: Optional[str] = "openid email profile",
-        redirect_uri: Optional[str] = None,
-        enable_jit: Optional[bool] = None,
+        provider_name: str,
+        client_id: str,
+        client_secret: str,
+        authorization_url: str,
+        token_endpoint: str,
+        user_info_endpoint: str,
+        scope: str,
+        redirect_uri: str,
+        enable_jit: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,

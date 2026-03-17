@@ -12,7 +12,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class GoogleAuthConfigTypedDict(TypedDict):
     r"""Google authentication configuration"""
 
-    client_id: NotRequired[str]
+    client_id: str
     r"""Google OAuth client ID"""
     enable_jit: NotRequired[bool]
     r"""Enable Just-In-Time user provisioning"""
@@ -21,15 +21,15 @@ class GoogleAuthConfigTypedDict(TypedDict):
 class GoogleAuthConfig(BaseModel):
     r"""Google authentication configuration"""
 
-    client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
+    client_id: Annotated[str, pydantic.Field(alias="clientId")]
     r"""Google OAuth client ID"""
 
-    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
+    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = True
     r"""Enable Just-In-Time user provisioning"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["clientId", "enableJit"])
+        optional_fields = set(["enableJit"])
         serialized = handler(self)
         m = {}
 
