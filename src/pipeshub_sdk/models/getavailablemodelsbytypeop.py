@@ -36,6 +36,8 @@ class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     is_default: NotRequired[bool]
     is_multimodal: NotRequired[bool]
     is_reasoning: NotRequired[bool]
+    model_friendly_name: NotRequired[str]
+    r"""Human-readable display name for the model"""
 
 
 class GetAvailableModelsByTypeModel(BaseModel):
@@ -59,6 +61,11 @@ class GetAvailableModelsByTypeModel(BaseModel):
 
     is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Human-readable display name for the model"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -71,6 +78,7 @@ class GetAvailableModelsByTypeModel(BaseModel):
                 "isDefault",
                 "isMultimodal",
                 "isReasoning",
+                "modelFriendlyName",
             ]
         )
         serialized = handler(self)
