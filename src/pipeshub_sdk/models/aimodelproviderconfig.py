@@ -8,11 +8,39 @@ from pipeshub_sdk.types import (
     OptionalNullable,
     UNSET,
     UNSET_SENTINEL,
+    UnrecognizedStr,
 )
 import pydantic
 from pydantic import ConfigDict, model_serializer
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+Provider = Union[
+    Literal[
+        "anthropic",
+        "bedrock",
+        "azureAI",
+        "azureOpenAI",
+        "cohere",
+        "fireworks",
+        "gemini",
+        "groq",
+        "huggingFace",
+        "jinaAI",
+        "mistral",
+        "ollama",
+        "openAI",
+        "openAICompatible",
+        "sentenceTransformers",
+        "together",
+        "vertexAI",
+        "voyage",
+        "xai",
+    ],
+    UnrecognizedStr,
+]
+r"""AI provider name"""
 
 
 class AIModelProviderConfigConfigurationTypedDict(TypedDict):
@@ -66,8 +94,8 @@ class AIModelProviderConfigConfiguration(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
-            serialized.pop(k, None)
+            val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -79,7 +107,7 @@ class AIModelProviderConfigConfiguration(BaseModel):
 
 
 class AIModelProviderConfigTypedDict(TypedDict):
-    provider: str
+    provider: Provider
     r"""AI provider name"""
     configuration: AIModelProviderConfigConfigurationTypedDict
     r"""Provider-specific configuration. Keys vary by provider (e.g., ollama includes endpoint)."""
@@ -98,7 +126,7 @@ class AIModelProviderConfigTypedDict(TypedDict):
 
 
 class AIModelProviderConfig(BaseModel):
-    provider: str
+    provider: Provider
     r"""AI provider name"""
 
     configuration: AIModelProviderConfigConfiguration
@@ -146,7 +174,7 @@ class AIModelProviderConfig(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

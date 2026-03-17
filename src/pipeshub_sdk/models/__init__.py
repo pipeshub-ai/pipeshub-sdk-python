@@ -95,6 +95,7 @@ if TYPE_CHECKING:
         AIModelProviderConfigConfiguration,
         AIModelProviderConfigConfigurationTypedDict,
         AIModelProviderConfigTypedDict,
+        Provider,
     )
     from .aimodelproviderresponse import (
         AIModelProviderResponse,
@@ -2846,6 +2847,7 @@ __all__ = [
     "ProgressTypedDict",
     "ProgressUnion",
     "ProgressUnionTypedDict",
+    "Provider",
     "Ratings",
     "RatingsTypedDict",
     "ReauthenticateToolsetInstanceRequest",
@@ -3357,6 +3359,7 @@ _dynamic_imports: dict[str, str] = {
     "AIModelProviderConfigConfiguration": ".aimodelproviderconfig",
     "AIModelProviderConfigConfigurationTypedDict": ".aimodelproviderconfig",
     "AIModelProviderConfigTypedDict": ".aimodelproviderconfig",
+    "Provider": ".aimodelproviderconfig",
     "AIModelProviderResponse": ".aimodelproviderresponse",
     "AIModelProviderResponseStatus": ".aimodelproviderresponse",
     "AIModelProviderResponseTypedDict": ".aimodelproviderresponse",

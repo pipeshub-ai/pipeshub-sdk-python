@@ -10,15 +10,24 @@ Type of content:
 - OTHERS: Miscellaneous content types
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import RecordType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: RecordType = "FILE"
+```
+
 
 ## Values
 
-| Name      | Value     |
-| --------- | --------- |
-| `FILE`    | FILE      |
-| `WEBPAGE` | WEBPAGE   |
-| `COMMENT` | COMMENT   |
-| `MESSAGE` | MESSAGE   |
-| `EMAIL`   | EMAIL     |
-| `TICKET`  | TICKET    |
-| `OTHERS`  | OTHERS    |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"FILE"`
+- `"WEBPAGE"`
+- `"COMMENT"`
+- `"MESSAGE"`
+- `"EMAIL"`
+- `"TICKET"`
+- `"OTHERS"`
