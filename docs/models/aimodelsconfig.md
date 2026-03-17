@@ -1,0 +1,11 @@
+# AIModelsConfig
+
+Must have at least one model type configured
+
+
+## Fields
+
+| Field                                                                    | Type                                                                     | Required                                                                 | Description                                                              |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `llm`                                                                    | List[[models.AIModelProviderConfig](../models/aimodelproviderconfig.md)] | :heavy_minus_sign:                                                       | N/A                                                                      |
+| `embedding`                                                              | List[[models.AIModelProviderConfig](../models/aimodelproviderconfig.md)] | :heavy_minus_sign:                                                       | N/A                                                                      |

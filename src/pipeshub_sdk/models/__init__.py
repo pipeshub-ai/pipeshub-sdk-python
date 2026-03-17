@@ -101,6 +101,7 @@ if TYPE_CHECKING:
         Details,
         DetailsTypedDict,
     )
+    from .aimodelsconfig import AIModelsConfig, AIModelsConfigTypedDict
     from .apptype import AppType
     from .archiveconversationop import (
         ArchiveConversationRequest,
@@ -1988,6 +1989,8 @@ __all__ = [
     "AIModelProviderResponse",
     "AIModelProviderResponseStatus",
     "AIModelProviderResponseTypedDict",
+    "AIModelsConfig",
+    "AIModelsConfigTypedDict",
     "Access",
     "AccessTypedDict",
     "Action",
@@ -3533,6 +3536,8 @@ _dynamic_imports: dict[str, str] = {
     "AIModelProviderResponseTypedDict": ".aimodelproviderresponse",
     "Details": ".aimodelproviderresponse",
     "DetailsTypedDict": ".aimodelproviderresponse",
+    "AIModelsConfig": ".aimodelsconfig",
+    "AIModelsConfigTypedDict": ".aimodelsconfig",
     "AppType": ".apptype",
     "ArchiveConversationRequest": ".archiveconversationop",
     "ArchiveConversationRequestTypedDict": ".archiveconversationop",
