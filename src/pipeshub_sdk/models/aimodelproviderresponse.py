@@ -35,6 +35,8 @@ class DetailsTypedDict(TypedDict):
     model: NotRequired[str]
     r"""Model name/identifier"""
     is_default: NotRequired[bool]
+    is_multimodal: NotRequired[bool]
+    is_reasoning: NotRequired[bool]
     context_length: NotRequired[Nullable[int]]
 
 
@@ -53,6 +55,12 @@ class Details(BaseModel):
 
     is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
 
+    is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
+        None
+    )
+
+    is_reasoning: Annotated[Optional[bool], pydantic.Field(alias="isReasoning")] = None
+
     context_length: Annotated[
         OptionalNullable[int], pydantic.Field(alias="contextLength")
     ] = UNSET
@@ -60,7 +68,16 @@ class Details(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["modelKey", "modelType", "provider", "model", "isDefault", "contextLength"]
+            [
+                "modelKey",
+                "modelType",
+                "provider",
+                "model",
+                "isDefault",
+                "isMultimodal",
+                "isReasoning",
+                "contextLength",
+            ]
         )
         nullable_fields = set(["contextLength"])
         serialized = handler(self)
@@ -68,7 +85,7 @@ class Details(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -110,7 +127,7 @@ class AIModelProviderResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

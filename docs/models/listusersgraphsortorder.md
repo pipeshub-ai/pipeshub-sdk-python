@@ -2,10 +2,15 @@
 
 Sort direction
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListUsersGraphSortOrder
+value: ListUsersGraphSortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

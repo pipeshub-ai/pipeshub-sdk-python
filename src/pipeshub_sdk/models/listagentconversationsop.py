@@ -2,14 +2,33 @@
 # @generated-id: 638b708fa221
 
 from __future__ import annotations
-from .conversation import Conversation, ConversationTypedDict
-from datetime import datetime
+from .agentconversationlistitem import (
+    AgentConversationListItem,
+    AgentConversationListItemTypedDict,
+)
+from .conversationfilters import ConversationFilters, ConversationFiltersTypedDict
+from datetime import date, datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+ListAgentConversationsSortBy = Literal[
+    "createdAt",
+    "lastActivityAt",
+    "title",
+]
+r"""Field to sort by"""
+
+
+ListAgentConversationsSortOrder = Literal[
+    "asc",
+    "desc",
+]
+r"""Sort order"""
 
 
 class ListAgentConversationsRequestTypedDict(TypedDict):
@@ -19,6 +38,16 @@ class ListAgentConversationsRequestTypedDict(TypedDict):
     r"""Page number"""
     limit: NotRequired[int]
     r"""Items per page"""
+    search: NotRequired[str]
+    r"""Search in conversation title and message content"""
+    sort_by: NotRequired[ListAgentConversationsSortBy]
+    r"""Field to sort by"""
+    sort_order: NotRequired[ListAgentConversationsSortOrder]
+    r"""Sort order"""
+    start_date: NotRequired[date]
+    r"""Filter by creation date range start (ISO 8601)"""
+    end_date: NotRequired[date]
+    r"""Filter by creation date range end (ISO 8601)"""
 
 
 class ListAgentConversationsRequest(BaseModel):
@@ -41,15 +70,51 @@ class ListAgentConversationsRequest(BaseModel):
     ] = 20
     r"""Items per page"""
 
+    search: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Search in conversation title and message content"""
+
+    sort_by: Annotated[
+        Optional[ListAgentConversationsSortBy],
+        pydantic.Field(alias="sortBy"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = "lastActivityAt"
+    r"""Field to sort by"""
+
+    sort_order: Annotated[
+        Optional[ListAgentConversationsSortOrder],
+        pydantic.Field(alias="sortOrder"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = "desc"
+    r"""Sort order"""
+
+    start_date: Annotated[
+        Optional[date],
+        pydantic.Field(alias="startDate"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by creation date range start (ISO 8601)"""
+
+    end_date: Annotated[
+        Optional[date],
+        pydantic.Field(alias="endDate"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Filter by creation date range end (ISO 8601)"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["page", "limit"])
+        optional_fields = set(
+            ["page", "limit", "search", "sortBy", "sortOrder", "startDate", "endDate"]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -90,7 +155,7 @@ class ListAgentConversationsPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -120,7 +185,7 @@ class ListAgentConversationsMeta(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -132,27 +197,28 @@ class ListAgentConversationsMeta(BaseModel):
 class ListAgentConversationsResponseTypedDict(TypedDict):
     r"""List of agent conversations"""
 
-    conversations: NotRequired[List[ConversationTypedDict]]
-    shared_with_me_conversations: NotRequired[List[ConversationTypedDict]]
+    conversations: NotRequired[List[AgentConversationListItemTypedDict]]
+    shared_with_me_conversations: NotRequired[List[AgentConversationListItemTypedDict]]
     pagination: NotRequired[ListAgentConversationsPaginationTypedDict]
-    filters: NotRequired[Dict[str, Any]]
-    r"""Applied and available filters"""
+    filters: NotRequired[ConversationFiltersTypedDict]
+    r"""Applied and available filters for conversation endpoints"""
     meta: NotRequired[ListAgentConversationsMetaTypedDict]
 
 
 class ListAgentConversationsResponse(BaseModel):
     r"""List of agent conversations"""
 
-    conversations: Optional[List[Conversation]] = None
+    conversations: Optional[List[AgentConversationListItem]] = None
 
     shared_with_me_conversations: Annotated[
-        Optional[List[Conversation]], pydantic.Field(alias="sharedWithMeConversations")
+        Optional[List[AgentConversationListItem]],
+        pydantic.Field(alias="sharedWithMeConversations"),
     ] = None
 
     pagination: Optional[ListAgentConversationsPagination] = None
 
-    filters: Optional[Dict[str, Any]] = None
-    r"""Applied and available filters"""
+    filters: Optional[ConversationFilters] = None
+    r"""Applied and available filters for conversation endpoints"""
 
     meta: Optional[ListAgentConversationsMeta] = None
 
@@ -172,7 +238,7 @@ class ListAgentConversationsResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

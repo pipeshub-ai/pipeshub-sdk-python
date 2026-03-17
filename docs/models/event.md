@@ -1,12 +1,21 @@
 # Event
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import Event
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: Event = "connected"
+```
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `CONNECTED` | connected   |
-| `CHUNK`     | chunk       |
-| `CITATION`  | citation    |
-| `COMPLETE`  | complete    |
-| `ERROR`     | error       |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"connected"`
+- `"chunk"`
+- `"citation"`
+- `"complete"`
+- `"error"`

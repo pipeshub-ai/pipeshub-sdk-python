@@ -59,3 +59,57 @@ def test_ai_models_providers_add_ai_model_provider():
         )
         assert res is not None
         assert res == models.AIModelProviderResponse()
+
+
+def test_ai_models_providers_update_ai_model_provider():
+    test_http_client = create_test_http_client("updateAIModelProvider")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.ai_models_providers.update_ai_model_provider(
+            model_type="reasoning",
+            model_key="<value>",
+            provider="<value>",
+            configuration=models.UpdateAIModelProviderRequestConfiguration(),
+        )
+        assert res is not None
+        assert res == models.AIModelProviderResponse()
+
+
+def test_ai_models_providers_delete_ai_model_provider():
+    test_http_client = create_test_http_client("deleteAIModelProvider")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.ai_models_providers.delete_ai_model_provider(
+            model_type="reasoning", model_key="<value>"
+        )
+        assert res is not None
+        assert res == models.DeleteAIModelProviderResponse()
+
+
+def test_ai_models_providers_set_default_ai_model():
+    test_http_client = create_test_http_client("setDefaultAIModel")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.ai_models_providers.set_default_ai_model(
+            model_type="ocr", model_key="<value>"
+        )
+        assert res is not None
+        assert res == models.SetDefaultAIModelResponse()

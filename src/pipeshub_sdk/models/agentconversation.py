@@ -4,10 +4,10 @@
 from __future__ import annotations
 from .message import Message, MessageTypedDict
 from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -17,6 +17,17 @@ class AgentConversationSharedWithTypedDict(TypedDict):
 
 class AgentConversationSharedWith(BaseModel):
     pass
+
+
+AgentConversationStatus = Union[
+    Literal[
+        "Complete",
+        "INPROGRESS",
+        "FAILED",
+    ],
+    UnrecognizedStr,
+]
+r"""Conversation status"""
 
 
 class AgentConversationModelInfoTypedDict(TypedDict):
@@ -40,7 +51,7 @@ class AgentConversationModelInfo(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -67,7 +78,7 @@ class MessageRange(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -121,7 +132,7 @@ class AgentConversationPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -148,7 +159,7 @@ class Access(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -158,7 +169,7 @@ class Access(BaseModel):
 
 
 class AgentConversationTypedDict(TypedDict):
-    r"""A conversation with a specific AI agent."""
+    r"""A conversation with a specific AI agent (full detail with messages)."""
 
     id: NotRequired[str]
     r"""Unique conversation identifier"""
@@ -168,8 +179,8 @@ class AgentConversationTypedDict(TypedDict):
     created_at: NotRequired[datetime]
     is_shared: NotRequired[bool]
     shared_with: NotRequired[List[AgentConversationSharedWithTypedDict]]
-    status: NotRequired[str]
-    r"""Conversation status (e.g., Complete, INPROGRESS, FAILED)"""
+    status: NotRequired[AgentConversationStatus]
+    r"""Conversation status"""
     messages: NotRequired[List[MessageTypedDict]]
     model_info: NotRequired[AgentConversationModelInfoTypedDict]
     pagination: NotRequired[AgentConversationPaginationTypedDict]
@@ -177,7 +188,7 @@ class AgentConversationTypedDict(TypedDict):
 
 
 class AgentConversation(BaseModel):
-    r"""A conversation with a specific AI agent."""
+    r"""A conversation with a specific AI agent (full detail with messages)."""
 
     id: Optional[str] = None
     r"""Unique conversation identifier"""
@@ -195,8 +206,8 @@ class AgentConversation(BaseModel):
         Optional[List[AgentConversationSharedWith]], pydantic.Field(alias="sharedWith")
     ] = None
 
-    status: Optional[str] = None
-    r"""Conversation status (e.g., Complete, INPROGRESS, FAILED)"""
+    status: Optional[AgentConversationStatus] = None
+    r"""Conversation status"""
 
     messages: Optional[List[Message]] = None
 
@@ -230,7 +241,7 @@ class AgentConversation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

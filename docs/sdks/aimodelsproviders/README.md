@@ -165,9 +165,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.ai_models_providers.update_ai_model_provider(model_type="reasoning", model_key="<value>", provider="<value>", configuration={})
+    res = pipeshub.ai_models_providers.update_ai_model_provider(model_type="reasoning", model_key="<value>", provider="<value>", configuration=models.UpdateAIModelProviderRequestConfiguration())
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -178,12 +179,16 @@ with Pipeshub(
 | `model_type`                                                                                                  | [models.ModelType](../../models/modeltype.md)                                                                 | :heavy_check_mark:                                                                                            | Type of AI model                                                                                              |
 | `model_key`                                                                                                   | *str*                                                                                                         | :heavy_check_mark:                                                                                            | Unique model key (UUID)                                                                                       |
 | `provider`                                                                                                    | *str*                                                                                                         | :heavy_check_mark:                                                                                            | Provider name                                                                                                 |
-| `configuration`                                                                                               | [models.UpdateAIModelProviderRequestConfiguration](../../models/updateaimodelproviderrequestconfiguration.md) | :heavy_check_mark:                                                                                            | Updated provider configuration                                                                                |
+| `configuration`                                                                                               | [models.UpdateAIModelProviderRequestConfiguration](../../models/updateaimodelproviderrequestconfiguration.md) | :heavy_check_mark:                                                                                            | Provider-specific configuration. Keys vary by provider.                                                       |
 | `is_multimodal`                                                                                               | *Optional[bool]*                                                                                              | :heavy_minus_sign:                                                                                            | N/A                                                                                                           |
 | `is_reasoning`                                                                                                | *Optional[bool]*                                                                                              | :heavy_minus_sign:                                                                                            | N/A                                                                                                           |
 | `is_default`                                                                                                  | *Optional[bool]*                                                                                              | :heavy_minus_sign:                                                                                            | N/A                                                                                                           |
 | `context_length`                                                                                              | *OptionalNullable[int]*                                                                                       | :heavy_minus_sign:                                                                                            | N/A                                                                                                           |
 | `retries`                                                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                              | :heavy_minus_sign:                                                                                            | Configuration to override the default retry behavior of the client.                                           |
+
+### Response
+
+**[models.AIModelProviderResponse](../../models/aimodelproviderresponse.md)**
 
 ### Errors
 
@@ -209,9 +214,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.ai_models_providers.delete_ai_model_provider(model_type="reasoning", model_key="<value>")
+    res = pipeshub.ai_models_providers.delete_ai_model_provider(model_type="reasoning", model_key="<value>")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -222,6 +228,10 @@ with Pipeshub(
 | `model_type`                                                        | [models.ModelType](../../models/modeltype.md)                       | :heavy_check_mark:                                                  | Type of AI model                                                    |
 | `model_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.DeleteAIModelProviderResponse](../../models/deleteaimodelproviderresponse.md)**
 
 ### Errors
 
@@ -247,9 +257,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.ai_models_providers.set_default_ai_model(model_type="ocr", model_key="<value>")
+    res = pipeshub.ai_models_providers.set_default_ai_model(model_type="ocr", model_key="<value>")
 
-    # Use the SDK ...
+    # Handle response
+    print(res)
 
 ```
 
@@ -260,6 +271,10 @@ with Pipeshub(
 | `model_type`                                                        | [models.ModelType](../../models/modeltype.md)                       | :heavy_check_mark:                                                  | Type of AI model                                                    |
 | `model_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.SetDefaultAIModelResponse](../../models/setdefaultaimodelresponse.md)**
 
 ### Errors
 

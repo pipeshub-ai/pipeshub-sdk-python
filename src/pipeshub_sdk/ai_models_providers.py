@@ -615,7 +615,7 @@ class AIModelsProviders(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.AIModelProviderResponse:
         r"""Update AI model provider
 
         Update an existing AI model provider configuration.
@@ -623,7 +623,7 @@ class AIModelsProviders(BaseSDK):
         :param model_type: Type of AI model
         :param model_key: Unique model key (UUID)
         :param provider: Provider name
-        :param configuration: Updated provider configuration
+        :param configuration: Provider-specific configuration. Keys vary by provider.
         :param is_multimodal:
         :param is_reasoning:
         :param is_default:
@@ -668,7 +668,7 @@ class AIModelsProviders(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -701,8 +701,8 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.AIModelProviderResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -734,7 +734,7 @@ class AIModelsProviders(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.AIModelProviderResponse:
         r"""Update AI model provider
 
         Update an existing AI model provider configuration.
@@ -742,7 +742,7 @@ class AIModelsProviders(BaseSDK):
         :param model_type: Type of AI model
         :param model_key: Unique model key (UUID)
         :param provider: Provider name
-        :param configuration: Updated provider configuration
+        :param configuration: Provider-specific configuration. Keys vary by provider.
         :param is_multimodal:
         :param is_reasoning:
         :param is_default:
@@ -787,7 +787,7 @@ class AIModelsProviders(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
@@ -820,8 +820,8 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.AIModelProviderResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -844,7 +844,7 @@ class AIModelsProviders(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.DeleteAIModelProviderResponse:
         r"""Delete AI model provider
 
         Remove an AI model provider configuration. Cannot delete the default model if it's the only one.
@@ -881,7 +881,7 @@ class AIModelsProviders(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
@@ -901,7 +901,7 @@ class AIModelsProviders(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteAIModelProvider",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -911,8 +911,10 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.DeleteAIModelProviderResponse, http_res
+            )
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -935,7 +937,7 @@ class AIModelsProviders(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.DeleteAIModelProviderResponse:
         r"""Delete AI model provider
 
         Remove an AI model provider configuration. Cannot delete the default model if it's the only one.
@@ -972,7 +974,7 @@ class AIModelsProviders(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
@@ -992,7 +994,7 @@ class AIModelsProviders(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteAIModelProvider",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1002,8 +1004,10 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.DeleteAIModelProviderResponse, http_res
+            )
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1026,7 +1030,7 @@ class AIModelsProviders(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetDefaultAIModelResponse:
         r"""Set default AI model
 
         Set a model as the default for its type.
@@ -1063,7 +1067,7 @@ class AIModelsProviders(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
@@ -1093,8 +1097,8 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetDefaultAIModelResponse, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1117,7 +1121,7 @@ class AIModelsProviders(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ):
+    ) -> models.SetDefaultAIModelResponse:
         r"""Set default AI model
 
         Set a model as the default for its type.
@@ -1154,7 +1158,7 @@ class AIModelsProviders(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="*/*",
+            accept_header_value="application/json",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
@@ -1184,8 +1188,8 @@ class AIModelsProviders(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "*"):
-            return
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.SetDefaultAIModelResponse, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

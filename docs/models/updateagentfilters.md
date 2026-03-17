@@ -1,17 +1,9 @@
 # UpdateAgentFilters
 
 
-## Supported Types
+## Fields
 
-### `Dict[str, Any]`
-
-```python
-value: Dict[str, Any] = /* values here */
-```
-
-### `str`
-
-```python
-value: str = /* values here */
-```
-
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `record_groups`    | List[*str*]        | :heavy_minus_sign: | N/A                |
+| `records`          | List[*str*]        | :heavy_minus_sign: | N/A                |

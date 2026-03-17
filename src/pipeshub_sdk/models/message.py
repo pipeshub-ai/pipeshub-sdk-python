@@ -13,7 +13,7 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-MessageType = Union[
+MessageTypeEnum = Union[
     Literal[
         "user_query",
         "bot_response",
@@ -44,6 +44,55 @@ ContentFormat = Union[
     UnrecognizedStr,
 ]
 r"""Format of the content for rendering"""
+
+
+class MessageModelInfoTypedDict(TypedDict):
+    r"""Model information for this message"""
+
+    model_key: NotRequired[str]
+    model_name: NotRequired[str]
+    chat_mode: NotRequired[str]
+    model_friendly_name: NotRequired[str]
+
+
+class MessageModelInfo(BaseModel):
+    r"""Model information for this message"""
+
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+
+    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
+
+    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["modelKey", "modelName", "chatMode", "modelFriendlyName"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class ReferenceDatumTypedDict(TypedDict):
+    pass
+
+
+class ReferenceDatum(BaseModel):
+    pass
 
 
 class MessageMetadataTypedDict(TypedDict):
@@ -84,7 +133,7 @@ class MessageMetadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -101,7 +150,7 @@ class MessageTypedDict(TypedDict):
 
     id: NotRequired[str]
     r"""Unique message identifier"""
-    message_type: NotRequired[MessageType]
+    message_type: NotRequired[MessageTypeEnum]
     r"""Type of message:
     <ul>
     <li><code>user_query</code> - User's question or input</li>
@@ -124,6 +173,10 @@ class MessageTypedDict(TypedDict):
     r"""Suggested follow-up questions"""
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     r"""User feedback on this message"""
+    model_info: NotRequired[MessageModelInfoTypedDict]
+    r"""Model information for this message"""
+    reference_data: NotRequired[List[ReferenceDatumTypedDict]]
+    r"""Reference data associated with this message"""
     metadata: NotRequired[MessageMetadataTypedDict]
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
@@ -139,7 +192,7 @@ class Message(BaseModel):
     r"""Unique message identifier"""
 
     message_type: Annotated[
-        Optional[MessageType], pydantic.Field(alias="messageType")
+        Optional[MessageTypeEnum], pydantic.Field(alias="messageType")
     ] = None
     r"""Type of message:
     <ul>
@@ -174,6 +227,16 @@ class Message(BaseModel):
     feedback: Optional[List[MessageFeedback]] = None
     r"""User feedback on this message"""
 
+    model_info: Annotated[
+        Optional[MessageModelInfo], pydantic.Field(alias="modelInfo")
+    ] = None
+    r"""Model information for this message"""
+
+    reference_data: Annotated[
+        Optional[List[ReferenceDatum]], pydantic.Field(alias="referenceData")
+    ] = None
+    r"""Reference data associated with this message"""
+
     metadata: Optional[MessageMetadata] = None
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
@@ -192,6 +255,8 @@ class Message(BaseModel):
                 "confidence",
                 "followUpQuestions",
                 "feedback",
+                "modelInfo",
+                "referenceData",
                 "metadata",
                 "createdAt",
                 "updatedAt",
@@ -202,7 +267,7 @@ class Message(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -211,6 +276,10 @@ class Message(BaseModel):
         return m
 
 
+try:
+    MessageModelInfo.model_rebuild()
+except NameError:
+    pass
 try:
     MessageMetadata.model_rebuild()
 except NameError:

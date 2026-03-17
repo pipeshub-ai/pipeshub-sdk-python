@@ -2,6 +2,8 @@
 # @generated-id: 4af74ce5fd33
 
 from __future__ import annotations
+from .agentknowledge import AgentKnowledge, AgentKnowledgeTypedDict
+from .agenttoolset import AgentToolset, AgentToolsetTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -66,29 +68,13 @@ class Model(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
-
-
-class AgentToolsetTypedDict(TypedDict):
-    pass
-
-
-class AgentToolset(BaseModel):
-    pass
-
-
-class AgentKnowledgeTypedDict(TypedDict):
-    pass
-
-
-class AgentKnowledge(BaseModel):
-    pass
 
 
 class AgentTypedDict(TypedDict):
@@ -277,7 +263,7 @@ class Agent(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

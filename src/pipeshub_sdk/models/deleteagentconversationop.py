@@ -52,7 +52,7 @@ class DeleteAgentConversationModelInfo(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -69,11 +69,11 @@ class DeleteAgentConversationSharedWith(BaseModel):
     pass
 
 
-class ConversationErrorTypedDict(TypedDict):
+class DeleteAgentConversationConversationErrorTypedDict(TypedDict):
     pass
 
 
-class ConversationError(BaseModel):
+class DeleteAgentConversationConversationError(BaseModel):
     pass
 
 
@@ -92,7 +92,9 @@ class DeleteAgentConversationConversationTypedDict(TypedDict):
     is_deleted: NotRequired[bool]
     is_archived: NotRequired[bool]
     conversation_source: NotRequired[str]
-    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
+    conversation_errors: NotRequired[
+        List[DeleteAgentConversationConversationErrorTypedDict]
+    ]
     deleted_by: NotRequired[str]
     last_activity_at: NotRequired[int]
     v: NotRequired[int]
@@ -137,7 +139,8 @@ class DeleteAgentConversationConversation(BaseModel):
     ] = None
 
     conversation_errors: Annotated[
-        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
+        Optional[List[DeleteAgentConversationConversationError]],
+        pydantic.Field(alias="conversationErrors"),
     ] = None
 
     deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
@@ -183,7 +186,7 @@ class DeleteAgentConversationConversation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -214,7 +217,7 @@ class DeleteAgentConversationResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
