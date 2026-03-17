@@ -7,10 +7,19 @@ Scope determines visibility and access control for connectors:<br>
 </ul>
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ConnectorScope
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: ConnectorScope = "team"
+```
+
 
 ## Values
 
-| Name       | Value      |
-| ---------- | ---------- |
-| `TEAM`     | team       |
-| `PERSONAL` | personal   |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"team"`
+- `"personal"`

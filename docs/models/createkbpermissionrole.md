@@ -2,14 +2,19 @@
 
 Permission role to grant
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import CreateKBPermissionRole
+value: CreateKBPermissionRole = "OWNER"
+```
+
 
 ## Values
 
-| Name            | Value           |
-| --------------- | --------------- |
-| `OWNER`         | OWNER           |
-| `ORGANIZER`     | ORGANIZER       |
-| `FILEORGANIZER` | FILEORGANIZER   |
-| `WRITER`        | WRITER          |
-| `COMMENTER`     | COMMENTER       |
-| `READER`        | READER          |
+- `"OWNER"`
+- `"ORGANIZER"`
+- `"FILEORGANIZER"`
+- `"WRITER"`
+- `"COMMENTER"`
+- `"READER"`

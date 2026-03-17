@@ -1,13 +1,18 @@
 # UpdateKBPermissionsRole
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import UpdateKBPermissionsRole
+value: UpdateKBPermissionsRole = "OWNER"
+```
+
 
 ## Values
 
-| Name            | Value           |
-| --------------- | --------------- |
-| `OWNER`         | OWNER           |
-| `ORGANIZER`     | ORGANIZER       |
-| `FILEORGANIZER` | FILEORGANIZER   |
-| `WRITER`        | WRITER          |
-| `COMMENTER`     | COMMENTER       |
-| `READER`        | READER          |
+- `"OWNER"`
+- `"ORGANIZER"`
+- `"FILEORGANIZER"`
+- `"WRITER"`
+- `"COMMENTER"`
+- `"READER"`
