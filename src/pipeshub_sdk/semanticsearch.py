@@ -56,8 +56,6 @@ class SemanticSearch(BaseSDK):
         All searches are saved and can be retrieved via <code>GET /search</code>.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param query: Natural language search query. The system understands
             semantic meaning, not just keywords.
 
@@ -107,7 +105,6 @@ class SemanticSearch(BaseSDK):
                 request, False, False, "json", models.SemanticSearchRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -194,8 +191,6 @@ class SemanticSearch(BaseSDK):
         All searches are saved and can be retrieved via <code>GET /search</code>.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param query: Natural language search query. The system understands
             semantic meaning, not just keywords.
 
@@ -245,7 +240,6 @@ class SemanticSearch(BaseSDK):
                 request, False, False, "json", models.SemanticSearchRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -307,8 +301,6 @@ class SemanticSearch(BaseSDK):
         Use <code>page</code> and <code>limit</code> to navigate through results.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param limit: Number of results per page
         :param page: Page number
         :param retries: Override the default retry configuration for this method
@@ -345,7 +337,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -407,8 +398,6 @@ class SemanticSearch(BaseSDK):
         Use <code>page</code> and <code>limit</code> to navigate through results.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param limit: Number of results per page
         :param page: Page number
         :param retries: Override the default retry configuration for this method
@@ -445,7 +434,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -502,8 +490,6 @@ class SemanticSearch(BaseSDK):
         This action cannot be undone. All saved searches will be permanently removed.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -532,7 +518,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -591,8 +576,6 @@ class SemanticSearch(BaseSDK):
         This action cannot be undone. All saved searches will be permanently removed.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -621,7 +604,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -679,8 +661,6 @@ class SemanticSearch(BaseSDK):
         Retrieve a specific search result by its ID.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -715,7 +695,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -771,8 +750,6 @@ class SemanticSearch(BaseSDK):
         Retrieve a specific search result by its ID.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -807,7 +784,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -863,8 +839,6 @@ class SemanticSearch(BaseSDK):
         Delete a specific search result by its ID.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -899,7 +873,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -955,8 +928,6 @@ class SemanticSearch(BaseSDK):
         Delete a specific search result by its ID.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -991,7 +962,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1048,8 +1018,6 @@ class SemanticSearch(BaseSDK):
         Share a specific search result, making it accessible to other users.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param user_ids:
         :param retries: Override the default retry configuration for this method
@@ -1091,7 +1059,6 @@ class SemanticSearch(BaseSDK):
                 request.body, False, False, "json", models.ShareSearchRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1148,8 +1115,6 @@ class SemanticSearch(BaseSDK):
         Share a specific search result, making it accessible to other users.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param user_ids:
         :param retries: Override the default retry configuration for this method
@@ -1191,7 +1156,6 @@ class SemanticSearch(BaseSDK):
                 request.body, False, False, "json", models.ShareSearchRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1248,8 +1212,6 @@ class SemanticSearch(BaseSDK):
         Revoke sharing for a specific search result, making it private again.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param user_ids:
         :param retries: Override the default retry configuration for this method
@@ -1291,7 +1253,6 @@ class SemanticSearch(BaseSDK):
                 request.body, False, False, "json", models.UnshareSearchRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1348,8 +1309,6 @@ class SemanticSearch(BaseSDK):
         Revoke sharing for a specific search result, making it private again.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param user_ids:
         :param retries: Override the default retry configuration for this method
@@ -1391,7 +1350,6 @@ class SemanticSearch(BaseSDK):
                 request.body, False, False, "json", models.UnshareSearchRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1447,8 +1405,6 @@ class SemanticSearch(BaseSDK):
         Archive a specific search result. Archived searches are hidden from the default search history view.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1483,7 +1439,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1539,8 +1494,6 @@ class SemanticSearch(BaseSDK):
         Archive a specific search result. Archived searches are hidden from the default search history view.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1575,7 +1528,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1631,8 +1583,6 @@ class SemanticSearch(BaseSDK):
         Restore a previously archived search result back to the active search history.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1667,7 +1617,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1723,8 +1672,6 @@ class SemanticSearch(BaseSDK):
         Restore a previously archived search result back to the active search history.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1759,7 +1706,6 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

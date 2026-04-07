@@ -48,8 +48,6 @@ class Upload(BaseSDK):
         Set <code>isVersioned: true</code> to enable version tracking for uploaded files.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
         :param files_metadata: JSON array with file_path and last_modified for each file
@@ -103,7 +101,6 @@ class Upload(BaseSDK):
                 models.UploadRecordsToKBRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -182,8 +179,6 @@ class Upload(BaseSDK):
         Set <code>isVersioned: true</code> to enable version tracking for uploaded files.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
         :param files_metadata: JSON array with file_path and last_modified for each file
@@ -237,7 +232,6 @@ class Upload(BaseSDK):
                 models.UploadRecordsToKBRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -303,8 +297,6 @@ class Upload(BaseSDK):
         <b>Same as KB upload</b> but files are placed in the specified folder instead of KB root.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id: Target folder ID
         :param files:
@@ -358,7 +350,6 @@ class Upload(BaseSDK):
                 models.UploadRecordsToFolderRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -422,8 +413,6 @@ class Upload(BaseSDK):
         <b>Same as KB upload</b> but files are placed in the specified folder instead of KB root.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id: Target folder ID
         :param files:
@@ -477,7 +466,6 @@ class Upload(BaseSDK):
                 models.UploadRecordsToFolderRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

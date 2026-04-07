@@ -24,8 +24,6 @@ class PublicUrls(BaseSDK):
 
         Configure the public URL where the frontend application is accessible. Used for OAuth redirects and email links.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param url: Public URL
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -63,7 +61,6 @@ class PublicUrls(BaseSDK):
                 request, False, False, "json", models.URLConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -118,8 +115,6 @@ class PublicUrls(BaseSDK):
 
         Configure the public URL where the frontend application is accessible. Used for OAuth redirects and email links.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param url: Public URL
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -157,7 +152,6 @@ class PublicUrls(BaseSDK):
                 request, False, False, "json", models.URLConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -211,8 +205,6 @@ class PublicUrls(BaseSDK):
 
         Get frontend public URL.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -241,7 +233,6 @@ class PublicUrls(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -295,8 +286,6 @@ class PublicUrls(BaseSDK):
 
         Get frontend public URL.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -325,7 +314,6 @@ class PublicUrls(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -380,8 +368,6 @@ class PublicUrls(BaseSDK):
 
         Configure the public URL for connector OAuth callbacks.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param url: Public URL
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -419,7 +405,6 @@ class PublicUrls(BaseSDK):
                 request, False, False, "json", models.URLConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -474,8 +459,6 @@ class PublicUrls(BaseSDK):
 
         Configure the public URL for connector OAuth callbacks.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param url: Public URL
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -513,7 +496,6 @@ class PublicUrls(BaseSDK):
                 request, False, False, "json", models.URLConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -567,8 +549,6 @@ class PublicUrls(BaseSDK):
 
         Get connector public URL.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -597,7 +577,6 @@ class PublicUrls(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -651,8 +630,6 @@ class PublicUrls(BaseSDK):
 
         Get connector public URL.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -681,7 +658,6 @@ class PublicUrls(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

@@ -29,8 +29,6 @@ class ToolsetOAuth(BaseSDK):
         Returns a URL that the user should visit to authorize the toolset.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param base_url:
         :param retries: Override the default retry configuration for this method
@@ -67,7 +65,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -125,8 +122,6 @@ class ToolsetOAuth(BaseSDK):
         Returns a URL that the user should visit to authorize the toolset.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param base_url:
         :param retries: Override the default retry configuration for this method
@@ -163,7 +158,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -223,8 +217,6 @@ class ToolsetOAuth(BaseSDK):
         This endpoint processes the authorization code and completes the OAuth flow.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param code:
         :param state:
         :param error:
@@ -265,7 +257,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -327,8 +318,6 @@ class ToolsetOAuth(BaseSDK):
         This endpoint processes the authorization code and completes the OAuth flow.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param code:
         :param state:
         :param error:
@@ -369,7 +358,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -426,8 +414,6 @@ class ToolsetOAuth(BaseSDK):
     ) -> models.GetAgentToolsetOAuthURLResponse:
         r"""Get OAuth authorization URL for agent instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param base_url:
@@ -466,7 +452,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -523,8 +508,6 @@ class ToolsetOAuth(BaseSDK):
     ) -> models.GetAgentToolsetOAuthURLResponse:
         r"""Get OAuth authorization URL for agent instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param base_url:
@@ -563,7 +546,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -618,8 +600,6 @@ class ToolsetOAuth(BaseSDK):
     ) -> models.GetInstanceOAuthAuthorizationURLResponse:
         r"""Get OAuth authorization URL for instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -654,7 +634,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -709,8 +688,6 @@ class ToolsetOAuth(BaseSDK):
     ) -> models.GetInstanceOAuthAuthorizationURLResponse:
         r"""Get OAuth authorization URL for instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -745,7 +722,6 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

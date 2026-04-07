@@ -34,8 +34,6 @@ class OauthApps(BaseSDK):
         - `search` - Search by app name
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page: Page number
         :param limit: Items per page
         :param status: Filter by status
@@ -76,7 +74,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -141,8 +138,6 @@ class OauthApps(BaseSDK):
         - `search` - Search by app name
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page: Page number
         :param limit: Items per page
         :param status: Filter by status
@@ -183,7 +178,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -259,8 +253,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param name: App name (displayed to users during authorization)
         :param allowed_scopes: Scopes the app can request
         :param description: App description
@@ -324,7 +316,6 @@ class OauthApps(BaseSDK):
                 request, False, False, "json", models.CreateOAuthAppRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -400,8 +391,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param name: App name (displayed to users during authorization)
         :param allowed_scopes: Scopes the app can request
         :param description: App description
@@ -465,7 +454,6 @@ class OauthApps(BaseSDK):
                 request, False, False, "json", models.CreateOAuthAppRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -523,8 +511,6 @@ class OauthApps(BaseSDK):
         in app configuration UI.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -553,7 +539,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -611,8 +596,6 @@ class OauthApps(BaseSDK):
         in app configuration UI.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -641,7 +624,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -699,8 +681,6 @@ class OauthApps(BaseSDK):
         Returns app configuration without the client secret.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID (MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -735,7 +715,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -793,8 +772,6 @@ class OauthApps(BaseSDK):
         Returns app configuration without the client secret.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID (MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -829,7 +806,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -904,8 +880,6 @@ class OauthApps(BaseSDK):
         `/oauth-clients/{appId}/regenerate-secret` endpoint.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param name: App name
         :param description: App description
@@ -967,7 +941,6 @@ class OauthApps(BaseSDK):
                 request.body, False, False, "json", models.UpdateOAuthAppRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1044,8 +1017,6 @@ class OauthApps(BaseSDK):
         `/oauth-clients/{appId}/regenerate-secret` endpoint.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param name: App name
         :param description: App description
@@ -1107,7 +1078,6 @@ class OauthApps(BaseSDK):
                 request.body, False, False, "json", models.UpdateOAuthAppRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1172,8 +1142,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1208,7 +1176,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1271,8 +1238,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1307,7 +1272,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1372,8 +1336,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1408,7 +1370,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1473,8 +1434,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1509,7 +1468,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1572,8 +1530,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1608,7 +1564,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1671,8 +1626,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1707,7 +1660,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1767,8 +1719,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1803,7 +1753,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1863,8 +1812,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1899,7 +1846,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1959,8 +1905,6 @@ class OauthApps(BaseSDK):
         <b>Admin Only:</b> Requires admin privileges.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1995,7 +1939,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2055,8 +1998,6 @@ class OauthApps(BaseSDK):
         <b>Admin Only:</b> Requires admin privileges.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2091,7 +2032,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2153,8 +2093,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2189,7 +2127,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2253,8 +2190,6 @@ class OauthApps(BaseSDK):
         <b>Rate Limited:</b> 10 requests per minute.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2289,7 +2224,6 @@ class OauthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

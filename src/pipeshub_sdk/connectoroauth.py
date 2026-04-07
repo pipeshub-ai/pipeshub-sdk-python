@@ -38,8 +38,6 @@ class ConnectorOAuth(BaseSDK):
         connector ID. This is validated in the callback.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param base_url: Base URL for self-hosted instances
         :param retries: Override the default retry configuration for this method
@@ -76,7 +74,6 @@ class ConnectorOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -146,8 +143,6 @@ class ConnectorOAuth(BaseSDK):
         connector ID. This is validated in the callback.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param base_url: Base URL for self-hosted instances
         :param retries: Override the default retry configuration for this method
@@ -184,7 +179,6 @@ class ConnectorOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -472,8 +466,6 @@ class ConnectorOAuth(BaseSDK):
         Requires organization admin privileges.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param temp_code: Google OAuth authorization code received from the consent flow
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -511,7 +503,6 @@ class ConnectorOAuth(BaseSDK):
                 request, False, False, "json", models.GetTokenFromCodeRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -591,8 +582,6 @@ class ConnectorOAuth(BaseSDK):
         Requires organization admin privileges.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param temp_code: Google OAuth authorization code received from the consent flow
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -630,7 +619,6 @@ class ConnectorOAuth(BaseSDK):
                 request, False, False, "json", models.GetTokenFromCodeRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

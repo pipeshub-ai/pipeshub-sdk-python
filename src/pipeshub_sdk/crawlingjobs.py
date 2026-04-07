@@ -66,8 +66,6 @@ class CrawlingJobs(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector: Connector type identifier (e.g., \"drive\", \"onedrive\", \"slack\", \"jira\")
         :param connector_id: Unique identifier of the connector instance (MongoDB ObjectId)
         :param schedule_config: Schedule configuration for crawling jobs. The structure varies based on <code>scheduleType</code>.<br><br>
@@ -133,7 +131,6 @@ class CrawlingJobs(BaseSDK):
                 models.ScheduleCrawlingJobRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -230,8 +227,6 @@ class CrawlingJobs(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector: Connector type identifier (e.g., \"drive\", \"onedrive\", \"slack\", \"jira\")
         :param connector_id: Unique identifier of the connector instance (MongoDB ObjectId)
         :param schedule_config: Schedule configuration for crawling jobs. The structure varies based on <code>scheduleType</code>.<br><br>
@@ -297,7 +292,6 @@ class CrawlingJobs(BaseSDK):
                 models.ScheduleCrawlingJobRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -371,8 +365,6 @@ class CrawlingJobs(BaseSDK):
         Same as scheduling - team connectors require admin, personal connectors require creator.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector: Connector type identifier
         :param connector_id: Unique identifier of the connector instance
         :param retries: Override the default retry configuration for this method
@@ -409,7 +401,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -485,8 +476,6 @@ class CrawlingJobs(BaseSDK):
         Same as scheduling - team connectors require admin, personal connectors require creator.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector: Connector type identifier
         :param connector_id: Unique identifier of the connector instance
         :param retries: Override the default retry configuration for this method
@@ -523,7 +512,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -601,8 +589,6 @@ class CrawlingJobs(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector: Connector type identifier
         :param connector_id: Unique identifier of the connector instance
         :param retries: Override the default retry configuration for this method
@@ -639,7 +625,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -715,8 +700,6 @@ class CrawlingJobs(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector: Connector type identifier
         :param connector_id: Unique identifier of the connector instance
         :param retries: Override the default retry configuration for this method
@@ -753,7 +736,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -808,8 +790,6 @@ class CrawlingJobs(BaseSDK):
         Retrieve the status of all scheduled crawling jobs across the organization.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -838,7 +818,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -895,8 +874,6 @@ class CrawlingJobs(BaseSDK):
         Retrieve the status of all scheduled crawling jobs across the organization.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -925,7 +902,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -982,8 +958,6 @@ class CrawlingJobs(BaseSDK):
         Remove all scheduled crawling jobs for the organization.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1012,7 +986,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1069,8 +1042,6 @@ class CrawlingJobs(BaseSDK):
         Remove all scheduled crawling jobs for the organization.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1099,7 +1070,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1158,8 +1128,6 @@ class CrawlingJobs(BaseSDK):
         Pause a running or scheduled crawling job for a specific connector.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector:
         :param connector_id:
         :param retries: Override the default retry configuration for this method
@@ -1196,7 +1164,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1253,8 +1220,6 @@ class CrawlingJobs(BaseSDK):
         Pause a running or scheduled crawling job for a specific connector.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector:
         :param connector_id:
         :param retries: Override the default retry configuration for this method
@@ -1291,7 +1256,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1348,8 +1312,6 @@ class CrawlingJobs(BaseSDK):
         Resume a previously paused crawling job for a specific connector.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector:
         :param connector_id:
         :param retries: Override the default retry configuration for this method
@@ -1386,7 +1348,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1443,8 +1404,6 @@ class CrawlingJobs(BaseSDK):
         Resume a previously paused crawling job for a specific connector.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector:
         :param connector_id:
         :param retries: Override the default retry configuration for this method
@@ -1481,7 +1440,6 @@ class CrawlingJobs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

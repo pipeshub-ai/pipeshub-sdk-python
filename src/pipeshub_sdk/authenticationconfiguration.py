@@ -25,8 +25,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up Microsoft account as an authentication provider.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
         :param retries: Override the default retry configuration for this method
@@ -66,7 +64,6 @@ class AuthenticationConfiguration(BaseSDK):
                 request, False, False, "json", models.MicrosoftAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -122,8 +119,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up Microsoft account as an authentication provider.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param client_id: Microsoft application client ID
         :param tenant_id: Microsoft tenant ID
         :param retries: Override the default retry configuration for this method
@@ -163,7 +158,6 @@ class AuthenticationConfiguration(BaseSDK):
                 request, False, False, "json", models.MicrosoftAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -217,8 +211,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Get Microsoft authentication configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -247,7 +239,6 @@ class AuthenticationConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -301,8 +292,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Get Microsoft authentication configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -331,7 +320,6 @@ class AuthenticationConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -386,8 +374,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up Google OAuth as an authentication provider.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param client_id: Google OAuth client ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -425,7 +411,6 @@ class AuthenticationConfiguration(BaseSDK):
                 request, False, False, "json", models.GoogleAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -480,8 +465,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up Google OAuth as an authentication provider.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param client_id: Google OAuth client ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -519,7 +502,6 @@ class AuthenticationConfiguration(BaseSDK):
                 request, False, False, "json", models.GoogleAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -573,8 +555,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Get Google authentication configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -603,7 +583,6 @@ class AuthenticationConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -657,8 +636,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Get Google authentication configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -687,7 +664,6 @@ class AuthenticationConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -749,8 +725,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up a custom OAuth 2.0 authentication provider.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param provider_name: Display name for the OAuth provider
         :param client_id: OAuth client ID
         :param client_secret: OAuth client secret
@@ -802,7 +776,6 @@ class AuthenticationConfiguration(BaseSDK):
                 request, False, False, "json", models.GenericOAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -864,8 +837,6 @@ class AuthenticationConfiguration(BaseSDK):
 
         Set up a custom OAuth 2.0 authentication provider.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param provider_name: Display name for the OAuth provider
         :param client_id: OAuth client ID
         :param client_secret: OAuth client secret
@@ -917,7 +888,6 @@ class AuthenticationConfiguration(BaseSDK):
                 request, False, False, "json", models.GenericOAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

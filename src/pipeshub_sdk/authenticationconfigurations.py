@@ -23,8 +23,6 @@ class AuthenticationConfigurations(BaseSDK):
 
         Retrieve Azure AD authentication configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -53,7 +51,6 @@ class AuthenticationConfigurations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -107,8 +104,6 @@ class AuthenticationConfigurations(BaseSDK):
 
         Retrieve Azure AD authentication configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -137,7 +132,6 @@ class AuthenticationConfigurations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -191,8 +185,6 @@ class AuthenticationConfigurations(BaseSDK):
 
         Get generic OAuth configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -221,7 +213,6 @@ class AuthenticationConfigurations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -275,8 +266,6 @@ class AuthenticationConfigurations(BaseSDK):
 
         Get generic OAuth configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -305,7 +294,6 @@ class AuthenticationConfigurations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

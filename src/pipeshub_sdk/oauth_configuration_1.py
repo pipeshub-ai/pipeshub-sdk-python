@@ -23,8 +23,6 @@ class OAuthConfiguration1(BaseSDK):
     ):
         r"""List OAuth configs by toolset type
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -59,7 +57,6 @@ class OAuthConfiguration1(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -112,8 +109,6 @@ class OAuthConfiguration1(BaseSDK):
     ):
         r"""List OAuth configs by toolset type
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -148,7 +143,6 @@ class OAuthConfiguration1(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -203,8 +197,6 @@ class OAuthConfiguration1(BaseSDK):
     ):
         r"""Update OAuth config
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param oauth_config_id:
         :param body:
@@ -246,7 +238,6 @@ class OAuthConfiguration1(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -301,8 +292,6 @@ class OAuthConfiguration1(BaseSDK):
     ):
         r"""Update OAuth config
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param oauth_config_id:
         :param body:
@@ -344,7 +333,6 @@ class OAuthConfiguration1(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -398,8 +386,6 @@ class OAuthConfiguration1(BaseSDK):
     ):
         r"""Delete OAuth config
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param oauth_config_id:
         :param retries: Override the default retry configuration for this method
@@ -436,7 +422,6 @@ class OAuthConfiguration1(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -490,8 +475,6 @@ class OAuthConfiguration1(BaseSDK):
     ):
         r"""Delete OAuth config
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param oauth_config_id:
         :param retries: Override the default retry configuration for this method
@@ -528,7 +511,6 @@ class OAuthConfiguration1(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

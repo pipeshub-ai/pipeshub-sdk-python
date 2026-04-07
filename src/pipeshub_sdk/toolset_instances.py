@@ -31,8 +31,6 @@ class ToolsetInstances(BaseSDK):
         Create a new toolset instance with authentication configuration
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param name:
         :param auth:
         :param display_name:
@@ -78,7 +76,6 @@ class ToolsetInstances(BaseSDK):
                 request, False, False, "json", models.CreateToolsetRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -138,8 +135,6 @@ class ToolsetInstances(BaseSDK):
         Create a new toolset instance with authentication configuration
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param name:
         :param auth:
         :param display_name:
@@ -185,7 +180,6 @@ class ToolsetInstances(BaseSDK):
                 request, False, False, "json", models.CreateToolsetRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -240,8 +234,6 @@ class ToolsetInstances(BaseSDK):
         Get all configured toolsets for the authenticated user
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -270,7 +262,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -327,8 +318,6 @@ class ToolsetInstances(BaseSDK):
         Get all configured toolsets for the authenticated user
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -357,7 +346,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -414,8 +402,6 @@ class ToolsetInstances(BaseSDK):
 
         Check authentication status of a toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -450,7 +436,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -505,8 +490,6 @@ class ToolsetInstances(BaseSDK):
 
         Check authentication status of a toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -541,7 +524,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -598,8 +580,6 @@ class ToolsetInstances(BaseSDK):
         Only applicable to OAuth-configured toolsets.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -634,7 +614,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -693,8 +672,6 @@ class ToolsetInstances(BaseSDK):
         Only applicable to OAuth-configured toolsets.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -729,7 +706,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -787,8 +763,6 @@ class ToolsetInstances(BaseSDK):
 
         Returns organization toolset instances merged with current user's authentication status.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param include_registry: When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries.
         :param search: Optional search filter applied to instanceName, displayName, or toolsetType.
         :param retries: Override the default retry configuration for this method
@@ -825,7 +799,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -881,8 +854,6 @@ class ToolsetInstances(BaseSDK):
 
         Returns organization toolset instances merged with current user's authentication status.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param include_registry: When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries.
         :param search: Optional search filter applied to instanceName, displayName, or toolsetType.
         :param retries: Override the default retry configuration for this method
@@ -919,7 +890,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -976,8 +946,6 @@ class ToolsetInstances(BaseSDK):
 
         Returns organization toolset instances merged with the specified agent's authentication status.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param include_registry: When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries.
         :param search: Optional search filter applied to instanceName, displayName, or toolsetType.
@@ -1016,7 +984,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1073,8 +1040,6 @@ class ToolsetInstances(BaseSDK):
 
         Returns organization toolset instances merged with the specified agent's authentication status.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param include_registry: When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries.
         :param search: Optional search filter applied to instanceName, displayName, or toolsetType.
@@ -1113,7 +1078,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1168,8 +1132,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Authenticate agent toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param body:
@@ -1211,7 +1173,6 @@ class ToolsetInstances(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1266,8 +1227,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Authenticate agent toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param body:
@@ -1309,7 +1268,6 @@ class ToolsetInstances(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1369,8 +1327,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Update agent toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param auth:
@@ -1420,7 +1376,6 @@ class ToolsetInstances(BaseSDK):
                 models.UpdateAgentToolsetCredentialsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1480,8 +1435,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Update agent toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param auth:
@@ -1531,7 +1484,6 @@ class ToolsetInstances(BaseSDK):
                 models.UpdateAgentToolsetCredentialsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1585,8 +1537,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Remove agent toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param retries: Override the default retry configuration for this method
@@ -1623,7 +1573,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1677,8 +1626,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Remove agent toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param retries: Override the default retry configuration for this method
@@ -1715,7 +1662,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1769,8 +1715,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Mark agent instance for reauthentication
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param retries: Override the default retry configuration for this method
@@ -1807,7 +1751,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1861,8 +1804,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Mark agent instance for reauthentication
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param agent_key:
         :param instance_id:
         :param retries: Override the default retry configuration for this method
@@ -1899,7 +1840,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1953,8 +1893,6 @@ class ToolsetInstances(BaseSDK):
 
         List all toolset instances configured for the organization.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1983,7 +1921,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2037,8 +1974,6 @@ class ToolsetInstances(BaseSDK):
 
         List all toolset instances configured for the organization.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2067,7 +2002,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2128,8 +2062,6 @@ class ToolsetInstances(BaseSDK):
 
         Create a new toolset instance (admin only).
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_name:
         :param toolset_type:
         :param auth_type:
@@ -2179,7 +2111,6 @@ class ToolsetInstances(BaseSDK):
                 request, False, False, "json", models.CreateToolsetInstanceRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2240,8 +2171,6 @@ class ToolsetInstances(BaseSDK):
 
         Create a new toolset instance (admin only).
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_name:
         :param toolset_type:
         :param auth_type:
@@ -2291,7 +2220,6 @@ class ToolsetInstances(BaseSDK):
                 request, False, False, "json", models.CreateToolsetInstanceRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2344,8 +2272,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Get toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2380,7 +2306,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2433,8 +2358,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Get toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2469,7 +2392,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2523,8 +2445,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Update toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param body:
         :param retries: Override the default retry configuration for this method
@@ -2564,7 +2484,6 @@ class ToolsetInstances(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2618,8 +2537,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Update toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param body:
         :param retries: Override the default retry configuration for this method
@@ -2659,7 +2576,6 @@ class ToolsetInstances(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2712,8 +2628,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Delete toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2748,7 +2662,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2801,8 +2714,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Delete toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2837,7 +2748,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2891,8 +2801,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Authenticate toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param body:
         :param retries: Override the default retry configuration for this method
@@ -2932,7 +2840,6 @@ class ToolsetInstances(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2986,8 +2893,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Authenticate toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param body:
         :param retries: Override the default retry configuration for this method
@@ -3027,7 +2932,6 @@ class ToolsetInstances(BaseSDK):
                 request.body, False, False, "json", Dict[str, Any]
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3086,8 +2990,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Update toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param auth:
         :param retries: Override the default retry configuration for this method
@@ -3135,7 +3037,6 @@ class ToolsetInstances(BaseSDK):
                 models.UpdateToolsetCredentialsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3194,8 +3095,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Update toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param auth:
         :param retries: Override the default retry configuration for this method
@@ -3243,7 +3142,6 @@ class ToolsetInstances(BaseSDK):
                 models.UpdateToolsetCredentialsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3296,8 +3194,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Remove toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3332,7 +3228,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3385,8 +3280,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Remove toolset credentials
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3421,7 +3314,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3474,8 +3366,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Mark instance for reauthentication
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3510,7 +3400,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3563,8 +3452,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Mark instance for reauthentication
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3599,7 +3486,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3652,8 +3538,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Get instance authentication status
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3688,7 +3572,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3741,8 +3624,6 @@ class ToolsetInstances(BaseSDK):
     ):
         r"""Get instance authentication status
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3777,7 +3658,6 @@ class ToolsetInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

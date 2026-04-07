@@ -32,8 +32,6 @@ class ConnectorFilters(BaseSDK):
         options are loaded separately via the filter options endpoint.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -68,7 +66,6 @@ class ConnectorFilters(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -131,8 +128,6 @@ class ConnectorFilters(BaseSDK):
         options are loaded separately via the filter options endpoint.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -167,7 +162,6 @@ class ConnectorFilters(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -227,8 +221,6 @@ class ConnectorFilters(BaseSDK):
         selected values. These determine what data will be synced.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_id:
         :param filters: Filter values to save (structure depends on connector's filter schema)
         :param retries: Override the default retry configuration for this method
@@ -270,7 +262,6 @@ class ConnectorFilters(BaseSDK):
                 request.body, False, False, "json", models.SaveConnectorFiltersRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -332,8 +323,6 @@ class ConnectorFilters(BaseSDK):
         selected values. These determine what data will be synced.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_id:
         :param filters: Filter values to save (structure depends on connector's filter schema)
         :param retries: Override the default retry configuration for this method
@@ -375,7 +364,6 @@ class ConnectorFilters(BaseSDK):
                 request.body, False, False, "json", models.SaveConnectorFiltersRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -447,8 +435,6 @@ class ConnectorFilters(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param filter_key: Filter field key
         :param page:
@@ -493,7 +479,6 @@ class ConnectorFilters(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -565,8 +550,6 @@ class ConnectorFilters(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param filter_key: Filter field key
         :param page:
@@ -611,7 +594,6 @@ class ConnectorFilters(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

@@ -24,8 +24,6 @@ class ConfigurationManager(BaseSDK):
         Retrieve all Slack bot configurations for the organization.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -54,7 +52,6 @@ class ConfigurationManager(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -109,8 +106,6 @@ class ConfigurationManager(BaseSDK):
         Retrieve all Slack bot configurations for the organization.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -139,7 +134,6 @@ class ConfigurationManager(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -198,8 +192,6 @@ class ConfigurationManager(BaseSDK):
         Create a new Slack bot configuration for the organization.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param request: The request object to send.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -237,7 +229,6 @@ class ConfigurationManager(BaseSDK):
                 request, False, False, "json", models.CreateSlackBotConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -298,8 +289,6 @@ class ConfigurationManager(BaseSDK):
         Create a new Slack bot configuration for the organization.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param request: The request object to send.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -337,7 +326,6 @@ class ConfigurationManager(BaseSDK):
                 request, False, False, "json", models.CreateSlackBotConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -399,8 +387,6 @@ class ConfigurationManager(BaseSDK):
         Update an existing Slack bot configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param config_id:
         :param body: Request payload
         :param retries: Override the default retry configuration for this method
@@ -444,7 +430,6 @@ class ConfigurationManager(BaseSDK):
                 models.UpdateSlackBotConfigRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -506,8 +491,6 @@ class ConfigurationManager(BaseSDK):
         Update an existing Slack bot configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param config_id:
         :param body: Request payload
         :param retries: Override the default retry configuration for this method
@@ -551,7 +534,6 @@ class ConfigurationManager(BaseSDK):
                 models.UpdateSlackBotConfigRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -609,8 +591,6 @@ class ConfigurationManager(BaseSDK):
         Delete a Slack bot configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param config_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -645,7 +625,6 @@ class ConfigurationManager(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -703,8 +682,6 @@ class ConfigurationManager(BaseSDK):
         Delete a Slack bot configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param config_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -739,7 +716,6 @@ class ConfigurationManager(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

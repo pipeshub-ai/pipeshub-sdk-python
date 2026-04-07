@@ -41,8 +41,6 @@ class ConnectorConfiguration(BaseSDK):
         are not modified.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param auth: Authentication configuration for a connector instance
         :param sync: Synchronization configuration for a connector instance
@@ -96,7 +94,6 @@ class ConnectorConfiguration(BaseSDK):
                 request.body, False, False, "json", models.UpdateConnectorConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -170,8 +167,6 @@ class ConnectorConfiguration(BaseSDK):
         are not modified.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param auth: Authentication configuration for a connector instance
         :param sync: Synchronization configuration for a connector instance
@@ -225,7 +220,6 @@ class ConnectorConfiguration(BaseSDK):
                 request.body, False, False, "json", models.UpdateConnectorConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -291,8 +285,6 @@ class ConnectorConfiguration(BaseSDK):
         requiring re-authentication for OAuth connectors.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param auth: Authentication configuration for a connector instance
         :param base_url: Base URL (if changed with auth update)
@@ -336,7 +328,6 @@ class ConnectorConfiguration(BaseSDK):
                 request.body, False, False, "json", models.UpdateConnectorAuthRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -402,8 +393,6 @@ class ConnectorConfiguration(BaseSDK):
         requiring re-authentication for OAuth connectors.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param auth: Authentication configuration for a connector instance
         :param base_url: Base URL (if changed with auth update)
@@ -447,7 +436,6 @@ class ConnectorConfiguration(BaseSDK):
                 request.body, False, False, "json", models.UpdateConnectorAuthRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

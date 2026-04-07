@@ -41,8 +41,6 @@ class Folders(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param folder_name: Name of the folder
         :param retries: Override the default retry configuration for this method
@@ -84,7 +82,6 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateRootFolderRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -154,8 +151,6 @@ class Folders(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param folder_name: Name of the folder
         :param retries: Override the default retry configuration for this method
@@ -197,7 +192,6 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateRootFolderRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -263,8 +257,6 @@ class Folders(BaseSDK):
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
         :param page:
@@ -311,7 +303,6 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -377,8 +368,6 @@ class Folders(BaseSDK):
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
         :param page:
@@ -425,7 +414,6 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -484,8 +472,6 @@ class Folders(BaseSDK):
         <b>Required Permission:</b> FILEORGANIZER or higher
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id:
         :param folder_name:
@@ -529,7 +515,6 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.UpdateFolderRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -588,8 +573,6 @@ class Folders(BaseSDK):
         <b>Required Permission:</b> FILEORGANIZER or higher
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id:
         :param folder_name:
@@ -633,7 +616,6 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.UpdateFolderRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -694,8 +676,6 @@ class Folders(BaseSDK):
         <b>Warning:</b> This action is irreversible.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id:
         :param retries: Override the default retry configuration for this method
@@ -732,7 +712,6 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -793,8 +772,6 @@ class Folders(BaseSDK):
         <b>Warning:</b> This action is irreversible.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id:
         :param retries: Override the default retry configuration for this method
@@ -831,7 +808,6 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -897,8 +873,6 @@ class Folders(BaseSDK):
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
         :param page:
@@ -945,7 +919,6 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1011,8 +984,6 @@ class Folders(BaseSDK):
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
         :param page:
@@ -1059,7 +1030,6 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1120,8 +1090,6 @@ class Folders(BaseSDK):
         Supports unlimited folder nesting depth for complex organizational structures.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id: Parent folder ID
         :param folder_name:
@@ -1165,7 +1133,6 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateSubfolderRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1226,8 +1193,6 @@ class Folders(BaseSDK):
         Supports unlimited folder nesting depth for complex organizational structures.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param folder_id: Parent folder ID
         :param folder_name:
@@ -1271,7 +1236,6 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateSubfolderRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

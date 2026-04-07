@@ -55,8 +55,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param name: Team display name (must be unique in org)
         :param description: Team description and purpose
         :param user_roles: Optional initial members with roles
@@ -100,7 +98,6 @@ class Teams(BaseSDK):
                 request, False, False, "json", models.CreateTeamRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -184,8 +181,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param name: Team display name (must be unique in org)
         :param description: Team description and purpose
         :param user_roles: Optional initial members with roles
@@ -229,7 +224,6 @@ class Teams(BaseSDK):
                 request, False, False, "json", models.CreateTeamRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -305,8 +299,6 @@ class Teams(BaseSDK):
         Results are sorted by name alphabetically by default.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search: Search teams by name or description
         :param limit: Number of results per page
         :param page: Page number (1-based)
@@ -345,7 +337,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -421,8 +412,6 @@ class Teams(BaseSDK):
         Results are sorted by name alphabetically by default.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param search: Search teams by name or description
         :param limit: Number of results per page
         :param page: Page number (1-based)
@@ -461,7 +450,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -532,8 +520,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -568,7 +554,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -639,8 +624,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -675,7 +658,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -752,8 +734,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param name: New team name
         :param description: New team description
@@ -797,7 +777,6 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.UpdateTeamRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -874,8 +853,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param name: New team name
         :param description: New team description
@@ -919,7 +896,6 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.UpdateTeamRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -986,8 +962,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id: Unique identifier of the team to delete
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1022,7 +996,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1089,8 +1062,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id: Unique identifier of the team to delete
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1125,7 +1096,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1194,8 +1164,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number for pagination (1-based)
         :param limit: Number of teams per page
         :param retries: Override the default retry configuration for this method
@@ -1232,7 +1200,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1301,8 +1268,6 @@ class Teams(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number for pagination (1-based)
         :param limit: Number of teams per page
         :param retries: Override the default retry configuration for this method
@@ -1339,7 +1304,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1395,8 +1359,6 @@ class Teams(BaseSDK):
         Retrieve all users that belong to a specific team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1431,7 +1393,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1487,8 +1448,6 @@ class Teams(BaseSDK):
         Retrieve all users that belong to a specific team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1523,7 +1482,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1580,8 +1538,6 @@ class Teams(BaseSDK):
         Add one or more users to a team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param user_ids:
         :param retries: Override the default retry configuration for this method
@@ -1623,7 +1579,6 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.AddUsersToTeamRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1680,8 +1635,6 @@ class Teams(BaseSDK):
         Add one or more users to a team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param user_ids:
         :param retries: Override the default retry configuration for this method
@@ -1723,7 +1676,6 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.AddUsersToTeamRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1780,8 +1732,6 @@ class Teams(BaseSDK):
         Remove a user from a team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param user_id:
         :param retries: Override the default retry configuration for this method
@@ -1823,7 +1773,6 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.RemoveUserFromTeamRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1880,8 +1829,6 @@ class Teams(BaseSDK):
         Remove a user from a team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param user_id:
         :param retries: Override the default retry configuration for this method
@@ -1923,7 +1870,6 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.RemoveUserFromTeamRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1983,8 +1929,6 @@ class Teams(BaseSDK):
         Update permissions for users within a team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param body: Request payload
         :param retries: Override the default retry configuration for this method
@@ -2030,7 +1974,6 @@ class Teams(BaseSDK):
                 models.UpdateTeamUsersPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2092,8 +2035,6 @@ class Teams(BaseSDK):
         Update permissions for users within a team.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param team_id:
         :param body: Request payload
         :param retries: Override the default retry configuration for this method
@@ -2139,7 +2080,6 @@ class Teams(BaseSDK):
                 models.UpdateTeamUsersPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2196,8 +2136,6 @@ class Teams(BaseSDK):
         Retrieve teams created by the authenticated user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2226,7 +2164,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2281,8 +2218,6 @@ class Teams(BaseSDK):
         Retrieve teams created by the authenticated user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2311,7 +2246,6 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

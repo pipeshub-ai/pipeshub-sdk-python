@@ -42,8 +42,6 @@ class PermissionsSDK(BaseSDK):
         Provide arrays of userIds and/or teamIds to grant the same role to multiple entities.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param kb_id:
         :param role: Permission role to grant
         :param user_ids: User IDs to grant permission
@@ -89,7 +87,6 @@ class PermissionsSDK(BaseSDK):
                 request.body, False, False, "json", models.CreateKBPermissionRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -160,8 +157,6 @@ class PermissionsSDK(BaseSDK):
         Provide arrays of userIds and/or teamIds to grant the same role to multiple entities.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param kb_id:
         :param role: Permission role to grant
         :param user_ids: User IDs to grant permission
@@ -207,7 +202,6 @@ class PermissionsSDK(BaseSDK):
                 request.body, False, False, "json", models.CreateKBPermissionRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -264,8 +258,6 @@ class PermissionsSDK(BaseSDK):
         <b>Required Permission:</b> ORGANIZER or higher to see all permissions, others see only their own.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -300,7 +292,6 @@ class PermissionsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -357,8 +348,6 @@ class PermissionsSDK(BaseSDK):
         <b>Required Permission:</b> ORGANIZER or higher to see all permissions, others see only their own.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -393,7 +382,6 @@ class PermissionsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -453,8 +441,6 @@ class PermissionsSDK(BaseSDK):
         <b>Required Permission:</b> OWNER or ORGANIZER
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param role:
         :param user_ids:
@@ -504,7 +490,6 @@ class PermissionsSDK(BaseSDK):
                 models.UpdateKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -564,8 +549,6 @@ class PermissionsSDK(BaseSDK):
         <b>Required Permission:</b> OWNER or ORGANIZER
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param role:
         :param user_ids:
@@ -615,7 +598,6 @@ class PermissionsSDK(BaseSDK):
                 models.UpdateKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -675,8 +657,6 @@ class PermissionsSDK(BaseSDK):
         <b>Note:</b> Cannot remove the last OWNER from a KB.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param kb_id:
         :param user_ids:
         :param team_ids:
@@ -724,7 +704,6 @@ class PermissionsSDK(BaseSDK):
                 models.DeleteKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -784,8 +763,6 @@ class PermissionsSDK(BaseSDK):
         <b>Note:</b> Cannot remove the last OWNER from a KB.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param kb_id:
         :param user_ids:
         :param team_ids:
@@ -833,7 +810,6 @@ class PermissionsSDK(BaseSDK):
                 models.DeleteKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

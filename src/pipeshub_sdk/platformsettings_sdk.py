@@ -33,8 +33,6 @@ class PlatformSettingsSDK(BaseSDK):
         - ENABLE_BETA_CONNECTORS: Enable beta connector integrations (default: false)
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param file_upload_max_size_bytes: Maximum file upload size in bytes
         :param feature_flags: Key-value map of feature flags. Set to true to enable, false to disable.
         :param retries: Override the default retry configuration for this method
@@ -74,7 +72,6 @@ class PlatformSettingsSDK(BaseSDK):
                 request, False, False, "json", models.SetPlatformSettingsRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -138,8 +135,6 @@ class PlatformSettingsSDK(BaseSDK):
         - ENABLE_BETA_CONNECTORS: Enable beta connector integrations (default: false)
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param file_upload_max_size_bytes: Maximum file upload size in bytes
         :param feature_flags: Key-value map of feature flags. Set to true to enable, false to disable.
         :param retries: Override the default retry configuration for this method
@@ -179,7 +174,6 @@ class PlatformSettingsSDK(BaseSDK):
                 request, False, False, "json", models.SetPlatformSettingsRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -233,8 +227,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         Retrieve current platform settings including file upload limits and feature flag states.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -263,7 +255,6 @@ class PlatformSettingsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -317,8 +308,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         Retrieve current platform settings including file upload limits and feature flag states.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -347,7 +336,6 @@ class PlatformSettingsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -401,8 +389,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         List all available feature flags with their descriptions and default values.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -431,7 +417,6 @@ class PlatformSettingsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -487,8 +472,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         List all available feature flags with their descriptions and default values.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -517,7 +500,6 @@ class PlatformSettingsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -574,8 +556,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         Set a custom system prompt that will be used by AI models.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param custom_system_prompt: Custom system prompt text for AI models
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -613,7 +593,6 @@ class PlatformSettingsSDK(BaseSDK):
                 request, False, False, "json", models.CustomSystemPrompt
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -668,8 +647,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         Set a custom system prompt that will be used by AI models.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param custom_system_prompt: Custom system prompt text for AI models
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -707,7 +684,6 @@ class PlatformSettingsSDK(BaseSDK):
                 request, False, False, "json", models.CustomSystemPrompt
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -761,8 +737,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         Get custom system prompt.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -791,7 +765,6 @@ class PlatformSettingsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -845,8 +818,6 @@ class PlatformSettingsSDK(BaseSDK):
 
         Get custom system prompt.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -875,7 +846,6 @@ class PlatformSettingsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

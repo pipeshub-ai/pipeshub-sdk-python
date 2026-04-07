@@ -33,8 +33,6 @@ class ToolsetRegistry(BaseSDK):
         Supports pagination and search.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page:
         :param limit:
         :param search:
@@ -75,7 +73,6 @@ class ToolsetRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -137,8 +134,6 @@ class ToolsetRegistry(BaseSDK):
         Supports pagination and search.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page:
         :param limit:
         :param search:
@@ -179,7 +174,6 @@ class ToolsetRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -234,8 +228,6 @@ class ToolsetRegistry(BaseSDK):
 
         Get configuration schema for a specific toolset type
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -270,7 +262,6 @@ class ToolsetRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -325,8 +316,6 @@ class ToolsetRegistry(BaseSDK):
 
         Get configuration schema for a specific toolset type
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_type:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -361,7 +350,6 @@ class ToolsetRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

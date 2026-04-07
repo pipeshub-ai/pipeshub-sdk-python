@@ -28,8 +28,6 @@ class AgentConversations(BaseSDK):
         Agent conversations maintain the agent's context and capabilities.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key: Agent identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -64,7 +62,6 @@ class AgentConversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -125,8 +122,6 @@ class AgentConversations(BaseSDK):
         Agent conversations maintain the agent's context and capabilities.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key: Agent identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -161,7 +156,6 @@ class AgentConversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -229,8 +223,6 @@ class AgentConversations(BaseSDK):
         its system prompt, tools, and knowledge base access.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -292,7 +284,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -358,8 +349,6 @@ class AgentConversations(BaseSDK):
         its system prompt, tools, and knowledge base access.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -421,7 +410,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -486,8 +474,6 @@ class AgentConversations(BaseSDK):
         Same as POST /agents/{agentKey}/conversations but with real-time streaming.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -549,7 +535,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -623,8 +608,6 @@ class AgentConversations(BaseSDK):
         Same as POST /agents/{agentKey}/conversations but with real-time streaming.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -686,7 +669,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -751,8 +733,6 @@ class AgentConversations(BaseSDK):
 
         Retrieve a specific agent conversation by ID.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -789,7 +769,6 @@ class AgentConversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -845,8 +824,6 @@ class AgentConversations(BaseSDK):
 
         Retrieve a specific agent conversation by ID.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -883,7 +860,6 @@ class AgentConversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -939,8 +915,6 @@ class AgentConversations(BaseSDK):
 
         Delete a conversation with an agent.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -977,7 +951,6 @@ class AgentConversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1033,8 +1006,6 @@ class AgentConversations(BaseSDK):
 
         Delete a conversation with an agent.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -1071,7 +1042,6 @@ class AgentConversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1132,8 +1102,6 @@ class AgentConversations(BaseSDK):
 
         Add a follow-up message to an agent conversation.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param query: The follow-up question or message content
@@ -1185,7 +1153,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1246,8 +1213,6 @@ class AgentConversations(BaseSDK):
 
         Add a follow-up message to an agent conversation.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param query: The follow-up question or message content
@@ -1299,7 +1264,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1360,8 +1324,6 @@ class AgentConversations(BaseSDK):
 
         Add a message to agent conversation with SSE streaming response.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param query: The follow-up question or message content
@@ -1413,7 +1375,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1483,8 +1444,6 @@ class AgentConversations(BaseSDK):
 
         Add a message to agent conversation with SSE streaming response.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param query: The follow-up question or message content
@@ -1536,7 +1495,6 @@ class AgentConversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1608,8 +1566,6 @@ class AgentConversations(BaseSDK):
         Similar to conversation regeneration but uses the agent's configuration.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param message_id:
@@ -1663,7 +1619,6 @@ class AgentConversations(BaseSDK):
                 Optional[models.RegenerateAgentAnswerRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1726,8 +1681,6 @@ class AgentConversations(BaseSDK):
         Similar to conversation regeneration but uses the agent's configuration.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param conversation_id:
         :param message_id:
@@ -1781,7 +1734,6 @@ class AgentConversations(BaseSDK):
                 Optional[models.RegenerateAgentAnswerRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

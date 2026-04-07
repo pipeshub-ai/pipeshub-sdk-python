@@ -51,8 +51,6 @@ class DocumentManagement(BaseSDK):
         Signed URLs are single-use and time-limited. They can be safely shared for temporary access.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param document_id: Document ID (24-character MongoDB ObjectId)
         :param version: Version number to download (0-indexed). Must be less than total versions.
         :param expiration_time_in_seconds: Signed URL validity duration in seconds
@@ -94,7 +92,6 @@ class DocumentManagement(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -179,8 +176,6 @@ class DocumentManagement(BaseSDK):
         Signed URLs are single-use and time-limited. They can be safely shared for temporary access.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param document_id: Document ID (24-character MongoDB ObjectId)
         :param version: Version number to download (0-indexed). Must be less than total versions.
         :param expiration_time_in_seconds: Signed URL validity duration in seconds
@@ -222,7 +217,6 @@ class DocumentManagement(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

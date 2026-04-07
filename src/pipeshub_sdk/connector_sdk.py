@@ -32,8 +32,6 @@ class ConnectorSDK(BaseSDK):
         Controls processing depth for complex documents (-1 for full depth, 0-100 for limited).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id:
         :param depth: Processing depth (-1 for unlimited)
         :param retries: Override the default retry configuration for this method
@@ -79,7 +77,6 @@ class ConnectorSDK(BaseSDK):
                 Optional[models.ReindexRecordRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -140,8 +137,6 @@ class ConnectorSDK(BaseSDK):
         Controls processing depth for complex documents (-1 for full depth, 0-100 for limited).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id:
         :param depth: Processing depth (-1 for unlimited)
         :param retries: Override the default retry configuration for this method
@@ -187,7 +182,6 @@ class ConnectorSDK(BaseSDK):
                 Optional[models.ReindexRecordRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -246,8 +240,6 @@ class ConnectorSDK(BaseSDK):
         Batch reindex operation for entire containers. The recordGroupId can be a folder ID or KB ID.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_group_id: Folder ID or KB ID
         :param depth:
         :param retries: Override the default retry configuration for this method
@@ -293,7 +285,6 @@ class ConnectorSDK(BaseSDK):
                 Optional[models.ReindexRecordGroupRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -352,8 +343,6 @@ class ConnectorSDK(BaseSDK):
         Batch reindex operation for entire containers. The recordGroupId can be a folder ID or KB ID.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_group_id: Folder ID or KB ID
         :param depth:
         :param retries: Override the default retry configuration for this method
@@ -399,7 +388,6 @@ class ConnectorSDK(BaseSDK):
                 Optional[models.ReindexRecordGroupRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -455,8 +443,6 @@ class ConnectorSDK(BaseSDK):
         Retrieve statistics for a specific connector including record counts, indexing status breakdown, and sync information.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id: Connector ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -491,7 +477,6 @@ class ConnectorSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -547,8 +532,6 @@ class ConnectorSDK(BaseSDK):
         Retrieve statistics for a specific connector including record counts, indexing status breakdown, and sync information.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id: Connector ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -583,7 +566,6 @@ class ConnectorSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

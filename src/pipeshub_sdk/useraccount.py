@@ -1355,8 +1355,6 @@ class UserAccount(BaseSDK):
         <b>Note:</b> This endpoint requires the access token, not the refresh token.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1385,7 +1383,6 @@ class UserAccount(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1447,8 +1444,6 @@ class UserAccount(BaseSDK):
         <b>Note:</b> This endpoint requires the access token, not the refresh token.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1477,7 +1472,6 @@ class UserAccount(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1536,8 +1530,6 @@ class UserAccount(BaseSDK):
         Allows a logged-in user to change their password by providing the current password and a new password.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param current_password:
         :param new_password:
         :param retries: Override the default retry configuration for this method
@@ -1577,7 +1569,6 @@ class UserAccount(BaseSDK):
                 request, False, False, "json", models.ResetPasswordRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1642,8 +1633,6 @@ class UserAccount(BaseSDK):
         Allows a logged-in user to change their password by providing the current password and a new password.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param current_password:
         :param new_password:
         :param retries: Override the default retry configuration for this method
@@ -1683,7 +1672,6 @@ class UserAccount(BaseSDK):
                 request, False, False, "json", models.ResetPasswordRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

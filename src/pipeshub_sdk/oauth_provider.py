@@ -332,8 +332,6 @@ class OAuthProvider(BaseSDK):
         - Consent denied: Redirects to client with `access_denied` error
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param client_id: The OAuth app's client ID
         :param redirect_uri: Redirect URI (must match authorization request)
         :param scope: Requested scopes
@@ -383,7 +381,6 @@ class OAuthProvider(BaseSDK):
                 request, False, False, "json", models.OAuthConsentRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -460,8 +457,6 @@ class OAuthProvider(BaseSDK):
         - Consent denied: Redirects to client with `access_denied` error
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param client_id: The OAuth app's client ID
         :param redirect_uri: Redirect URI (must match authorization request)
         :param scope: Requested scopes
@@ -511,7 +506,6 @@ class OAuthProvider(BaseSDK):
                 request, False, False, "json", models.OAuthConsentRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

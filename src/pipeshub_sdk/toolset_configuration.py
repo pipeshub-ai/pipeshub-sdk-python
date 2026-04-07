@@ -26,8 +26,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Get configuration for a specific toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -62,7 +60,6 @@ class ToolsetConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -117,8 +114,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Get configuration for a specific toolset instance
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -153,7 +148,6 @@ class ToolsetConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -215,8 +209,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Save or update toolset configuration (deprecated - use PUT)
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param auth:
         :param base_url:
@@ -260,7 +252,6 @@ class ToolsetConfiguration(BaseSDK):
                 request.body, False, False, "json", models.SaveToolsetConfigRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -322,8 +313,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Save or update toolset configuration (deprecated - use PUT)
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param auth:
         :param base_url:
@@ -367,7 +356,6 @@ class ToolsetConfiguration(BaseSDK):
                 request.body, False, False, "json", models.SaveToolsetConfigRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -426,8 +414,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Update toolset configuration
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param auth:
         :param base_url:
@@ -475,7 +461,6 @@ class ToolsetConfiguration(BaseSDK):
                 models.UpdateToolsetConfigRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -534,8 +519,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Update toolset configuration
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param auth:
         :param base_url:
@@ -583,7 +566,6 @@ class ToolsetConfiguration(BaseSDK):
                 models.UpdateToolsetConfigRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -638,8 +620,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Delete a toolset instance and its configuration
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -674,7 +654,6 @@ class ToolsetConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -729,8 +708,6 @@ class ToolsetConfiguration(BaseSDK):
 
         Delete a toolset instance and its configuration
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param toolset_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -765,7 +742,6 @@ class ToolsetConfiguration(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

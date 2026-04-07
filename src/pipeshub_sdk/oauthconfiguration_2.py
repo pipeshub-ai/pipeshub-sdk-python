@@ -30,8 +30,6 @@ class OauthConfiguration2(BaseSDK):
         to be configured before users can authenticate.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page:
         :param limit:
         :param search:
@@ -70,7 +68,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -131,8 +128,6 @@ class OauthConfiguration2(BaseSDK):
         to be configured before users can authenticate.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page:
         :param limit:
         :param search:
@@ -171,7 +166,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -226,8 +220,6 @@ class OauthConfiguration2(BaseSDK):
 
         Get details for a specific OAuth-capable connector type.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -262,7 +254,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -319,8 +310,6 @@ class OauthConfiguration2(BaseSDK):
 
         Get details for a specific OAuth-capable connector type.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -355,7 +344,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -420,8 +408,6 @@ class OauthConfiguration2(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page:
         :param limit:
         :param search:
@@ -460,7 +446,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -523,8 +508,6 @@ class OauthConfiguration2(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param page:
         :param limit:
         :param search:
@@ -563,7 +546,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -621,8 +603,6 @@ class OauthConfiguration2(BaseSDK):
 
         Get all OAuth configurations for a specific connector type.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param page:
         :param limit:
@@ -663,7 +643,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -723,8 +702,6 @@ class OauthConfiguration2(BaseSDK):
 
         Get all OAuth configurations for a specific connector type.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param page:
         :param limit:
@@ -765,7 +742,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -836,8 +812,6 @@ class OauthConfiguration2(BaseSDK):
         OAuth client ID and secret.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param oauth_instance_name: Display name for this OAuth configuration (e.g., 'Production Google OAuth')
         :param config: OAuth application credentials
@@ -885,7 +859,6 @@ class OauthConfiguration2(BaseSDK):
                 request.body, False, False, "json", models.CreateOAuthConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -954,8 +927,6 @@ class OauthConfiguration2(BaseSDK):
         OAuth client ID and secret.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param oauth_instance_name: Display name for this OAuth configuration (e.g., 'Production Google OAuth')
         :param config: OAuth application credentials
@@ -1003,7 +974,6 @@ class OauthConfiguration2(BaseSDK):
                 request.body, False, False, "json", models.CreateOAuthConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1059,8 +1029,6 @@ class OauthConfiguration2(BaseSDK):
 
         Get a specific OAuth configuration by ID.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param config_id:
         :param retries: Override the default retry configuration for this method
@@ -1097,7 +1065,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1153,8 +1120,6 @@ class OauthConfiguration2(BaseSDK):
 
         Get a specific OAuth configuration by ID.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param config_id:
         :param retries: Override the default retry configuration for this method
@@ -1191,7 +1156,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1256,8 +1220,6 @@ class OauthConfiguration2(BaseSDK):
         Only the creator or another admin can update.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param config_id:
         :param oauth_instance_name:
@@ -1305,7 +1267,6 @@ class OauthConfiguration2(BaseSDK):
                 request.body, False, False, "json", models.UpdateOAuthConfigRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1370,8 +1331,6 @@ class OauthConfiguration2(BaseSDK):
         Only the creator or another admin can update.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param config_id:
         :param oauth_instance_name:
@@ -1419,7 +1378,6 @@ class OauthConfiguration2(BaseSDK):
                 request.body, False, False, "json", models.UpdateOAuthConfigRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1479,8 +1437,6 @@ class OauthConfiguration2(BaseSDK):
         Disable or delete dependent connectors first.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param config_id:
         :param retries: Override the default retry configuration for this method
@@ -1517,7 +1473,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1577,8 +1532,6 @@ class OauthConfiguration2(BaseSDK):
         Disable or delete dependent connectors first.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param connector_type:
         :param config_id:
         :param retries: Override the default retry configuration for this method
@@ -1615,7 +1568,6 @@ class OauthConfiguration2(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

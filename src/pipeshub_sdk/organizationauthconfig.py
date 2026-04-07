@@ -63,8 +63,6 @@ class OrganizationAuthConfig(BaseSDK):
         <b>Admin Access Required:</b> Only organization admins can update auth configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param auth_methods: List of authentication steps in order
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -102,7 +100,6 @@ class OrganizationAuthConfig(BaseSDK):
                 request, False, False, "json", models.AuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -200,8 +197,6 @@ class OrganizationAuthConfig(BaseSDK):
         <b>Admin Access Required:</b> Only organization admins can update auth configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param auth_methods: List of authentication steps in order
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -239,7 +234,6 @@ class OrganizationAuthConfig(BaseSDK):
                 request, False, False, "json", models.AuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

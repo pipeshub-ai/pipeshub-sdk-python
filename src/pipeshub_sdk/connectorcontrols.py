@@ -42,8 +42,6 @@ class ConnectorControls(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param type: Toggle type: 'sync' for data synchronization, 'agent' for AI agent integration
         :param retries: Override the default retry configuration for this method
@@ -85,7 +83,6 @@ class ConnectorControls(BaseSDK):
                 request.body, False, False, "json", models.ConnectorToggleRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -158,8 +155,6 @@ class ConnectorControls(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param type: Toggle type: 'sync' for data synchronization, 'agent' for AI agent integration
         :param retries: Override the default retry configuration for this method
@@ -201,7 +196,6 @@ class ConnectorControls(BaseSDK):
                 request.body, False, False, "json", models.ConnectorToggleRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

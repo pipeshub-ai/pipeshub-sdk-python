@@ -25,8 +25,6 @@ class AuthConfigSDK(BaseSDK):
 
         Set up Azure Active Directory as an authentication provider for user login.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param client_id: Azure AD application client ID
         :param tenant_id: Azure AD tenant ID (use 'common' for multi-tenant)
         :param retries: Override the default retry configuration for this method
@@ -66,7 +64,6 @@ class AuthConfigSDK(BaseSDK):
                 request, False, False, "json", models.AzureAdAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -122,8 +119,6 @@ class AuthConfigSDK(BaseSDK):
 
         Set up Azure Active Directory as an authentication provider for user login.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param client_id: Azure AD application client ID
         :param tenant_id: Azure AD tenant ID (use 'common' for multi-tenant)
         :param retries: Override the default retry configuration for this method
@@ -163,7 +158,6 @@ class AuthConfigSDK(BaseSDK):
                 request, False, False, "json", models.AzureAdAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -222,8 +216,6 @@ class AuthConfigSDK(BaseSDK):
 
         Set up SAML 2.0 Single Sign-On with your identity provider (Okta, OneLogin, etc.).
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param entry_point: Identity provider SSO URL
         :param certificate: X.509 certificate for signature validation (PEM format)
         :param email_key: SAML attribute name for user email
@@ -269,7 +261,6 @@ class AuthConfigSDK(BaseSDK):
                 request, False, False, "json", models.SSOAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -328,8 +319,6 @@ class AuthConfigSDK(BaseSDK):
 
         Set up SAML 2.0 Single Sign-On with your identity provider (Okta, OneLogin, etc.).
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param entry_point: Identity provider SSO URL
         :param certificate: X.509 certificate for signature validation (PEM format)
         :param email_key: SAML attribute name for user email
@@ -375,7 +364,6 @@ class AuthConfigSDK(BaseSDK):
                 request, False, False, "json", models.SSOAuthConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -429,8 +417,6 @@ class AuthConfigSDK(BaseSDK):
 
         Get SAML SSO configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -459,7 +445,6 @@ class AuthConfigSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -513,8 +498,6 @@ class AuthConfigSDK(BaseSDK):
 
         Get SAML SSO configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -543,7 +526,6 @@ class AuthConfigSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

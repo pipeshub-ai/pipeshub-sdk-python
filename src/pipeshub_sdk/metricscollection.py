@@ -30,8 +30,6 @@ class MetricsCollection(BaseSDK):
         **Admin Access Required:** This endpoint requires administrator privileges.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -60,7 +58,6 @@ class MetricsCollection(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -121,8 +118,6 @@ class MetricsCollection(BaseSDK):
         **Admin Access Required:** This endpoint requires administrator privileges.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -151,7 +146,6 @@ class MetricsCollection(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -219,8 +213,6 @@ class MetricsCollection(BaseSDK):
         **Admin Access Required:** This endpoint requires administrator privileges.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param enable_metric_collection: Set to true to enable metrics collection, false to disable
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -258,7 +250,6 @@ class MetricsCollection(BaseSDK):
                 request, False, False, "json", models.ToggleMetricsCollectionRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -328,8 +319,6 @@ class MetricsCollection(BaseSDK):
         **Admin Access Required:** This endpoint requires administrator privileges.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param enable_metric_collection: Set to true to enable metrics collection, false to disable
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -367,7 +356,6 @@ class MetricsCollection(BaseSDK):
                 request, False, False, "json", models.ToggleMetricsCollectionRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -425,8 +413,6 @@ class MetricsCollection(BaseSDK):
         Configure the interval for pushing metrics to the collection server.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param push_interval: Push interval in seconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -468,7 +454,6 @@ class MetricsCollection(BaseSDK):
                 models.SetMetricsCollectionPushIntervalRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -526,8 +511,6 @@ class MetricsCollection(BaseSDK):
         Configure the interval for pushing metrics to the collection server.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param push_interval: Push interval in seconds
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -569,7 +552,6 @@ class MetricsCollection(BaseSDK):
                 models.SetMetricsCollectionPushIntervalRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -627,8 +609,6 @@ class MetricsCollection(BaseSDK):
         Configure the remote server URL for metrics collection.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param server_url:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -670,7 +650,6 @@ class MetricsCollection(BaseSDK):
                 models.SetMetricsCollectionRemoteServerRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -728,8 +707,6 @@ class MetricsCollection(BaseSDK):
         Configure the remote server URL for metrics collection.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param server_url:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -771,7 +748,6 @@ class MetricsCollection(BaseSDK):
                 models.SetMetricsCollectionRemoteServerRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

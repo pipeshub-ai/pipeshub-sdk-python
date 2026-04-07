@@ -38,8 +38,6 @@ class ConnectorInstances(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Filter by scope (team or personal)
         :param page:
         :param limit:
@@ -80,7 +78,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -151,8 +148,6 @@ class ConnectorInstances(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Filter by scope (team or personal)
         :param page:
         :param limit:
@@ -193,7 +188,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -278,8 +272,6 @@ class ConnectorInstances(BaseSDK):
         </ol>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_type: Connector type from registry (e.g., google-drive, confluence, slack)
         :param instance_name: Display name for this connector instance
         :param scope: Scope determines visibility and access control for connectors:<br>
@@ -336,7 +328,6 @@ class ConnectorInstances(BaseSDK):
                 request, False, False, "json", models.CreateConnectorRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -421,8 +412,6 @@ class ConnectorInstances(BaseSDK):
         </ol>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_type: Connector type from registry (e.g., google-drive, confluence, slack)
         :param instance_name: Display name for this connector instance
         :param scope: Scope determines visibility and access control for connectors:<br>
@@ -479,7 +468,6 @@ class ConnectorInstances(BaseSDK):
                 request, False, False, "json", models.CreateConnectorRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -539,8 +527,6 @@ class ConnectorInstances(BaseSDK):
         These are connectors currently syncing data or available to AI agents.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -569,7 +555,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -629,8 +614,6 @@ class ConnectorInstances(BaseSDK):
         These are connectors currently syncing data or available to AI agents.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -659,7 +642,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -715,8 +697,6 @@ class ConnectorInstances(BaseSDK):
 
         Get all inactive (disabled) connector instances.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -745,7 +725,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -801,8 +780,6 @@ class ConnectorInstances(BaseSDK):
 
         Get all inactive (disabled) connector instances.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -831,7 +808,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -895,8 +871,6 @@ class ConnectorInstances(BaseSDK):
         These have all required settings but may not be active yet.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Scope determines visibility and access control for connectors:<br>
             <ul>
             <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
@@ -942,7 +916,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1006,8 +979,6 @@ class ConnectorInstances(BaseSDK):
         These have all required settings but may not be active yet.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Scope determines visibility and access control for connectors:<br>
             <ul>
             <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
@@ -1053,7 +1024,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1117,8 +1087,6 @@ class ConnectorInstances(BaseSDK):
         These are available to AI agents for querying and actions.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Scope determines visibility and access control for connectors:<br>
             <ul>
             <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
@@ -1164,7 +1132,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1228,8 +1195,6 @@ class ConnectorInstances(BaseSDK):
         These are available to AI agents for querying and actions.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Scope determines visibility and access control for connectors:<br>
             <ul>
             <li><code>team</code> - Available to all users in the organization (admin-only creation)</li>
@@ -1275,7 +1240,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1332,8 +1296,6 @@ class ConnectorInstances(BaseSDK):
 
         Retrieve a specific connector instance by ID.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id: Connector instance ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1368,7 +1330,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1425,8 +1386,6 @@ class ConnectorInstances(BaseSDK):
 
         Retrieve a specific connector instance by ID.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id: Connector instance ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1461,7 +1420,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1527,8 +1485,6 @@ class ConnectorInstances(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1563,7 +1519,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1629,8 +1584,6 @@ class ConnectorInstances(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1665,7 +1618,6 @@ class ConnectorInstances(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1725,8 +1677,6 @@ class ConnectorInstances(BaseSDK):
         <b>Note:</b> This only updates the display name, not the connector configuration.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id: Unique connector instance ID
         :param instance_name: New display name for the connector instance
         :param retries: Override the default retry configuration for this method
@@ -1768,7 +1718,6 @@ class ConnectorInstances(BaseSDK):
                 request.body, False, False, "json", models.UpdateConnectorNameRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1826,8 +1775,6 @@ class ConnectorInstances(BaseSDK):
         <b>Note:</b> This only updates the display name, not the connector configuration.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id: Unique connector instance ID
         :param instance_name: New display name for the connector instance
         :param retries: Override the default retry configuration for this method
@@ -1869,7 +1816,6 @@ class ConnectorInstances(BaseSDK):
                 request.body, False, False, "json", models.UpdateConnectorNameRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

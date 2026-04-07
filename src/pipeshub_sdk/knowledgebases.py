@@ -45,8 +45,6 @@ class KnowledgeBases(BaseSDK):
         The user creating the KB automatically becomes the OWNER with full administrative rights.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_name: Name of the knowledge base
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -84,7 +82,6 @@ class KnowledgeBases(BaseSDK):
                 request, False, False, "json", models.CreateKnowledgeBaseRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -158,8 +155,6 @@ class KnowledgeBases(BaseSDK):
         The user creating the KB automatically becomes the OWNER with full administrative rights.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_name: Name of the knowledge base
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -197,7 +192,6 @@ class KnowledgeBases(BaseSDK):
                 request, False, False, "json", models.CreateKnowledgeBaseRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -274,8 +268,6 @@ class KnowledgeBases(BaseSDK):
         Uses efficient pagination with limit/offset. For large result sets, use smaller page sizes.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number (1-indexed)
         :param limit: Results per page (max 100)
         :param search: Search query for KB names (max 1000 chars)
@@ -320,7 +312,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -397,8 +388,6 @@ class KnowledgeBases(BaseSDK):
         Uses efficient pagination with limit/offset. For large result sets, use smaller page sizes.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number (1-indexed)
         :param limit: Results per page (max 100)
         :param search: Search query for KB names (max 1000 chars)
@@ -443,7 +432,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -503,8 +491,6 @@ class KnowledgeBases(BaseSDK):
         User must have at least READER permission to view KB details.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -539,7 +525,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -599,8 +584,6 @@ class KnowledgeBases(BaseSDK):
         User must have at least READER permission to view KB details.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -635,7 +618,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -698,8 +680,6 @@ class KnowledgeBases(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param kb_name: New name for the knowledge base
         :param retries: Override the default retry configuration for this method
@@ -745,7 +725,6 @@ class KnowledgeBases(BaseSDK):
                 models.UpdateKnowledgeBaseRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -808,8 +787,6 @@ class KnowledgeBases(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param kb_name: New name for the knowledge base
         :param retries: Override the default retry configuration for this method
@@ -855,7 +832,6 @@ class KnowledgeBases(BaseSDK):
                 models.UpdateKnowledgeBaseRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -920,8 +896,6 @@ class KnowledgeBases(BaseSDK):
         <b>Warning:</b> This action is irreversible. Consider exporting data before deletion.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -956,7 +930,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1021,8 +994,6 @@ class KnowledgeBases(BaseSDK):
         <b>Warning:</b> This action is irreversible. Consider exporting data before deletion.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1057,7 +1028,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1136,8 +1106,6 @@ class KnowledgeBases(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param only_containers: Only return nodes with children (for sidebar)
         :param page: Page number (1-indexed)
         :param limit: Items per page
@@ -1202,7 +1170,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1281,8 +1248,6 @@ class KnowledgeBases(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param only_containers: Only return nodes with children (for sidebar)
         :param page: Page number (1-indexed)
         :param limit: Items per page
@@ -1347,7 +1312,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1423,8 +1387,6 @@ class KnowledgeBases(BaseSDK):
         parent_type must be one of: app, recordGroup, folder, record.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param parent_type: Type of parent node (app, recordGroup, folder, record)
         :param parent_id: ID of parent node (UUID or knowledgeBase_<orgId> for Collection app)
         :param only_containers: Only return nodes with children (for sidebar)
@@ -1493,7 +1455,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1569,8 +1530,6 @@ class KnowledgeBases(BaseSDK):
         parent_type must be one of: app, recordGroup, folder, record.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param parent_type: Type of parent node (app, recordGroup, folder, record)
         :param parent_id: ID of parent node (UUID or knowledgeBase_<orgId> for Collection app)
         :param only_containers: Only return nodes with children (for sidebar)
@@ -1639,7 +1598,6 @@ class KnowledgeBases(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1695,8 +1653,6 @@ class KnowledgeBases(BaseSDK):
         Trigger reindexing of records that previously failed to index for a specific connector.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1734,7 +1690,6 @@ class KnowledgeBases(BaseSDK):
                 request, False, False, "json", models.ReindexFailedRecordsRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1792,8 +1747,6 @@ class KnowledgeBases(BaseSDK):
         Trigger reindexing of records that previously failed to index for a specific connector.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1831,7 +1784,6 @@ class KnowledgeBases(BaseSDK):
                 request, False, False, "json", models.ReindexFailedRecordsRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1893,8 +1845,6 @@ class KnowledgeBases(BaseSDK):
         Move a record from one location to another within a knowledge base.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param record_id:
         :param body: Request payload
@@ -1936,7 +1886,6 @@ class KnowledgeBases(BaseSDK):
                 request.body, False, False, "json", models.MoveRecordRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1996,8 +1945,6 @@ class KnowledgeBases(BaseSDK):
         Move a record from one location to another within a knowledge base.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id:
         :param record_id:
         :param body: Request payload
@@ -2039,7 +1986,6 @@ class KnowledgeBases(BaseSDK):
                 request.body, False, False, "json", models.MoveRecordRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

@@ -54,8 +54,6 @@ class Conversations(BaseSDK):
         Each model may have different capabilities, speed, and accuracy trade-offs.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
@@ -113,7 +111,6 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -196,8 +193,6 @@ class Conversations(BaseSDK):
         Each model may have different capabilities, speed, and accuracy trade-offs.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
@@ -255,7 +250,6 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -339,8 +333,6 @@ class Conversations(BaseSDK):
         The conversation is marked as FAILED with the error reason stored.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
@@ -398,7 +390,6 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -491,8 +482,6 @@ class Conversations(BaseSDK):
         The conversation is marked as FAILED with the error reason stored.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
@@ -550,7 +539,6 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -624,8 +612,6 @@ class Conversations(BaseSDK):
         Conversations are sorted by last activity timestamp (most recent first).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -654,7 +640,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -719,8 +704,6 @@ class Conversations(BaseSDK):
         Conversations are sorted by last activity timestamp (most recent first).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -749,7 +732,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -810,8 +792,6 @@ class Conversations(BaseSDK):
         to the active list.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -840,7 +820,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -903,8 +882,6 @@ class Conversations(BaseSDK):
         to the active list.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -933,7 +910,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1008,8 +984,6 @@ class Conversations(BaseSDK):
         Users can access conversations they own or that have been shared with them.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id: Unique conversation identifier
         :param page: Page number for message pagination
         :param limit: Number of messages per page
@@ -1052,7 +1026,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1125,8 +1098,6 @@ class Conversations(BaseSDK):
         Users can access conversations they own or that have been shared with them.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id: Unique conversation identifier
         :param page: Page number for message pagination
         :param limit: Number of messages per page
@@ -1169,7 +1140,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1231,8 +1201,6 @@ class Conversations(BaseSDK):
         Shared users cannot delete conversations.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id: Unique conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1267,7 +1235,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1331,8 +1298,6 @@ class Conversations(BaseSDK):
         Shared users cannot delete conversations.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id: Unique conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1367,7 +1332,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1442,8 +1406,6 @@ class Conversations(BaseSDK):
         This allows switching models mid-conversation if needed.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param conversation_id: Unique conversation identifier
         :param query: The follow-up question or message content
         :param filters:
@@ -1493,7 +1455,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1566,8 +1527,6 @@ class Conversations(BaseSDK):
         This allows switching models mid-conversation if needed.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param conversation_id: Unique conversation identifier
         :param query: The follow-up question or message content
         :param filters:
@@ -1617,7 +1576,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1683,8 +1641,6 @@ class Conversations(BaseSDK):
         See <code>/conversations/stream</code> for event type documentation.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param query: The follow-up question or message content
         :param filters:
@@ -1734,7 +1690,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1809,8 +1764,6 @@ class Conversations(BaseSDK):
         See <code>/conversations/stream</code> for event type documentation.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param query: The follow-up question or message content
         :param filters:
@@ -1860,7 +1813,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1938,8 +1890,6 @@ class Conversations(BaseSDK):
         to the same organization.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param user_ids: IDs of users to share with
         :param access_level: Permission level for shared users:
@@ -1988,7 +1938,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.ShareRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2057,8 +2006,6 @@ class Conversations(BaseSDK):
         to the same organization.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param user_ids: IDs of users to share with
         :param access_level: Permission level for shared users:
@@ -2107,7 +2054,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.ShareRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2172,8 +2118,6 @@ class Conversations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param title: New conversation title
         :param retries: Override the default retry configuration for this method
@@ -2219,7 +2163,6 @@ class Conversations(BaseSDK):
                 models.UpdateConversationTitleRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2284,8 +2227,6 @@ class Conversations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param title: New conversation title
         :param retries: Override the default retry configuration for this method
@@ -2331,7 +2272,6 @@ class Conversations(BaseSDK):
                 models.UpdateConversationTitleRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2392,8 +2332,6 @@ class Conversations(BaseSDK):
         View archived conversations using <code>GET /conversations/show/archives</code>.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2428,7 +2366,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2489,8 +2426,6 @@ class Conversations(BaseSDK):
         View archived conversations using <code>GET /conversations/show/archives</code>.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2525,7 +2460,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2583,8 +2517,6 @@ class Conversations(BaseSDK):
         Removes the archived flag, making the conversation visible in the main list again.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2619,7 +2551,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2677,8 +2608,6 @@ class Conversations(BaseSDK):
         Removes the archived flag, making the conversation visible in the main list again.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2713,7 +2642,6 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2786,8 +2714,6 @@ class Conversations(BaseSDK):
         Specify <code>modelKey</code> to use a different model for regeneration.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
         :param filters:
@@ -2841,7 +2767,6 @@ class Conversations(BaseSDK):
                 Optional[models.RegenerateAnswerRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2914,8 +2839,6 @@ class Conversations(BaseSDK):
         Specify <code>modelKey</code> to use a different model for regeneration.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
         :param filters:
@@ -2969,7 +2892,6 @@ class Conversations(BaseSDK):
                 Optional[models.RegenerateAnswerRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3048,8 +2970,6 @@ class Conversations(BaseSDK):
         not on user queries or system messages.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param message_id:
         :param is_helpful: Overall helpfulness rating
@@ -3105,7 +3025,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.MessageFeedback
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3184,8 +3103,6 @@ class Conversations(BaseSDK):
         not on user queries or system messages.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param message_id:
         :param is_helpful: Overall helpfulness rating
@@ -3241,7 +3158,6 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.MessageFeedback
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3299,8 +3215,6 @@ class Conversations(BaseSDK):
         Revoke sharing for a conversation, making it private again.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param user_ids:
         :param team_ids:
@@ -3348,7 +3262,6 @@ class Conversations(BaseSDK):
                 Optional[models.UnshareConversationByIDRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3408,8 +3321,6 @@ class Conversations(BaseSDK):
         Revoke sharing for a conversation, making it private again.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param conversation_id:
         :param user_ids:
         :param team_ids:
@@ -3457,7 +3368,6 @@ class Conversations(BaseSDK):
                 Optional[models.UnshareConversationByIDRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

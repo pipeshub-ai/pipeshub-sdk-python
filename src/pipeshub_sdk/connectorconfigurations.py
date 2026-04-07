@@ -28,8 +28,6 @@ class ConnectorConfigurations(BaseSDK):
         Only admins can see partial credential information.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -64,7 +62,6 @@ class ConnectorConfigurations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -123,8 +120,6 @@ class ConnectorConfigurations(BaseSDK):
         Only admins can see partial credential information.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -159,7 +154,6 @@ class ConnectorConfigurations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -225,8 +219,6 @@ class ConnectorConfigurations(BaseSDK):
         without re-authenticating.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param sync: Synchronization configuration for a connector instance
         :param filters: Filter configuration to control what data is synced (sync filters and indexing filters)
@@ -280,7 +272,6 @@ class ConnectorConfigurations(BaseSDK):
                 models.UpdateConnectorFiltersSyncRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -348,8 +339,6 @@ class ConnectorConfigurations(BaseSDK):
         without re-authenticating.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_id:
         :param sync: Synchronization configuration for a connector instance
         :param filters: Filter configuration to control what data is synced (sync filters and indexing filters)
@@ -403,7 +392,6 @@ class ConnectorConfigurations(BaseSDK):
                 models.UpdateConnectorFiltersSyncRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

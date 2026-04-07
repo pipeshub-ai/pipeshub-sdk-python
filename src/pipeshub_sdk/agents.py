@@ -29,8 +29,6 @@ class Agents(BaseSDK):
         Each agent has unique capabilities defined by its tools and knowledge scope.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -59,7 +57,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -117,8 +114,6 @@ class Agents(BaseSDK):
         Each agent has unique capabilities defined by its tools and knowledge scope.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -147,7 +142,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -244,8 +238,6 @@ class Agents(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param name: Agent display name
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
@@ -307,7 +299,6 @@ class Agents(BaseSDK):
                 request, False, False, "json", models_.CreateAgentRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -404,8 +395,6 @@ class Agents(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param name: Agent display name
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
@@ -467,7 +456,6 @@ class Agents(BaseSDK):
                 request, False, False, "json", models_.CreateAgentRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -532,8 +520,6 @@ class Agents(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -562,7 +548,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -627,8 +612,6 @@ class Agents(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -657,7 +640,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -712,8 +694,6 @@ class Agents(BaseSDK):
 
         Retrieve agent details by its unique key.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key: Unique agent identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -748,7 +728,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -803,8 +782,6 @@ class Agents(BaseSDK):
 
         Retrieve agent details by its unique key.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key: Unique agent identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -839,7 +816,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -922,8 +898,6 @@ class Agents(BaseSDK):
         Only the agent creator can update it.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param name:
         :param description:
@@ -989,7 +963,6 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.UpdateAgentRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1072,8 +1045,6 @@ class Agents(BaseSDK):
         Only the agent creator can update it.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param name:
         :param description:
@@ -1139,7 +1110,6 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.UpdateAgentRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1197,8 +1167,6 @@ class Agents(BaseSDK):
         All conversations with this agent will become inaccessible.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1233,7 +1201,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1291,8 +1258,6 @@ class Agents(BaseSDK):
         All conversations with this agent will become inaccessible.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1327,7 +1292,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1382,8 +1346,6 @@ class Agents(BaseSDK):
 
         Get the current permission configuration for an agent.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1418,7 +1380,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1475,8 +1436,6 @@ class Agents(BaseSDK):
 
         Get the current permission configuration for an agent.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1511,7 +1470,6 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1575,8 +1533,6 @@ class Agents(BaseSDK):
 
         Update who can access and use the agent.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param is_public:
         :param shared_with:
@@ -1627,7 +1583,6 @@ class Agents(BaseSDK):
                 models_.UpdateAgentPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1689,8 +1644,6 @@ class Agents(BaseSDK):
 
         Update who can access and use the agent.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param is_public:
         :param shared_with:
@@ -1741,7 +1694,6 @@ class Agents(BaseSDK):
                 models_.UpdateAgentPermissionsRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1798,8 +1750,6 @@ class Agents(BaseSDK):
 
         Share an agent with specific users.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param user_ids: IDs of users to share with
         :param access_level: Permission level for shared users:
@@ -1848,7 +1798,6 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.ShareRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1905,8 +1854,6 @@ class Agents(BaseSDK):
 
         Share an agent with specific users.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param user_ids: IDs of users to share with
         :param access_level: Permission level for shared users:
@@ -1955,7 +1902,6 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.ShareRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2013,8 +1959,6 @@ class Agents(BaseSDK):
         Revoke sharing for an agent, removing access for specified users or teams.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param user_ids:
         :param team_ids:
@@ -2058,7 +2002,6 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.UnshareAgentRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2116,8 +2059,6 @@ class Agents(BaseSDK):
         Revoke sharing for an agent, removing access for specified users or teams.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param agent_key:
         :param user_ids:
         :param team_ids:
@@ -2161,7 +2102,6 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.UnshareAgentRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

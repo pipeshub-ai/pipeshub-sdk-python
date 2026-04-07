@@ -55,8 +55,6 @@ class Records(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page:
         :param limit:
         :param search: Search query (max 1000 chars)
@@ -111,7 +109,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -194,8 +191,6 @@ class Records(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page:
         :param limit:
         :param search: Search query (max 1000 chars)
@@ -250,7 +245,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -328,8 +322,6 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -384,7 +376,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -462,8 +453,6 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -518,7 +507,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -596,8 +584,6 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -652,7 +638,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -730,8 +715,6 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -786,7 +769,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -847,8 +829,6 @@ class Records(BaseSDK):
         Use the optional <code>convertTo</code> parameter to request file format conversion (e.g., PDF to text).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to
         :param retries: Override the default retry configuration for this method
@@ -885,7 +865,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -946,8 +925,6 @@ class Records(BaseSDK):
         Use the optional <code>convertTo</code> parameter to request file format conversion (e.g., PDF to text).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to
         :param retries: Override the default retry configuration for this method
@@ -984,7 +961,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1055,8 +1031,6 @@ class Records(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param record_id: Record ID
         :param record_name: New name for the record
         :param file: Replacement file content
@@ -1104,7 +1078,6 @@ class Records(BaseSDK):
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1175,8 +1148,6 @@ class Records(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param record_id: Record ID
         :param record_name: New name for the record
         :param file: Replacement file content
@@ -1224,7 +1195,6 @@ class Records(BaseSDK):
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1288,8 +1258,6 @@ class Records(BaseSDK):
         <b>Warning:</b> This action is irreversible.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1324,7 +1292,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1388,8 +1355,6 @@ class Records(BaseSDK):
         <b>Warning:</b> This action is irreversible.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1424,7 +1389,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1491,8 +1455,6 @@ class Records(BaseSDK):
         Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to PDF).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id: Record ID
         :param convert_to: Target format for conversion
         :param retries: Override the default retry configuration for this method
@@ -1529,7 +1491,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1600,8 +1561,6 @@ class Records(BaseSDK):
         Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to PDF).
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param record_id: Record ID
         :param convert_to: Target format for conversion
         :param retries: Override the default retry configuration for this method
@@ -1638,7 +1597,6 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

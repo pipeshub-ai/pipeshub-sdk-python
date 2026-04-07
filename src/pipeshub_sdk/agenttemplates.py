@@ -33,8 +33,6 @@ class AgentTemplates(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -63,7 +61,6 @@ class AgentTemplates(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -127,8 +124,6 @@ class AgentTemplates(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -157,7 +152,6 @@ class AgentTemplates(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -233,8 +227,6 @@ class AgentTemplates(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param name: Template name
         :param description: What agents from this template do
         :param category: Template category
@@ -286,7 +278,6 @@ class AgentTemplates(BaseSDK):
                 request, False, False, "json", models.CreateAgentTemplateRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -362,8 +353,6 @@ class AgentTemplates(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param name: Template name
         :param description: What agents from this template do
         :param category: Template category
@@ -415,7 +404,6 @@ class AgentTemplates(BaseSDK):
                 request, False, False, "json", models.CreateAgentTemplateRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -470,8 +458,6 @@ class AgentTemplates(BaseSDK):
 
         Retrieve a specific agent template by ID.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param template_id: Template identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -506,7 +492,6 @@ class AgentTemplates(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -561,8 +546,6 @@ class AgentTemplates(BaseSDK):
 
         Retrieve a specific agent template by ID.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param template_id: Template identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -597,7 +580,6 @@ class AgentTemplates(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -667,8 +649,6 @@ class AgentTemplates(BaseSDK):
         Only the template creator can update it.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param template_id:
         :param name:
         :param description:
@@ -728,7 +708,6 @@ class AgentTemplates(BaseSDK):
                 models.UpdateAgentTemplateRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -798,8 +777,6 @@ class AgentTemplates(BaseSDK):
         Only the template creator can update it.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param template_id:
         :param name:
         :param description:
@@ -859,7 +836,6 @@ class AgentTemplates(BaseSDK):
                 models.UpdateAgentTemplateRequestBody,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -917,8 +893,6 @@ class AgentTemplates(BaseSDK):
         Existing agents created from this template are not affected.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param template_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -953,7 +927,6 @@ class AgentTemplates(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1011,8 +984,6 @@ class AgentTemplates(BaseSDK):
         Existing agents created from this template are not affected.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param template_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1047,7 +1018,6 @@ class AgentTemplates(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

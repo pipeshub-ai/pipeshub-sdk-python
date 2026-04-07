@@ -36,8 +36,6 @@ class SMTPConfigurations(BaseSDK):
         Configuration is encrypted before storage.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param host: SMTP server hostname or IP address
         :param port: SMTP server port. Common ports are 25 (unencrypted), 465 (SSL), 587 (TLS/STARTTLS)
         :param from_email: Default sender email address that appears in the \"From\" field of outgoing emails
@@ -83,7 +81,6 @@ class SMTPConfigurations(BaseSDK):
                 request, False, False, "json", models.SMTPConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -151,8 +148,6 @@ class SMTPConfigurations(BaseSDK):
         Configuration is encrypted before storage.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param host: SMTP server hostname or IP address
         :param port: SMTP server port. Common ports are 25 (unencrypted), 465 (SSL), 587 (TLS/STARTTLS)
         :param from_email: Default sender email address that appears in the \"From\" field of outgoing emails
@@ -198,7 +193,6 @@ class SMTPConfigurations(BaseSDK):
                 request, False, False, "json", models.SMTPConfig
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

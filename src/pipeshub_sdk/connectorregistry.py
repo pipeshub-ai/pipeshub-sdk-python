@@ -42,8 +42,6 @@ class ConnectorRegistry(BaseSDK):
         Use <code>search</code> for full-text search across connector names.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Filter by scope type
         :param page: Page number
         :param limit: Items per page
@@ -84,7 +82,6 @@ class ConnectorRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -159,8 +156,6 @@ class ConnectorRegistry(BaseSDK):
         Use <code>search</code> for full-text search across connector names.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param scope: Filter by scope type
         :param page: Page number
         :param limit: Items per page
@@ -201,7 +196,6 @@ class ConnectorRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -268,8 +262,6 @@ class ConnectorRegistry(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_type: Connector type identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -304,7 +296,6 @@ class ConnectorRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -369,8 +360,6 @@ class ConnectorRegistry(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_type: Connector type identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -405,7 +394,6 @@ class ConnectorRegistry(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

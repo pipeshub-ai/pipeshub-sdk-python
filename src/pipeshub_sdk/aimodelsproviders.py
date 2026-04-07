@@ -24,8 +24,6 @@ class AiModelsProviders(BaseSDK):
 
         Get all configured models of a specific type.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -60,7 +58,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -115,8 +112,6 @@ class AiModelsProviders(BaseSDK):
 
         Get all configured models of a specific type.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -151,7 +146,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -206,8 +200,6 @@ class AiModelsProviders(BaseSDK):
 
         Get available models in a flattened format for UI selection dropdowns.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -242,7 +234,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -299,8 +290,6 @@ class AiModelsProviders(BaseSDK):
 
         Get available models in a flattened format for UI selection dropdowns.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -335,7 +324,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -401,8 +389,6 @@ class AiModelsProviders(BaseSDK):
 
         Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param provider: Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)
         :param configuration: Provider-specific configuration
@@ -454,7 +440,6 @@ class AiModelsProviders(BaseSDK):
                 request, False, False, "json", models.AddAIModelProviderRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -518,8 +503,6 @@ class AiModelsProviders(BaseSDK):
 
         Add a new AI model provider configuration. Performs a health check before saving to verify connectivity. Supported providers: openai, anthropic, azure-openai, aws-bedrock, google-vertex, ollama, huggingface.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param provider: Provider name (e.g., openai, anthropic, azure-openai, aws-bedrock)
         :param configuration: Provider-specific configuration
@@ -571,7 +554,6 @@ class AiModelsProviders(BaseSDK):
                 request, False, False, "json", models.AddAIModelProviderRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -636,8 +618,6 @@ class AiModelsProviders(BaseSDK):
 
         Update an existing AI model provider configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param model_key: Unique model key (UUID)
         :param provider: Provider name
@@ -693,7 +673,6 @@ class AiModelsProviders(BaseSDK):
                 request.body, False, False, "json", models.UpdateAIModelProviderRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -758,8 +737,6 @@ class AiModelsProviders(BaseSDK):
 
         Update an existing AI model provider configuration.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param model_key: Unique model key (UUID)
         :param provider: Provider name
@@ -815,7 +792,6 @@ class AiModelsProviders(BaseSDK):
                 request.body, False, False, "json", models.UpdateAIModelProviderRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -871,8 +847,6 @@ class AiModelsProviders(BaseSDK):
 
         Remove an AI model provider configuration. Cannot delete the default model if it's the only one.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param model_type: Type of AI model
         :param model_key:
         :param retries: Override the default retry configuration for this method
@@ -909,7 +883,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -965,8 +938,6 @@ class AiModelsProviders(BaseSDK):
 
         Remove an AI model provider configuration. Cannot delete the default model if it's the only one.
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param model_type: Type of AI model
         :param model_key:
         :param retries: Override the default retry configuration for this method
@@ -1003,7 +974,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1059,8 +1029,6 @@ class AiModelsProviders(BaseSDK):
 
         Set a model as the default for its type.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param model_key:
         :param retries: Override the default retry configuration for this method
@@ -1097,7 +1065,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1153,8 +1120,6 @@ class AiModelsProviders(BaseSDK):
 
         Set a model as the default for its type.
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param model_type: Type of AI model
         :param model_key:
         :param retries: Override the default retry configuration for this method
@@ -1191,7 +1156,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1246,8 +1210,6 @@ class AiModelsProviders(BaseSDK):
         Retrieve all available AI model providers.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1276,7 +1238,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1333,8 +1294,6 @@ class AiModelsProviders(BaseSDK):
         Retrieve all available AI model providers.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1363,7 +1322,6 @@ class AiModelsProviders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

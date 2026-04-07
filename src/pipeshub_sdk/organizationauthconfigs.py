@@ -41,8 +41,6 @@ class OrganizationAuthConfigs(BaseSDK):
         <b>Admin Access Required:</b> Only organization admins can view auth configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -71,7 +69,6 @@ class OrganizationAuthConfigs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -143,8 +140,6 @@ class OrganizationAuthConfigs(BaseSDK):
         <b>Admin Access Required:</b> Only organization admins can view auth configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -173,7 +168,6 @@ class OrganizationAuthConfigs(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -231,8 +225,6 @@ class OrganizationAuthConfigs(BaseSDK):
         Set up or initialize the organization's authentication configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param request: The request object to send.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -270,7 +262,6 @@ class OrganizationAuthConfigs(BaseSDK):
                 request, False, False, "json", models.SetUpAuthConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -328,8 +319,6 @@ class OrganizationAuthConfigs(BaseSDK):
         Set up or initialize the organization's authentication configuration.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param request: The request object to send.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -367,7 +356,6 @@ class OrganizationAuthConfigs(BaseSDK):
                 request, False, False, "json", models.SetUpAuthConfigRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

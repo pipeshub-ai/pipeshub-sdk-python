@@ -28,8 +28,6 @@ class Connectors(BaseSDK):
         <b>Warning:</b> This can be resource-intensive for large connectors.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_name: Connector type name
         :param connector_id: Connector instance ID
         :param retries: Override the default retry configuration for this method
@@ -69,7 +67,6 @@ class Connectors(BaseSDK):
                 request, False, False, "json", models.ResyncConnectorRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -129,8 +126,6 @@ class Connectors(BaseSDK):
         <b>Warning:</b> This can be resource-intensive for large connectors.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param connector_name: Connector type name
         :param connector_id: Connector instance ID
         :param retries: Override the default retry configuration for this method
@@ -170,7 +165,6 @@ class Connectors(BaseSDK):
                 request, False, False, "json", models.ResyncConnectorRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

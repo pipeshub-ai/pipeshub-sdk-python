@@ -497,8 +497,6 @@ class Organizations(BaseSDK):
         All authenticated users can access this endpoint to view their organization's details.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -527,7 +525,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -601,8 +598,6 @@ class Organizations(BaseSDK):
         All authenticated users can access this endpoint to view their organization's details.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -631,7 +626,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -719,8 +713,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param registered_name: Official registered/legal name
         :param short_name: Short display name for UI
         :param phone_number: Contact phone number (international format)
@@ -766,7 +758,6 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOrganizationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -854,8 +845,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param registered_name: Official registered/legal name
         :param short_name: Short display name for UI
         :param phone_number: Contact phone number (international format)
@@ -901,7 +890,6 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOrganizationRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -971,8 +959,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param confirm: Must be \"DELETE\" to confirm deletion
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1007,7 +993,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1077,8 +1062,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param confirm: Must be \"DELETE\" to confirm deletion
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1113,7 +1096,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1187,8 +1169,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param logo: Logo image file
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1226,7 +1206,6 @@ class Organizations(BaseSDK):
                 request, False, False, "multipart", models.UploadOrganizationLogoRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1302,8 +1281,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param logo: Logo image file
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1341,7 +1318,6 @@ class Organizations(BaseSDK):
                 request, False, False, "multipart", models.UploadOrganizationLogoRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1409,8 +1385,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1439,7 +1413,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1507,8 +1480,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1537,7 +1508,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1599,8 +1569,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1629,7 +1597,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1691,8 +1658,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1721,7 +1686,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1792,8 +1756,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1822,7 +1784,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1891,8 +1852,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1921,7 +1880,6 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1989,8 +1947,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param step_id: ID of the step to update
         :param action: Action to perform on the step
         :param retries: Override the default retry configuration for this method
@@ -2030,7 +1986,6 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOnboardingStatusRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2100,8 +2055,6 @@ class Organizations(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param step_id: ID of the step to update
         :param action: Action to perform on the step
         :param retries: Override the default retry configuration for this method
@@ -2141,7 +2094,6 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOnboardingStatusRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

@@ -57,8 +57,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number for pagination (1-based)
         :param limit: Number of users per page
         :param search: Search users by name or email
@@ -97,7 +95,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -176,8 +173,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number for pagination (1-based)
         :param limit: Number of users per page
         :param search: Search users by name or email
@@ -216,7 +211,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -302,8 +296,6 @@ class Users(BaseSDK):
         Only organization administrators can create new users.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param full_name: User's full display name
         :param email: User's email address (must be unique)
         :param mobile: Mobile phone number with country code
@@ -349,7 +341,6 @@ class Users(BaseSDK):
                 request, False, False, "json", models.CreateUserRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -435,8 +426,6 @@ class Users(BaseSDK):
         Only organization administrators can create new users.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param full_name: User's full display name
         :param email: User's email address (must be unique)
         :param mobile: Mobile phone number with country code
@@ -482,7 +471,6 @@ class Users(BaseSDK):
                 request, False, False, "json", models.CreateUserRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -559,8 +547,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -595,7 +581,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -672,8 +657,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -708,7 +691,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -801,8 +783,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param full_name: Full display name
         :param first_name: First name only
@@ -856,7 +836,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateUserRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -949,8 +928,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param full_name: Full display name
         :param first_name: First name only
@@ -1004,7 +981,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateUserRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1086,8 +1062,6 @@ class Users(BaseSDK):
         Deleted users can be restored by organization admins within a configurable retention period.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1122,7 +1096,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1204,8 +1177,6 @@ class Users(BaseSDK):
         Deleted users can be restored by organization admins within a configurable retention period.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1240,7 +1211,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1313,8 +1283,6 @@ class Users(BaseSDK):
         Requires admin privileges. Regular users should use the main user endpoint which may mask emails based on organization settings.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1349,7 +1317,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1422,8 +1389,6 @@ class Users(BaseSDK):
         Requires admin privileges. Regular users should use the main user endpoint which may mask emails based on organization settings.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param id: User ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1458,7 +1423,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1515,8 +1479,6 @@ class Users(BaseSDK):
         Update the email address of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param email:
         :param retries: Override the default retry configuration for this method
@@ -1558,7 +1520,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateEmailRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1615,8 +1576,6 @@ class Users(BaseSDK):
         Update the email address of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param email:
         :param retries: Override the default retry configuration for this method
@@ -1658,7 +1617,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateEmailRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1741,8 +1699,6 @@ class Users(BaseSDK):
         Users can only upload their own display picture. Admins cannot upload on behalf of other users.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param file: Image file (PNG, JPEG, WebP, or GIF, max 1MB)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1784,7 +1740,6 @@ class Users(BaseSDK):
                 models.UploadUserDisplayPictureRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1871,8 +1826,6 @@ class Users(BaseSDK):
         Users can only upload their own display picture. Admins cannot upload on behalf of other users.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param file: Image file (PNG, JPEG, WebP, or GIF, max 1MB)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1914,7 +1867,6 @@ class Users(BaseSDK):
                 models.UploadUserDisplayPictureRequest,
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1990,8 +1942,6 @@ class Users(BaseSDK):
         For signed URL access, use the user profile endpoint which returns a <code>displayPictureUrl</code> field.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2023,7 +1973,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2101,8 +2050,6 @@ class Users(BaseSDK):
         For signed URL access, use the user profile endpoint which returns a <code>displayPictureUrl</code> field.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2134,7 +2081,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2206,8 +2152,6 @@ class Users(BaseSDK):
         This action is immediate and irreversible. To restore a picture, user must upload a new one.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2236,7 +2180,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2304,8 +2247,6 @@ class Users(BaseSDK):
         This action is immediate and irreversible. To restore a picture, user must upload a new one.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2334,7 +2275,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2420,8 +2360,6 @@ class Users(BaseSDK):
         Response includes count of successful invites and any failures with reasons.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param emails: Array of email addresses to invite (max 100)
         :param group_ids: Optional group IDs to add all invited users to
         :param send_email: Whether to send invitation emails immediately
@@ -2463,7 +2401,6 @@ class Users(BaseSDK):
                 request, False, False, "json", models.BulkInviteUsersRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2547,8 +2484,6 @@ class Users(BaseSDK):
         Response includes count of successful invites and any failures with reasons.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param emails: Array of email addresses to invite (max 100)
         :param group_ids: Optional group IDs to add all invited users to
         :param send_email: Whether to send invitation emails immediately
@@ -2590,7 +2525,6 @@ class Users(BaseSDK):
                 request, False, False, "json", models.BulkInviteUsersRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2669,8 +2603,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param id: User ID of the user to resend invitation to
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2705,7 +2637,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2784,8 +2715,6 @@ class Users(BaseSDK):
         </ul>
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param id: User ID of the user to resend invitation to
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2820,7 +2749,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2903,8 +2831,6 @@ class Users(BaseSDK):
         Use this endpoint when you need advanced search or are dealing with large user bases. Use <code>/users</code> for simple full-list retrieval.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number (1-based)
         :param limit: Number of results per page
         :param search: Search query (searches name and email)
@@ -2947,7 +2873,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3030,8 +2955,6 @@ class Users(BaseSDK):
         Use this endpoint when you need advanced search or are dealing with large user bases. Use <code>/users</code> for simple full-list retrieval.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param page: Page number (1-based)
         :param limit: Number of results per page
         :param search: Search query (searches name and email)
@@ -3074,7 +2997,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3149,8 +3071,6 @@ class Users(BaseSDK):
         <b>Note:</b> If the user is not blocked or does not exist in the organization, a 404 response is returned.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param id: User ID to unblock
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3185,7 +3105,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3260,8 +3179,6 @@ class Users(BaseSDK):
         <b>Note:</b> If the user is not blocked or does not exist in the organization, a 404 response is returned.
 
 
-        If set, this operation will use `bearer_auth` from the global security.
-
         :param id: User ID to unblock
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3296,7 +3213,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -3351,8 +3267,6 @@ class Users(BaseSDK):
         Retrieve all users in the organization along with their group memberships.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3381,7 +3295,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3438,8 +3351,6 @@ class Users(BaseSDK):
         Retrieve all users in the organization along with their group memberships.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3468,7 +3379,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3526,8 +3436,6 @@ class Users(BaseSDK):
         Retrieve multiple users by their IDs in a single request.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3565,7 +3473,6 @@ class Users(BaseSDK):
                 request, False, False, "json", models.GetUsersByIdsRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3621,8 +3528,6 @@ class Users(BaseSDK):
         Retrieve multiple users by their IDs in a single request.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param ids:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3660,7 +3565,6 @@ class Users(BaseSDK):
                 request, False, False, "json", models.GetUsersByIdsRequest
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3717,8 +3621,6 @@ class Users(BaseSDK):
         Update the full name of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param full_name:
         :param retries: Override the default retry configuration for this method
@@ -3760,7 +3662,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateFullNameRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3817,8 +3718,6 @@ class Users(BaseSDK):
         Update the full name of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param full_name:
         :param retries: Override the default retry configuration for this method
@@ -3860,7 +3759,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateFullNameRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3917,8 +3815,6 @@ class Users(BaseSDK):
         Update the first name of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param first_name:
         :param retries: Override the default retry configuration for this method
@@ -3960,7 +3856,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateFirstNameRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4017,8 +3912,6 @@ class Users(BaseSDK):
         Update the first name of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param first_name:
         :param retries: Override the default retry configuration for this method
@@ -4060,7 +3953,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateFirstNameRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4117,8 +4009,6 @@ class Users(BaseSDK):
         Update the last name of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param last_name:
         :param retries: Override the default retry configuration for this method
@@ -4160,7 +4050,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateLastNameRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4217,8 +4106,6 @@ class Users(BaseSDK):
         Update the last name of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param last_name:
         :param retries: Override the default retry configuration for this method
@@ -4260,7 +4147,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateLastNameRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4317,8 +4203,6 @@ class Users(BaseSDK):
         Update the designation/title of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param designation:
         :param retries: Override the default retry configuration for this method
@@ -4360,7 +4244,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateDesignationRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4417,8 +4300,6 @@ class Users(BaseSDK):
         Update the designation/title of a user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param designation:
         :param retries: Override the default retry configuration for this method
@@ -4460,7 +4341,6 @@ class Users(BaseSDK):
                 request.body, False, False, "json", models.UpdateDesignationRequestBody
             ),
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4516,8 +4396,6 @@ class Users(BaseSDK):
         Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -4552,7 +4430,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4608,8 +4485,6 @@ class Users(BaseSDK):
         Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -4644,7 +4519,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4699,8 +4573,6 @@ class Users(BaseSDK):
         Retrieve teams associated with the authenticated user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4729,7 +4601,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4786,8 +4657,6 @@ class Users(BaseSDK):
         Retrieve teams associated with the authenticated user.
 
 
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4816,7 +4685,6 @@ class Users(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
