@@ -12,34 +12,24 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class MicrosoftAuthConfigTypedDict(TypedDict):
     r"""Microsoft authentication configuration"""
 
-    client_id: str
+    client_id: NotRequired[str]
     r"""Microsoft application client ID"""
     tenant_id: NotRequired[str]
     r"""Microsoft tenant ID"""
-    authority: NotRequired[str]
-    r"""Microsoft authority URL"""
-    enable_jit: NotRequired[bool]
-    r"""Enable Just-In-Time user provisioning"""
 
 
 class MicrosoftAuthConfig(BaseModel):
     r"""Microsoft authentication configuration"""
 
-    client_id: Annotated[str, pydantic.Field(alias="clientId")]
+    client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
     r"""Microsoft application client ID"""
 
     tenant_id: Annotated[Optional[str], pydantic.Field(alias="tenantId")] = "common"
     r"""Microsoft tenant ID"""
 
-    authority: Optional[str] = None
-    r"""Microsoft authority URL"""
-
-    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = False
-    r"""Enable Just-In-Time user provisioning"""
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["tenantId", "authority", "enableJit"])
+        optional_fields = set(["clientId", "tenantId"])
         serialized = handler(self)
         m = {}
 

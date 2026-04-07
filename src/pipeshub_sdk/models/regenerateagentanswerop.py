@@ -2,6 +2,7 @@
 # @generated-id: 47e62c67f326
 
 from __future__ import annotations
+from .filters import Filters, FiltersTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
@@ -13,31 +14,23 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class RegenerateAgentAnswerRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
-    model_name: NotRequired[str]
-    r"""Model name"""
-    model_provider: NotRequired[str]
-    r"""Model provider"""
+    filters: NotRequired[FiltersTypedDict]
+    model_key: NotRequired[str]
     chat_mode: NotRequired[str]
-    r"""Chat mode"""
 
 
 class RegenerateAgentAnswerRequestBody(BaseModel):
     r"""Request payload"""
 
-    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-    r"""Model name"""
+    filters: Optional[Filters] = None
 
-    model_provider: Annotated[Optional[str], pydantic.Field(alias="modelProvider")] = (
-        None
-    )
-    r"""Model provider"""
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
-    r"""Chat mode"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelName", "modelProvider", "chatMode"])
+        optional_fields = set(["filters", "modelKey", "chatMode"])
         serialized = handler(self)
         m = {}
 

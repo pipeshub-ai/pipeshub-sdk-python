@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, Union
 class Upload(BaseSDK):
     r"""File upload operations"""
 
-    def upload_records_to_kb(
+    def to_knowledge_base(
         self,
         *,
         kb_id: str,
@@ -47,6 +47,8 @@ class Upload(BaseSDK):
         <b>Versioning:</b><br>
         Set <code>isVersioned: true</code> to enable version tracking for uploaded files.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
@@ -82,7 +84,7 @@ class Upload(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/upload",
+            path="/knowledgeBase/{kbId}/upload",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -101,6 +103,7 @@ class Upload(BaseSDK):
                 models.UploadRecordsToKBRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -144,7 +147,7 @@ class Upload(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def upload_records_to_kb_async(
+    async def to_knowledge_base_async(
         self,
         *,
         kb_id: str,
@@ -178,6 +181,8 @@ class Upload(BaseSDK):
         <b>Versioning:</b><br>
         Set <code>isVersioned: true</code> to enable version tracking for uploaded files.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
@@ -213,7 +218,7 @@ class Upload(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/upload",
+            path="/knowledgeBase/{kbId}/upload",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -232,6 +237,7 @@ class Upload(BaseSDK):
                 models.UploadRecordsToKBRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -275,7 +281,7 @@ class Upload(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def upload_records_to_folder(
+    def records_to_folder(
         self,
         *,
         kb_id: str,
@@ -296,6 +302,8 @@ class Upload(BaseSDK):
         Upload files directly to a specific folder within a knowledge base.<br><br>
         <b>Same as KB upload</b> but files are placed in the specified folder instead of KB root.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id: Target folder ID
@@ -331,7 +339,7 @@ class Upload(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/upload",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/upload",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -350,6 +358,7 @@ class Upload(BaseSDK):
                 models.UploadRecordsToFolderRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -391,7 +400,7 @@ class Upload(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def upload_records_to_folder_async(
+    async def records_to_folder_async(
         self,
         *,
         kb_id: str,
@@ -412,6 +421,8 @@ class Upload(BaseSDK):
         Upload files directly to a specific folder within a knowledge base.<br><br>
         <b>Same as KB upload</b> but files are placed in the specified folder instead of KB root.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id: Target folder ID
@@ -447,7 +458,7 @@ class Upload(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/upload",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/upload",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -466,6 +477,7 @@ class Upload(BaseSDK):
                 models.UploadRecordsToFolderRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -495,174 +507,6 @@ class Upload(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UploadResult, http_res)
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def get_upload_limits(
-        self,
-        *,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetUploadLimitsResponse:
-        r"""Get upload limits
-
-        Retrieve current upload constraints for the organization.<br><br>
-        <b>Use Case:</b><br>
-        Call this before uploads to validate file sizes on the client side and display appropriate limits to users.
-
-
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-        req = self._build_request(
-            method="GET",
-            path="/api/v1/knowledgeBase/limits",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=None,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getUploadLimits",
-                oauth2_scopes=["kb:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetUploadLimitsResponse, http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_upload_limits_async(
-        self,
-        *,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetUploadLimitsResponse:
-        r"""Get upload limits
-
-        Retrieve current upload constraints for the organization.<br><br>
-        <b>Use Case:</b><br>
-        Call this before uploads to validate file sizes on the client side and display appropriate limits to users.
-
-
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-        req = self._build_request_async(
-            method="GET",
-            path="/api/v1/knowledgeBase/limits",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=None,
-            request_body_required=False,
-            request_has_path_params=False,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getUploadLimits",
-                oauth2_scopes=["kb:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-            ),
-            request=req,
-            error_status_codes=["401", "4XX", "5XX"],
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.GetUploadLimitsResponse, http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

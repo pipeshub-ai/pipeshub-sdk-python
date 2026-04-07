@@ -13,14 +13,14 @@ from typing import List, Mapping, Optional, Union
 class Agents(BaseSDK):
     r"""Custom AI agents with specialized capabilities and tool integrations"""
 
-    def list_agents(
+    def get_all(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.ListAgentsResponse:
+    ) -> List[models_.Agent]:
         r"""List agents
 
         Retrieve all agents available to the authenticated user.<br><br>
@@ -28,6 +28,8 @@ class Agents(BaseSDK):
         Returns agents created by the user plus public agents in the organization.
         Each agent has unique capabilities defined by its tools and knowledge scope.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -45,7 +47,7 @@ class Agents(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/agents",
+            path="/agents",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -57,6 +59,7 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -79,13 +82,13 @@ class Agents(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
+            error_status_codes=["401", "4XX", "5XX"],
             retry_config=retry_config,
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.ListAgentsResponse, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            return unmarshal_json_response(List[models_.Agent], http_res)
+        if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -98,14 +101,14 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_agents_async(
+    async def get_all_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.ListAgentsResponse:
+    ) -> List[models_.Agent]:
         r"""List agents
 
         Retrieve all agents available to the authenticated user.<br><br>
@@ -113,6 +116,8 @@ class Agents(BaseSDK):
         Returns agents created by the user plus public agents in the organization.
         Each agent has unique capabilities defined by its tools and knowledge scope.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -130,7 +135,7 @@ class Agents(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/agents",
+            path="/agents",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -142,6 +147,7 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -164,13 +170,13 @@ class Agents(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
+            error_status_codes=["401", "4XX", "5XX"],
             retry_config=retry_config,
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.ListAgentsResponse, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            return unmarshal_json_response(List[models_.Agent], http_res)
+        if utils.match_response(http_res, ["401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -183,18 +189,20 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create_agent(
+    def create(
         self,
         *,
         name: str,
-        models: Union[
-            List[models_.CreateAgentModelUnion],
-            List[models_.CreateAgentModelUnionTypedDict],
-        ],
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         start_message: Optional[str] = None,
         instructions: OptionalNullable[str] = UNSET,
+        models: Optional[
+            Union[
+                List[models_.CreateAgentModelUnion],
+                List[models_.CreateAgentModelUnionTypedDict],
+            ]
+        ] = None,
         toolsets: Optional[
             Union[
                 List[models_.CreateAgentToolset],
@@ -207,13 +215,13 @@ class Agents(BaseSDK):
                 List[models_.CreateAgentKnowledgeTypedDict],
             ]
         ] = None,
-        tags: Optional[List[str]] = None,
+        is_public: Optional[bool] = False,
         share_with_org: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.CreateAgentResponse:
+    ) -> models_.Agent:
         r"""Create agent
 
         Create a new custom AI agent.<br><br>
@@ -236,15 +244,17 @@ class Agents(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param name: Agent display name
-        :param models: Agent model configuration entries
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
         :param start_message: Initial greeting shown when conversation starts
         :param instructions: Additional agent execution instructions
+        :param models: Agent model configuration entries
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
-        :param tags: Tags for categorization
+        :param is_public: Make agent available to all org users
         :param share_with_org: Share agent with the organization
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -268,7 +278,7 @@ class Agents(BaseSDK):
             start_message=start_message,
             instructions=instructions,
             models=utils.get_pydantic_model(
-                models, List[models_.CreateAgentModelUnion]
+                models, Optional[List[models_.CreateAgentModelUnion]]
             ),
             toolsets=utils.get_pydantic_model(
                 toolsets, Optional[List[models_.CreateAgentToolset]]
@@ -276,13 +286,13 @@ class Agents(BaseSDK):
             knowledge=utils.get_pydantic_model(
                 knowledge, Optional[List[models_.CreateAgentKnowledge]]
             ),
-            tags=tags,
+            is_public=is_public,
             share_with_org=share_with_org,
         )
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/agents/create",
+            path="/agents/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -297,6 +307,7 @@ class Agents(BaseSDK):
                 request, False, False, "json", models_.CreateAgentRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -324,7 +335,7 @@ class Agents(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models_.CreateAgentResponse, http_res)
+            return unmarshal_json_response(models_.Agent, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -338,18 +349,20 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_agent_async(
+    async def create_async(
         self,
         *,
         name: str,
-        models: Union[
-            List[models_.CreateAgentModelUnion],
-            List[models_.CreateAgentModelUnionTypedDict],
-        ],
         description: Optional[str] = None,
         system_prompt: Optional[str] = None,
         start_message: Optional[str] = None,
         instructions: OptionalNullable[str] = UNSET,
+        models: Optional[
+            Union[
+                List[models_.CreateAgentModelUnion],
+                List[models_.CreateAgentModelUnionTypedDict],
+            ]
+        ] = None,
         toolsets: Optional[
             Union[
                 List[models_.CreateAgentToolset],
@@ -362,13 +375,13 @@ class Agents(BaseSDK):
                 List[models_.CreateAgentKnowledgeTypedDict],
             ]
         ] = None,
-        tags: Optional[List[str]] = None,
+        is_public: Optional[bool] = False,
         share_with_org: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.CreateAgentResponse:
+    ) -> models_.Agent:
         r"""Create agent
 
         Create a new custom AI agent.<br><br>
@@ -391,15 +404,17 @@ class Agents(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param name: Agent display name
-        :param models: Agent model configuration entries
         :param description: What the agent does
         :param system_prompt: System instructions for the agent
         :param start_message: Initial greeting shown when conversation starts
         :param instructions: Additional agent execution instructions
+        :param models: Agent model configuration entries
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
-        :param tags: Tags for categorization
+        :param is_public: Make agent available to all org users
         :param share_with_org: Share agent with the organization
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -423,7 +438,7 @@ class Agents(BaseSDK):
             start_message=start_message,
             instructions=instructions,
             models=utils.get_pydantic_model(
-                models, List[models_.CreateAgentModelUnion]
+                models, Optional[List[models_.CreateAgentModelUnion]]
             ),
             toolsets=utils.get_pydantic_model(
                 toolsets, Optional[List[models_.CreateAgentToolset]]
@@ -431,13 +446,13 @@ class Agents(BaseSDK):
             knowledge=utils.get_pydantic_model(
                 knowledge, Optional[List[models_.CreateAgentKnowledge]]
             ),
-            tags=tags,
+            is_public=is_public,
             share_with_org=share_with_org,
         )
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/agents/create",
+            path="/agents/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -452,6 +467,7 @@ class Agents(BaseSDK):
                 request, False, False, "json", models_.CreateAgentRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -479,7 +495,7 @@ class Agents(BaseSDK):
         )
 
         if utils.match_response(http_res, "201", "application/json"):
-            return unmarshal_json_response(models_.CreateAgentResponse, http_res)
+            return unmarshal_json_response(models_.Agent, http_res)
         if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -493,7 +509,197 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_agent(
+    def get_tools(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> List[models_.AgentTool]:
+        r"""List available tools
+
+        Get all tools that can be assigned to agents.<br><br>
+        <b>Overview:</b><br>
+        Tools extend agent capabilities beyond basic Q&A. Each tool
+        has specific inputs and outputs defined by its schema.<br><br>
+        <b>Common Tools:</b><br>
+        <ul>
+        <li><b>web-search:</b> Search the internet</li>
+        <li><b>code-interpreter:</b> Execute code snippets</li>
+        <li><b>file-reader:</b> Read uploaded files</li>
+        <li><b>api-caller:</b> Make external API requests</li>
+        </ul>
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request(
+            method="GET",
+            path="/agents/tools/list",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="listAgentTools",
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(List[models_.AgentTool], http_res)
+        if utils.match_response(http_res, ["401", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_tools_async(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> List[models_.AgentTool]:
+        r"""List available tools
+
+        Get all tools that can be assigned to agents.<br><br>
+        <b>Overview:</b><br>
+        Tools extend agent capabilities beyond basic Q&A. Each tool
+        has specific inputs and outputs defined by its schema.<br><br>
+        <b>Common Tools:</b><br>
+        <ul>
+        <li><b>web-search:</b> Search the internet</li>
+        <li><b>code-interpreter:</b> Execute code snippets</li>
+        <li><b>file-reader:</b> Read uploaded files</li>
+        <li><b>api-caller:</b> Make external API requests</li>
+        </ul>
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request_async(
+            method="GET",
+            path="/agents/tools/list",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="listAgentTools",
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(List[models_.AgentTool], http_res)
+        if utils.match_response(http_res, ["401", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get(
         self,
         *,
         agent_key: str,
@@ -501,10 +707,12 @@ class Agents(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.GetAgentResponse:
+    ) -> models_.Agent:
         r"""Get agent
 
         Retrieve agent details by its unique key.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key: Unique agent identifier
         :param retries: Override the default retry configuration for this method
@@ -528,7 +736,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/agents/{agentKey}",
+            path="/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -540,6 +748,7 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -567,7 +776,7 @@ class Agents(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.GetAgentResponse, http_res)
+            return unmarshal_json_response(models_.Agent, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -581,7 +790,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_agent_async(
+    async def get_async(
         self,
         *,
         agent_key: str,
@@ -589,10 +798,12 @@ class Agents(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.GetAgentResponse:
+    ) -> models_.Agent:
         r"""Get agent
 
         Retrieve agent details by its unique key.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key: Unique agent identifier
         :param retries: Override the default retry configuration for this method
@@ -616,7 +827,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/agents/{agentKey}",
+            path="/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -628,6 +839,7 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -655,7 +867,7 @@ class Agents(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.GetAgentResponse, http_res)
+            return unmarshal_json_response(models_.Agent, http_res)
         if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -669,7 +881,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_agent(
+    def update(
         self,
         *,
         agent_key: str,
@@ -696,13 +908,13 @@ class Agents(BaseSDK):
                 List[models_.UpdateAgentKnowledgeTypedDict],
             ]
         ] = None,
-        tags: Optional[List[str]] = None,
+        is_public: Optional[bool] = None,
         share_with_org: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.UpdateAgentResponse:
+    ) -> models_.Agent:
         r"""Update agent
 
         Update an existing agent's configuration.<br><br>
@@ -710,17 +922,19 @@ class Agents(BaseSDK):
         Only the agent creator can update it.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param agent_key:
         :param name:
         :param description:
         :param system_prompt:
         :param start_message:
         :param instructions:
-        :param models: At least one model required, at least one must be a reasoning model. Accepts objects or compact strings.
-        :param toolsets: Replaces all existing toolsets. Empty array removes all toolsets.
-        :param knowledge: Replaces all existing knowledge sources. Empty array removes all.
-        :param tags:
-        :param share_with_org: Share agent with the organization
+        :param models:
+        :param toolsets:
+        :param knowledge:
+        :param is_public:
+        :param share_with_org:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -753,14 +967,14 @@ class Agents(BaseSDK):
                 knowledge=utils.get_pydantic_model(
                     knowledge, Optional[List[models_.UpdateAgentKnowledge]]
                 ),
-                tags=tags,
+                is_public=is_public,
                 share_with_org=share_with_org,
             ),
         )
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/agents/{agentKey}",
+            path="/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -775,6 +989,7 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.UpdateAgentRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -802,7 +1017,7 @@ class Agents(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.UpdateAgentResponse, http_res)
+            return unmarshal_json_response(models_.Agent, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -816,7 +1031,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_agent_async(
+    async def update_async(
         self,
         *,
         agent_key: str,
@@ -843,13 +1058,13 @@ class Agents(BaseSDK):
                 List[models_.UpdateAgentKnowledgeTypedDict],
             ]
         ] = None,
-        tags: Optional[List[str]] = None,
+        is_public: Optional[bool] = None,
         share_with_org: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.UpdateAgentResponse:
+    ) -> models_.Agent:
         r"""Update agent
 
         Update an existing agent's configuration.<br><br>
@@ -857,17 +1072,19 @@ class Agents(BaseSDK):
         Only the agent creator can update it.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param agent_key:
         :param name:
         :param description:
         :param system_prompt:
         :param start_message:
         :param instructions:
-        :param models: At least one model required, at least one must be a reasoning model. Accepts objects or compact strings.
-        :param toolsets: Replaces all existing toolsets. Empty array removes all toolsets.
-        :param knowledge: Replaces all existing knowledge sources. Empty array removes all.
-        :param tags:
-        :param share_with_org: Share agent with the organization
+        :param models:
+        :param toolsets:
+        :param knowledge:
+        :param is_public:
+        :param share_with_org:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -900,14 +1117,14 @@ class Agents(BaseSDK):
                 knowledge=utils.get_pydantic_model(
                     knowledge, Optional[List[models_.UpdateAgentKnowledge]]
                 ),
-                tags=tags,
+                is_public=is_public,
                 share_with_org=share_with_org,
             ),
         )
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/agents/{agentKey}",
+            path="/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -922,6 +1139,7 @@ class Agents(BaseSDK):
                 request.body, False, False, "json", models_.UpdateAgentRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -949,7 +1167,7 @@ class Agents(BaseSDK):
         )
 
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.UpdateAgentResponse, http_res)
+            return unmarshal_json_response(models_.Agent, http_res)
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -963,7 +1181,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_agent(
+    def delete(
         self,
         *,
         agent_key: str,
@@ -971,13 +1189,15 @@ class Agents(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.DeleteAgentResponse:
+    ):
         r"""Delete agent
 
         Delete an agent.<br><br>
         <b>Warning:</b><br>
         All conversations with this agent will become inaccessible.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key:
         :param retries: Override the default retry configuration for this method
@@ -1001,7 +1221,7 @@ class Agents(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/agents/{agentKey}",
+            path="/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1009,10 +1229,11 @@ class Agents(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="application/json",
+            accept_header_value="*/*",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1039,8 +1260,8 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.DeleteAgentResponse, http_res)
+        if utils.match_response(http_res, "200", "*"):
+            return
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1054,7 +1275,7 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_agent_async(
+    async def delete_async(
         self,
         *,
         agent_key: str,
@@ -1062,13 +1283,15 @@ class Agents(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.DeleteAgentResponse:
+    ):
         r"""Delete agent
 
         Delete an agent.<br><br>
         <b>Warning:</b><br>
         All conversations with this agent will become inaccessible.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key:
         :param retries: Override the default retry configuration for this method
@@ -1092,7 +1315,7 @@ class Agents(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/agents/{agentKey}",
+            path="/agents/{agentKey}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1100,10 +1323,11 @@ class Agents(BaseSDK):
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
-            accept_header_value="application/json",
+            accept_header_value="*/*",
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1130,9 +1354,843 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models_.DeleteAgentResponse, http_res)
+        if utils.match_response(http_res, "200", "*"):
+            return
         if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_permissions(
+        self,
+        *,
+        agent_key: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.GetAgentPermissionsResponse:
+        r"""Get agent permissions
+
+        Get the current permission configuration for an agent.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.GetAgentPermissionsRequest(
+            agent_key=agent_key,
+        )
+
+        req = self._build_request(
+            method="GET",
+            path="/agents/{agentKey}/permissions",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getAgentPermissions",
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.GetAgentPermissionsResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_permissions_async(
+        self,
+        *,
+        agent_key: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.GetAgentPermissionsResponse:
+        r"""Get agent permissions
+
+        Get the current permission configuration for an agent.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.GetAgentPermissionsRequest(
+            agent_key=agent_key,
+        )
+
+        req = self._build_request_async(
+            method="GET",
+            path="/agents/{agentKey}/permissions",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getAgentPermissions",
+                oauth2_scopes=["agent:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.GetAgentPermissionsResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def update_permissions(
+        self,
+        *,
+        agent_key: str,
+        is_public: Optional[bool] = None,
+        shared_with: Optional[
+            Union[
+                List[models_.UpdateAgentPermissionsSharedWith],
+                List[models_.UpdateAgentPermissionsSharedWithTypedDict],
+            ]
+        ] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ):
+        r"""Update agent permissions
+
+        Update who can access and use the agent.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param is_public:
+        :param shared_with:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.UpdateAgentPermissionsRequest(
+            agent_key=agent_key,
+            body=models_.UpdateAgentPermissionsRequestBody(
+                is_public=is_public,
+                shared_with=utils.get_pydantic_model(
+                    shared_with,
+                    Optional[List[models_.UpdateAgentPermissionsSharedWith]],
+                ),
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/agents/{agentKey}/permissions",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="*/*",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.UpdateAgentPermissionsRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateAgentPermissions",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "*"):
+            return
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def update_permissions_async(
+        self,
+        *,
+        agent_key: str,
+        is_public: Optional[bool] = None,
+        shared_with: Optional[
+            Union[
+                List[models_.UpdateAgentPermissionsSharedWith],
+                List[models_.UpdateAgentPermissionsSharedWithTypedDict],
+            ]
+        ] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ):
+        r"""Update agent permissions
+
+        Update who can access and use the agent.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param is_public:
+        :param shared_with:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.UpdateAgentPermissionsRequest(
+            agent_key=agent_key,
+            body=models_.UpdateAgentPermissionsRequestBody(
+                is_public=is_public,
+                shared_with=utils.get_pydantic_model(
+                    shared_with,
+                    Optional[List[models_.UpdateAgentPermissionsSharedWith]],
+                ),
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/agents/{agentKey}/permissions",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="*/*",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.UpdateAgentPermissionsRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateAgentPermissions",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "*"):
+            return
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def share(
+        self,
+        *,
+        agent_key: str,
+        user_ids: List[str],
+        access_level: Optional[models_.ShareRequestAccessLevel] = "read",
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.Agent:
+        r"""Share agent
+
+        Share an agent with specific users.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param user_ids: IDs of users to share with
+        :param access_level: Permission level for shared users:
+            <ul>
+            <li><code>read</code> - Can view only</li>
+            <li><code>write</code> - Can add messages</li>
+            </ul>
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.ShareAgentRequest(
+            agent_key=agent_key,
+            body=models_.ShareRequest(
+                user_ids=user_ids,
+                access_level=access_level,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/share",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models_.ShareRequest
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="shareAgent",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models_.Agent, http_res)
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def share_async(
+        self,
+        *,
+        agent_key: str,
+        user_ids: List[str],
+        access_level: Optional[models_.ShareRequestAccessLevel] = "read",
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.Agent:
+        r"""Share agent
+
+        Share an agent with specific users.
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param user_ids: IDs of users to share with
+        :param access_level: Permission level for shared users:
+            <ul>
+            <li><code>read</code> - Can view only</li>
+            <li><code>write</code> - Can add messages</li>
+            </ul>
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.ShareAgentRequest(
+            agent_key=agent_key,
+            body=models_.ShareRequest(
+                user_ids=user_ids,
+                access_level=access_level,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/share",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models_.ShareRequest
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="shareAgent",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models_.Agent, http_res)
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def unshare(
+        self,
+        *,
+        agent_key: str,
+        user_ids: Optional[List[str]] = None,
+        team_ids: Optional[List[str]] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.UnshareAgentResponse:
+        r"""Unshare an agent
+
+        Revoke sharing for an agent, removing access for specified users or teams.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param user_ids:
+        :param team_ids:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.UnshareAgentRequest(
+            agent_key=agent_key,
+            body=models_.UnshareAgentRequestBody(
+                user_ids=user_ids,
+                team_ids=team_ids,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/unshare",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models_.UnshareAgentRequestBody
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="unshareAgent",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models_.UnshareAgentResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def unshare_async(
+        self,
+        *,
+        agent_key: str,
+        user_ids: Optional[List[str]] = None,
+        team_ids: Optional[List[str]] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.UnshareAgentResponse:
+        r"""Unshare an agent
+
+        Revoke sharing for an agent, removing access for specified users or teams.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param user_ids:
+        :param team_ids:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.UnshareAgentRequest(
+            agent_key=agent_key,
+            body=models_.UnshareAgentRequestBody(
+                user_ids=user_ids,
+                team_ids=team_ids,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/unshare",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models_.UnshareAgentRequestBody
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="unshareAgent",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models_.UnshareAgentResponse, http_res)
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

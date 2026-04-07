@@ -50,3 +50,20 @@ def test_toolset_oauth_get_instance_o_auth_authorization_url():
         )
         assert res is not None
         assert res == models.GetInstanceOAuthAuthorizationURLResponse()
+
+
+def test_toolset_oauth_get_agent_toolset_o_auth_url():
+    test_http_client = create_test_http_client("getAgentToolsetOAuthUrl")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.toolset_o_auth.get_agent_toolset_o_auth_url(
+            agent_key="<value>", instance_id="<id>"
+        )
+        assert res is not None
+        assert res == models.GetAgentToolsetOAuthURLResponse()

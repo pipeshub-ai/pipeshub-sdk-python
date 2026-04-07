@@ -19,7 +19,7 @@ Supports pagination and search.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listToolsetRegistry" method="get" path="/api/v1/toolsets/registry" -->
+<!-- UsageSnippet language="python" operationID="listToolsetRegistry" method="get" path="/toolsets/registry" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -64,7 +64,7 @@ Get configuration schema for a specific toolset type
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetSchema" method="get" path="/api/v1/toolsets/registry/{toolsetType}/schema" -->
+<!-- UsageSnippet language="python" operationID="getToolsetSchema" method="get" path="/toolsets/registry/{toolsetType}/schema" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

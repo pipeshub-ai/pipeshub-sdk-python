@@ -3,12 +3,5 @@
 
 ## Fields
 
-| Field                                                                | Type                                                                 | Required                                                             | Description                                                          |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `id`                                                                 | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Unique config identifier                                             |
-| `name`                                                               | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Bot display name                                                     |
-| `agent_id`                                                           | *OptionalNullable[str]*                                              | :heavy_minus_sign:                                                   | Associated agent ID                                                  |
-| `bot_token`                                                          | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Slack bot token                                                      |
-| `signing_secret`                                                     | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Slack signing secret                                                 |
-| `created_at`                                                         | [date](https://docs.python.org/3/library/datetime.html#date-objects) | :heavy_minus_sign:                                                   | N/A                                                                  |
-| `updated_at`                                                         | [date](https://docs.python.org/3/library/datetime.html#date-objects) | :heavy_minus_sign:                                                   | N/A                                                                  |
+| Field       | Type        | Required    | Description |
+| ----------- | ----------- | ----------- | ----------- |

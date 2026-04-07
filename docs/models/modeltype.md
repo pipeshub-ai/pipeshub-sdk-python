@@ -14,3 +14,7 @@ value: ModelType = "llm"
 
 - `"llm"`
 - `"embedding"`
+- `"ocr"`
+- `"slm"`
+- `"reasoning"`
+- `"multiModal"`

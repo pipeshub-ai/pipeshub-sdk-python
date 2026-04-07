@@ -1,38 +1,22 @@
-# OAuthApps
+# OauthApps
 
 ## Overview
 
-Manage OAuth 2.0 client applications registered with PipesHub.
-
-OAuth apps allow third-party applications to access PipesHub APIs on behalf of users
-or organizations. Each app receives a client ID and secret for authentication.
-
-**App Types:**
-- **Confidential clients**: Server-side apps that can securely store secrets
-- **Public clients**: Browser/mobile apps that cannot securely store secrets (use PKCE)
-
-**App Lifecycle:**
-- Create apps with name, redirect URIs, and allowed scopes
-- Regenerate secrets if compromised
-- Suspend/activate apps to control access
-- Revoke all tokens for emergency access removal
-
-
 ### Available Operations
 
-* [list_o_auth_apps](#list_o_auth_apps) - List OAuth apps
-* [create_o_auth_app](#create_o_auth_app) - Create OAuth app
-* [list_o_auth_scopes](#list_o_auth_scopes) - List available scopes
-* [get_o_auth_app](#get_o_auth_app) - Get OAuth app details
-* [update_o_auth_app](#update_o_auth_app) - Update OAuth app
-* [delete_o_auth_app](#delete_o_auth_app) - Delete OAuth app
-* [regenerate_o_auth_app_secret](#regenerate_o_auth_app_secret) - Regenerate client secret
-* [suspend_o_auth_app](#suspend_o_auth_app) - Suspend OAuth app
-* [activate_o_auth_app](#activate_o_auth_app) - Activate suspended OAuth app
-* [list_o_auth_app_tokens](#list_o_auth_app_tokens) - List app tokens
-* [revoke_all_o_auth_app_tokens](#revoke_all_o_auth_app_tokens) - Revoke all app tokens
+* [list](#list) - List OAuth apps
+* [create](#create) - Create OAuth app
+* [list_scopes](#list_scopes) - List available scopes
+* [get](#get) - Get OAuth app details
+* [update](#update) - Update OAuth app
+* [delete](#delete) - Delete OAuth app
+* [regenerate_secret](#regenerate_secret) - Regenerate client secret
+* [suspend](#suspend) - Suspend OAuth app
+* [activate](#activate) - Activate suspended OAuth app
+* [list_tokens](#list_tokens) - List app tokens
+* [revoke_all_tokens](#revoke_all_tokens) - Revoke all app tokens
 
-## list_o_auth_apps
+## list
 
 List all OAuth apps registered for the organization.
 <br><br>
@@ -45,7 +29,7 @@ Returns a paginated list of apps with their configuration (excluding secrets).
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listOAuthApps" method="get" path="/api/v1/oauth-clients" -->
+<!-- UsageSnippet language="python" operationID="listOAuthApps" method="get" path="/oauth-clients" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -57,7 +41,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.list_o_auth_apps(page=1, limit=20)
+    res = pipeshub.oauth_apps.list(page=1, limit=20)
 
     # Handle response
     print(res)
@@ -84,7 +68,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_o_auth_app
+## create
 
 Create a new OAuth app for the organization.
 <br><br>
@@ -99,7 +83,7 @@ regenerate it.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createOAuthApp" method="post" path="/api/v1/oauth-clients" -->
+<!-- UsageSnippet language="python" operationID="createOAuthApp" method="post" path="/oauth-clients" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -111,7 +95,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.create_o_auth_app(name="My Integration App", allowed_scopes=[
+    res = pipeshub.oauth_apps.create(name="My Integration App", allowed_scopes=[
         "openid",
         "profile",
         "read:records",
@@ -155,7 +139,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_o_auth_scopes
+## list_scopes
 
 List all available OAuth scopes that can be requested by apps.
 <br><br>
@@ -165,7 +149,7 @@ in app configuration UI.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listOAuthScopes" method="get" path="/api/v1/oauth-clients/scopes" -->
+<!-- UsageSnippet language="python" operationID="listOAuthScopes" method="get" path="/oauth-clients/scopes" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -177,7 +161,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.list_o_auth_scopes()
+    res = pipeshub.oauth_apps.list_scopes()
 
     # Handle response
     print(res)
@@ -200,7 +184,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_o_auth_app
+## get
 
 Get details of a specific OAuth app.
 <br><br>
@@ -209,7 +193,7 @@ Returns app configuration without the client secret.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getOAuthApp" method="get" path="/api/v1/oauth-clients/{appId}" -->
+<!-- UsageSnippet language="python" operationID="getOAuthApp" method="get" path="/oauth-clients/{appId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -221,7 +205,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.get_o_auth_app(app_id="<id>")
+    res = pipeshub.oauth_apps.get(app_id="<id>")
 
     # Handle response
     print(res)
@@ -245,7 +229,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_o_auth_app
+## update
 
 Update an OAuth app's configuration.
 <br><br>
@@ -259,7 +243,7 @@ Update an OAuth app's configuration.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateOAuthApp" method="put" path="/api/v1/oauth-clients/{appId}" -->
+<!-- UsageSnippet language="python" operationID="updateOAuthApp" method="put" path="/oauth-clients/{appId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -271,7 +255,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.update_o_auth_app(app_id="<id>")
+    res = pipeshub.oauth_apps.update(app_id="<id>")
 
     # Handle response
     print(res)
@@ -305,7 +289,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_o_auth_app
+## delete
 
 Delete (soft delete) an OAuth app.
 <br><br>
@@ -319,7 +303,7 @@ The app cannot be restored after deletion.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteOAuthApp" method="delete" path="/api/v1/oauth-clients/{appId}" -->
+<!-- UsageSnippet language="python" operationID="deleteOAuthApp" method="delete" path="/oauth-clients/{appId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -331,7 +315,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.delete_o_auth_app(app_id="<id>")
+    res = pipeshub.oauth_apps.delete(app_id="<id>")
 
     # Handle response
     print(res)
@@ -355,7 +339,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## regenerate_o_auth_app_secret
+## regenerate_secret
 
 Regenerate the client secret for an OAuth app.
 <br><br>
@@ -371,7 +355,7 @@ secret will fail to authenticate until updated with the new secret.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="regenerateOAuthAppSecret" method="post" path="/api/v1/oauth-clients/{appId}/regenerate-secret" -->
+<!-- UsageSnippet language="python" operationID="regenerateOAuthAppSecret" method="post" path="/oauth-clients/{appId}/regenerate-secret" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -383,7 +367,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.regenerate_o_auth_app_secret(app_id="<id>")
+    res = pipeshub.oauth_apps.regenerate_secret(app_id="<id>")
 
     # Handle response
     print(res)
@@ -407,7 +391,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## suspend_o_auth_app
+## suspend
 
 Suspend an OAuth app, preventing it from authenticating or issuing tokens.
 <br><br>
@@ -421,7 +405,7 @@ be obtained. Use this for temporary access suspension.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="suspendOAuthApp" method="post" path="/api/v1/oauth-clients/{appId}/suspend" -->
+<!-- UsageSnippet language="python" operationID="suspendOAuthApp" method="post" path="/oauth-clients/{appId}/suspend" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -433,7 +417,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.suspend_o_auth_app(app_id="<id>")
+    res = pipeshub.oauth_apps.suspend(app_id="<id>")
 
     # Handle response
     print(res)
@@ -457,7 +441,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## activate_o_auth_app
+## activate
 
 Reactivate a suspended OAuth app, allowing it to authenticate and issue tokens again.
 <br><br>
@@ -468,7 +452,7 @@ Reactivate a suspended OAuth app, allowing it to authenticate and issue tokens a
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="activateOAuthApp" method="post" path="/api/v1/oauth-clients/{appId}/activate" -->
+<!-- UsageSnippet language="python" operationID="activateOAuthApp" method="post" path="/oauth-clients/{appId}/activate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -480,7 +464,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.activate_o_auth_app(app_id="<id>")
+    res = pipeshub.oauth_apps.activate(app_id="<id>")
 
     # Handle response
     print(res)
@@ -504,7 +488,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_o_auth_app_tokens
+## list_tokens
 
 List all active tokens issued to an OAuth app.
 <br><br>
@@ -515,7 +499,7 @@ Useful for monitoring app usage and identifying tokens to revoke.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listOAuthAppTokens" method="get" path="/api/v1/oauth-clients/{appId}/tokens" -->
+<!-- UsageSnippet language="python" operationID="listOAuthAppTokens" method="get" path="/oauth-clients/{appId}/tokens" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -527,7 +511,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.list_o_auth_app_tokens(app_id="<id>")
+    res = pipeshub.oauth_apps.list_tokens(app_id="<id>")
 
     # Handle response
     print(res)
@@ -551,7 +535,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## revoke_all_o_auth_app_tokens
+## revoke_all_tokens
 
 Revoke all tokens (access and refresh) issued to an OAuth app.
 <br><br>
@@ -564,7 +548,7 @@ Use this for emergency access removal or when rotating credentials.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="revokeAllOAuthAppTokens" method="post" path="/api/v1/oauth-clients/{appId}/revoke-all-tokens" -->
+<!-- UsageSnippet language="python" operationID="revokeAllOAuthAppTokens" method="post" path="/oauth-clients/{appId}/revoke-all-tokens" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -576,7 +560,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.o_auth_apps.revoke_all_o_auth_app_tokens(app_id="<id>")
+    res = pipeshub.oauth_apps.revoke_all_tokens(app_id="<id>")
 
     # Handle response
     print(res)

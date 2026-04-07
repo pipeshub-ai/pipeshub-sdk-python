@@ -29,6 +29,8 @@ class ToolsetOAuth(BaseSDK):
         Returns a URL that the user should visit to authorize the toolset.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param toolset_id:
         :param base_url:
         :param retries: Override the default retry configuration for this method
@@ -53,7 +55,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/toolsets/{toolsetId}/oauth/authorize",
+            path="/toolsets/{toolsetId}/oauth/authorize",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -65,6 +67,7 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -122,6 +125,8 @@ class ToolsetOAuth(BaseSDK):
         Returns a URL that the user should visit to authorize the toolset.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param toolset_id:
         :param base_url:
         :param retries: Override the default retry configuration for this method
@@ -146,7 +151,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/toolsets/{toolsetId}/oauth/authorize",
+            path="/toolsets/{toolsetId}/oauth/authorize",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -158,6 +163,7 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -217,6 +223,8 @@ class ToolsetOAuth(BaseSDK):
         This endpoint processes the authorization code and completes the OAuth flow.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param code:
         :param state:
         :param error:
@@ -245,7 +253,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/toolsets/oauth/callback",
+            path="/toolsets/oauth/callback",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -257,6 +265,7 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -318,6 +327,8 @@ class ToolsetOAuth(BaseSDK):
         This endpoint processes the authorization code and completes the OAuth flow.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param code:
         :param state:
         :param error:
@@ -346,7 +357,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/toolsets/oauth/callback",
+            path="/toolsets/oauth/callback",
             base_url=base_url_,
             url_variables=url_variables,
             request=request,
@@ -358,6 +369,7 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -401,6 +413,200 @@ class ToolsetOAuth(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    def get_agent_toolset_o_auth_url(
+        self,
+        *,
+        agent_key: str,
+        instance_id: str,
+        base_url: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetAgentToolsetOAuthURLResponse:
+        r"""Get OAuth authorization URL for agent instance
+
+        If set, this operation will use `bearer_auth` from the global security.
+
+        :param agent_key:
+        :param instance_id:
+        :param base_url:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url_ = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url_ = server_url
+        else:
+            base_url_ = self._get_url(base_url_, url_variables)
+
+        request = models.GetAgentToolsetOAuthURLRequest(
+            agent_key=agent_key,
+            instance_id=instance_id,
+            base_url=base_url,
+        )
+
+        req = self._build_request(
+            method="GET",
+            path="/toolsets/agents/{agentKey}/instances/{instanceId}/oauth/authorize",
+            base_url=base_url_,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url_ or "",
+                operation_id="getAgentToolsetOAuthUrl",
+                oauth2_scopes=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.GetAgentToolsetOAuthURLResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_agent_toolset_o_auth_url_async(
+        self,
+        *,
+        agent_key: str,
+        instance_id: str,
+        base_url: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetAgentToolsetOAuthURLResponse:
+        r"""Get OAuth authorization URL for agent instance
+
+        If set, this operation will use `bearer_auth` from the global security.
+
+        :param agent_key:
+        :param instance_id:
+        :param base_url:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url_ = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url_ = server_url
+        else:
+            base_url_ = self._get_url(base_url_, url_variables)
+
+        request = models.GetAgentToolsetOAuthURLRequest(
+            agent_key=agent_key,
+            instance_id=instance_id,
+            base_url=base_url,
+        )
+
+        req = self._build_request_async(
+            method="GET",
+            path="/toolsets/agents/{agentKey}/instances/{instanceId}/oauth/authorize",
+            base_url=base_url_,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url_ or "",
+                operation_id="getAgentToolsetOAuthUrl",
+                oauth2_scopes=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.GetAgentToolsetOAuthURLResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
     def get_instance_o_auth_authorization_url(
         self,
         *,
@@ -411,6 +617,8 @@ class ToolsetOAuth(BaseSDK):
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.GetInstanceOAuthAuthorizationURLResponse:
         r"""Get OAuth authorization URL for instance
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param instance_id:
         :param retries: Override the default retry configuration for this method
@@ -434,7 +642,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/toolsets/instances/{instanceId}/oauth/authorize",
+            path="/toolsets/instances/{instanceId}/oauth/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -446,6 +654,7 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -500,6 +709,8 @@ class ToolsetOAuth(BaseSDK):
     ) -> models.GetInstanceOAuthAuthorizationURLResponse:
         r"""Get OAuth authorization URL for instance
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param instance_id:
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -522,7 +733,7 @@ class ToolsetOAuth(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/toolsets/instances/{instanceId}/oauth/authorize",
+            path="/toolsets/instances/{instanceId}/oauth/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -534,6 +745,7 @@ class ToolsetOAuth(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

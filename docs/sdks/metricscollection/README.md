@@ -2,34 +2,14 @@
 
 ## Overview
 
-Configure telemetry and metrics collection for application monitoring and analytics.
-
-PipesHub collects anonymized usage metrics to help improve the product. Metrics are pushed
-to a configurable remote server at regular intervals.
-
-**Collected Metrics:**
-- API request counts and response times
-- User activity patterns (anonymized)
-- Feature usage statistics
-- Error rates and types
-
-**Configuration Options:**
-- Enable/disable metrics collection entirely
-- Configure push interval (minimum 1 second, default 60 seconds)
-- Set custom metrics server URL for self-hosted analytics
-
-**Privacy:**
-- All metrics are anonymized before collection
-- No personally identifiable information (PII) is collected
-- Organization can disable collection at any time
-
-
 ### Available Operations
 
-* [get_metrics_collection](#get_metrics_collection) - Get metrics collection configuration
-* [toggle_metrics_collection](#toggle_metrics_collection) - Enable or disable metrics collection
+* [get_config](#get_config) - Get metrics collection configuration
+* [toggle](#toggle) - Enable or disable metrics collection
+* [set_push_interval](#set_push_interval) - Set metrics push interval
+* [set_server_url](#set_server_url) - Set metrics remote server URL
 
-## get_metrics_collection
+## get_config
 
 Retrieve the current metrics collection configuration including:
 - Whether collection is enabled
@@ -42,7 +22,7 @@ Retrieve the current metrics collection configuration including:
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getMetricsCollection" method="get" path="/api/v1/configurationManager/metricsCollection" -->
+<!-- UsageSnippet language="python" operationID="getMetricsCollection" method="get" path="/configurationManager/metricsCollection" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -54,7 +34,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.metrics_collection.get_metrics_collection()
+    res = pipeshub.metrics_collection.get_config()
 
     # Handle response
     print(res)
@@ -77,7 +57,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## toggle_metrics_collection
+## toggle
 
 Toggle the master switch for metrics collection.
 
@@ -96,7 +76,7 @@ Toggle the master switch for metrics collection.
 
 ### Example Usage: disable
 
-<!-- UsageSnippet language="python" operationID="toggleMetricsCollection" method="put" path="/api/v1/configurationManager/metricsCollection/toggle" example="disable" -->
+<!-- UsageSnippet language="python" operationID="toggleMetricsCollection" method="put" path="/configurationManager/metricsCollection/toggle" example="disable" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -108,7 +88,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.metrics_collection.toggle_metrics_collection(enable_metric_collection=False)
+    res = pipeshub.metrics_collection.toggle(enable_metric_collection=False)
 
     # Handle response
     print(res)
@@ -116,7 +96,7 @@ with Pipeshub(
 ```
 ### Example Usage: enable
 
-<!-- UsageSnippet language="python" operationID="toggleMetricsCollection" method="put" path="/api/v1/configurationManager/metricsCollection/toggle" example="enable" -->
+<!-- UsageSnippet language="python" operationID="toggleMetricsCollection" method="put" path="/configurationManager/metricsCollection/toggle" example="enable" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -128,7 +108,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.metrics_collection.toggle_metrics_collection(enable_metric_collection=True)
+    res = pipeshub.metrics_collection.toggle(enable_metric_collection=True)
 
     # Handle response
     print(res)
@@ -145,6 +125,92 @@ with Pipeshub(
 ### Response
 
 **[models.ToggleMetricsCollectionResponse](../../models/togglemetricscollectionresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## set_push_interval
+
+Configure the interval for pushing metrics to the collection server.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="setMetricsCollectionPushInterval" method="patch" path="/configurationManager/metricsCollection/pushInterval" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.metrics_collection.set_push_interval()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `push_interval`                                                     | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | Push interval in seconds                                            |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.SetMetricsCollectionPushIntervalResponse](../../models/setmetricscollectionpushintervalresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## set_server_url
+
+Configure the remote server URL for metrics collection.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="setMetricsCollectionRemoteServer" method="patch" path="/configurationManager/metricsCollection/serverUrl" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.metrics_collection.set_server_url()
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `server_url`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.SetMetricsCollectionRemoteServerResponse](../../models/setmetricscollectionremoteserverresponse.md)**
 
 ### Errors
 

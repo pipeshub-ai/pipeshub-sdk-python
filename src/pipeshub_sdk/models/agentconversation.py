@@ -11,149 +11,40 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class AgentConversationSharedWithTypedDict(TypedDict):
-    pass
-
-
-class AgentConversationSharedWith(BaseModel):
-    pass
-
-
 AgentConversationStatus = Union[
     Literal[
-        "Complete",
         "INPROGRESS",
+        "COMPLETED",
         "FAILED",
     ],
     UnrecognizedStr,
 ]
-r"""Conversation status"""
 
 
-class AgentConversationModelInfoTypedDict(TypedDict):
-    model_key: NotRequired[str]
-    model_name: NotRequired[str]
-    chat_mode: NotRequired[str]
+AgentConversationAccessLevel = Union[
+    Literal[
+        "read",
+        "write",
+    ],
+    UnrecognizedStr,
+]
 
 
-class AgentConversationModelInfo(BaseModel):
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-
-    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-
-    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "modelName", "chatMode"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+class AgentConversationSharedWithTypedDict(TypedDict):
+    user_id: NotRequired[str]
+    access_level: NotRequired[AgentConversationAccessLevel]
 
 
-class MessageRangeTypedDict(TypedDict):
-    start: NotRequired[int]
-    end: NotRequired[int]
+class AgentConversationSharedWith(BaseModel):
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
-
-class MessageRange(BaseModel):
-    start: Optional[int] = None
-
-    end: Optional[int] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["start", "end"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class AgentConversationPaginationTypedDict(TypedDict):
-    page: NotRequired[int]
-    limit: NotRequired[int]
-    total_count: NotRequired[int]
-    total_pages: NotRequired[int]
-    has_next_page: NotRequired[bool]
-    has_prev_page: NotRequired[bool]
-    message_range: NotRequired[MessageRangeTypedDict]
-
-
-class AgentConversationPagination(BaseModel):
-    page: Optional[int] = None
-
-    limit: Optional[int] = None
-
-    total_count: Annotated[Optional[int], pydantic.Field(alias="totalCount")] = None
-
-    total_pages: Annotated[Optional[int], pydantic.Field(alias="totalPages")] = None
-
-    has_next_page: Annotated[Optional[bool], pydantic.Field(alias="hasNextPage")] = None
-
-    has_prev_page: Annotated[Optional[bool], pydantic.Field(alias="hasPrevPage")] = None
-
-    message_range: Annotated[
-        Optional[MessageRange], pydantic.Field(alias="messageRange")
+    access_level: Annotated[
+        Optional[AgentConversationAccessLevel], pydantic.Field(alias="accessLevel")
     ] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "page",
-                "limit",
-                "totalCount",
-                "totalPages",
-                "hasNextPage",
-                "hasPrevPage",
-                "messageRange",
-            ]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class AccessTypedDict(TypedDict):
-    is_owner: NotRequired[bool]
-    access_level: NotRequired[str]
-
-
-class Access(BaseModel):
-    is_owner: Annotated[Optional[bool], pydantic.Field(alias="isOwner")] = None
-
-    access_level: Annotated[Optional[str], pydantic.Field(alias="accessLevel")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["isOwner", "accessLevel"])
+        optional_fields = set(["userId", "accessLevel"])
         serialized = handler(self)
         m = {}
 
@@ -169,36 +60,46 @@ class Access(BaseModel):
 
 
 class AgentConversationTypedDict(TypedDict):
-    r"""A conversation with a specific AI agent (full detail with messages)."""
+    r"""A conversation with a specific AI agent. Similar to regular conversations
+    but tied to an agent's configuration and capabilities.
+
+    """
 
     id: NotRequired[str]
-    r"""Unique conversation identifier"""
+    agent_key: NotRequired[str]
+    r"""The agent this conversation is with"""
+    user_id: NotRequired[str]
+    org_id: NotRequired[str]
     title: NotRequired[str]
-    initiator: NotRequired[str]
-    r"""User ID who started the conversation"""
-    created_at: NotRequired[datetime]
+    messages: NotRequired[List[MessageTypedDict]]
+    status: NotRequired[AgentConversationStatus]
     is_shared: NotRequired[bool]
     shared_with: NotRequired[List[AgentConversationSharedWithTypedDict]]
-    status: NotRequired[AgentConversationStatus]
-    r"""Conversation status"""
-    messages: NotRequired[List[MessageTypedDict]]
-    model_info: NotRequired[AgentConversationModelInfoTypedDict]
-    pagination: NotRequired[AgentConversationPaginationTypedDict]
-    access: NotRequired[AccessTypedDict]
+    last_activity_at: NotRequired[int]
+    created_at: NotRequired[datetime]
+    updated_at: NotRequired[datetime]
 
 
 class AgentConversation(BaseModel):
-    r"""A conversation with a specific AI agent (full detail with messages)."""
+    r"""A conversation with a specific AI agent. Similar to regular conversations
+    but tied to an agent's configuration and capabilities.
 
-    id: Optional[str] = None
-    r"""Unique conversation identifier"""
+    """
+
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""The agent this conversation is with"""
+
+    user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
+
+    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
 
     title: Optional[str] = None
 
-    initiator: Optional[str] = None
-    r"""User ID who started the conversation"""
+    messages: Optional[List[Message]] = None
 
-    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
+    status: Optional[AgentConversationStatus] = None
 
     is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = None
 
@@ -206,34 +107,30 @@ class AgentConversation(BaseModel):
         Optional[List[AgentConversationSharedWith]], pydantic.Field(alias="sharedWith")
     ] = None
 
-    status: Optional[AgentConversationStatus] = None
-    r"""Conversation status"""
-
-    messages: Optional[List[Message]] = None
-
-    model_info: Annotated[
-        Optional[AgentConversationModelInfo], pydantic.Field(alias="modelInfo")
+    last_activity_at: Annotated[
+        Optional[int], pydantic.Field(alias="lastActivityAt")
     ] = None
 
-    pagination: Optional[AgentConversationPagination] = None
+    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
-    access: Optional[Access] = None
+    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
             [
-                "id",
+                "_id",
+                "agentKey",
+                "userId",
+                "orgId",
                 "title",
-                "initiator",
-                "createdAt",
+                "messages",
+                "status",
                 "isShared",
                 "sharedWith",
-                "status",
-                "messages",
-                "modelInfo",
-                "pagination",
-                "access",
+                "lastActivityAt",
+                "createdAt",
+                "updatedAt",
             ]
         )
         serialized = handler(self)
@@ -251,15 +148,7 @@ class AgentConversation(BaseModel):
 
 
 try:
-    AgentConversationModelInfo.model_rebuild()
-except NameError:
-    pass
-try:
-    AgentConversationPagination.model_rebuild()
-except NameError:
-    pass
-try:
-    Access.model_rebuild()
+    AgentConversationSharedWith.model_rebuild()
 except NameError:
     pass
 try:

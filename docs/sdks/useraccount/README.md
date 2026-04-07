@@ -8,12 +8,13 @@ User authentication including multi-step MFA, password reset, OTP login, and tok
 
 * [init_auth](#init_auth) - Initialize authentication session
 * [authenticate](#authenticate) - Authenticate user with credentials
-* [generate_login_otp](#generate_login_otp) - Generate and send OTP for login
+* [generate_otp](#generate_otp) - Generate and send OTP for login
 * [forgot_password](#forgot_password) - Request password reset email
-* [reset_password_with_token](#reset_password_with_token) - Reset password with email token
-* [refresh_token](#refresh_token) - Refresh access token
+* [reset_password_token](#reset_password_token) - Reset password with email token
+* [refresh](#refresh) - Refresh access token
 * [logout](#logout) - Logout current session
 * [reset_password](#reset_password) - Reset password
+* [validate_email_change_token](#validate_email_change_token) - Validate email change token
 
 ## init_auth
 
@@ -38,7 +39,7 @@ authentication steps. Each step completion returns the next step's allowed metho
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="initAuth" method="post" path="/api/v1/userAccount/initAuth" -->
+<!-- UsageSnippet language="python" operationID="initAuth" method="post" path="/userAccount/initAuth" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -80,6 +81,7 @@ Requires a valid session token from <code>/initAuth</code>.
 - <code>otp</code>: <code>{ "credentials": { "otp": "123456" } }</code> (6-digit code, valid for 10 minutes)<br>
 - <code>google</code>: <code>{ "credentials": "google-id-token-string" }</code><br>
 - <code>microsoft</code>: <code>{ "credentials": { "accessToken": "...", "idToken": "..." } }</code><br>
+- <code>azureAd</code>: <code>{ "credentials": { "accessToken": "...", "idToken": "..." } }</code><br>
 - <code>oauth</code>: <code>{ "credentials": { "accessToken": "...", "idToken": "..." } }</code><br>
 - <code>samlSso</code>: Handled via redirect flow (use <code>/saml/signIn</code> instead)
 <br><br>
@@ -98,7 +100,7 @@ After completing all steps:<br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="authenticate" method="post" path="/api/v1/userAccount/authenticate" -->
+<!-- UsageSnippet language="python" operationID="authenticate" method="post" path="/userAccount/authenticate" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -136,7 +138,7 @@ with Pipeshub() as pipeshub:
 | errors.AuthError            | 400, 401, 403, 404, 410     | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## generate_login_otp
+## generate_otp
 
 Generate and send a 6-digit one-time password (OTP) to the user's email.
 Use this endpoint before authenticating with the <code>otp</code> method.
@@ -156,14 +158,14 @@ If Cloudflare Turnstile is enabled, include <code>cf-turnstile-response</code> i
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="generateLoginOtp" method="post" path="/api/v1/userAccount/login/otp/generate" -->
+<!-- UsageSnippet language="python" operationID="generateLoginOtp" method="post" path="/userAccount/login/otp/generate" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.generate_login_otp(email="Garland.Sipes42@hotmail.com")
+    res = pipeshub.user_account.generate_otp(email="Garland.Sipes42@hotmail.com")
 
     # Handle response
     print(res)
@@ -199,7 +201,7 @@ The link contains a time-limited token that can be used to reset the password.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="forgotPassword" method="post" path="/api/v1/userAccount/password/forgot" -->
+<!-- UsageSnippet language="python" operationID="forgotPassword" method="post" path="/userAccount/password/forgot" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -231,7 +233,7 @@ with Pipeshub() as pipeshub:
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## reset_password_with_token
+## reset_password_token
 
 Reset password using a token received via email from the forgot password flow.
 <br><br>
@@ -249,7 +251,7 @@ Reset password using a token received via email from the forgot password flow.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="resetPasswordWithToken" method="post" path="/api/v1/userAccount/password/reset/token" -->
+<!-- UsageSnippet language="python" operationID="resetPasswordWithToken" method="post" path="/userAccount/password/reset/token" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -257,7 +259,7 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.reset_password_with_token(security=models.ResetPasswordWithTokenSecurity(
+    res = pipeshub.user_account.reset_password_token(security=models.ResetPasswordWithTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
     ), password="H9GEHoL829GXj06")
 
@@ -285,7 +287,7 @@ with Pipeshub() as pipeshub:
 | errors.AuthError            | 400                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## refresh_token
+## refresh
 
 Get a new access token using a valid refresh token.
 <br><br>
@@ -305,7 +307,7 @@ Get a new access token using a valid refresh token.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="refreshToken" method="post" path="/api/v1/userAccount/refresh/token" -->
+<!-- UsageSnippet language="python" operationID="refreshToken" method="post" path="/userAccount/refresh/token" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -313,7 +315,7 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.refresh_token(security=models.RefreshTokenSecurity(
+    res = pipeshub.user_account.refresh(security=models.RefreshTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
     ))
 
@@ -354,7 +356,7 @@ Log out the current user session and invalidate tokens.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="logout" method="post" path="/api/v1/userAccount/logout/manual" -->
+<!-- UsageSnippet language="python" operationID="logout" method="post" path="/userAccount/logout/manual" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -398,7 +400,7 @@ Allows a logged-in user to change their password by providing the current passwo
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="resetPassword" method="post" path="/api/v1/userAccount/password/reset" -->
+<!-- UsageSnippet language="python" operationID="resetPassword" method="post" path="/userAccount/password/reset" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -435,3 +437,51 @@ with Pipeshub(
 | ----------------------------------- | ----------------------------------- | ----------------------------------- |
 | errors.ResetPasswordBadRequestError | 400                                 | application/json                    |
 | errors.PipeshubDefaultError         | 4XX, 5XX                            | \*/\*                               |
+
+## validate_email_change_token
+
+Validate a token for changing the user's email address.
+This is used in the email change flow to verify the token before allowing the change.
+<br><br>
+<b>Flow:</b><br>
+1. User requests email change and receives a token via email<br>
+2. This endpoint validates the token and returns success if valid<br>
+3. If valid, user can proceed to change their email address
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="validateEmailChangeToken" method="put" path="/userAccount/validateEmailChange" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub() as pipeshub:
+
+    res = pipeshub.user_account.validate_email_change_token(security=models.ValidateEmailChangeTokenSecurity(
+        scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
+    ))
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                                            | Type                                                                                 | Required                                                                             | Description                                                                          |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `security`                                                                           | [models.ValidateEmailChangeTokenSecurity](../../validateemailchangetokensecurity.md) | :heavy_check_mark:                                                                   | The security requirements to use for the request.                                    |
+| `retries`                                                                            | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                     | :heavy_minus_sign:                                                                   | Configuration to override the default retry behavior of the client.                  |
+
+### Response
+
+**[models.ValidateEmailChangeTokenResponse](../../models/validateemailchangetokenresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.AuthError            | 400                         | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |

@@ -12,59 +12,71 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class GenericOAuthConfigTypedDict(TypedDict):
     r"""Generic OAuth 2.0 provider configuration"""
 
-    provider_name: str
+    provider_name: NotRequired[str]
     r"""Display name for the OAuth provider"""
-    client_id: str
+    client_id: NotRequired[str]
     r"""OAuth client ID"""
-    client_secret: str
+    client_secret: NotRequired[str]
     r"""OAuth client secret"""
-    authorization_url: str
+    authorization_url: NotRequired[str]
     r"""Authorization endpoint URL"""
-    token_endpoint: str
+    token_endpoint: NotRequired[str]
     r"""Token endpoint URL"""
-    user_info_endpoint: str
+    user_info_endpoint: NotRequired[str]
     r"""User info endpoint URL"""
-    scope: str
+    scope: NotRequired[str]
     r"""OAuth scopes to request"""
-    redirect_uri: str
+    redirect_uri: NotRequired[str]
     r"""OAuth redirect URI"""
-    enable_jit: NotRequired[bool]
-    r"""Enable Just-In-Time user provisioning"""
 
 
 class GenericOAuthConfig(BaseModel):
     r"""Generic OAuth 2.0 provider configuration"""
 
-    provider_name: Annotated[str, pydantic.Field(alias="providerName")]
+    provider_name: Annotated[Optional[str], pydantic.Field(alias="providerName")] = None
     r"""Display name for the OAuth provider"""
 
-    client_id: Annotated[str, pydantic.Field(alias="clientId")]
+    client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
     r"""OAuth client ID"""
 
-    client_secret: Annotated[str, pydantic.Field(alias="clientSecret")]
+    client_secret: Annotated[Optional[str], pydantic.Field(alias="clientSecret")] = None
     r"""OAuth client secret"""
 
-    authorization_url: Annotated[str, pydantic.Field(alias="authorizationUrl")]
+    authorization_url: Annotated[
+        Optional[str], pydantic.Field(alias="authorizationUrl")
+    ] = None
     r"""Authorization endpoint URL"""
 
-    token_endpoint: Annotated[str, pydantic.Field(alias="tokenEndpoint")]
+    token_endpoint: Annotated[Optional[str], pydantic.Field(alias="tokenEndpoint")] = (
+        None
+    )
     r"""Token endpoint URL"""
 
-    user_info_endpoint: Annotated[str, pydantic.Field(alias="userInfoEndpoint")]
+    user_info_endpoint: Annotated[
+        Optional[str], pydantic.Field(alias="userInfoEndpoint")
+    ] = None
     r"""User info endpoint URL"""
 
-    scope: str
+    scope: Optional[str] = None
     r"""OAuth scopes to request"""
 
-    redirect_uri: Annotated[str, pydantic.Field(alias="redirectUri")]
+    redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
     r"""OAuth redirect URI"""
-
-    enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = True
-    r"""Enable Just-In-Time user provisioning"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["enableJit"])
+        optional_fields = set(
+            [
+                "providerName",
+                "clientId",
+                "clientSecret",
+                "authorizationUrl",
+                "tokenEndpoint",
+                "userInfoEndpoint",
+                "scope",
+                "redirectUri",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

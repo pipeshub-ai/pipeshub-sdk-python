@@ -16,11 +16,9 @@ if TYPE_CHECKING:
         ResetPasswordBadRequestErrorData,
     )
     from .responsevalidationerror import ResponseValidationError
-    from .samlsignincallbackop import (
-        SamlSignInCallbackBadRequestError,
-        SamlSignInCallbackBadRequestErrorData,
-        UnauthorizedError,
-        UnauthorizedErrorData,
+    from .updatesamlappconfigop import (
+        UpdateSamlAppConfigBadRequestError,
+        UpdateSamlAppConfigBadRequestErrorData,
     )
 
 __all__ = [
@@ -34,10 +32,8 @@ __all__ = [
     "ResetPasswordBadRequestError",
     "ResetPasswordBadRequestErrorData",
     "ResponseValidationError",
-    "SamlSignInCallbackBadRequestError",
-    "SamlSignInCallbackBadRequestErrorData",
-    "UnauthorizedError",
-    "UnauthorizedErrorData",
+    "UpdateSamlAppConfigBadRequestError",
+    "UpdateSamlAppConfigBadRequestErrorData",
 ]
 
 _dynamic_imports: dict[str, str] = {
@@ -50,10 +46,8 @@ _dynamic_imports: dict[str, str] = {
     "ResetPasswordBadRequestError": ".resetpasswordop",
     "ResetPasswordBadRequestErrorData": ".resetpasswordop",
     "ResponseValidationError": ".responsevalidationerror",
-    "SamlSignInCallbackBadRequestError": ".samlsignincallbackop",
-    "SamlSignInCallbackBadRequestErrorData": ".samlsignincallbackop",
-    "UnauthorizedError": ".samlsignincallbackop",
-    "UnauthorizedErrorData": ".samlsignincallbackop",
+    "UpdateSamlAppConfigBadRequestError": ".updatesamlappconfigop",
+    "UpdateSamlAppConfigBadRequestErrorData": ".updatesamlappconfigop",
 }
 
 

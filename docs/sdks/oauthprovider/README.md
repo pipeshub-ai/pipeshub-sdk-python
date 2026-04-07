@@ -56,7 +56,7 @@ to authorize access to their account.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthAuthorize" method="get" path="/api/v1/oauth2/authorize" -->
+<!-- UsageSnippet language="python" operationID="oauthAuthorize" method="get" path="/oauth2/authorize" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -109,7 +109,7 @@ This endpoint generates an authorization code if consent is granted.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthAuthorizeConsent" method="post" path="/api/v1/oauth2/authorize" -->
+<!-- UsageSnippet language="python" operationID="oauthAuthorizeConsent" method="post" path="/oauth2/authorize" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -175,7 +175,7 @@ verified against the stored code challenge.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthToken" method="post" path="/api/v1/oauth2/token" -->
+<!-- UsageSnippet language="python" operationID="oauthToken" method="post" path="/oauth2/token" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -232,7 +232,7 @@ Revoking a refresh token also invalidates associated access tokens.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="oauthRevoke" method="post" path="/api/v1/oauth2/revoke" -->
+<!-- UsageSnippet language="python" operationID="oauthRevoke" method="post" path="/oauth2/revoke" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -280,7 +280,7 @@ Check if a token is active and retrieve its metadata.
 
 ### Example Usage: active
 
-<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/api/v1/oauth2/introspect" example="active" -->
+<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/oauth2/introspect" example="active" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
@@ -295,7 +295,7 @@ with Pipeshub() as pipeshub:
 ```
 ### Example Usage: inactive
 
-<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/api/v1/oauth2/introspect" example="inactive" -->
+<!-- UsageSnippet language="python" operationID="oauthIntrospect" method="post" path="/oauth2/introspect" example="inactive" -->
 ```python
 from pipeshub_sdk import Pipeshub
 

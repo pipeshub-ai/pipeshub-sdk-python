@@ -47,11 +47,14 @@ def test_toolset_instances_get_my_toolsets():
 
         res = pipeshub.toolset_instances.get_my_toolsets()
         assert res is not None
-        assert res == {
-            "key": "<value>",
-            "key1": "<value>",
-            "key2": "<value>",
-        }
+        assert res == models.GetMyToolsetsResponse(
+            status="success",
+            toolsets=[
+                models.GetMyToolsetsToolset(
+                    category="app",
+                ),
+            ],
+        )
 
 
 def test_toolset_instances_get_toolset_instances():
@@ -68,4 +71,23 @@ def test_toolset_instances_get_toolset_instances():
         assert res is not None
         assert res == {
             "key": "<value>",
+        }
+
+
+def test_toolset_instances_get_agent_toolsets():
+    test_http_client = create_test_http_client("getAgentToolsets")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.toolset_instances.get_agent_toolsets(agent_key="<value>")
+        assert res is not None
+        assert res == {
+            "key": "<value>",
+            "key1": "<value>",
+            "key2": "<value>",
         }

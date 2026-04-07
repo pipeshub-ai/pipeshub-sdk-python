@@ -13,7 +13,7 @@ from typing import Mapping, Optional, Union
 class Organizations(BaseSDK):
     r"""Organization management operations"""
 
-    def check_org_exists(
+    def check_exists(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -56,7 +56,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/org/exists",
+            path="/org/exists",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -106,7 +106,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def check_org_exists_async(
+    async def check_exists_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -149,7 +149,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/org/exists",
+            path="/org/exists",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -199,7 +199,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create_organization(
+    def create(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -279,7 +279,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -332,7 +332,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_organization_async(
+    async def create_async(
         self,
         *,
         account_type: models.CreateOrganizationAccountType,
@@ -412,7 +412,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -465,7 +465,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_current_organization(
+    def get(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -497,6 +497,8 @@ class Organizations(BaseSDK):
         All authenticated users can access this endpoint to view their organization's details.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -513,7 +515,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -525,6 +527,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -566,7 +569,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_current_organization_async(
+    async def get_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -598,6 +601,8 @@ class Organizations(BaseSDK):
         All authenticated users can access this endpoint to view their organization's details.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -614,7 +619,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -626,6 +631,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -667,7 +673,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_organization(
+    def update(
         self,
         *,
         registered_name: Optional[str] = None,
@@ -713,6 +719,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param registered_name: Official registered/legal name
         :param short_name: Short display name for UI
         :param phone_number: Contact phone number (international format)
@@ -743,7 +751,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -758,6 +766,7 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOrganizationRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -799,7 +808,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_organization_async(
+    async def update_async(
         self,
         *,
         registered_name: Optional[str] = None,
@@ -845,6 +854,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param registered_name: Official registered/legal name
         :param short_name: Short display name for UI
         :param phone_number: Contact phone number (international format)
@@ -875,7 +886,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -890,6 +901,7 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOrganizationRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -931,7 +943,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_organization(
+    def delete(
         self,
         *,
         confirm: models.Confirm,
@@ -959,6 +971,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param confirm: Must be \"DELETE\" to confirm deletion
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -981,7 +995,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -993,6 +1007,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1034,7 +1049,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_organization_async(
+    async def delete_async(
         self,
         *,
         confirm: models.Confirm,
@@ -1062,6 +1077,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param confirm: Must be \"DELETE\" to confirm deletion
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1084,7 +1101,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/org",
+            path="/org",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1096,6 +1113,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1137,7 +1155,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def upload_organization_logo(
+    def upload_logo(
         self,
         *,
         logo: Union[models.Logo, models.LogoTypedDict],
@@ -1169,6 +1187,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param logo: Logo image file
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1191,7 +1211,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/org/logo",
+            path="/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1206,6 +1226,7 @@ class Organizations(BaseSDK):
                 request, False, False, "multipart", models.UploadOrganizationLogoRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1249,7 +1270,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def upload_organization_logo_async(
+    async def upload_logo_async(
         self,
         *,
         logo: Union[models.Logo, models.LogoTypedDict],
@@ -1281,6 +1302,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param logo: Logo image file
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1303,7 +1326,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/org/logo",
+            path="/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1318,6 +1341,7 @@ class Organizations(BaseSDK):
                 request, False, False, "multipart", models.UploadOrganizationLogoRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1361,7 +1385,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_organization_logo(
+    def get_logo(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1385,6 +1409,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1401,7 +1427,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/org/logo",
+            path="/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1413,6 +1439,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1456,7 +1483,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_organization_logo_async(
+    async def get_logo_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1480,6 +1507,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1496,7 +1525,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/org/logo",
+            path="/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1508,6 +1537,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1551,7 +1581,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_organization_logo(
+    def delete_logo(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1569,6 +1599,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1585,7 +1617,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/org/logo",
+            path="/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1597,6 +1629,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1640,7 +1673,7 @@ class Organizations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_organization_logo_async(
+    async def delete_logo_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -1658,6 +1691,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1674,7 +1709,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/org/logo",
+            path="/org/logo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1686,6 +1721,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1756,6 +1792,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1772,7 +1810,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/org/onboarding-status",
+            path="/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1784,6 +1822,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1852,6 +1891,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1868,7 +1909,7 @@ class Organizations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/org/onboarding-status",
+            path="/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1880,6 +1921,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1947,6 +1989,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param step_id: ID of the step to update
         :param action: Action to perform on the step
         :param retries: Override the default retry configuration for this method
@@ -1971,7 +2015,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/org/onboarding-status",
+            path="/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1986,6 +2030,7 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOnboardingStatusRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2055,6 +2100,8 @@ class Organizations(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param step_id: ID of the step to update
         :param action: Action to perform on the step
         :param retries: Override the default retry configuration for this method
@@ -2079,7 +2126,7 @@ class Organizations(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/org/onboarding-status",
+            path="/org/onboarding-status",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2094,6 +2141,7 @@ class Organizations(BaseSDK):
                 request, False, False, "json", models.UpdateOnboardingStatusRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

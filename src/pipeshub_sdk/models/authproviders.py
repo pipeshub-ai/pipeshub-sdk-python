@@ -68,17 +68,17 @@ class Microsoft(BaseModel):
 
 class AzureadTypedDict(TypedDict):
     tenant_id: NotRequired[str]
-    r"""Microsoft tenant ID"""
+    r"""Azure AD tenant ID"""
     client_id: NotRequired[str]
-    r"""Microsoft client ID"""
+    r"""Azure AD client ID"""
 
 
 class Azuread(BaseModel):
     tenant_id: Annotated[Optional[str], pydantic.Field(alias="tenantId")] = None
-    r"""Microsoft tenant ID"""
+    r"""Azure AD tenant ID"""
 
     client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
-    r"""Microsoft client ID"""
+    r"""Azure AD client ID"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

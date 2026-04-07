@@ -6,7 +6,7 @@ from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import Optional
+from typing import Dict, List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -47,3 +47,11 @@ class SamlSignInCallbackRequest(BaseModel):
                     m[k] = val
 
         return m
+
+
+class SamlSignInCallbackResponseTypedDict(TypedDict):
+    headers: Dict[str, List[str]]
+
+
+class SamlSignInCallbackResponse(BaseModel):
+    headers: Dict[str, List[str]]

@@ -1,6 +1,6 @@
 # OAuthCredentials
 
-Credentials for OAuth authentication (Microsoft, generic OAuth)
+Credentials for OAuth authentication (Microsoft, Azure AD, generic OAuth)
 
 
 ## Fields

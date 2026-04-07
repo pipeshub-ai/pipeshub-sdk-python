@@ -3,20 +3,11 @@
 
 from __future__ import annotations
 from .filters import Filters, FiltersTypedDict
-from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
-
-
-class ToolTypedDict(TypedDict):
-    pass
-
-
-class Tool(BaseModel):
-    pass
 
 
 class AddMessageRequestTypedDict(TypedDict):
@@ -31,14 +22,6 @@ class AddMessageRequestTypedDict(TypedDict):
     r"""Display name of the model"""
     chat_mode: NotRequired[str]
     r"""Chat mode for this message"""
-    model_friendly_name: NotRequired[str]
-    r"""Friendly display name of the model"""
-    timezone: NotRequired[str]
-    r"""User's timezone"""
-    current_time: NotRequired[datetime]
-    r"""Current time in ISO 8601 format"""
-    tools: NotRequired[List[ToolTypedDict]]
-    r"""Tools available for this message"""
 
 
 class AddMessageRequest(BaseModel):
@@ -58,36 +41,9 @@ class AddMessageRequest(BaseModel):
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
     r"""Chat mode for this message"""
 
-    model_friendly_name: Annotated[
-        Optional[str], pydantic.Field(alias="modelFriendlyName")
-    ] = None
-    r"""Friendly display name of the model"""
-
-    timezone: Optional[str] = None
-    r"""User's timezone"""
-
-    current_time: Annotated[Optional[datetime], pydantic.Field(alias="currentTime")] = (
-        None
-    )
-    r"""Current time in ISO 8601 format"""
-
-    tools: Optional[List[Tool]] = None
-    r"""Tools available for this message"""
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "filters",
-                "modelKey",
-                "modelName",
-                "chatMode",
-                "modelFriendlyName",
-                "timezone",
-                "currentTime",
-                "tools",
-            ]
-        )
+        optional_fields = set(["filters", "modelKey", "modelName", "chatMode"])
         serialized = handler(self)
         m = {}
 

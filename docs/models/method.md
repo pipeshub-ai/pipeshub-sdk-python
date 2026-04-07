@@ -17,4 +17,5 @@ value: Method = "samlSso"
 - `"password"`
 - `"google"`
 - `"microsoft"`
+- `"azureAd"`
 - `"oauth"`

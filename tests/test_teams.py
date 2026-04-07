@@ -15,7 +15,7 @@ def test_teams_create_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.create_team(
+        res = pipeshub.teams.create(
             name="Engineering Team",
             description="Core engineering team for product development",
         )
@@ -36,7 +36,7 @@ def test_teams_list_teams():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.list_teams(search="engineering", limit=10, page=1)
+        res = pipeshub.teams.list(search="engineering", limit=10, page=1)
         assert res is not None
         assert res == models.ListTeamsResponse(
             success=True,
@@ -53,7 +53,7 @@ def test_teams_get_team_by_id():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.get_team_by_id(team_id="507f1f77bcf86cd799439011")
+        res = pipeshub.teams.get_by_id(team_id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.GetTeamByIDResponse(
             success=True,
@@ -70,7 +70,7 @@ def test_teams_update_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.update_team(
+        res = pipeshub.teams.update(
             team_id="507f1f77bcf86cd799439011",
             name="Core Engineering Team",
             description="Primary engineering team for product development",
@@ -92,7 +92,7 @@ def test_teams_delete_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.delete_team(team_id="507f1f77bcf86cd799439011")
+        res = pipeshub.teams.delete(team_id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.DeleteTeamResponse(
             success=True,
@@ -110,7 +110,7 @@ def test_teams_get_user_teams():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.get_user_teams(page=1, limit=20)
+        res = pipeshub.teams.get_user(page=1, limit=20)
         assert res is not None
         assert res == models.GetUserTeamsResponse(
             success=True,
@@ -132,7 +132,7 @@ def test_teams_get_team_users():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.get_team_users(team_id="507f1f77bcf86cd799439011")
+        res = pipeshub.teams.get_members(team_id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.GetTeamUsersResponse()
 
@@ -147,7 +147,7 @@ def test_teams_add_users_to_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.add_users_to_team(team_id="507f1f77bcf86cd799439011")
+        res = pipeshub.teams.add_users(team_id="507f1f77bcf86cd799439011")
         assert res is not None
         assert res == models.AddUsersToTeamResponse()
 
@@ -162,7 +162,7 @@ def test_teams_remove_user_from_team():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.remove_user_from_team(team_id="<id>")
+        res = pipeshub.teams.remove_users(team_id="<id>")
         assert res is not None
         assert res == models.RemoveUserFromTeamResponse()
 
@@ -177,7 +177,7 @@ def test_teams_update_team_users_permissions():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.update_team_users_permissions(team_id="<id>", body={})
+        res = pipeshub.teams.update_user_permissions(team_id="<id>", body={})
         assert res is not None
         assert res == models.UpdateTeamUsersPermissionsResponse()
 
@@ -192,6 +192,6 @@ def test_teams_get_user_created_teams():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.teams.get_user_created_teams()
+        res = pipeshub.teams.list_created()
         assert res is not None
         assert res == models.GetUserCreatedTeamsResponse()

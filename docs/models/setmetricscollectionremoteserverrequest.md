@@ -7,4 +7,4 @@ Request payload
 
 | Field              | Type               | Required           | Description        |
 | ------------------ | ------------------ | ------------------ | ------------------ |
-| `server_url`       | *str*              | :heavy_check_mark: | N/A                |
+| `server_url`       | *Optional[str]*    | :heavy_minus_sign: | N/A                |

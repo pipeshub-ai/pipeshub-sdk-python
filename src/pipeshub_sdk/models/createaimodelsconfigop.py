@@ -8,6 +8,14 @@ from typing import Optional
 from typing_extensions import NotRequired, TypedDict
 
 
+class CreateAIModelsConfigRequestTypedDict(TypedDict):
+    r"""Request payload"""
+
+
+class CreateAIModelsConfigRequest(BaseModel):
+    r"""Request payload"""
+
+
 class CreateAIModelsConfigResponseTypedDict(TypedDict):
     r"""AI models config created"""
 

@@ -15,7 +15,7 @@ def test_oauth_sdk_exchange_o_auth_code():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.o_auth.exchange_o_auth_code(
+        res = pipeshub.oauth.exchange_code(
             code="<value>",
             email="Jason2@gmail.com",
             provider="<value>",

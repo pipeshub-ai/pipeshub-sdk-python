@@ -47,6 +47,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param name: Display name for the group
         :param type: Group type determining behavior and privileges
         :param description: Optional description of the group's purpose
@@ -73,7 +75,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/userGroups",
+            path="/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -88,6 +90,7 @@ class UserGroups(BaseSDK):
                 request, False, False, "json", models.CreateUserGroupRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -163,6 +166,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param name: Display name for the group
         :param type: Group type determining behavior and privileges
         :param description: Optional description of the group's purpose
@@ -189,7 +194,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/userGroups",
+            path="/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -204,6 +209,7 @@ class UserGroups(BaseSDK):
                 request, False, False, "json", models.CreateUserGroupRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -270,6 +276,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -286,7 +294,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/userGroups",
+            path="/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -298,6 +306,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -364,6 +373,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -380,7 +391,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/userGroups",
+            path="/userGroups",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -392,6 +403,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -454,6 +466,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: Unique identifier of the user group
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -476,7 +490,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/userGroups/{groupId}",
+            path="/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -488,6 +502,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -550,6 +565,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: Unique identifier of the user group
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -572,7 +589,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/userGroups/{groupId}",
+            path="/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -584,6 +601,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -647,6 +665,8 @@ class UserGroups(BaseSDK):
         <b>Note:</b> Group type cannot be changed after creation.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: Unique identifier of the user group to update
         :param name: New display name for the group
         :param description: Updated description
@@ -675,7 +695,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/userGroups/{groupId}",
+            path="/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -690,6 +710,7 @@ class UserGroups(BaseSDK):
                 request.body, False, False, "json", models.UpdateUserGroupRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -753,6 +774,8 @@ class UserGroups(BaseSDK):
         <b>Note:</b> Group type cannot be changed after creation.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: Unique identifier of the user group to update
         :param name: New display name for the group
         :param description: Updated description
@@ -781,7 +804,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/userGroups/{groupId}",
+            path="/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -796,6 +819,7 @@ class UserGroups(BaseSDK):
                 request.body, False, False, "json", models.UpdateUserGroupRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -862,6 +886,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: Unique identifier of the user group to delete
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -884,7 +910,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/userGroups/{groupId}",
+            path="/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -896,6 +922,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -962,6 +989,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: Unique identifier of the user group to delete
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -984,7 +1013,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/userGroups/{groupId}",
+            path="/userGroups/{groupId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -996,6 +1025,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1064,6 +1094,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: ID of the group to add users to
         :param user_ids: Array of user IDs to add to the group
         :param retries: Override the default retry configuration for this method
@@ -1088,7 +1120,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/userGroups/add-users",
+            path="/userGroups/add-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1103,6 +1135,7 @@ class UserGroups(BaseSDK):
                 request, False, False, "json", models.AddUsersToGroupRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1171,6 +1204,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: ID of the group to add users to
         :param user_ids: Array of user IDs to add to the group
         :param retries: Override the default retry configuration for this method
@@ -1195,7 +1230,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/userGroups/add-users",
+            path="/userGroups/add-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1210,6 +1245,7 @@ class UserGroups(BaseSDK):
                 request, False, False, "json", models.AddUsersToGroupRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1276,6 +1312,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: ID of the group to remove users from
         :param user_ids: Array of user IDs to remove from the group
         :param retries: Override the default retry configuration for this method
@@ -1300,7 +1338,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/userGroups/remove-users",
+            path="/userGroups/remove-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1315,6 +1353,7 @@ class UserGroups(BaseSDK):
                 request, False, False, "json", models.RemoveUsersFromGroupRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1383,6 +1422,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param group_id: ID of the group to remove users from
         :param user_ids: Array of user IDs to remove from the group
         :param retries: Override the default retry configuration for this method
@@ -1407,7 +1448,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/userGroups/remove-users",
+            path="/userGroups/remove-users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1422,6 +1463,7 @@ class UserGroups(BaseSDK):
                 request, False, False, "json", models.RemoveUsersFromGroupRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1490,6 +1532,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param user_id: Unique identifier of the user
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1512,7 +1556,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/userGroups/users/{userId}",
+            path="/userGroups/users/{userId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1524,6 +1568,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1590,6 +1635,8 @@ class UserGroups(BaseSDK):
         </ul>
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param user_id: Unique identifier of the user
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1612,7 +1659,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/userGroups/users/{userId}",
+            path="/userGroups/users/{userId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1624,6 +1671,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1679,6 +1727,8 @@ class UserGroups(BaseSDK):
         Retrieve all users that belong to a specific user group.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param group_id: Unique identifier of the user group
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1701,7 +1751,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/userGroups/{groupId}/users",
+            path="/userGroups/{groupId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1713,6 +1763,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1768,6 +1819,8 @@ class UserGroups(BaseSDK):
         Retrieve all users that belong to a specific user group.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param group_id: Unique identifier of the user group
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1790,7 +1843,7 @@ class UserGroups(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/userGroups/{groupId}/users",
+            path="/userGroups/{groupId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1802,6 +1855,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1856,6 +1910,8 @@ class UserGroups(BaseSDK):
         Retrieve statistics for all user groups including member counts.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1872,7 +1928,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/userGroups/stats/list",
+            path="/userGroups/stats/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1884,6 +1940,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1938,6 +1995,8 @@ class UserGroups(BaseSDK):
         Retrieve statistics for all user groups including member counts.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1954,7 +2013,7 @@ class UserGroups(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/userGroups/stats/list",
+            path="/userGroups/stats/list",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -1966,6 +2025,7 @@ class UserGroups(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

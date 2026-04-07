@@ -53,6 +53,8 @@ class OpenIDConnect(BaseSDK):
         Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -69,7 +71,7 @@ class OpenIDConnect(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/oauth2/userinfo",
+            path="/oauth2/userinfo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -81,6 +83,7 @@ class OpenIDConnect(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -146,6 +149,8 @@ class OpenIDConnect(BaseSDK):
         Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -162,7 +167,7 @@ class OpenIDConnect(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/oauth2/userinfo",
+            path="/oauth2/userinfo",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -174,6 +179,7 @@ class OpenIDConnect(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -247,7 +253,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS[0]
         req = self._build_request(
             method="GET",
             path="/.well-known/oauth-authorization-server",
@@ -332,7 +338,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.OAUTH_AUTHORIZATION_SERVER_METADATA_OP_SERVERS[0]
         req = self._build_request_async(
             method="GET",
             path="/.well-known/oauth-authorization-server",
@@ -421,7 +427,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.OAUTH_PROTECTED_RESOURCE_OP_SERVERS[0]
         req = self._build_request(
             method="GET",
             path="/.well-known/oauth-protected-resource/mcp",
@@ -512,7 +518,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.OAUTH_PROTECTED_RESOURCE_OP_SERVERS[0]
         req = self._build_request_async(
             method="GET",
             path="/.well-known/oauth-protected-resource/mcp",
@@ -603,7 +609,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.OPENID_CONFIGURATION_OP_SERVERS[0]
         req = self._build_request(
             method="GET",
             path="/.well-known/openid-configuration",
@@ -692,7 +698,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.OPENID_CONFIGURATION_OP_SERVERS[0]
         req = self._build_request_async(
             method="GET",
             path="/.well-known/openid-configuration",
@@ -783,7 +789,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.JWKS_OP_SERVERS[0]
         req = self._build_request(
             method="GET",
             path="/.well-known/jwks.json",
@@ -874,7 +880,7 @@ class OpenIDConnect(BaseSDK):
         if server_url is not None:
             base_url = server_url
         else:
-            base_url = self._get_url(base_url, url_variables)
+            base_url = models.JWKS_OP_SERVERS[0]
         req = self._build_request_async(
             method="GET",
             path="/.well-known/jwks.json",

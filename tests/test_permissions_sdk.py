@@ -15,7 +15,7 @@ def test_permissions_sdk_create_kb_permission():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.permissions.create_kb_permission(kb_id="<id>", role="OWNER")
+        res = pipeshub.permissions.grant(kb_id="<id>", role="OWNER")
         assert res is not None
         assert res == models.CreateKBPermissionResponse()
 
@@ -30,6 +30,6 @@ def test_permissions_sdk_list_kb_permissions():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.permissions.list_kb_permissions(kb_id="<id>")
+        res = pipeshub.permissions.list(kb_id="<id>")
         assert res is not None
         assert res == models.ListKBPermissionsResponse()

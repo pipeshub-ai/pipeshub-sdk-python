@@ -3,12 +3,10 @@
 
 from __future__ import annotations
 from .modeltype import ModelType
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+from pipeshub_sdk.types import BaseModel
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from pydantic import model_serializer
-from typing import Literal, Optional, Union
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 
 class DeleteAIModelProviderRequestTypedDict(TypedDict):
@@ -30,90 +28,3 @@ class DeleteAIModelProviderRequest(BaseModel):
         pydantic.Field(alias="modelKey"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-
-
-DeleteAIModelProviderStatus = Union[
-    Literal[
-        "success",
-        "error",
-    ],
-    UnrecognizedStr,
-]
-
-
-class DeleteAIModelProviderDetailsTypedDict(TypedDict):
-    model_key: NotRequired[str]
-    model_type: NotRequired[str]
-    provider: NotRequired[str]
-    model: NotRequired[str]
-    was_default: NotRequired[bool]
-
-
-class DeleteAIModelProviderDetails(BaseModel):
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-
-    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
-
-    provider: Optional[str] = None
-
-    model: Optional[str] = None
-
-    was_default: Annotated[Optional[bool], pydantic.Field(alias="wasDefault")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            ["modelKey", "modelType", "provider", "model", "wasDefault"]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class DeleteAIModelProviderResponseTypedDict(TypedDict):
-    r"""AI model provider deleted"""
-
-    status: NotRequired[DeleteAIModelProviderStatus]
-    message: NotRequired[str]
-    details: NotRequired[DeleteAIModelProviderDetailsTypedDict]
-
-
-class DeleteAIModelProviderResponse(BaseModel):
-    r"""AI model provider deleted"""
-
-    status: Optional[DeleteAIModelProviderStatus] = None
-
-    message: Optional[str] = None
-
-    details: Optional[DeleteAIModelProviderDetails] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["status", "message", "details"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-try:
-    DeleteAIModelProviderDetails.model_rebuild()
-except NameError:
-    pass

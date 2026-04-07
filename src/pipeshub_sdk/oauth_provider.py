@@ -110,7 +110,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/oauth2/authorize",
+            path="/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -247,7 +247,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/oauth2/authorize",
+            path="/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -332,6 +332,8 @@ class OAuthProvider(BaseSDK):
         - Consent denied: Redirects to client with `access_denied` error
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param client_id: The OAuth app's client ID
         :param redirect_uri: Redirect URI (must match authorization request)
         :param scope: Requested scopes
@@ -366,7 +368,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/oauth2/authorize",
+            path="/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -381,6 +383,7 @@ class OAuthProvider(BaseSDK):
                 request, False, False, "json", models.OAuthConsentRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -457,6 +460,8 @@ class OAuthProvider(BaseSDK):
         - Consent denied: Redirects to client with `access_denied` error
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param client_id: The OAuth app's client ID
         :param redirect_uri: Redirect URI (must match authorization request)
         :param scope: Requested scopes
@@ -491,7 +496,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/oauth2/authorize",
+            path="/oauth2/authorize",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -506,6 +511,7 @@ class OAuthProvider(BaseSDK):
                 request, False, False, "json", models.OAuthConsentRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -634,7 +640,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/oauth2/token",
+            path="/oauth2/token",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -772,7 +778,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/oauth2/token",
+            path="/oauth2/token",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -887,7 +893,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/oauth2/revoke",
+            path="/oauth2/revoke",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1002,7 +1008,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/oauth2/revoke",
+            path="/oauth2/revoke",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1117,7 +1123,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/oauth2/introspect",
+            path="/oauth2/introspect",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1232,7 +1238,7 @@ class OAuthProvider(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/oauth2/introspect",
+            path="/oauth2/introspect",
             base_url=base_url,
             url_variables=url_variables,
             request=request,

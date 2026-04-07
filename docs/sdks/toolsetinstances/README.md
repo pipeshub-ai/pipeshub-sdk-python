@@ -11,12 +11,18 @@ Create, manage, and configure toolset instances for your organization
 * [check_toolset_status](#check_toolset_status) - Check toolset status
 * [reauthenticate_toolset](#reauthenticate_toolset) - Reauthenticate toolset
 * [get_my_toolsets](#get_my_toolsets) - List my toolsets with auth status
+* [get_agent_toolsets](#get_agent_toolsets) - List toolsets for an agent with auth status
+* [authenticate_agent_toolset](#authenticate_agent_toolset) - Authenticate agent toolset instance
+* [update_agent_toolset_credentials](#update_agent_toolset_credentials) - Update agent toolset credentials
+* [remove_agent_toolset_credentials](#remove_agent_toolset_credentials) - Remove agent toolset credentials
+* [reauthenticate_agent_toolset](#reauthenticate_agent_toolset) - Mark agent instance for reauthentication
 * [get_toolset_instances](#get_toolset_instances) - List toolset instances
 * [create_toolset_instance](#create_toolset_instance) - Create toolset instance
 * [get_toolset_instance](#get_toolset_instance) - Get toolset instance
 * [update_toolset_instance](#update_toolset_instance) - Update toolset instance
 * [delete_toolset_instance](#delete_toolset_instance) - Delete toolset instance
 * [authenticate_toolset_instance](#authenticate_toolset_instance) - Authenticate toolset instance
+* [update_toolset_credentials](#update_toolset_credentials) - Update toolset credentials
 * [remove_toolset_credentials](#remove_toolset_credentials) - Remove toolset credentials
 * [reauthenticate_toolset_instance](#reauthenticate_toolset_instance) - Mark instance for reauthentication
 * [get_toolset_instance_status](#get_toolset_instance_status) - Get instance authentication status
@@ -28,7 +34,7 @@ Create a new toolset instance with authentication configuration
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createToolset" method="post" path="/api/v1/toolsets" -->
+<!-- UsageSnippet language="python" operationID="createToolset" method="post" path="/toolsets" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -72,7 +78,7 @@ Get all configured toolsets for the authenticated user
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listConfiguredToolsets" method="get" path="/api/v1/toolsets/configured" -->
+<!-- UsageSnippet language="python" operationID="listConfiguredToolsets" method="get" path="/toolsets/configured" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -113,7 +119,7 @@ Check authentication status of a toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="checkToolsetStatus" method="get" path="/api/v1/toolsets/{toolsetId}/status" -->
+<!-- UsageSnippet language="python" operationID="checkToolsetStatus" method="get" path="/toolsets/{toolsetId}/status" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -152,7 +158,7 @@ Only applicable to OAuth-configured toolsets.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="reauthenticateToolset" method="post" path="/api/v1/toolsets/{toolsetId}/reauthenticate" -->
+<!-- UsageSnippet language="python" operationID="reauthenticateToolset" method="post" path="/toolsets/{toolsetId}/reauthenticate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -194,7 +200,7 @@ Returns organization toolset instances merged with current user's authentication
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getMyToolsets" method="get" path="/api/v1/toolsets/my-toolsets" -->
+<!-- UsageSnippet language="python" operationID="getMyToolsets" method="get" path="/toolsets/my-toolsets" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -215,13 +221,215 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                       | Type                                                                                                            | Required                                                                                                        | Description                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `include_registry`                                                                                              | *Optional[bool]*                                                                                                | :heavy_minus_sign:                                                                                              | When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries. |
+| `search`                                                                                                        | *Optional[str]*                                                                                                 | :heavy_minus_sign:                                                                                              | Optional search filter applied to instanceName, displayName, or toolsetType.                                    |
+| `retries`                                                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                | :heavy_minus_sign:                                                                                              | Configuration to override the default retry behavior of the client.                                             |
+
+### Response
+
+**[models.GetMyToolsetsResponse](../../models/getmytoolsetsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## get_agent_toolsets
+
+Returns organization toolset instances merged with the specified agent's authentication status.
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getAgentToolsets" method="get" path="/toolsets/agents/{agentKey}" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.toolset_instances.get_agent_toolsets(agent_key="<value>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                                                                       | Type                                                                                                            | Required                                                                                                        | Description                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `agent_key`                                                                                                     | *str*                                                                                                           | :heavy_check_mark:                                                                                              | N/A                                                                                                             |
+| `include_registry`                                                                                              | *Optional[bool]*                                                                                                | :heavy_minus_sign:                                                                                              | When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries. |
+| `search`                                                                                                        | *Optional[str]*                                                                                                 | :heavy_minus_sign:                                                                                              | Optional search filter applied to instanceName, displayName, or toolsetType.                                    |
+| `retries`                                                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                | :heavy_minus_sign:                                                                                              | Configuration to override the default retry behavior of the client.                                             |
 
 ### Response
 
 **[Dict[str, Any]](../../models/.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## authenticate_agent_toolset
+
+Authenticate agent toolset instance
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="authenticateAgentToolset" method="post" path="/toolsets/agents/{agentKey}/instances/{instanceId}/authenticate" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    pipeshub.toolset_instances.authenticate_agent_toolset(agent_key="<value>", instance_id="<id>", body={
+
+    })
+
+    # Use the SDK ...
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `instance_id`                                                       | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `body`                                                              | Dict[str, *Any*]                                                    | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## update_agent_toolset_credentials
+
+Update agent toolset credentials
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateAgentToolsetCredentials" method="put" path="/toolsets/agents/{agentKey}/instances/{instanceId}/credentials" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    pipeshub.toolset_instances.update_agent_toolset_credentials(agent_key="<value>", instance_id="<id>")
+
+    # Use the SDK ...
+
+```
+
+### Parameters
+
+| Parameter                                                                                               | Type                                                                                                    | Required                                                                                                | Description                                                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `agent_key`                                                                                             | *str*                                                                                                   | :heavy_check_mark:                                                                                      | N/A                                                                                                     |
+| `instance_id`                                                                                           | *str*                                                                                                   | :heavy_check_mark:                                                                                      | N/A                                                                                                     |
+| `auth`                                                                                                  | [Optional[models.UpdateAgentToolsetCredentialsAuth]](../../models/updateagenttoolsetcredentialsauth.md) | :heavy_minus_sign:                                                                                      | N/A                                                                                                     |
+| `retries`                                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                        | :heavy_minus_sign:                                                                                      | Configuration to override the default retry behavior of the client.                                     |
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## remove_agent_toolset_credentials
+
+Remove agent toolset credentials
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="removeAgentToolsetCredentials" method="delete" path="/toolsets/agents/{agentKey}/instances/{instanceId}/credentials" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    pipeshub.toolset_instances.remove_agent_toolset_credentials(agent_key="<value>", instance_id="<id>")
+
+    # Use the SDK ...
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `instance_id`                                                       | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## reauthenticate_agent_toolset
+
+Mark agent instance for reauthentication
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="reauthenticateAgentToolset" method="post" path="/toolsets/agents/{agentKey}/instances/{instanceId}/reauthenticate" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    pipeshub.toolset_instances.reauthenticate_agent_toolset(agent_key="<value>", instance_id="<id>")
+
+    # Use the SDK ...
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `instance_id`                                                       | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Errors
 
@@ -235,7 +443,7 @@ List all toolset instances configured for the organization.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetInstances" method="get" path="/api/v1/toolsets/instances" -->
+<!-- UsageSnippet language="python" operationID="getToolsetInstances" method="get" path="/toolsets/instances" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -276,7 +484,7 @@ Create a new toolset instance (admin only).
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createToolsetInstance" method="post" path="/api/v1/toolsets/instances" -->
+<!-- UsageSnippet language="python" operationID="createToolsetInstance" method="post" path="/toolsets/instances" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -319,7 +527,7 @@ Get toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetInstance" method="get" path="/api/v1/toolsets/instances/{instanceId}" -->
+<!-- UsageSnippet language="python" operationID="getToolsetInstance" method="get" path="/toolsets/instances/{instanceId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -356,7 +564,7 @@ Update toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateToolsetInstance" method="put" path="/api/v1/toolsets/instances/{instanceId}" -->
+<!-- UsageSnippet language="python" operationID="updateToolsetInstance" method="put" path="/toolsets/instances/{instanceId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -396,7 +604,7 @@ Delete toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteToolsetInstance" method="delete" path="/api/v1/toolsets/instances/{instanceId}" -->
+<!-- UsageSnippet language="python" operationID="deleteToolsetInstance" method="delete" path="/toolsets/instances/{instanceId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -433,7 +641,7 @@ Authenticate toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="authenticateToolsetInstance" method="post" path="/api/v1/toolsets/instances/{instanceId}/authenticate" -->
+<!-- UsageSnippet language="python" operationID="authenticateToolsetInstance" method="post" path="/toolsets/instances/{instanceId}/authenticate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -467,13 +675,51 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
+## update_toolset_credentials
+
+Update toolset credentials
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="updateToolsetCredentials" method="put" path="/toolsets/instances/{instanceId}/credentials" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    pipeshub.toolset_instances.update_toolset_credentials(instance_id="<id>")
+
+    # Use the SDK ...
+
+```
+
+### Parameters
+
+| Parameter                                                                                     | Type                                                                                          | Required                                                                                      | Description                                                                                   |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `instance_id`                                                                                 | *str*                                                                                         | :heavy_check_mark:                                                                            | N/A                                                                                           |
+| `auth`                                                                                        | [Optional[models.UpdateToolsetCredentialsAuth]](../../models/updatetoolsetcredentialsauth.md) | :heavy_minus_sign:                                                                            | N/A                                                                                           |
+| `retries`                                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                              | :heavy_minus_sign:                                                                            | Configuration to override the default retry behavior of the client.                           |
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
 ## remove_toolset_credentials
 
 Remove toolset credentials
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="removeToolsetCredentials" method="delete" path="/api/v1/toolsets/instances/{instanceId}/credentials" -->
+<!-- UsageSnippet language="python" operationID="removeToolsetCredentials" method="delete" path="/toolsets/instances/{instanceId}/credentials" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -510,7 +756,7 @@ Mark instance for reauthentication
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="reauthenticateToolsetInstance" method="post" path="/api/v1/toolsets/instances/{instanceId}/reauthenticate" -->
+<!-- UsageSnippet language="python" operationID="reauthenticateToolsetInstance" method="post" path="/toolsets/instances/{instanceId}/reauthenticate" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -547,7 +793,7 @@ Get instance authentication status
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetInstanceStatus" method="get" path="/api/v1/toolsets/instances/{instanceId}/status" -->
+<!-- UsageSnippet language="python" operationID="getToolsetInstanceStatus" method="get" path="/toolsets/instances/{instanceId}/status" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

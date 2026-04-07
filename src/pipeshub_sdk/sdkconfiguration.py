@@ -17,8 +17,10 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 
 SERVERS = [
-    "https://{instance_url}",
+    "https://{instance_url}/api/v1",
     # Base API URL
+    "https://{instance_url}",
+    # Root URL (used for MCP endpoints mounted at /mcp)
 ]
 """Contains the list of servers available to the SDK"""
 

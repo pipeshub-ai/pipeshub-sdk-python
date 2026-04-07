@@ -2,15 +2,13 @@
 
 ## Overview
 
-OAuth 2.0 authorization flow for connectors requiring user consent
-
 ### Available Operations
 
-* [get_o_auth_authorization_url](#get_o_auth_authorization_url) - Get OAuth authorization URL
-* [handle_o_auth_callback](#handle_o_auth_callback) - OAuth callback handler
-* [~~get_token_from_code~~](#get_token_from_code) - Exchange Google authorization code for tokens :warning: **Deprecated**
+* [get_authorization_url](#get_authorization_url) - Get OAuth authorization URL
+* [handle_callback](#handle_callback) - OAuth callback handler
+* [~~exchange_code_for_token~~](#exchange_code_for_token) - Exchange Google authorization code for tokens :warning: **Deprecated**
 
-## get_o_auth_authorization_url
+## get_authorization_url
 
 Generate an OAuth authorization URL to start the OAuth flow.<br><br>
 <b>Flow:</b><br>
@@ -28,7 +26,7 @@ connector ID. This is validated in the callback.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getOAuthAuthorizationUrl" method="get" path="/api/v1/connectors/{connectorId}/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="getOAuthAuthorizationUrl" method="get" path="/connectors/{connectorId}/oauth/authorize" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -40,7 +38,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_o_auth.get_o_auth_authorization_url(connector_id="<id>")
+    res = pipeshub.connector_o_auth.get_authorization_url(connector_id="<id>")
 
     # Handle response
     print(res)
@@ -65,7 +63,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## handle_o_auth_callback
+## handle_callback
 
 Handle the OAuth callback from the identity provider.<br><br>
 <b>Note:</b><br>
@@ -81,14 +79,14 @@ user is redirected with error information.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="handleOAuthCallback" method="get" path="/api/v1/connectors/oauth/callback" -->
+<!-- UsageSnippet language="python" operationID="handleOAuthCallback" method="get" path="/connectors/oauth/callback" -->
 ```python
 from pipeshub_sdk import Pipeshub
 
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.connector_o_auth.handle_o_auth_callback()
+    res = pipeshub.connector_o_auth.handle_callback()
 
     # Handle response
     print(res)
@@ -115,7 +113,7 @@ with Pipeshub() as pipeshub:
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## ~~get_token_from_code~~
+## ~~exchange_code_for_token~~
 
 <b>⚠️ Deprecated:</b> Legacy Google Workspace token exchange endpoint. Use the generic
 OAuth flow via <code>/connectors/{connectorId}/oauth/authorize</code> instead.<br><br>
@@ -139,7 +137,7 @@ Requires organization admin privileges.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getTokenFromCode" method="post" path="/api/v1/connectors/getTokenFromCode" -->
+<!-- UsageSnippet language="python" operationID="getTokenFromCode" method="post" path="/connectors/getTokenFromCode" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -151,7 +149,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_o_auth.get_token_from_code(temp_code="<value>")
+    res = pipeshub.connector_o_auth.exchange_code_for_token(temp_code="<value>")
 
     # Handle response
     print(res)

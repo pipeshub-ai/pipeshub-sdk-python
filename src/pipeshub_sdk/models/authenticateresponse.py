@@ -21,6 +21,7 @@ AuthenticateResponseAllowedMethod = Union[
         "password",
         "google",
         "microsoft",
+        "azureAd",
         "oauth",
     ],
     UnrecognizedStr,

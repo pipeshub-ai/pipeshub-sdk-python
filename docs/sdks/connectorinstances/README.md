@@ -2,21 +2,19 @@
 
 ## Overview
 
-Create, manage, and delete connector instances for your organization
-
 ### Available Operations
 
-* [list_connector_instances](#list_connector_instances) - List connector instances
-* [create_connector_instance](#create_connector_instance) - Create connector instance
-* [list_active_connectors](#list_active_connectors) - List active connector instances
-* [list_inactive_connectors](#list_inactive_connectors) - List inactive connector instances
-* [list_configured_connectors](#list_configured_connectors) - List configured connector instances
-* [list_active_agent_connectors](#list_active_agent_connectors) - List active agent connectors
-* [get_connector_instance](#get_connector_instance) - Get connector instance
-* [delete_connector_instance](#delete_connector_instance) - Delete connector instance
-* [update_connector_name](#update_connector_name) - Update connector instance name
+* [list](#list) - List connector instances
+* [create](#create) - Create connector instance
+* [list_active](#list_active) - List active connector instances
+* [list_inactive](#list_inactive) - List inactive connector instances
+* [list_configured](#list_configured) - List configured connector instances
+* [list_active_agents](#list_active_agents) - List active agent connectors
+* [get](#get) - Get connector instance
+* [delete](#delete) - Delete connector instance
+* [update_name](#update_name) - Update connector instance name
 
-## list_connector_instances
+## list
 
 Get all configured connector instances for your organization.<br><br>
 <b>Overview:</b><br>
@@ -33,7 +31,7 @@ are only visible to their creators.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listConnectorInstances" method="get" path="/api/v1/connectors" -->
+<!-- UsageSnippet language="python" operationID="listConnectorInstances" method="get" path="/connectors" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -45,7 +43,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_connector_instances(scope="team", page=1, limit=20)
+    res = pipeshub.connector_instances.list(scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -72,7 +70,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_connector_instance
+## create
 
 Create a new connector instance from a registry type.<br><br>
 <b>Overview:</b><br>
@@ -95,7 +93,7 @@ and filter setup before it can be activated.<br><br>
 
 ### Example Usage: confluence
 
-<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/api/v1/connectors" example="confluence" -->
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="confluence" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -107,7 +105,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.create_connector_instance(connector_type="confluence", instance_name="My Confluence", scope="personal", auth_type="API_TOKEN", config={
+    res = pipeshub.connector_instances.create(connector_type="confluence", instance_name="My Confluence", scope="personal", auth_type="API_TOKEN", oauth_config_id="oauth_config_123", config={
         "auth": {
             "values": {
                 "apiKey": "sk-xxxxx",
@@ -152,7 +150,7 @@ with Pipeshub(
 ```
 ### Example Usage: googleDrive
 
-<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/api/v1/connectors" example="googleDrive" -->
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="googleDrive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -164,7 +162,64 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.create_connector_instance(connector_type="google-drive", instance_name="Company Google Drive", scope="team", auth_type="OAUTH_ADMIN_CONSENT", config={
+    res = pipeshub.connector_instances.create(connector_type="google-drive", instance_name="Company Google Drive", scope="team", auth_type="OAUTH_ADMIN_CONSENT", oauth_config_id="oauth_config_123", config={
+        "auth": {
+            "values": {
+                "apiKey": "sk-xxxxx",
+                "baseUrl": "https://api.example.com",
+            },
+            "oauth_config_id": "oauth_config_123",
+        },
+        "sync": {
+            "scheduled_config": {
+                "cron_expression": "0 */6 * * *",
+                "timezone": "America/New_York",
+            },
+            "webhook_config": {
+                "events": [
+                    "file.created",
+                    "file.modified",
+                    "file.deleted",
+                ],
+            },
+        },
+        "filters": {
+            "sync": {
+                "values": {
+                    "folders": [
+                        "folder_id_1",
+                        "folder_id_2",
+                    ],
+                    "fileTypes": [
+                        "pdf",
+                        "docx",
+                        "xlsx",
+                    ],
+                    "includeShared": True,
+                },
+            },
+        },
+    }, base_url="https://confluence.mycompany.com")
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: slackWithOAuthApp
+
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="slackWithOAuthApp" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.connector_instances.create(connector_type="slack", instance_name="My Team Slack", scope="personal", auth_type="OAUTH", oauth_config_id="oauth_config_123", config={
         "auth": {
             "values": {
                 "apiKey": "sk-xxxxx",
@@ -216,6 +271,7 @@ with Pipeshub(
 | `instance_name`                                                                                                                                                                                                                                 | *str*                                                                                                                                                                                                                                           | :heavy_check_mark:                                                                                                                                                                                                                              | Display name for this connector instance                                                                                                                                                                                                        | Marketing Team Drive                                                                                                                                                                                                                            |
 | `scope`                                                                                                                                                                                                                                         | [models.ConnectorScope](../../models/connectorscope.md)                                                                                                                                                                                         | :heavy_check_mark:                                                                                                                                                                                                                              | Scope determines visibility and access control for connectors:<br><br/><ul><br/><li><code>team</code> - Available to all users in the organization (admin-only creation)</li><br/><li><code>personal</code> - Private to the creating user only</li><br/></ul><br/> | team                                                                                                                                                                                                                                            |
 | `auth_type`                                                                                                                                                                                                                                     | [Optional[models.AuthType]](../../models/authtype.md)                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                              | Authentication type (required if connector supports multiple auth methods)                                                                                                                                                                      | OAUTH                                                                                                                                                                                                                                           |
+| `oauth_config_id`                                                                                                                                                                                                                               | *Optional[str]*                                                                                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                                                                                              | ID of admin-created OAuth App to use (required for non-admin users creating OAuth connectors, optional for admins)                                                                                                                              | oauth_config_123                                                                                                                                                                                                                                |
 | `config`                                                                                                                                                                                                                                        | [Optional[models.CreateConnectorRequestConfig]](../../models/createconnectorrequestconfig.md)                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                              | Initial configuration (can also be set after creation)                                                                                                                                                                                          |                                                                                                                                                                                                                                                 |
 | `base_url`                                                                                                                                                                                                                                      | *Optional[str]*                                                                                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                                                                                              | Base URL for self-hosted instances (e.g., Confluence Server, GitLab Self-Managed)                                                                                                                                                               | https://confluence.mycompany.com                                                                                                                                                                                                                |
 | `retries`                                                                                                                                                                                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                                                                | :heavy_minus_sign:                                                                                                                                                                                                                              | Configuration to override the default retry behavior of the client.                                                                                                                                                                             |                                                                                                                                                                                                                                                 |
@@ -230,7 +286,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_active_connectors
+## list_active
 
 Get all active (enabled) connector instances.<br><br>
 <b>Overview:</b><br>
@@ -240,7 +296,7 @@ These are connectors currently syncing data or available to AI agents.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listActiveConnectors" method="get" path="/api/v1/connectors/active" -->
+<!-- UsageSnippet language="python" operationID="listActiveConnectors" method="get" path="/connectors/active" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -252,7 +308,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_active_connectors()
+    res = pipeshub.connector_instances.list_active()
 
     # Handle response
     print(res)
@@ -275,13 +331,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_inactive_connectors
+## list_inactive
 
 Get all inactive (disabled) connector instances.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listInactiveConnectors" method="get" path="/api/v1/connectors/inactive" -->
+<!-- UsageSnippet language="python" operationID="listInactiveConnectors" method="get" path="/connectors/inactive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -293,7 +349,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_inactive_connectors()
+    res = pipeshub.connector_instances.list_inactive()
 
     # Handle response
     print(res)
@@ -316,7 +372,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_configured_connectors
+## list_configured
 
 Get all connector instances that have completed configuration.<br><br>
 <b>Overview:</b><br>
@@ -326,7 +382,7 @@ These have all required settings but may not be active yet.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listConfiguredConnectors" method="get" path="/api/v1/connectors/configured" -->
+<!-- UsageSnippet language="python" operationID="listConfiguredConnectors" method="get" path="/connectors/configured" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -338,7 +394,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_configured_connectors(scope="team", page=1, limit=20)
+    res = pipeshub.connector_instances.list_configured(scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -365,7 +421,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_active_agent_connectors
+## list_active_agents
 
 Get connector instances enabled for AI agent integration.<br><br>
 <b>Overview:</b><br>
@@ -375,7 +431,7 @@ These are available to AI agents for querying and actions.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listActiveAgentConnectors" method="get" path="/api/v1/connectors/agents/active" -->
+<!-- UsageSnippet language="python" operationID="listActiveAgentConnectors" method="get" path="/connectors/agents/active" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -387,7 +443,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.list_active_agent_connectors(scope="team", page=1, limit=20)
+    res = pipeshub.connector_instances.list_active_agents(scope="team", page=1, limit=20)
 
     # Handle response
     print(res)
@@ -414,13 +470,13 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_connector_instance
+## get
 
 Retrieve a specific connector instance by ID.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getConnectorInstance" method="get" path="/api/v1/connectors/{connectorId}" -->
+<!-- UsageSnippet language="python" operationID="getConnectorInstance" method="get" path="/connectors/{connectorId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -432,7 +488,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.get_connector_instance(connector_id="conn_abc123")
+    res = pipeshub.connector_instances.get(connector_id="conn_abc123")
 
     # Handle response
     print(res)
@@ -456,7 +512,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_connector_instance
+## delete
 
 Delete a connector instance and all associated data.<br><br>
 <b>Warning:</b><br>
@@ -471,7 +527,7 @@ Synced records in knowledge bases are NOT deleted.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteConnectorInstance" method="delete" path="/api/v1/connectors/{connectorId}" -->
+<!-- UsageSnippet language="python" operationID="deleteConnectorInstance" method="delete" path="/connectors/{connectorId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -483,7 +539,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.delete_connector_instance(connector_id="<id>")
+    res = pipeshub.connector_instances.delete(connector_id="<id>")
 
     # Handle response
     print(res)
@@ -507,7 +563,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_connector_name
+## update_name
 
 Update the display name of a connector instance.<br><br>
 <b>Note:</b> This only updates the display name, not the connector configuration.
@@ -515,7 +571,7 @@ Update the display name of a connector instance.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateConnectorName" method="put" path="/api/v1/connectors/{connectorId}/name" -->
+<!-- UsageSnippet language="python" operationID="updateConnectorName" method="put" path="/connectors/{connectorId}/name" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -527,7 +583,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.update_connector_name(connector_id="<id>", instance_name="Sales Team Drive (Updated)")
+    res = pipeshub.connector_instances.update_name(connector_id="<id>", instance_name="Sales Team Drive (Updated)")
 
     # Handle response
     print(res)

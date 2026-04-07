@@ -26,13 +26,14 @@ def test_openid_connect_oauth_authorization_server_metadata():
     test_http_client = create_test_http_client("oauthAuthorizationServerMetadata")
 
     with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
         security=models.Security(),
         client=test_http_client,
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.open_id_connect.oauth_authorization_server_metadata()
+        res = pipeshub.open_id_connect.oauth_authorization_server_metadata(
+            server_url="http://localhost:3000/api/v1"
+        )
         assert res is not None
         assert res == models.OpenIDConfiguration(
             scopes_supported=[
@@ -81,13 +82,14 @@ def test_openid_connect_oauth_protected_resource():
     test_http_client = create_test_http_client("oauthProtectedResource")
 
     with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
         security=models.Security(),
         client=test_http_client,
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.open_id_connect.oauth_protected_resource()
+        res = pipeshub.open_id_connect.oauth_protected_resource(
+            server_url="http://localhost:3000/api/v1"
+        )
         assert res is not None
         assert res == models.OAuthProtectedResourceMetadata(
             resource="https://critical-thongs.biz",
@@ -107,13 +109,14 @@ def test_openid_connect_openid_configuration():
     test_http_client = create_test_http_client("openidConfiguration")
 
     with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
         security=models.Security(),
         client=test_http_client,
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.open_id_connect.get_configuration()
+        res = pipeshub.open_id_connect.get_configuration(
+            server_url="http://localhost:3000/api/v1"
+        )
         assert res is not None
         assert res == models.OpenIDConfiguration(
             scopes_supported=[
@@ -162,13 +165,12 @@ def test_openid_connect_jwks():
     test_http_client = create_test_http_client("jwks")
 
     with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
         security=models.Security(),
         client=test_http_client,
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.open_id_connect.jwks()
+        res = pipeshub.open_id_connect.jwks(server_url="http://localhost:3000/api/v1")
         assert res is not None
         assert res == models.Jwks(
             keys=[

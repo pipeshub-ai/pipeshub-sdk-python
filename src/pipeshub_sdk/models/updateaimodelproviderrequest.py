@@ -10,72 +10,17 @@ from pipeshub_sdk.types import (
     UNSET_SENTINEL,
 )
 import pydantic
-from pydantic import ConfigDict, model_serializer
-from typing import Any, Dict, Optional
+from pydantic import model_serializer
+from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class UpdateAIModelProviderRequestConfigurationTypedDict(TypedDict):
-    r"""Provider-specific configuration. Keys vary by provider."""
-
-    model: NotRequired[str]
-    r"""Model name/identifier"""
-    api_key: NotRequired[str]
-    r"""API key for the provider"""
-    model_friendly_name: NotRequired[str]
-    r"""Human-readable display name for the model"""
-    endpoint: NotRequired[str]
-    r"""Custom endpoint URL (for Azure, self-hosted)"""
+    r"""Updated provider configuration"""
 
 
 class UpdateAIModelProviderRequestConfiguration(BaseModel):
-    r"""Provider-specific configuration. Keys vary by provider."""
-
-    model_config = ConfigDict(
-        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
-    )
-    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
-
-    model: Optional[str] = None
-    r"""Model name/identifier"""
-
-    api_key: Annotated[Optional[str], pydantic.Field(alias="apiKey")] = None
-    r"""API key for the provider"""
-
-    model_friendly_name: Annotated[
-        Optional[str], pydantic.Field(alias="modelFriendlyName")
-    ] = None
-    r"""Human-readable display name for the model"""
-
-    endpoint: Optional[str] = None
-    r"""Custom endpoint URL (for Azure, self-hosted)"""
-
-    @property
-    def additional_properties(self):
-        return self.__pydantic_extra__
-
-    @additional_properties.setter
-    def additional_properties(self, value):
-        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["model", "apiKey", "modelFriendlyName", "endpoint"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-            serialized.pop(k, serialized.pop(n, None))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-        for k, v in serialized.items():
-            m[k] = v
-
-        return m
+    r"""Updated provider configuration"""
 
 
 class UpdateAIModelProviderRequestTypedDict(TypedDict):
@@ -84,7 +29,7 @@ class UpdateAIModelProviderRequestTypedDict(TypedDict):
     provider: str
     r"""Provider name"""
     configuration: UpdateAIModelProviderRequestConfigurationTypedDict
-    r"""Provider-specific configuration. Keys vary by provider."""
+    r"""Updated provider configuration"""
     is_multimodal: NotRequired[bool]
     is_reasoning: NotRequired[bool]
     is_default: NotRequired[bool]
@@ -98,7 +43,7 @@ class UpdateAIModelProviderRequest(BaseModel):
     r"""Provider name"""
 
     configuration: UpdateAIModelProviderRequestConfiguration
-    r"""Provider-specific configuration. Keys vary by provider."""
+    r"""Updated provider configuration"""
 
     is_multimodal: Annotated[Optional[bool], pydantic.Field(alias="isMultimodal")] = (
         None
@@ -140,10 +85,6 @@ class UpdateAIModelProviderRequest(BaseModel):
         return m
 
 
-try:
-    UpdateAIModelProviderRequestConfiguration.model_rebuild()
-except NameError:
-    pass
 try:
     UpdateAIModelProviderRequest.model_rebuild()
 except NameError:

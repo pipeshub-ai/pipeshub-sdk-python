@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional
 class PermissionsSDK(BaseSDK):
     r"""Permission management for knowledge bases"""
 
-    def create_kb_permission(
+    def grant(
         self,
         *,
         kb_id: str,
@@ -41,6 +41,8 @@ class PermissionsSDK(BaseSDK):
         <b>Grant to Multiple:</b><br>
         Provide arrays of userIds and/or teamIds to grant the same role to multiple entities.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param kb_id:
         :param role: Permission role to grant
@@ -72,7 +74,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -87,6 +89,7 @@ class PermissionsSDK(BaseSDK):
                 request.body, False, False, "json", models.CreateKBPermissionRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -128,7 +131,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_kb_permission_async(
+    async def grant_async(
         self,
         *,
         kb_id: str,
@@ -156,6 +159,8 @@ class PermissionsSDK(BaseSDK):
         <b>Grant to Multiple:</b><br>
         Provide arrays of userIds and/or teamIds to grant the same role to multiple entities.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param kb_id:
         :param role: Permission role to grant
@@ -187,7 +192,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -202,6 +207,7 @@ class PermissionsSDK(BaseSDK):
                 request.body, False, False, "json", models.CreateKBPermissionRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -243,7 +249,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_kb_permissions(
+    def list(
         self,
         *,
         kb_id: str,
@@ -257,6 +263,8 @@ class PermissionsSDK(BaseSDK):
         Retrieve all permissions granted on a knowledge base.<br><br>
         <b>Required Permission:</b> ORGANIZER or higher to see all permissions, others see only their own.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param retries: Override the default retry configuration for this method
@@ -280,7 +288,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -292,6 +300,7 @@ class PermissionsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -333,7 +342,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_kb_permissions_async(
+    async def list_async(
         self,
         *,
         kb_id: str,
@@ -347,6 +356,8 @@ class PermissionsSDK(BaseSDK):
         Retrieve all permissions granted on a knowledge base.<br><br>
         <b>Required Permission:</b> ORGANIZER or higher to see all permissions, others see only their own.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param retries: Override the default retry configuration for this method
@@ -370,7 +381,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -382,6 +393,7 @@ class PermissionsSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -423,7 +435,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_kb_permissions(
+    def update(
         self,
         *,
         kb_id: str,
@@ -440,6 +452,8 @@ class PermissionsSDK(BaseSDK):
         Update permission roles for users or teams.<br><br>
         <b>Required Permission:</b> OWNER or ORGANIZER
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param role:
@@ -471,7 +485,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -490,6 +504,7 @@ class PermissionsSDK(BaseSDK):
                 models.UpdateKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -531,7 +546,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_kb_permissions_async(
+    async def update_async(
         self,
         *,
         kb_id: str,
@@ -548,6 +563,8 @@ class PermissionsSDK(BaseSDK):
         Update permission roles for users or teams.<br><br>
         <b>Required Permission:</b> OWNER or ORGANIZER
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param role:
@@ -579,7 +596,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -598,6 +615,7 @@ class PermissionsSDK(BaseSDK):
                 models.UpdateKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -639,7 +657,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_kb_permissions(
+    def delete(
         self,
         *,
         kb_id: str,
@@ -656,6 +674,8 @@ class PermissionsSDK(BaseSDK):
         <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
         <b>Note:</b> Cannot remove the last OWNER from a KB.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param kb_id:
         :param user_ids:
@@ -685,7 +705,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -704,6 +724,7 @@ class PermissionsSDK(BaseSDK):
                 models.DeleteKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -745,7 +766,7 @@ class PermissionsSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_kb_permissions_async(
+    async def delete_async(
         self,
         *,
         kb_id: str,
@@ -762,6 +783,8 @@ class PermissionsSDK(BaseSDK):
         <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
         <b>Note:</b> Cannot remove the last OWNER from a KB.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param kb_id:
         :param user_ids:
@@ -791,7 +814,7 @@ class PermissionsSDK(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/knowledgeBase/{kbId}/permissions",
+            path="/knowledgeBase/{kbId}/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -810,6 +833,7 @@ class PermissionsSDK(BaseSDK):
                 models.DeleteKBPermissionsRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 

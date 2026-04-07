@@ -6,12 +6,12 @@ Permission management for knowledge bases
 
 ### Available Operations
 
-* [create_kb_permission](#create_kb_permission) - Grant permissions
-* [list_kb_permissions](#list_kb_permissions) - List permissions
-* [update_kb_permissions](#update_kb_permissions) - Update permissions
-* [delete_kb_permissions](#delete_kb_permissions) - Remove permissions
+* [grant](#grant) - Grant permissions
+* [list](#list) - List permissions
+* [update](#update) - Update permissions
+* [delete](#delete) - Remove permissions
 
-## create_kb_permission
+## grant
 
 Grant access permissions to users or teams for a knowledge base.<br><br>
 <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
@@ -30,7 +30,7 @@ Provide arrays of userIds and/or teamIds to grant the same role to multiple enti
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createKBPermission" method="post" path="/api/v1/knowledgeBase/{kbId}/permissions" -->
+<!-- UsageSnippet language="python" operationID="createKBPermission" method="post" path="/knowledgeBase/{kbId}/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -42,7 +42,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.permissions.create_kb_permission(kb_id="<id>", role="OWNER")
+    res = pipeshub.permissions.grant(kb_id="<id>", role="OWNER")
 
     # Handle response
     print(res)
@@ -69,7 +69,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_kb_permissions
+## list
 
 Retrieve all permissions granted on a knowledge base.<br><br>
 <b>Required Permission:</b> ORGANIZER or higher to see all permissions, others see only their own.
@@ -77,7 +77,7 @@ Retrieve all permissions granted on a knowledge base.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listKBPermissions" method="get" path="/api/v1/knowledgeBase/{kbId}/permissions" -->
+<!-- UsageSnippet language="python" operationID="listKBPermissions" method="get" path="/knowledgeBase/{kbId}/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -89,7 +89,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.permissions.list_kb_permissions(kb_id="<id>")
+    res = pipeshub.permissions.list(kb_id="<id>")
 
     # Handle response
     print(res)
@@ -113,7 +113,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_kb_permissions
+## update
 
 Update permission roles for users or teams.<br><br>
 <b>Required Permission:</b> OWNER or ORGANIZER
@@ -121,7 +121,7 @@ Update permission roles for users or teams.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateKBPermissions" method="put" path="/api/v1/knowledgeBase/{kbId}/permissions" -->
+<!-- UsageSnippet language="python" operationID="updateKBPermissions" method="put" path="/knowledgeBase/{kbId}/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -133,7 +133,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.permissions.update_kb_permissions(kb_id="<id>", role="WRITER")
+    pipeshub.permissions.update(kb_id="<id>", role="WRITER")
 
     # Use the SDK ...
 
@@ -155,7 +155,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_kb_permissions
+## delete
 
 Remove access permissions from users or teams.<br><br>
 <b>Required Permission:</b> OWNER or ORGANIZER<br><br>
@@ -164,7 +164,7 @@ Remove access permissions from users or teams.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteKBPermissions" method="delete" path="/api/v1/knowledgeBase/{kbId}/permissions" -->
+<!-- UsageSnippet language="python" operationID="deleteKBPermissions" method="delete" path="/knowledgeBase/{kbId}/permissions" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -176,7 +176,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.permissions.delete_kb_permissions(kb_id="<id>")
+    pipeshub.permissions.delete(kb_id="<id>")
 
     # Use the SDK ...
 

@@ -2,44 +2,13 @@
 # @generated-id: 94edfa6c223e
 
 from __future__ import annotations
-from .aimodelsconfig import AIModelsConfig, AIModelsConfigTypedDict
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import NotRequired, TypedDict
+from pipeshub_sdk.types import BaseModel
+from typing_extensions import TypedDict
 
 
 class GetAIModelsProvidersResponseTypedDict(TypedDict):
     r"""AI model providers retrieved"""
 
-    status: NotRequired[str]
-    message: NotRequired[str]
-    models: NotRequired[AIModelsConfigTypedDict]
-    r"""Must have at least one model type configured"""
-
 
 class GetAIModelsProvidersResponse(BaseModel):
     r"""AI model providers retrieved"""
-
-    status: Optional[str] = None
-
-    message: Optional[str] = None
-
-    models: Optional[AIModelsConfig] = None
-    r"""Must have at least one model type configured"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["status", "message", "models"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m

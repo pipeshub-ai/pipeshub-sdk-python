@@ -18,6 +18,7 @@ Method = Literal[
     "password",
     "google",
     "microsoft",
+    "azureAd",
     "oauth",
 ]
 r"""Authentication method to use"""
@@ -48,6 +49,7 @@ class AuthenticateRequestTypedDict(TypedDict):
     - `otp`: `{ otp: \"123456\" }` (6-digit code)
     - `google`: `\"google-id-token-string\"`
     - `microsoft`: `{ accessToken: \"...\", idToken: \"...\" }`
+    - `azureAd`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `oauth`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `samlSso`: handled via redirect flow
 
@@ -70,6 +72,7 @@ class AuthenticateRequest(BaseModel):
     - `otp`: `{ otp: \"123456\" }` (6-digit code)
     - `google`: `\"google-id-token-string\"`
     - `microsoft`: `{ accessToken: \"...\", idToken: \"...\" }`
+    - `azureAd`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `oauth`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `samlSso`: handled via redirect flow
 

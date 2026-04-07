@@ -2,7 +2,6 @@
 # @generated-id: 55e27edbc32c
 
 from __future__ import annotations
-from .agentcreateresponse import AgentCreateResponse, AgentCreateResponseTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -12,7 +11,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
@@ -134,54 +133,23 @@ class CreateAgentToolset(BaseModel):
         return m
 
 
-class CreateAgentFiltersTypedDict(TypedDict):
-    record_groups: NotRequired[List[str]]
-    records: NotRequired[List[str]]
-
-
-class CreateAgentFilters(BaseModel):
-    record_groups: Annotated[
-        Optional[List[str]], pydantic.Field(alias="recordGroups")
-    ] = None
-
-    records: Optional[List[str]] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["recordGroups", "records"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-CreateAgentFiltersUnionTypedDict = TypeAliasType(
-    "CreateAgentFiltersUnionTypedDict", Union[CreateAgentFiltersTypedDict, str]
+CreateAgentFiltersTypedDict = TypeAliasType(
+    "CreateAgentFiltersTypedDict", Union[Dict[str, Any], str]
 )
 
 
-CreateAgentFiltersUnion = TypeAliasType(
-    "CreateAgentFiltersUnion", Union[CreateAgentFilters, str]
-)
+CreateAgentFilters = TypeAliasType("CreateAgentFilters", Union[Dict[str, Any], str])
 
 
 class CreateAgentKnowledgeTypedDict(TypedDict):
     connector_id: NotRequired[str]
-    filters: NotRequired[CreateAgentFiltersUnionTypedDict]
+    filters: NotRequired[CreateAgentFiltersTypedDict]
 
 
 class CreateAgentKnowledge(BaseModel):
     connector_id: Annotated[Optional[str], pydantic.Field(alias="connectorId")] = None
 
-    filters: Optional[CreateAgentFiltersUnion] = None
+    filters: Optional[CreateAgentFilters] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -205,8 +173,6 @@ class CreateAgentRequestTypedDict(TypedDict):
 
     name: str
     r"""Agent display name"""
-    models: List[CreateAgentModelUnionTypedDict]
-    r"""Agent model configuration entries"""
     description: NotRequired[str]
     r"""What the agent does"""
     system_prompt: NotRequired[str]
@@ -215,12 +181,14 @@ class CreateAgentRequestTypedDict(TypedDict):
     r"""Initial greeting shown when conversation starts"""
     instructions: NotRequired[Nullable[str]]
     r"""Additional agent execution instructions"""
+    models: NotRequired[List[CreateAgentModelUnionTypedDict]]
+    r"""Agent model configuration entries"""
     toolsets: NotRequired[List[CreateAgentToolsetTypedDict]]
     r"""Toolsets attached to the agent (instance-aware)"""
     knowledge: NotRequired[List[CreateAgentKnowledgeTypedDict]]
     r"""Knowledge sources connected to the agent"""
-    tags: NotRequired[List[str]]
-    r"""Tags for categorization"""
+    is_public: NotRequired[bool]
+    r"""Make agent available to all org users"""
     share_with_org: NotRequired[bool]
     r"""Share agent with the organization"""
 
@@ -230,9 +198,6 @@ class CreateAgentRequest(BaseModel):
 
     name: str
     r"""Agent display name"""
-
-    models: List[CreateAgentModelUnion]
-    r"""Agent model configuration entries"""
 
     description: Optional[str] = None
     r"""What the agent does"""
@@ -246,14 +211,17 @@ class CreateAgentRequest(BaseModel):
     instructions: OptionalNullable[str] = UNSET
     r"""Additional agent execution instructions"""
 
+    models: Optional[List[CreateAgentModelUnion]] = None
+    r"""Agent model configuration entries"""
+
     toolsets: Optional[List[CreateAgentToolset]] = None
     r"""Toolsets attached to the agent (instance-aware)"""
 
     knowledge: Optional[List[CreateAgentKnowledge]] = None
     r"""Knowledge sources connected to the agent"""
 
-    tags: Optional[List[str]] = None
-    r"""Tags for categorization"""
+    is_public: Annotated[Optional[bool], pydantic.Field(alias="isPublic")] = False
+    r"""Make agent available to all org users"""
 
     share_with_org: Annotated[Optional[bool], pydantic.Field(alias="shareWithOrg")] = (
         False
@@ -268,63 +236,14 @@ class CreateAgentRequest(BaseModel):
                 "systemPrompt",
                 "startMessage",
                 "instructions",
+                "models",
                 "toolsets",
                 "knowledge",
-                "tags",
+                "isPublic",
                 "shareWithOrg",
             ]
         )
         nullable_fields = set(["instructions"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-            is_nullable_and_explicitly_set = (
-                k in nullable_fields
-                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
-            )
-
-            if val != UNSET_SENTINEL:
-                if (
-                    val is not None
-                    or k not in optional_fields
-                    or is_nullable_and_explicitly_set
-                ):
-                    m[k] = val
-
-        return m
-
-
-class CreateAgentResponseTypedDict(TypedDict):
-    r"""Agent created"""
-
-    status: NotRequired[str]
-    message: NotRequired[str]
-    agent: NotRequired[AgentCreateResponseTypedDict]
-    r"""Agent object returned from create endpoint"""
-    warnings: NotRequired[Nullable[List[str]]]
-    r"""Warnings from agent creation (e.g., failed toolset connections)"""
-
-
-class CreateAgentResponse(BaseModel):
-    r"""Agent created"""
-
-    status: Optional[str] = None
-
-    message: Optional[str] = None
-
-    agent: Optional[AgentCreateResponse] = None
-    r"""Agent object returned from create endpoint"""
-
-    warnings: OptionalNullable[List[str]] = UNSET
-    r"""Warnings from agent creation (e.g., failed toolset connections)"""
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["status", "message", "agent", "warnings"])
-        nullable_fields = set(["warnings"])
         serialized = handler(self)
         m = {}
 
@@ -357,10 +276,6 @@ except NameError:
     pass
 try:
     CreateAgentToolset.model_rebuild()
-except NameError:
-    pass
-try:
-    CreateAgentFilters.model_rebuild()
 except NameError:
     pass
 try:

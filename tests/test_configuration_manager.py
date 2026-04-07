@@ -5,55 +5,6 @@ from pipeshub_sdk import Pipeshub, models
 from tests.test_client import create_test_http_client
 
 
-def test_configuration_manager_get_ai_models_providers():
-    test_http_client = create_test_http_client("getAIModelsProviders")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.configuration_manager.get_ai_models_providers()
-        assert res is not None
-        assert res == models.GetAIModelsProvidersResponse()
-
-
-def test_configuration_manager_set_metrics_collection_push_interval():
-    test_http_client = create_test_http_client("setMetricsCollectionPushInterval")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.configuration_manager.set_metrics_collection_push_interval(
-            push_interval_ms=394545
-        )
-        assert res is not None
-        assert res == models.SetMetricsCollectionPushIntervalResponse()
-
-
-def test_configuration_manager_set_metrics_collection_remote_server():
-    test_http_client = create_test_http_client("setMetricsCollectionRemoteServer")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.configuration_manager.set_metrics_collection_remote_server(
-            server_url_="https://exhausted-perp.net/"
-        )
-        assert res is not None
-        assert res == models.SetMetricsCollectionRemoteServerResponse()
-
-
 def test_configuration_manager_get_slack_bot_configs():
     test_http_client = create_test_http_client("getSlackBotConfigs")
 
@@ -79,9 +30,7 @@ def test_configuration_manager_create_slack_bot_config():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.configuration_manager.create_slack_bot_config(
-            name="<value>", bot_token="<value>", signing_secret="<value>"
-        )
+        res = pipeshub.configuration_manager.create_slack_bot_config(request={})
         assert res is not None
         assert res == models.CreateSlackBotConfigResponse()
 
@@ -97,10 +46,7 @@ def test_configuration_manager_update_slack_bot_config():
         assert pipeshub is not None
 
         res = pipeshub.configuration_manager.update_slack_bot_config(
-            config_id="<id>",
-            name="<value>",
-            bot_token="<value>",
-            signing_secret="<value>",
+            config_id="<id>", body={}
         )
         assert res is not None
         assert res == models.UpdateSlackBotConfigResponse()
@@ -119,33 +65,3 @@ def test_configuration_manager_delete_slack_bot_config():
         res = pipeshub.configuration_manager.delete_slack_bot_config(config_id="<id>")
         assert res is not None
         assert res == models.DeleteSlackBotConfigResponse()
-
-
-def test_configuration_manager_get_ai_models_config():
-    test_http_client = create_test_http_client("getAIModelsConfig")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.configuration_manager.get_ai_models_config()
-        assert res is not None
-        assert res == models.AIModelsConfig()
-
-
-def test_configuration_manager_create_ai_models_config():
-    test_http_client = create_test_http_client("createAIModelsConfig")
-
-    with Pipeshub(
-        server_url="http://localhost:3000/api/v1",
-        security=models.Security(),
-        client=test_http_client,
-    ) as pipeshub:
-        assert pipeshub is not None
-
-        res = pipeshub.configuration_manager.create_ai_models_config()
-        assert res is not None
-        assert res == models.CreateAIModelsConfigResponse()

@@ -9,43 +9,53 @@ from typing import Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+class InputSchemaTypedDict(TypedDict):
+    r"""JSON Schema for tool inputs"""
+
+
+class InputSchema(BaseModel):
+    r"""JSON Schema for tool inputs"""
+
+
 class AgentToolTypedDict(TypedDict):
-    r"""A tool available within a toolset"""
+    r"""A tool that agents can use to perform actions"""
 
     key: NotRequired[str]
-    r"""Unique key of the tool"""
+    r"""Unique tool identifier"""
     name: NotRequired[str]
-    r"""Short name of the tool"""
-    full_name: NotRequired[str]
-    r"""Fully qualified tool name (toolsetName.toolName)"""
-    toolset_name: NotRequired[str]
-    r"""Name of the parent toolset"""
+    r"""Display name"""
     description: NotRequired[str]
-    r"""Human-readable description of what the tool does"""
+    r"""What the tool does"""
+    input_schema: NotRequired[InputSchemaTypedDict]
+    r"""JSON Schema for tool inputs"""
+    is_enabled: NotRequired[bool]
+    r"""Whether tool is currently available"""
 
 
 class AgentTool(BaseModel):
-    r"""A tool available within a toolset"""
+    r"""A tool that agents can use to perform actions"""
 
-    key: Annotated[Optional[str], pydantic.Field(alias="_key")] = None
-    r"""Unique key of the tool"""
+    key: Optional[str] = None
+    r"""Unique tool identifier"""
 
     name: Optional[str] = None
-    r"""Short name of the tool"""
-
-    full_name: Annotated[Optional[str], pydantic.Field(alias="fullName")] = None
-    r"""Fully qualified tool name (toolsetName.toolName)"""
-
-    toolset_name: Annotated[Optional[str], pydantic.Field(alias="toolsetName")] = None
-    r"""Name of the parent toolset"""
+    r"""Display name"""
 
     description: Optional[str] = None
-    r"""Human-readable description of what the tool does"""
+    r"""What the tool does"""
+
+    input_schema: Annotated[
+        Optional[InputSchema], pydantic.Field(alias="inputSchema")
+    ] = None
+    r"""JSON Schema for tool inputs"""
+
+    is_enabled: Annotated[Optional[bool], pydantic.Field(alias="isEnabled")] = None
+    r"""Whether tool is currently available"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["_key", "name", "fullName", "toolsetName", "description"]
+            ["key", "name", "description", "inputSchema", "isEnabled"]
         )
         serialized = handler(self)
         m = {}

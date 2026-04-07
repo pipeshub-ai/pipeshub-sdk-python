@@ -14,7 +14,7 @@ from typing import Mapping, Optional, Union
 class Records(BaseSDK):
     r"""Record management and operations"""
 
-    def get_all_records(
+    def get_all(
         self,
         *,
         page: Optional[int] = 1,
@@ -54,6 +54,8 @@ class Records(BaseSDK):
         <li>Pagination metadata</li>
         </ul>
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param page:
         :param limit:
@@ -97,7 +99,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/records",
+            path="/knowledgeBase/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -109,6 +111,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -150,7 +153,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_records_async(
+    async def get_all_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -190,6 +193,8 @@ class Records(BaseSDK):
         <li>Pagination metadata</li>
         </ul>
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param page:
         :param limit:
@@ -233,7 +238,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/records",
+            path="/knowledgeBase/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -245,6 +250,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -286,7 +292,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_kb_records(
+    def get(
         self,
         *,
         kb_id: str,
@@ -321,6 +327,8 @@ class Records(BaseSDK):
         <b>Sorting:</b><br>
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
         :param page:
@@ -364,7 +372,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/records",
+            path="/knowledgeBase/{kbId}/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -376,6 +384,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -417,7 +426,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_kb_records_async(
+    async def get_async(
         self,
         *,
         kb_id: str,
@@ -452,6 +461,8 @@ class Records(BaseSDK):
         <b>Sorting:</b><br>
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
         :param page:
@@ -495,7 +506,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/records",
+            path="/knowledgeBase/{kbId}/records",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -507,6 +518,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -584,6 +596,8 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -626,7 +640,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/children",
+            path="/knowledgeBase/{kbId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -638,6 +652,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -715,6 +730,8 @@ class Records(BaseSDK):
         Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param page:
         :param limit:
@@ -757,7 +774,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/children",
+            path="/knowledgeBase/{kbId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -769,6 +786,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -810,7 +828,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_record_by_id(
+    def get_by_id(
         self,
         *,
         record_id: str,
@@ -828,6 +846,8 @@ class Records(BaseSDK):
         <b>File Conversion:</b><br>
         Use the optional <code>convertTo</code> parameter to request file format conversion (e.g., PDF to text).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to
@@ -853,7 +873,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/record/{recordId}",
+            path="/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -865,6 +885,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -906,7 +927,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_record_by_id_async(
+    async def get_by_id_async(
         self,
         *,
         record_id: str,
@@ -924,6 +945,8 @@ class Records(BaseSDK):
         <b>File Conversion:</b><br>
         Use the optional <code>convertTo</code> parameter to request file format conversion (e.g., PDF to text).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to
@@ -949,7 +972,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/record/{recordId}",
+            path="/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -961,6 +984,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1002,7 +1026,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_record(
+    def update(
         self,
         *,
         record_id: str,
@@ -1030,6 +1054,8 @@ class Records(BaseSDK):
         <li>Triggers re-indexing for content changes</li>
         </ul>
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param record_id: Record ID
         :param record_name: New name for the record
@@ -1059,7 +1085,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/knowledgeBase/record/{recordId}",
+            path="/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1078,6 +1104,7 @@ class Records(BaseSDK):
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1119,7 +1146,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_record_async(
+    async def update_async(
         self,
         *,
         record_id: str,
@@ -1147,6 +1174,8 @@ class Records(BaseSDK):
         <li>Triggers re-indexing for content changes</li>
         </ul>
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param record_id: Record ID
         :param record_name: New name for the record
@@ -1176,7 +1205,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/knowledgeBase/record/{recordId}",
+            path="/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1195,6 +1224,7 @@ class Records(BaseSDK):
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1236,7 +1266,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_record(
+    def delete(
         self,
         *,
         record_id: str,
@@ -1257,6 +1287,8 @@ class Records(BaseSDK):
         </ul>
         <b>Warning:</b> This action is irreversible.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
@@ -1280,7 +1312,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/knowledgeBase/record/{recordId}",
+            path="/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1292,6 +1324,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1333,7 +1366,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_record_async(
+    async def delete_async(
         self,
         *,
         record_id: str,
@@ -1354,6 +1387,8 @@ class Records(BaseSDK):
         </ul>
         <b>Warning:</b> This action is irreversible.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
@@ -1377,7 +1412,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/knowledgeBase/record/{recordId}",
+            path="/knowledgeBase/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1389,6 +1424,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1430,7 +1466,7 @@ class Records(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def stream_record_buffer(
+    def stream(
         self,
         *,
         record_id: str,
@@ -1454,6 +1490,8 @@ class Records(BaseSDK):
         <b>Format Conversion:</b><br>
         Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to PDF).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
         :param convert_to: Target format for conversion
@@ -1479,7 +1517,7 @@ class Records(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/stream/record/{recordId}",
+            path="/knowledgeBase/stream/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1491,6 +1529,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1536,7 +1575,7 @@ class Records(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def stream_record_buffer_async(
+    async def stream_async(
         self,
         *,
         record_id: str,
@@ -1560,6 +1599,8 @@ class Records(BaseSDK):
         <b>Format Conversion:</b><br>
         Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to PDF).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
         :param convert_to: Target format for conversion
@@ -1585,7 +1626,7 @@ class Records(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/stream/record/{recordId}",
+            path="/knowledgeBase/stream/record/{recordId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1597,6 +1638,7 @@ class Records(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

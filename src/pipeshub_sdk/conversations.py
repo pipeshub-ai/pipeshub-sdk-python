@@ -2,7 +2,6 @@
 # @generated-id: 0ca561aedc86
 
 from .basesdk import BaseSDK
-from datetime import datetime
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
@@ -14,7 +13,7 @@ from typing import List, Mapping, Optional, Union
 class Conversations(BaseSDK):
     r"""AI-powered conversational chat management with citations and follow-up questions"""
 
-    def create_conversation(
+    def create(
         self,
         *,
         query: str,
@@ -54,6 +53,8 @@ class Conversations(BaseSDK):
         Use <code>modelKey</code> to select different AI models configured for your organization.
         Each model may have different capabilities, speed, and accuracy trade-offs.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -97,7 +98,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/create",
+            path="/conversations/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -112,6 +113,7 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -153,7 +155,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_conversation_async(
+    async def create_async(
         self,
         *,
         query: str,
@@ -193,6 +195,8 @@ class Conversations(BaseSDK):
         Use <code>modelKey</code> to select different AI models configured for your organization.
         Each model may have different capabilities, speed, and accuracy trade-offs.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -236,7 +240,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/create",
+            path="/conversations/create",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -251,6 +255,7 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -292,7 +297,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def stream_chat(
+    def create_with_streaming(
         self,
         *,
         query: str,
@@ -333,6 +338,8 @@ class Conversations(BaseSDK):
         If an error occurs mid-stream, an <code>error</code> event is sent and the stream closes.
         The conversation is marked as FAILED with the error reason stored.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -376,7 +383,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/stream",
+            path="/conversations/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -391,6 +398,7 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -441,7 +449,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    async def stream_chat_async(
+    async def create_with_streaming_async(
         self,
         *,
         query: str,
@@ -482,6 +490,8 @@ class Conversations(BaseSDK):
         If an error occurs mid-stream, an <code>error</code> event is sent and the stream closes.
         The conversation is marked as FAILED with the error reason stored.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
@@ -525,7 +535,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/stream",
+            path="/conversations/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -540,6 +550,7 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.CreateConversationRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -590,7 +601,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def get_all_conversations(
+    def list(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -613,6 +624,8 @@ class Conversations(BaseSDK):
         Conversations are sorted by last activity timestamp (most recent first).
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -629,7 +642,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/conversations",
+            path="/conversations",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -641,6 +654,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -682,7 +696,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_all_conversations_async(
+    async def list_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -705,6 +719,8 @@ class Conversations(BaseSDK):
         Conversations are sorted by last activity timestamp (most recent first).
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -721,7 +737,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/conversations",
+            path="/conversations",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -733,6 +749,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -774,7 +791,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_archived_conversations(
+    def list_archived(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -793,6 +810,8 @@ class Conversations(BaseSDK):
         to the active list.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -809,7 +828,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/conversations/show/archives",
+            path="/conversations/show/archives",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -821,6 +840,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -864,7 +884,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_archived_conversations_async(
+    async def list_archived_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -883,6 +903,8 @@ class Conversations(BaseSDK):
         to the active list.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -899,7 +921,7 @@ class Conversations(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/conversations/show/archives",
+            path="/conversations/show/archives",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -911,6 +933,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -954,7 +977,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_conversation_by_id(
+    def get_by_id(
         self,
         *,
         conversation_id: str,
@@ -984,6 +1007,8 @@ class Conversations(BaseSDK):
         <b>Access Control:</b><br>
         Users can access conversations they own or that have been shared with them.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
         :param page: Page number for message pagination
@@ -1015,7 +1040,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/conversations/{conversationId}",
+            path="/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1027,6 +1052,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1068,7 +1094,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_conversation_by_id_async(
+    async def get_by_id_async(
         self,
         *,
         conversation_id: str,
@@ -1098,6 +1124,8 @@ class Conversations(BaseSDK):
         <b>Access Control:</b><br>
         Users can access conversations they own or that have been shared with them.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
         :param page: Page number for message pagination
@@ -1129,7 +1157,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/conversations/{conversationId}",
+            path="/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1141,6 +1169,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1182,7 +1211,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_conversation_by_id(
+    def delete(
         self,
         *,
         conversation_id: str,
@@ -1201,6 +1230,8 @@ class Conversations(BaseSDK):
         Only the conversation owner (initiator) can delete it.
         Shared users cannot delete conversations.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
         :param retries: Override the default retry configuration for this method
@@ -1224,7 +1255,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/conversations/{conversationId}",
+            path="/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1236,6 +1267,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1279,7 +1311,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_conversation_by_id_async(
+    async def delete_async(
         self,
         *,
         conversation_id: str,
@@ -1298,6 +1330,8 @@ class Conversations(BaseSDK):
         Only the conversation owner (initiator) can delete it.
         Shared users cannot delete conversations.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
         :param retries: Override the default retry configuration for this method
@@ -1321,7 +1355,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/conversations/{conversationId}",
+            path="/conversations/{conversationId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1333,6 +1367,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1385,10 +1420,6 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        timezone: Optional[str] = None,
-        current_time: Optional[datetime] = None,
-        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1411,16 +1442,14 @@ class Conversations(BaseSDK):
         This allows switching models mid-conversation if needed.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param query: The follow-up question or message content
         :param filters:
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
-        :param model_friendly_name: Friendly display name of the model
-        :param timezone: User's timezone
-        :param current_time: Current time in ISO 8601 format
-        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1444,16 +1473,12 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
-                timezone=timezone,
-                current_time=current_time,
-                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/messages",
+            path="/conversations/{conversationId}/messages",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1468,6 +1493,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1518,10 +1544,6 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        timezone: Optional[str] = None,
-        current_time: Optional[datetime] = None,
-        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1544,16 +1566,14 @@ class Conversations(BaseSDK):
         This allows switching models mid-conversation if needed.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param query: The follow-up question or message content
         :param filters:
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
-        :param model_friendly_name: Friendly display name of the model
-        :param timezone: User's timezone
-        :param current_time: Current time in ISO 8601 format
-        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1577,16 +1597,12 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
-                timezone=timezone,
-                current_time=current_time,
-                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/messages",
+            path="/conversations/{conversationId}/messages",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1601,6 +1617,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1651,10 +1668,6 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        timezone: Optional[str] = None,
-        current_time: Optional[datetime] = None,
-        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1670,16 +1683,14 @@ class Conversations(BaseSDK):
         See <code>/conversations/stream</code> for event type documentation.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id:
         :param query: The follow-up question or message content
         :param filters:
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
-        :param model_friendly_name: Friendly display name of the model
-        :param timezone: User's timezone
-        :param current_time: Current time in ISO 8601 format
-        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1703,16 +1714,12 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
-                timezone=timezone,
-                current_time=current_time,
-                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/messages/stream",
+            path="/conversations/{conversationId}/messages/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1727,6 +1734,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1786,10 +1794,6 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        timezone: Optional[str] = None,
-        current_time: Optional[datetime] = None,
-        tools: Optional[Union[List[models.Tool], List[models.ToolTypedDict]]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1805,16 +1809,14 @@ class Conversations(BaseSDK):
         See <code>/conversations/stream</code> for event type documentation.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id:
         :param query: The follow-up question or message content
         :param filters:
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param chat_mode: Chat mode for this message
-        :param model_friendly_name: Friendly display name of the model
-        :param timezone: User's timezone
-        :param current_time: Current time in ISO 8601 format
-        :param tools: Tools available for this message
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1838,16 +1840,12 @@ class Conversations(BaseSDK):
                 model_key=model_key,
                 model_name=model_name,
                 chat_mode=chat_mode,
-                model_friendly_name=model_friendly_name,
-                timezone=timezone,
-                current_time=current_time,
-                tools=utils.get_pydantic_model(tools, Optional[List[models.Tool]]),
             ),
         )
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/messages/stream",
+            path="/conversations/{conversationId}/messages/stream",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1862,6 +1860,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.AddMessageRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1912,7 +1911,7 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
-    def share_conversation(
+    def share(
         self,
         *,
         conversation_id: str,
@@ -1938,6 +1937,8 @@ class Conversations(BaseSDK):
         Only the conversation initiator (owner) can share. Users must belong
         to the same organization.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param user_ids: IDs of users to share with
@@ -1972,7 +1973,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/share",
+            path="/conversations/{conversationId}/share",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1987,6 +1988,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.ShareRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2028,7 +2030,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def share_conversation_async(
+    async def share_async(
         self,
         *,
         conversation_id: str,
@@ -2054,6 +2056,8 @@ class Conversations(BaseSDK):
         Only the conversation initiator (owner) can share. Users must belong
         to the same organization.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param user_ids: IDs of users to share with
@@ -2088,7 +2092,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/share",
+            path="/conversations/{conversationId}/share",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2103,6 +2107,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.ShareRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2144,7 +2149,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_conversation_title(
+    def update_title(
         self,
         *,
         conversation_id: str,
@@ -2166,6 +2171,8 @@ class Conversations(BaseSDK):
         <li>Maximum: 200 characters</li>
         </ul>
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param title: New conversation title
@@ -2193,7 +2200,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/api/v1/conversations/{conversationId}/title",
+            path="/conversations/{conversationId}/title",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2212,6 +2219,7 @@ class Conversations(BaseSDK):
                 models.UpdateConversationTitleRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2253,7 +2261,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_conversation_title_async(
+    async def update_title_async(
         self,
         *,
         conversation_id: str,
@@ -2275,6 +2283,8 @@ class Conversations(BaseSDK):
         <li>Maximum: 200 characters</li>
         </ul>
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param title: New conversation title
@@ -2302,7 +2312,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/api/v1/conversations/{conversationId}/title",
+            path="/conversations/{conversationId}/title",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2321,6 +2331,7 @@ class Conversations(BaseSDK):
                 models.UpdateConversationTitleRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2362,7 +2373,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def archive_conversation(
+    def archive(
         self,
         *,
         conversation_id: str,
@@ -2380,6 +2391,8 @@ class Conversations(BaseSDK):
         <b>Retrieval:</b><br>
         View archived conversations using <code>GET /conversations/show/archives</code>.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -2403,7 +2416,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/api/v1/conversations/{conversationId}/archive",
+            path="/conversations/{conversationId}/archive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2415,6 +2428,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2456,7 +2470,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def archive_conversation_async(
+    async def archive_async(
         self,
         *,
         conversation_id: str,
@@ -2474,6 +2488,8 @@ class Conversations(BaseSDK):
         <b>Retrieval:</b><br>
         View archived conversations using <code>GET /conversations/show/archives</code>.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -2497,7 +2513,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/api/v1/conversations/{conversationId}/archive",
+            path="/conversations/{conversationId}/archive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2509,6 +2525,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2550,7 +2567,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def unarchive_conversation(
+    def unarchive(
         self,
         *,
         conversation_id: str,
@@ -2565,6 +2582,8 @@ class Conversations(BaseSDK):
         <b>Overview:</b><br>
         Removes the archived flag, making the conversation visible in the main list again.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -2588,7 +2607,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="PATCH",
-            path="/api/v1/conversations/{conversationId}/unarchive",
+            path="/conversations/{conversationId}/unarchive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2600,6 +2619,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2641,7 +2661,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def unarchive_conversation_async(
+    async def unarchive_async(
         self,
         *,
         conversation_id: str,
@@ -2656,6 +2676,8 @@ class Conversations(BaseSDK):
         <b>Overview:</b><br>
         Removes the archived flag, making the conversation visible in the main list again.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param retries: Override the default retry configuration for this method
@@ -2679,7 +2701,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="PATCH",
-            path="/api/v1/conversations/{conversationId}/unarchive",
+            path="/conversations/{conversationId}/unarchive",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2691,6 +2713,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2732,7 +2755,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def regenerate_answer(
+    def regenerate(
         self,
         *,
         conversation_id: str,
@@ -2762,6 +2785,8 @@ class Conversations(BaseSDK):
         <b>Model Override:</b><br>
         Specify <code>modelKey</code> to use a different model for regeneration.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
@@ -2797,7 +2822,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/message/{messageId}/regenerate",
+            path="/conversations/{conversationId}/message/{messageId}/regenerate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2816,6 +2841,7 @@ class Conversations(BaseSDK):
                 Optional[models.RegenerateAnswerRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2857,7 +2883,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def regenerate_answer_async(
+    async def regenerate_async(
         self,
         *,
         conversation_id: str,
@@ -2887,6 +2913,8 @@ class Conversations(BaseSDK):
         <b>Model Override:</b><br>
         Specify <code>modelKey</code> to use a different model for regeneration.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
@@ -2922,7 +2950,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/message/{messageId}/regenerate",
+            path="/conversations/{conversationId}/message/{messageId}/regenerate",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2941,6 +2969,7 @@ class Conversations(BaseSDK):
                 Optional[models.RegenerateAnswerRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2982,7 +3011,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_message_feedback(
+    def submit_feedback(
         self,
         *,
         conversation_id: str,
@@ -3018,6 +3047,8 @@ class Conversations(BaseSDK):
         Feedback can only be submitted on <code>bot_response</code> messages,
         not on user queries or system messages.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param message_id:
@@ -3059,7 +3090,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/message/{messageId}/feedback",
+            path="/conversations/{conversationId}/message/{messageId}/feedback",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3074,6 +3105,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.MessageFeedback
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3115,7 +3147,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_message_feedback_async(
+    async def submit_feedback_async(
         self,
         *,
         conversation_id: str,
@@ -3151,6 +3183,8 @@ class Conversations(BaseSDK):
         Feedback can only be submitted on <code>bot_response</code> messages,
         not on user queries or system messages.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param message_id:
@@ -3192,7 +3226,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/message/{messageId}/feedback",
+            path="/conversations/{conversationId}/message/{messageId}/feedback",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3207,6 +3241,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.MessageFeedback
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3248,7 +3283,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def unshare_conversation_by_id(
+    def unshare(
         self,
         *,
         conversation_id: str,
@@ -3263,6 +3298,8 @@ class Conversations(BaseSDK):
 
         Revoke sharing for a conversation, making it private again.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param user_ids:
@@ -3292,7 +3329,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/unshare",
+            path="/conversations/{conversationId}/unshare",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3311,6 +3348,7 @@ class Conversations(BaseSDK):
                 Optional[models.UnshareConversationByIDRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3354,7 +3392,7 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def unshare_conversation_by_id_async(
+    async def unshare_async(
         self,
         *,
         conversation_id: str,
@@ -3369,6 +3407,8 @@ class Conversations(BaseSDK):
 
         Revoke sharing for a conversation, making it private again.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
         :param user_ids:
@@ -3398,7 +3438,7 @@ class Conversations(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/conversations/{conversationId}/unshare",
+            path="/conversations/{conversationId}/unshare",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -3417,6 +3457,7 @@ class Conversations(BaseSDK):
                 Optional[models.UnshareConversationByIDRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

@@ -29,7 +29,7 @@ r"""Current status of the conversation:
 """
 
 
-class ConversationModelInfoTypedDict(TypedDict):
+class ModelInfoTypedDict(TypedDict):
     r"""AI model configuration used"""
 
     model_key: NotRequired[str]
@@ -38,7 +38,7 @@ class ConversationModelInfoTypedDict(TypedDict):
     chat_mode: NotRequired[str]
 
 
-class ConversationModelInfo(BaseModel):
+class ModelInfo(BaseModel):
     r"""AI model configuration used"""
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
@@ -139,7 +139,7 @@ class ConversationTypedDict(TypedDict):
     """
     fail_reason: NotRequired[str]
     r"""Error description if status is FAILED"""
-    model_info: NotRequired[ConversationModelInfoTypedDict]
+    model_info: NotRequired[ModelInfoTypedDict]
     r"""AI model configuration used"""
     is_shared: NotRequired[bool]
     r"""Whether this conversation is shared with others"""
@@ -198,9 +198,7 @@ class Conversation(BaseModel):
     fail_reason: Annotated[Optional[str], pydantic.Field(alias="failReason")] = None
     r"""Error description if status is FAILED"""
 
-    model_info: Annotated[
-        Optional[ConversationModelInfo], pydantic.Field(alias="modelInfo")
-    ] = None
+    model_info: Annotated[Optional[ModelInfo], pydantic.Field(alias="modelInfo")] = None
     r"""AI model configuration used"""
 
     is_shared: Annotated[Optional[bool], pydantic.Field(alias="isShared")] = False
@@ -267,7 +265,7 @@ class Conversation(BaseModel):
 
 
 try:
-    ConversationModelInfo.model_rebuild()
+    ModelInfo.model_rebuild()
 except NameError:
     pass
 try:

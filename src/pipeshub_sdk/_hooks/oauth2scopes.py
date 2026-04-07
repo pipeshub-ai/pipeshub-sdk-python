@@ -115,15 +115,6 @@ class OAuth2Scope(str, Enum):
     CONFIG_WRITE = "config:write"
     r"""Update system configuration"""
 
-    DOCUMENT_READ = "document:read"
-    r"""Read documents"""
-
-    DOCUMENT_WRITE = "document:write"
-    r"""Upload and update documents"""
-
-    DOCUMENT_DELETE = "document:delete"
-    r"""Delete documents"""
-
     CRAWL_READ = "crawl:read"
     r"""Read crawling jobs"""
 

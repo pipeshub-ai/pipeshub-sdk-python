@@ -6,30 +6,30 @@ User management operations
 
 ### Available Operations
 
-* [get_all_users](#get_all_users) - Get all users
-* [create_user](#create_user) - Create a new user
-* [get_user_by_id](#get_user_by_id) - Get user by ID
-* [update_user](#update_user) - Update user
-* [delete_user](#delete_user) - Delete user
-* [get_user_email_by_id](#get_user_email_by_id) - Get user email by ID
+* [get_all](#get_all) - Get all users
+* [create](#create) - Create a new user
+* [get_by_id](#get_by_id) - Get user by ID
+* [update](#update) - Update user
+* [delete](#delete) - Delete user
+* [get_email](#get_email) - Get user email by ID
 * [update_email](#update_email) - Update user email
-* [upload_user_display_picture](#upload_user_display_picture) - Upload display picture
-* [get_user_display_picture](#get_user_display_picture) - Get display picture
-* [remove_user_display_picture](#remove_user_display_picture) - Remove display picture
-* [bulk_invite_users](#bulk_invite_users) - Bulk invite users
-* [resend_user_invite](#resend_user_invite) - Resend user invite
-* [list_users_graph](#list_users_graph) - List users (paginated with graph data)
+* [upload_display_picture](#upload_display_picture) - Upload display picture
+* [get_display_picture](#get_display_picture) - Get display picture
+* [remove_display_picture](#remove_display_picture) - Remove display picture
+* [bulk_invite](#bulk_invite) - Bulk invite users
+* [resend_invite](#resend_invite) - Resend user invite
+* [list_with_graph](#list_with_graph) - List users (paginated with graph data)
 * [unblock_user](#unblock_user) - Unblock a user in organization
-* [get_all_users_with_groups](#get_all_users_with_groups) - Get all users with groups
-* [get_users_by_ids](#get_users_by_ids) - Get users by IDs
+* [get_all_with_groups](#get_all_with_groups) - Get all users with groups
+* [get_by_ids](#get_by_ids) - Get users by IDs
 * [update_full_name](#update_full_name) - Update user full name
 * [update_first_name](#update_first_name) - Update user first name
 * [update_last_name](#update_last_name) - Update user last name
 * [update_designation](#update_designation) - Update user designation
-* [admin_check](#admin_check) - Check if user is admin
-* [get_user_teams_via_users](#get_user_teams_via_users) - Get user teams
+* [check_admin_status](#check_admin_status) - Check if user is admin
+* [get_teams](#get_teams) - Get user teams
 
-## get_all_users
+## get_all
 
 Retrieve a paginated list of all users in the organization.<br><br>
 <b>Overview:</b><br>
@@ -57,7 +57,7 @@ This endpoint returns all active users in your organization. It's the primary en
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAllUsers" method="get" path="/api/v1/users" -->
+<!-- UsageSnippet language="python" operationID="getAllUsers" method="get" path="/users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -69,7 +69,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_all_users(page=1, limit=50)
+    res = pipeshub.users.get_all(page=1, limit=50)
 
     # Handle response
     print(res)
@@ -95,7 +95,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## create_user
+## create
 
 Create a new user account in the organization and optionally send an invitation email.<br><br>
 <b>Overview:</b><br>
@@ -128,7 +128,7 @@ Only organization administrators can create new users.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="createUser" method="post" path="/api/v1/users" -->
+<!-- UsageSnippet language="python" operationID="createUser" method="post" path="/users" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -140,7 +140,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.create_user(full_name="John Smith", email="john.smith@company.com", mobile="+15551234567", designation="Software Engineer", send_invite=True)
+    res = pipeshub.users.create(full_name="John Smith", email="john.smith@company.com", mobile="+15551234567", designation="Software Engineer", send_invite=True)
 
     # Handle response
     print(res)
@@ -168,7 +168,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_user_by_id
+## get_by_id
 
 Retrieve detailed information about a specific user by their unique identifier.<br><br>
 <b>Overview:</b><br>
@@ -196,7 +196,7 @@ This endpoint returns the complete user profile for the specified user ID. Use t
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserById" method="get" path="/api/v1/users/{id}" -->
+<!-- UsageSnippet language="python" operationID="getUserById" method="get" path="/users/{id}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -208,7 +208,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_user_by_id(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.get_by_id(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -232,7 +232,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_user
+## update
 
 Update user profile information. Users can update their own profile, admins can update any user.<br><br>
 <b>Overview:</b><br>
@@ -269,7 +269,7 @@ This endpoint allows updating user profile fields. The scope of allowed updates 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateUser" method="put" path="/api/v1/users/{id}" -->
+<!-- UsageSnippet language="python" operationID="updateUser" method="put" path="/users/{id}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -281,7 +281,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.update_user(id="507f1f77bcf86cd799439011", full_name="John Smith", first_name="John", last_name="Smith", email="john.smith@company.com", mobile="+15551234567", designation="Senior Software Engineer")
+    res = pipeshub.users.update(id="507f1f77bcf86cd799439011", full_name="John Smith", first_name="John", last_name="Smith", email="john.smith@company.com", mobile="+15551234567", designation="Senior Software Engineer")
 
     # Handle response
     print(res)
@@ -312,7 +312,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_user
+## delete
 
 Soft delete a user from the organization. The user account is deactivated but data is retained for audit purposes.<br><br>
 <b>Overview:</b><br>
@@ -345,7 +345,7 @@ Deleted users can be restored by organization admins within a configurable reten
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteUser" method="delete" path="/api/v1/users/{id}" -->
+<!-- UsageSnippet language="python" operationID="deleteUser" method="delete" path="/users/{id}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -357,7 +357,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.delete_user(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.delete(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -381,7 +381,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_user_email_by_id
+## get_email
 
 Retrieve the email address for a specific user. This is a dedicated endpoint for email lookup with proper access controls.<br><br>
 <b>Overview:</b><br>
@@ -405,7 +405,7 @@ Requires admin privileges. Regular users should use the main user endpoint which
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserEmailById" method="get" path="/api/v1/users/{id}/email" -->
+<!-- UsageSnippet language="python" operationID="getUserEmailById" method="get" path="/users/{id}/email" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -417,7 +417,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_user_email_by_id(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.get_email(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -448,7 +448,7 @@ Update the email address of a user.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateEmail" method="patch" path="/api/v1/users/{id}/email" -->
+<!-- UsageSnippet language="python" operationID="updateEmail" method="patch" path="/users/{id}/email" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -480,7 +480,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## upload_user_display_picture
+## upload_display_picture
 
 Upload or update the display picture (avatar) for the authenticated user.<br><br>
 <b>Overview:</b><br>
@@ -511,7 +511,7 @@ Users can only upload their own display picture. Admins cannot upload on behalf 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="uploadUserDisplayPicture" method="put" path="/api/v1/users/dp" -->
+<!-- UsageSnippet language="python" operationID="uploadUserDisplayPicture" method="put" path="/users/dp" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -523,7 +523,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.upload_user_display_picture(file={
+    res = pipeshub.users.upload_display_picture(file={
         "file_name": "example.file",
         "content": open("example.file", "rb"),
     })
@@ -550,7 +550,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_user_display_picture
+## get_display_picture
 
 Retrieve the current user's display picture image.<br><br>
 <b>Overview:</b><br>
@@ -573,7 +573,7 @@ For signed URL access, use the user profile endpoint which returns a <code>displ
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserDisplayPicture" method="get" path="/api/v1/users/dp" -->
+<!-- UsageSnippet language="python" operationID="getUserDisplayPicture" method="get" path="/users/dp" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -585,7 +585,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_user_display_picture()
+    res = pipeshub.users.get_display_picture()
 
     # Handle response
     print(res)
@@ -608,7 +608,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## remove_user_display_picture
+## remove_display_picture
 
 Remove the current user's display picture and revert to default avatar.<br><br>
 <b>Overview:</b><br>
@@ -626,7 +626,7 @@ This action is immediate and irreversible. To restore a picture, user must uploa
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="removeUserDisplayPicture" method="delete" path="/api/v1/users/dp" -->
+<!-- UsageSnippet language="python" operationID="removeUserDisplayPicture" method="delete" path="/users/dp" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -638,7 +638,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.remove_user_display_picture()
+    res = pipeshub.users.remove_display_picture()
 
     # Handle response
     print(res)
@@ -661,7 +661,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## bulk_invite_users
+## bulk_invite
 
 Invite multiple users to the organization in a single operation. Ideal for onboarding entire teams at once.<br><br>
 <b>Overview:</b><br>
@@ -694,7 +694,7 @@ Response includes count of successful invites and any failures with reasons.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="bulkInviteUsers" method="post" path="/api/v1/users/bulk/invite" -->
+<!-- UsageSnippet language="python" operationID="bulkInviteUsers" method="post" path="/users/bulk/invite" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -706,7 +706,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.bulk_invite_users(emails=[
+    res = pipeshub.users.bulk_invite(emails=[
         "user1@company.com",
         "user2@company.com",
     ], group_ids=[
@@ -737,7 +737,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## resend_user_invite
+## resend_invite
 
 Resend the invitation email to a user who hasn't completed their account setup.<br><br>
 <b>Overview:</b><br>
@@ -767,7 +767,7 @@ This endpoint resends the invitation email to a user who was previously invited 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="resendUserInvite" method="post" path="/api/v1/users/{id}/resend-invite" -->
+<!-- UsageSnippet language="python" operationID="resendUserInvite" method="post" path="/users/{id}/resend-invite" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -779,7 +779,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.resend_user_invite(id="507f1f77bcf86cd799439011")
+    res = pipeshub.users.resend_invite(id="507f1f77bcf86cd799439011")
 
     # Handle response
     print(res)
@@ -803,7 +803,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## list_users_graph
+## list_with_graph
 
 Retrieve a paginated list of users with enhanced search capabilities using the graph service.<br><br>
 <b>Overview:</b><br>
@@ -833,7 +833,7 @@ Use this endpoint when you need advanced search or are dealing with large user b
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="listUsersGraph" method="get" path="/api/v1/users/graph/list" -->
+<!-- UsageSnippet language="python" operationID="listUsersGraph" method="get" path="/users/graph/list" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -845,7 +845,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.list_users_graph(page=1, limit=10, search="john", sort_by="fullName", sort_order="asc")
+    res = pipeshub.users.list_with_graph(page=1, limit=10, search="john", sort_by="fullName", sort_order="asc")
 
     # Handle response
     print(res)
@@ -899,7 +899,7 @@ and resetting <code>wrongCredentialCount</code> to <code>0</code>.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="unblockUser" method="put" path="/api/v1/users/{id}/unblock" -->
+<!-- UsageSnippet language="python" operationID="unblockUser" method="put" path="/users/{id}/unblock" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -935,14 +935,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_all_users_with_groups
+## get_all_with_groups
 
 Retrieve all users in the organization along with their group memberships.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAllUsersWithGroups" method="get" path="/api/v1/users/fetch/with-groups" -->
+<!-- UsageSnippet language="python" operationID="getAllUsersWithGroups" method="get" path="/users/fetch/with-groups" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -954,7 +954,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_all_users_with_groups()
+    res = pipeshub.users.get_all_with_groups()
 
     # Handle response
     print(res)
@@ -977,14 +977,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_users_by_ids
+## get_by_ids
 
 Retrieve multiple users by their IDs in a single request.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUsersByIds" method="post" path="/api/v1/users/by-ids" -->
+<!-- UsageSnippet language="python" operationID="getUsersByIds" method="post" path="/users/by-ids" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -996,7 +996,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_users_by_ids()
+    res = pipeshub.users.get_by_ids()
 
     # Handle response
     print(res)
@@ -1027,7 +1027,7 @@ Update the full name of a user.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateFullName" method="patch" path="/api/v1/users/{id}/fullname" -->
+<!-- UsageSnippet language="python" operationID="updateFullName" method="patch" path="/users/{id}/fullname" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -1071,7 +1071,7 @@ Update the first name of a user.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateFirstName" method="patch" path="/api/v1/users/{id}/firstName" -->
+<!-- UsageSnippet language="python" operationID="updateFirstName" method="patch" path="/users/{id}/firstName" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -1115,7 +1115,7 @@ Update the last name of a user.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateLastName" method="patch" path="/api/v1/users/{id}/lastName" -->
+<!-- UsageSnippet language="python" operationID="updateLastName" method="patch" path="/users/{id}/lastName" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -1159,7 +1159,7 @@ Update the designation/title of a user.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateDesignation" method="patch" path="/api/v1/users/{id}/designation" -->
+<!-- UsageSnippet language="python" operationID="updateDesignation" method="patch" path="/users/{id}/designation" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -1196,14 +1196,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## admin_check
+## check_admin_status
 
 Check whether the specified user has admin privileges. Returns 200 OK if the user is an admin.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="adminCheck" method="get" path="/api/v1/users/{id}/adminCheck" -->
+<!-- UsageSnippet language="python" operationID="adminCheck" method="get" path="/users/{id}/adminCheck" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -1215,7 +1215,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.admin_check(id="<id>")
+    res = pipeshub.users.check_admin_status(id="<id>")
 
     # Handle response
     print(res)
@@ -1239,14 +1239,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_user_teams_via_users
+## get_teams
 
 Retrieve teams associated with the authenticated user.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getUserTeamsViaUsers" method="get" path="/api/v1/users/teams/list" -->
+<!-- UsageSnippet language="python" operationID="getUserTeamsViaUsers" method="get" path="/users/teams/list" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -1258,7 +1258,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.users.get_user_teams_via_users()
+    res = pipeshub.users.get_teams()
 
     # Handle response
     print(res)

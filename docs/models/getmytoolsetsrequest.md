@@ -1,0 +1,9 @@
+# GetMyToolsetsRequest
+
+
+## Fields
+
+| Field                                                                                                           | Type                                                                                                            | Required                                                                                                        | Description                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `include_registry`                                                                                              | *Optional[bool]*                                                                                                | :heavy_minus_sign:                                                                                              | When true, include toolsets from the registry that are not yet configured as synthetic, non-configured entries. |
+| `search`                                                                                                        | *Optional[str]*                                                                                                 | :heavy_minus_sign:                                                                                              | Optional search filter applied to instanceName, displayName, or toolsetType.                                    |

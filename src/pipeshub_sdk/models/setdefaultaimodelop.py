@@ -3,12 +3,10 @@
 
 from __future__ import annotations
 from .modeltype import ModelType
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+from pipeshub_sdk.types import BaseModel
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
-from pydantic import model_serializer
-from typing import Literal, Optional, Union
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 
 class SetDefaultAIModelRequestTypedDict(TypedDict):
@@ -30,85 +28,3 @@ class SetDefaultAIModelRequest(BaseModel):
         pydantic.Field(alias="modelKey"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-
-
-SetDefaultAIModelStatus = Union[
-    Literal[
-        "success",
-        "error",
-    ],
-    UnrecognizedStr,
-]
-
-
-class SetDefaultAIModelDetailsTypedDict(TypedDict):
-    model_key: NotRequired[str]
-    model_type: NotRequired[str]
-    provider: NotRequired[str]
-    model: NotRequired[str]
-
-
-class SetDefaultAIModelDetails(BaseModel):
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-
-    model_type: Annotated[Optional[str], pydantic.Field(alias="modelType")] = None
-
-    provider: Optional[str] = None
-
-    model: Optional[str] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "modelType", "provider", "model"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-class SetDefaultAIModelResponseTypedDict(TypedDict):
-    r"""Default model updated"""
-
-    status: NotRequired[SetDefaultAIModelStatus]
-    message: NotRequired[str]
-    details: NotRequired[SetDefaultAIModelDetailsTypedDict]
-
-
-class SetDefaultAIModelResponse(BaseModel):
-    r"""Default model updated"""
-
-    status: Optional[SetDefaultAIModelStatus] = None
-
-    message: Optional[str] = None
-
-    details: Optional[SetDefaultAIModelDetails] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["status", "message", "details"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
-try:
-    SetDefaultAIModelDetails.model_rebuild()
-except NameError:
-    pass

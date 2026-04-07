@@ -2,91 +2,18 @@
 # @generated-id: 35d552a5b3d7
 
 from __future__ import annotations
-from datetime import datetime
-from pipeshub_sdk.types import (
-    BaseModel,
-    Nullable,
-    OptionalNullable,
-    UNSET,
-    UNSET_SENTINEL,
-)
-import pydantic
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pydantic import model_serializer
 from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict
 
 
 class GetSlackBotConfigsConfigTypedDict(TypedDict):
-    id: NotRequired[str]
-    r"""Unique config identifier"""
-    name: NotRequired[str]
-    r"""Bot display name"""
-    agent_id: NotRequired[Nullable[str]]
-    r"""Associated agent ID"""
-    bot_token: NotRequired[str]
-    r"""Slack bot token"""
-    signing_secret: NotRequired[str]
-    r"""Slack signing secret"""
-    created_at: NotRequired[datetime]
-    updated_at: NotRequired[datetime]
+    pass
 
 
 class GetSlackBotConfigsConfig(BaseModel):
-    id: Optional[str] = None
-    r"""Unique config identifier"""
-
-    name: Optional[str] = None
-    r"""Bot display name"""
-
-    agent_id: Annotated[OptionalNullable[str], pydantic.Field(alias="agentId")] = UNSET
-    r"""Associated agent ID"""
-
-    bot_token: Annotated[Optional[str], pydantic.Field(alias="botToken")] = None
-    r"""Slack bot token"""
-
-    signing_secret: Annotated[Optional[str], pydantic.Field(alias="signingSecret")] = (
-        None
-    )
-    r"""Slack signing secret"""
-
-    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
-
-    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "id",
-                "name",
-                "agentId",
-                "botToken",
-                "signingSecret",
-                "createdAt",
-                "updatedAt",
-            ]
-        )
-        nullable_fields = set(["agentId"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k, serialized.get(n))
-            is_nullable_and_explicitly_set = (
-                k in nullable_fields
-                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
-            )
-
-            if val != UNSET_SENTINEL:
-                if (
-                    val is not None
-                    or k not in optional_fields
-                    or is_nullable_and_explicitly_set
-                ):
-                    m[k] = val
-
-        return m
+    pass
 
 
 class GetSlackBotConfigsResponseTypedDict(TypedDict):
@@ -118,9 +45,3 @@ class GetSlackBotConfigsResponse(BaseModel):
                     m[k] = val
 
         return m
-
-
-try:
-    GetSlackBotConfigsConfig.model_rebuild()
-except NameError:
-    pass

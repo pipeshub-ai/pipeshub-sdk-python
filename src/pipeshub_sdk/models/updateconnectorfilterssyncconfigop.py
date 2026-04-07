@@ -41,6 +41,10 @@ class UpdateConnectorFiltersSyncConfigResponseTypedDict(TypedDict):
     success: NotRequired[bool]
     config: NotRequired[ConnectorConfigTypedDict]
     r"""Configuration for a connector instance including auth, sync, and filter settings"""
+    message: NotRequired[str]
+    r"""Success message"""
+    sync_filters_changed: NotRequired[bool]
+    r"""Indicates whether sync filters changed, requiring a full resync"""
 
 
 class UpdateConnectorFiltersSyncConfigResponse(BaseModel):
@@ -51,9 +55,17 @@ class UpdateConnectorFiltersSyncConfigResponse(BaseModel):
     config: Optional[ConnectorConfig] = None
     r"""Configuration for a connector instance including auth, sync, and filter settings"""
 
+    message: Optional[str] = None
+    r"""Success message"""
+
+    sync_filters_changed: Annotated[
+        Optional[bool], pydantic.Field(alias="syncFiltersChanged")
+    ] = None
+    r"""Indicates whether sync filters changed, requiring a full resync"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["success", "config"])
+        optional_fields = set(["success", "config", "message", "syncFiltersChanged"])
         serialized = handler(self)
         m = {}
 
@@ -66,3 +78,9 @@ class UpdateConnectorFiltersSyncConfigResponse(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    UpdateConnectorFiltersSyncConfigResponse.model_rebuild()
+except NameError:
+    pass

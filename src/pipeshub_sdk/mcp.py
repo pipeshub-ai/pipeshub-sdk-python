@@ -51,6 +51,8 @@ class Mcp(BaseSDK):
         Each request creates an independent MCP server session.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param jsonrpc:
         :param method: MCP method (e.g. initialize, tools/list, tools/call)
         :param id:
@@ -97,6 +99,7 @@ class Mcp(BaseSDK):
                 request, False, False, "json", models.HandleMCPRequestRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -161,6 +164,8 @@ class Mcp(BaseSDK):
         Each request creates an independent MCP server session.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param jsonrpc:
         :param method: MCP method (e.g. initialize, tools/list, tools/call)
         :param id:
@@ -207,6 +212,7 @@ class Mcp(BaseSDK):
                 request, False, False, "json", models.HandleMCPRequestRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -263,6 +269,8 @@ class Mcp(BaseSDK):
         since each request is handled independently via POST.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -294,6 +302,7 @@ class Mcp(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -350,6 +359,8 @@ class Mcp(BaseSDK):
         since each request is handled independently via POST.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -381,6 +392,7 @@ class Mcp(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

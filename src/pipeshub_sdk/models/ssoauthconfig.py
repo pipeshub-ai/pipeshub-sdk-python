@@ -12,34 +12,41 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class SSOAuthConfigTypedDict(TypedDict):
     r"""SAML SSO authentication configuration"""
 
-    certificate: str
-    r"""X.509 certificate for signature validation (PEM format)"""
-    entry_point: str
+    entry_point: NotRequired[str]
     r"""Identity provider SSO URL"""
-    email_key: str
+    certificate: NotRequired[str]
+    r"""X.509 certificate for signature validation (PEM format)"""
+    email_key: NotRequired[str]
     r"""SAML attribute name for user email"""
     enable_jit: NotRequired[bool]
-    r"""Enable Just-In-Time user provisioning"""
+    r"""Enable Just-In-Time (JIT) user provisioning"""
+    saml_platform: NotRequired[str]
+    r"""Name of the SAML platform or provider (e.g., Okta, Azure AD)"""
 
 
 class SSOAuthConfig(BaseModel):
     r"""SAML SSO authentication configuration"""
 
-    certificate: str
-    r"""X.509 certificate for signature validation (PEM format)"""
-
-    entry_point: Annotated[str, pydantic.Field(alias="entryPoint")]
+    entry_point: Annotated[Optional[str], pydantic.Field(alias="entryPoint")] = None
     r"""Identity provider SSO URL"""
 
-    email_key: Annotated[str, pydantic.Field(alias="emailKey")]
+    certificate: Optional[str] = None
+    r"""X.509 certificate for signature validation (PEM format)"""
+
+    email_key: Annotated[Optional[str], pydantic.Field(alias="emailKey")] = None
     r"""SAML attribute name for user email"""
 
     enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = True
-    r"""Enable Just-In-Time user provisioning"""
+    r"""Enable Just-In-Time (JIT) user provisioning"""
+
+    saml_platform: Annotated[Optional[str], pydantic.Field(alias="samlPlatform")] = None
+    r"""Name of the SAML platform or provider (e.g., Okta, Azure AD)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["enableJit"])
+        optional_fields = set(
+            ["entryPoint", "certificate", "emailKey", "enableJit", "samlPlatform"]
+        )
         serialized = handler(self)
         m = {}
 

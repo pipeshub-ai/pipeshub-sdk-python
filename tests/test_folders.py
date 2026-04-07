@@ -15,7 +15,7 @@ def test_folders_create_root_folder():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.folders.create_root_folder(
+        res = pipeshub.folders.create_root(
             kb_id="<id>", folder_name="Project Documents"
         )
         assert res is not None
@@ -36,7 +36,7 @@ def test_folders_get_folder_contents():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.folders.get_folder_contents(
+        res = pipeshub.folders.get_contents(
             kb_id="<id>",
             folder_id="<id>",
             page=1,
@@ -81,7 +81,7 @@ def test_folders_update_folder():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.folders.update_folder(
+        res = pipeshub.folders.update(
             kb_id="<id>", folder_id="<id>", folder_name="<value>"
         )
         assert res is not None
@@ -149,7 +149,7 @@ def test_folders_create_subfolder():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.folders.create_subfolder(
+        res = pipeshub.folders.create_sub(
             kb_id="<id>", folder_id="<id>", folder_name="<value>"
         )
         assert res is not None

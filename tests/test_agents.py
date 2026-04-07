@@ -2,7 +2,6 @@
 # @generated-id: 2eb70a860f3a
 
 from pipeshub_sdk import Pipeshub, models
-import pytest
 from tests.test_client import create_test_http_client
 
 
@@ -16,12 +15,11 @@ def test_agents_list_agents():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.list_agents()
+        res = pipeshub.agents.get_all()
         assert res is not None
-        assert res == models.ListAgentsResponse(
-            status="success",
-            message="Agents retrieved successfully",
-        )
+        assert res == [
+            models.Agent(),
+        ]
 
 
 def test_agents_create_agent():
@@ -34,54 +32,31 @@ def test_agents_create_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.create_agent(
-            name="Product Support Agent",
-            models=[
-                {
-                    "model_key": "gpt-4o",
-                    "model_name": "GPT-4o",
-                    "provider": "openai",
-                    "is_reasoning": False,
-                },
-            ],
-            share_with_org=False,
+        res = pipeshub.agents.create(
+            name="Product Support Agent", is_public=False, share_with_org=False
         )
         assert res is not None
-        assert res == models.CreateAgentResponse(
-            status="success",
-            message="Agent created successfully",
-            agent=models.AgentCreateResponse(
-                toolsets=[
-                    models.AgentToolset(
-                        name="github",
-                        display_name="GitHub Integration",
-                        type="app",
-                        tools=[
-                            models.AgentTool(
-                                name="create_issue",
-                                full_name="github.create_issue",
-                                toolset_name="github",
-                                description="Create a new issue in a repository.",
-                            ),
-                        ],
-                    ),
-                ],
-                knowledge=[
-                    models.AgentKnowledge(
-                        name="Box",
-                        type="Box",
-                        display_name="Box",
-                    ),
-                ],
-            ),
+        assert res == models.Agent(
+            agent_key="customer-support-agent",
+            name="Customer Support Assistant",
         )
 
 
-@pytest.mark.skip(
-    reason="incomplete test found please make sure to address the following errors: [`workflow step listAgentTools.test referencing operation listAgentTools not found in document`]"
-)
 def test_agents_list_agent_tools():
-    pass
+    test_http_client = create_test_http_client("listAgentTools")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.agents.get_tools()
+        assert res is not None
+        assert res == [
+            models.AgentTool(),
+        ]
 
 
 def test_agents_get_agent():
@@ -94,38 +69,11 @@ def test_agents_get_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.get_agent(agent_key="customer-support-agent")
+        res = pipeshub.agents.get(agent_key="customer-support-agent")
         assert res is not None
-        assert res == models.GetAgentResponse(
-            status="success",
-            message="Agent retrieved successfully",
-            agent=models.Agent(
-                name="Customer Support Assistant",
-                toolsets=[
-                    models.AgentToolset(
-                        name="github",
-                        display_name="GitHub Integration",
-                        type="app",
-                        tools=[
-                            models.AgentTool(
-                                name="create_issue",
-                                full_name="github.create_issue",
-                                toolset_name="github",
-                                description="Create a new issue in a repository.",
-                            ),
-                        ],
-                    ),
-                ],
-                knowledge=[
-                    models.AgentKnowledge(
-                        name="Box",
-                        type="Box",
-                        display_name="Box",
-                    ),
-                ],
-                user_role="OWNER",
-                access_type="INDIVIDUAL",
-            ),
+        assert res == models.Agent(
+            agent_key="customer-support-agent",
+            name="Customer Support Assistant",
         )
 
 
@@ -139,33 +87,66 @@ def test_agents_update_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.update_agent(agent_key="<value>")
+        res = pipeshub.agents.update(agent_key="<value>")
         assert res is not None
-        assert res == models.UpdateAgentResponse(
-            status="success",
-            message="Agent updated successfully",
+        assert res == models.Agent(
+            agent_key="customer-support-agent",
+            name="Customer Support Assistant",
         )
 
 
-@pytest.mark.skip(
-    reason="incomplete test found please make sure to address the following errors: [`workflow step getAgentPermissions.test referencing operation getAgentPermissions not found in document`]"
-)
 def test_agents_get_agent_permissions():
-    pass
+    test_http_client = create_test_http_client("getAgentPermissions")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.agents.get_permissions(agent_key="<value>")
+        assert res is not None
+        assert res == models.GetAgentPermissionsResponse()
 
 
-@pytest.mark.skip(
-    reason="incomplete test found please make sure to address the following errors: [`workflow step shareAgent.test referencing operation shareAgent not found in document`]"
-)
 def test_agents_share_agent():
-    pass
+    test_http_client = create_test_http_client("shareAgent")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.agents.share(
+            agent_key="<value>",
+            user_ids=[
+                "507f1f77bcf86cd799439011",
+            ],
+            access_level="read",
+        )
+        assert res is not None
+        assert res == models.Agent(
+            agent_key="customer-support-agent",
+            name="Customer Support Assistant",
+        )
 
 
-@pytest.mark.skip(
-    reason="incomplete test found please make sure to address the following errors: [`workflow step unshareAgent.test referencing operation unshareAgent not found in document`]"
-)
 def test_agents_unshare_agent():
-    pass
+    test_http_client = create_test_http_client("unshareAgent")
+
+    with Pipeshub(
+        server_url="http://localhost:3000/api/v1",
+        security=models.Security(),
+        client=test_http_client,
+    ) as pipeshub:
+        assert pipeshub is not None
+
+        res = pipeshub.agents.unshare(agent_key="<value>")
+        assert res is not None
+        assert res == models.UnshareAgentResponse()
 
 
 def test_agents_delete_agent():
@@ -178,9 +159,4 @@ def test_agents_delete_agent():
     ) as pipeshub:
         assert pipeshub is not None
 
-        res = pipeshub.agents.delete_agent(agent_key="<value>")
-        assert res is not None
-        assert res == models.DeleteAgentResponse(
-            status="success",
-            message="Agent deleted successfully",
-        )
+        pipeshub.agents.delete(agent_key="<value>")

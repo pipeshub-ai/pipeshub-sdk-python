@@ -8,6 +8,7 @@ OAuth 2.0 authorization flow for toolsets requiring user consent
 
 * [get_toolset_o_auth_url](#get_toolset_o_auth_url) - Get OAuth authorization URL
 * [handle_toolset_o_auth_callback](#handle_toolset_o_auth_callback) - Handle OAuth callback
+* [get_agent_toolset_o_auth_url](#get_agent_toolset_o_auth_url) - Get OAuth authorization URL for agent instance
 * [get_instance_o_auth_authorization_url](#get_instance_o_auth_authorization_url) - Get OAuth authorization URL for instance
 
 ## get_toolset_o_auth_url
@@ -18,7 +19,7 @@ Returns a URL that the user should visit to authorize the toolset.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetOAuthUrl" method="get" path="/api/v1/toolsets/{toolsetId}/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="getToolsetOAuthUrl" method="get" path="/toolsets/{toolsetId}/oauth/authorize" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -63,7 +64,7 @@ This endpoint processes the authorization code and completes the OAuth flow.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="handleToolsetOAuthCallback" method="get" path="/api/v1/toolsets/oauth/callback" -->
+<!-- UsageSnippet language="python" operationID="handleToolsetOAuthCallback" method="get" path="/toolsets/oauth/callback" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -102,13 +103,57 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
+## get_agent_toolset_o_auth_url
+
+Get OAuth authorization URL for agent instance
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="getAgentToolsetOAuthUrl" method="get" path="/toolsets/agents/{agentKey}/instances/{instanceId}/oauth/authorize" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.toolset_o_auth.get_agent_toolset_o_auth_url(agent_key="<value>", instance_id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `agent_key`                                                         | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `instance_id`                                                       | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `base_url`                                                          | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.GetAgentToolsetOAuthURLResponse](../../models/getagenttoolsetoauthurlresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
 ## get_instance_o_auth_authorization_url
 
 Get OAuth authorization URL for instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getInstanceOAuthAuthorizationUrl" method="get" path="/api/v1/toolsets/instances/{instanceId}/oauth/authorize" -->
+<!-- UsageSnippet language="python" operationID="getInstanceOAuthAuthorizationUrl" method="get" path="/toolsets/instances/{instanceId}/oauth/authorize" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

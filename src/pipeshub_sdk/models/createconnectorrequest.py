@@ -83,6 +83,8 @@ class CreateConnectorRequestTypedDict(TypedDict):
     """
     auth_type: NotRequired[AuthType]
     r"""Authentication type (required if connector supports multiple auth methods)"""
+    oauth_config_id: NotRequired[str]
+    r"""ID of admin-created OAuth App to use (required for non-admin users creating OAuth connectors, optional for admins)"""
     config: NotRequired[CreateConnectorRequestConfigTypedDict]
     r"""Initial configuration (can also be set after creation)"""
     base_url: NotRequired[str]
@@ -110,6 +112,11 @@ class CreateConnectorRequest(BaseModel):
     auth_type: Annotated[Optional[AuthType], pydantic.Field(alias="authType")] = None
     r"""Authentication type (required if connector supports multiple auth methods)"""
 
+    oauth_config_id: Annotated[Optional[str], pydantic.Field(alias="oauthConfigId")] = (
+        None
+    )
+    r"""ID of admin-created OAuth App to use (required for non-admin users creating OAuth connectors, optional for admins)"""
+
     config: Optional[CreateConnectorRequestConfig] = None
     r"""Initial configuration (can also be set after creation)"""
 
@@ -118,7 +125,7 @@ class CreateConnectorRequest(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["authType", "config", "baseUrl"])
+        optional_fields = set(["authType", "oauthConfigId", "config", "baseUrl"])
         serialized = handler(self)
         m = {}
 

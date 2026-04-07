@@ -6,6 +6,7 @@ Request to authenticate using specified method.
 - `otp`: `{ otp: "123456" }` (6-digit code)
 - `google`: `"google-id-token-string"`
 - `microsoft`: `{ accessToken: "...", idToken: "..." }`
+- `azureAd`: `{ accessToken: "...", idToken: "..." }`
 - `oauth`: `{ accessToken: "...", idToken: "..." }`
 - `samlSso`: handled via redirect flow
 

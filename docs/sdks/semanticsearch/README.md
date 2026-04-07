@@ -2,21 +2,19 @@
 
 ## Overview
 
-Enterprise semantic search across all indexed knowledge with relevance scoring
-
 ### Available Operations
 
-* [search](#search) - Perform semantic search
-* [search_history](#search_history) - Get search history
-* [delete_all_search_history](#delete_all_search_history) - Clear all search history
-* [get_search_by_id](#get_search_by_id) - Get search by ID
-* [delete_search_by_id](#delete_search_by_id) - Delete search by ID
-* [share_search](#share_search) - Share a search
-* [unshare_search](#unshare_search) - Unshare a search
-* [archive_search](#archive_search) - Archive a search
-* [unarchive_search](#unarchive_search) - Unarchive a search
+* [post](#post) - Perform semantic search
+* [history](#history) - Get search history
+* [delete_all_history](#delete_all_history) - Clear all search history
+* [get_by_id](#get_by_id) - Get search by ID
+* [delete](#delete) - Delete search by ID
+* [share](#share) - Share a search
+* [unshare](#unshare) - Unshare a search
+* [archive](#archive) - Archive a search
+* [unarchive](#unarchive) - Unarchive a search
 
-## search
+## post
 
 Execute a semantic search across your organization's knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -49,7 +47,7 @@ All searches are saved and can be retrieved via <code>GET /search</code>.
 
 ### Example Usage: filtered
 
-<!-- UsageSnippet language="python" operationID="search" method="post" path="/api/v1/search" example="filtered" -->
+<!-- UsageSnippet language="python" operationID="search" method="post" path="/search" example="filtered" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -61,7 +59,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.search(query="API documentation examples", filters={
+    res = pipeshub.semantic_search.post(query="API documentation examples", filters={
         "apps": [
             "drive",
         ],
@@ -73,7 +71,7 @@ with Pipeshub(
 ```
 ### Example Usage: simple
 
-<!-- UsageSnippet language="python" operationID="search" method="post" path="/api/v1/search" example="simple" -->
+<!-- UsageSnippet language="python" operationID="search" method="post" path="/search" example="simple" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -85,7 +83,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.search(query="company vacation policy", limit=10)
+    res = pipeshub.semantic_search.post(query="company vacation policy", limit=10)
 
     # Handle response
     print(res)
@@ -114,7 +112,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## search_history
+## history
 
 Retrieve your search history with pagination.<br><br>
 <b>Overview:</b><br>
@@ -126,7 +124,7 @@ Use <code>page</code> and <code>limit</code> to navigate through results.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="searchHistory" method="get" path="/api/v1/search" -->
+<!-- UsageSnippet language="python" operationID="searchHistory" method="get" path="/search" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -138,7 +136,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.search_history(limit=10, page=1)
+    res = pipeshub.semantic_search.history(limit=10, page=1)
 
     # Handle response
     print(res)
@@ -163,7 +161,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_all_search_history
+## delete_all_history
 
 Delete all search history for the authenticated user.<br><br>
 <b>Warning:</b><br>
@@ -172,7 +170,7 @@ This action cannot be undone. All saved searches will be permanently removed.
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteAllSearchHistory" method="delete" path="/api/v1/search" -->
+<!-- UsageSnippet language="python" operationID="deleteAllSearchHistory" method="delete" path="/search" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -184,7 +182,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.delete_all_search_history()
+    res = pipeshub.semantic_search.delete_all_history()
 
     # Handle response
     print(res)
@@ -207,14 +205,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_search_by_id
+## get_by_id
 
 Retrieve a specific search result by its ID.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getSearchById" method="get" path="/api/v1/search/{searchId}" -->
+<!-- UsageSnippet language="python" operationID="getSearchById" method="get" path="/search/{searchId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -226,7 +224,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.get_search_by_id(search_id="<value>")
+    res = pipeshub.semantic_search.get_by_id(search_id="<value>")
 
     # Handle response
     print(res)
@@ -250,14 +248,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_search_by_id
+## delete
 
 Delete a specific search result by its ID.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteSearchById" method="delete" path="/api/v1/search/{searchId}" -->
+<!-- UsageSnippet language="python" operationID="deleteSearchById" method="delete" path="/search/{searchId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -269,7 +267,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.delete_search_by_id(search_id="<value>")
+    res = pipeshub.semantic_search.delete(search_id="<value>")
 
     # Handle response
     print(res)
@@ -293,14 +291,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## share_search
+## share
 
 Share a specific search result, making it accessible to other users.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="shareSearch" method="patch" path="/api/v1/search/{searchId}/share" -->
+<!-- UsageSnippet language="python" operationID="shareSearch" method="patch" path="/search/{searchId}/share" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -312,7 +310,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.share_search(search_id="<value>")
+    res = pipeshub.semantic_search.share(search_id="<value>")
 
     # Handle response
     print(res)
@@ -337,14 +335,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unshare_search
+## unshare
 
 Revoke sharing for a specific search result, making it private again.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="unshareSearch" method="patch" path="/api/v1/search/{searchId}/unshare" -->
+<!-- UsageSnippet language="python" operationID="unshareSearch" method="patch" path="/search/{searchId}/unshare" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -356,7 +354,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.unshare_search(search_id="<value>")
+    res = pipeshub.semantic_search.unshare(search_id="<value>")
 
     # Handle response
     print(res)
@@ -381,14 +379,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## archive_search
+## archive
 
 Archive a specific search result. Archived searches are hidden from the default search history view.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="archiveSearch" method="patch" path="/api/v1/search/{searchId}/archive" -->
+<!-- UsageSnippet language="python" operationID="archiveSearch" method="patch" path="/search/{searchId}/archive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -400,7 +398,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.archive_search(search_id="<value>")
+    res = pipeshub.semantic_search.archive(search_id="<value>")
 
     # Handle response
     print(res)
@@ -424,14 +422,14 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## unarchive_search
+## unarchive
 
 Restore a previously archived search result back to the active search history.
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="unarchiveSearch" method="patch" path="/api/v1/search/{searchId}/unarchive" -->
+<!-- UsageSnippet language="python" operationID="unarchiveSearch" method="patch" path="/search/{searchId}/unarchive" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -443,7 +441,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.semantic_search.unarchive_search(search_id="<value>")
+    res = pipeshub.semantic_search.unarchive(search_id="<value>")
 
     # Handle response
     print(res)

@@ -86,6 +86,8 @@ class KnowledgeHubNodeTypedDict(TypedDict):
     record_type: NotRequired[Nullable[str]]
     record_group_type: NotRequired[Nullable[str]]
     indexing_status: NotRequired[Nullable[str]]
+    is_internal: NotRequired[bool]
+    r"""True when the node is an internal/system record group or record (doesn't come from source)"""
     created_at: NotRequired[int]
     r"""Creation timestamp (epoch ms)"""
     updated_at: NotRequired[int]
@@ -135,6 +137,9 @@ class KnowledgeHubNode(BaseModel):
         OptionalNullable[str], pydantic.Field(alias="indexingStatus")
     ] = UNSET
 
+    is_internal: Annotated[Optional[bool], pydantic.Field(alias="isInternal")] = None
+    r"""True when the node is an internal/system record group or record (doesn't come from source)"""
+
     created_at: Annotated[Optional[int], pydantic.Field(alias="createdAt")] = None
     r"""Creation timestamp (epoch ms)"""
 
@@ -178,6 +183,7 @@ class KnowledgeHubNode(BaseModel):
                 "recordType",
                 "recordGroupType",
                 "indexingStatus",
+                "isInternal",
                 "createdAt",
                 "updatedAt",
                 "sizeInBytes",

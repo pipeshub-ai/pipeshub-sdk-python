@@ -13,7 +13,7 @@ from typing import Mapping, Optional
 class Folders(BaseSDK):
     r"""Folder organization and management"""
 
-    def create_root_folder(
+    def create_root(
         self,
         *,
         kb_id: str,
@@ -41,6 +41,8 @@ class Folders(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param folder_name: Name of the folder
         :param retries: Override the default retry configuration for this method
@@ -67,7 +69,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/folder",
+            path="/knowledgeBase/{kbId}/folder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -82,6 +84,7 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateRootFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -123,7 +126,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_root_folder_async(
+    async def create_root_async(
         self,
         *,
         kb_id: str,
@@ -151,6 +154,8 @@ class Folders(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param folder_name: Name of the folder
         :param retries: Override the default retry configuration for this method
@@ -177,7 +182,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/folder",
+            path="/knowledgeBase/{kbId}/folder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -192,6 +197,7 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateRootFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -233,7 +239,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_folder_contents(
+    def get_contents(
         self,
         *,
         kb_id: str,
@@ -256,6 +262,8 @@ class Folders(BaseSDK):
         <b>Navigation:</b><br>
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
@@ -291,7 +299,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -303,6 +311,7 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -344,7 +353,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_folder_contents_async(
+    async def get_contents_async(
         self,
         *,
         kb_id: str,
@@ -367,6 +376,8 @@ class Folders(BaseSDK):
         <b>Navigation:</b><br>
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
@@ -402,7 +413,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -414,6 +425,7 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -455,7 +467,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_folder(
+    def update(
         self,
         *,
         kb_id: str,
@@ -471,6 +483,8 @@ class Folders(BaseSDK):
         Rename a folder.<br><br>
         <b>Required Permission:</b> FILEORGANIZER or higher
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id:
@@ -500,7 +514,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -515,6 +529,7 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.UpdateFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -556,7 +571,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_folder_async(
+    async def update_async(
         self,
         *,
         kb_id: str,
@@ -572,6 +587,8 @@ class Folders(BaseSDK):
         Rename a folder.<br><br>
         <b>Required Permission:</b> FILEORGANIZER or higher
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id:
@@ -601,7 +618,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -616,6 +633,7 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.UpdateFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -657,7 +675,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_folder(
+    def delete(
         self,
         *,
         kb_id: str,
@@ -675,6 +693,8 @@ class Folders(BaseSDK):
         All subfolders and records within will be permanently deleted.<br><br>
         <b>Warning:</b> This action is irreversible.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id:
@@ -700,7 +720,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -712,6 +732,7 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -753,7 +774,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_folder_async(
+    async def delete_async(
         self,
         *,
         kb_id: str,
@@ -771,6 +792,8 @@ class Folders(BaseSDK):
         All subfolders and records within will be permanently deleted.<br><br>
         <b>Warning:</b> This action is irreversible.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id:
@@ -796,7 +819,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}",
+            path="/knowledgeBase/{kbId}/folder/{folderId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -808,6 +831,7 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -873,6 +897,8 @@ class Folders(BaseSDK):
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
         :param page:
@@ -907,7 +933,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/children",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -919,6 +945,7 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -984,6 +1011,8 @@ class Folders(BaseSDK):
         Use this endpoint to browse folder hierarchies. Response includes folder metadata and child items.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param folder_id: Folder ID
         :param page:
@@ -1018,7 +1047,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/children",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/children",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1030,6 +1059,7 @@ class Folders(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1071,7 +1101,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def create_subfolder(
+    def create_sub(
         self,
         *,
         kb_id: str,
@@ -1089,6 +1119,8 @@ class Folders(BaseSDK):
         <b>Nesting:</b><br>
         Supports unlimited folder nesting depth for complex organizational structures.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id: Parent folder ID
@@ -1118,7 +1150,7 @@ class Folders(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1133,6 +1165,7 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateSubfolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1174,7 +1207,7 @@ class Folders(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_subfolder_async(
+    async def create_sub_async(
         self,
         *,
         kb_id: str,
@@ -1192,6 +1225,8 @@ class Folders(BaseSDK):
         <b>Nesting:</b><br>
         Supports unlimited folder nesting depth for complex organizational structures.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id: Parent folder ID
@@ -1221,7 +1256,7 @@ class Folders(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1236,6 +1271,7 @@ class Folders(BaseSDK):
                 request.body, False, False, "json", models.CreateSubfolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

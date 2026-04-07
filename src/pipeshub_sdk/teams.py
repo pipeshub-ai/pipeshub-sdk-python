@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, Union
 class Teams(BaseSDK):
     r"""Team management operations"""
 
-    def create_team(
+    def create(
         self,
         *,
         name: str,
@@ -55,6 +55,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param name: Team display name (must be unique in org)
         :param description: Team description and purpose
         :param user_roles: Optional initial members with roles
@@ -83,7 +85,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/teams",
+            path="/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -98,6 +100,7 @@ class Teams(BaseSDK):
                 request, False, False, "json", models.CreateTeamRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -139,7 +142,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def create_team_async(
+    async def create_async(
         self,
         *,
         name: str,
@@ -181,6 +184,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param name: Team display name (must be unique in org)
         :param description: Team description and purpose
         :param user_roles: Optional initial members with roles
@@ -209,7 +214,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/teams",
+            path="/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -224,6 +229,7 @@ class Teams(BaseSDK):
                 request, False, False, "json", models.CreateTeamRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -265,7 +271,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def list_teams(
+    def list(
         self,
         *,
         search: Optional[str] = None,
@@ -299,6 +305,8 @@ class Teams(BaseSDK):
         Results are sorted by name alphabetically by default.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search: Search teams by name or description
         :param limit: Number of results per page
         :param page: Page number (1-based)
@@ -325,7 +333,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/teams",
+            path="/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -337,6 +345,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -378,7 +387,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def list_teams_async(
+    async def list_async(
         self,
         *,
         search: Optional[str] = None,
@@ -412,6 +421,8 @@ class Teams(BaseSDK):
         Results are sorted by name alphabetically by default.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search: Search teams by name or description
         :param limit: Number of results per page
         :param page: Page number (1-based)
@@ -438,7 +449,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/teams",
+            path="/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -450,6 +461,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -491,7 +503,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_team_by_id(
+    def get_by_id(
         self,
         *,
         team_id: str,
@@ -520,6 +532,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -542,7 +556,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/teams/{teamId}",
+            path="/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -554,6 +568,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -595,7 +610,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_team_by_id_async(
+    async def get_by_id_async(
         self,
         *,
         team_id: str,
@@ -624,6 +639,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -646,7 +663,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/teams/{teamId}",
+            path="/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -658,6 +675,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -699,7 +717,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_team(
+    def update(
         self,
         *,
         team_id: str,
@@ -734,6 +752,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param name: New team name
         :param description: New team description
@@ -762,7 +782,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/teams/{teamId}",
+            path="/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -777,6 +797,7 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.UpdateTeamRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -818,7 +839,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_team_async(
+    async def update_async(
         self,
         *,
         team_id: str,
@@ -853,6 +874,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param team_id: Team ID (24-character MongoDB ObjectId)
         :param name: New team name
         :param description: New team description
@@ -881,7 +904,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/teams/{teamId}",
+            path="/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -896,6 +919,7 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.UpdateTeamRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -937,7 +961,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def delete_team(
+    def delete(
         self,
         *,
         team_id: str,
@@ -962,6 +986,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param team_id: Unique identifier of the team to delete
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -984,7 +1010,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/teams/{teamId}",
+            path="/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -996,6 +1022,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1037,7 +1064,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def delete_team_async(
+    async def delete_async(
         self,
         *,
         team_id: str,
@@ -1062,6 +1089,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param team_id: Unique identifier of the team to delete
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1084,7 +1113,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/teams/{teamId}",
+            path="/teams/{teamId}",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1096,6 +1125,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1137,7 +1167,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_user_teams(
+    def get_user(
         self,
         *,
         page: Optional[int] = 1,
@@ -1164,6 +1194,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number for pagination (1-based)
         :param limit: Number of teams per page
         :param retries: Override the default retry configuration for this method
@@ -1188,7 +1220,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/teams/user/teams",
+            path="/teams/user/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1200,6 +1232,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1241,7 +1274,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_user_teams_async(
+    async def get_user_async(
         self,
         *,
         page: Optional[int] = 1,
@@ -1268,6 +1301,8 @@ class Teams(BaseSDK):
         </ul>
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number for pagination (1-based)
         :param limit: Number of teams per page
         :param retries: Override the default retry configuration for this method
@@ -1292,7 +1327,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/teams/user/teams",
+            path="/teams/user/teams",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1304,6 +1339,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1345,7 +1381,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_team_users(
+    def get_members(
         self,
         *,
         team_id: str,
@@ -1358,6 +1394,8 @@ class Teams(BaseSDK):
 
         Retrieve all users that belong to a specific team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param retries: Override the default retry configuration for this method
@@ -1381,7 +1419,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="GET",
-            path="/api/v1/teams/{teamId}/users",
+            path="/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1393,6 +1431,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1434,7 +1473,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_team_users_async(
+    async def get_members_async(
         self,
         *,
         team_id: str,
@@ -1447,6 +1486,8 @@ class Teams(BaseSDK):
 
         Retrieve all users that belong to a specific team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param retries: Override the default retry configuration for this method
@@ -1470,7 +1511,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/teams/{teamId}/users",
+            path="/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1482,6 +1523,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1523,7 +1565,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def add_users_to_team(
+    def add_users(
         self,
         *,
         team_id: str,
@@ -1537,6 +1579,8 @@ class Teams(BaseSDK):
 
         Add one or more users to a team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param user_ids:
@@ -1564,7 +1608,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="POST",
-            path="/api/v1/teams/{teamId}/users",
+            path="/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1579,6 +1623,7 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.AddUsersToTeamRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1620,7 +1665,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def add_users_to_team_async(
+    async def add_users_async(
         self,
         *,
         team_id: str,
@@ -1634,6 +1679,8 @@ class Teams(BaseSDK):
 
         Add one or more users to a team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param user_ids:
@@ -1661,7 +1708,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="POST",
-            path="/api/v1/teams/{teamId}/users",
+            path="/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1676,6 +1723,7 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.AddUsersToTeamRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1717,7 +1765,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def remove_user_from_team(
+    def remove_users(
         self,
         *,
         team_id: str,
@@ -1731,6 +1779,8 @@ class Teams(BaseSDK):
 
         Remove a user from a team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param user_id:
@@ -1758,7 +1808,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="DELETE",
-            path="/api/v1/teams/{teamId}/users",
+            path="/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1773,6 +1823,7 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.RemoveUserFromTeamRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1814,7 +1865,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def remove_user_from_team_async(
+    async def remove_users_async(
         self,
         *,
         team_id: str,
@@ -1828,6 +1879,8 @@ class Teams(BaseSDK):
 
         Remove a user from a team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param user_id:
@@ -1855,7 +1908,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="DELETE",
-            path="/api/v1/teams/{teamId}/users",
+            path="/teams/{teamId}/users",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1870,6 +1923,7 @@ class Teams(BaseSDK):
                 request.body, False, False, "json", models.RemoveUserFromTeamRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1911,7 +1965,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_team_users_permissions(
+    def update_user_permissions(
         self,
         *,
         team_id: str,
@@ -1928,6 +1982,8 @@ class Teams(BaseSDK):
 
         Update permissions for users within a team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param body: Request payload
@@ -1955,7 +2011,7 @@ class Teams(BaseSDK):
 
         req = self._build_request(
             method="PUT",
-            path="/api/v1/teams/{teamId}/users/permissions",
+            path="/teams/{teamId}/users/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -1974,6 +2030,7 @@ class Teams(BaseSDK):
                 models.UpdateTeamUsersPermissionsRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2017,7 +2074,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def update_team_users_permissions_async(
+    async def update_user_permissions_async(
         self,
         *,
         team_id: str,
@@ -2034,6 +2091,8 @@ class Teams(BaseSDK):
 
         Update permissions for users within a team.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param team_id:
         :param body: Request payload
@@ -2061,7 +2120,7 @@ class Teams(BaseSDK):
 
         req = self._build_request_async(
             method="PUT",
-            path="/api/v1/teams/{teamId}/users/permissions",
+            path="/teams/{teamId}/users/permissions",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -2080,6 +2139,7 @@ class Teams(BaseSDK):
                 models.UpdateTeamUsersPermissionsRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2123,7 +2183,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def get_user_created_teams(
+    def list_created(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -2136,6 +2196,8 @@ class Teams(BaseSDK):
         Retrieve teams created by the authenticated user.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2152,7 +2214,7 @@ class Teams(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request(
             method="GET",
-            path="/api/v1/teams/user/teams/created",
+            path="/teams/user/teams/created",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2164,6 +2226,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2205,7 +2268,7 @@ class Teams(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def get_user_created_teams_async(
+    async def list_created_async(
         self,
         *,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -2217,6 +2280,8 @@ class Teams(BaseSDK):
 
         Retrieve teams created by the authenticated user.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2234,7 +2299,7 @@ class Teams(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
         req = self._build_request_async(
             method="GET",
-            path="/api/v1/teams/user/teams/created",
+            path="/teams/user/teams/created",
             base_url=base_url,
             url_variables=url_variables,
             request=None,
@@ -2246,6 +2311,7 @@ class Teams(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 

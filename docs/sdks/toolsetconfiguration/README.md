@@ -17,7 +17,7 @@ Get configuration for a specific toolset instance
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getToolsetConfig" method="get" path="/api/v1/toolsets/{toolsetId}/config" -->
+<!-- UsageSnippet language="python" operationID="getToolsetConfig" method="get" path="/toolsets/{toolsetId}/config" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -56,7 +56,7 @@ Save or update toolset configuration (deprecated - use PUT)
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="saveToolsetConfig" method="post" path="/api/v1/toolsets/{toolsetId}/config" -->
+<!-- UsageSnippet language="python" operationID="saveToolsetConfig" method="post" path="/toolsets/{toolsetId}/config" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -95,7 +95,7 @@ Update toolset configuration
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateToolsetConfig" method="put" path="/api/v1/toolsets/{toolsetId}/config" -->
+<!-- UsageSnippet language="python" operationID="updateToolsetConfig" method="put" path="/toolsets/{toolsetId}/config" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -134,7 +134,7 @@ Delete a toolset instance and its configuration
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteToolsetConfig" method="delete" path="/api/v1/toolsets/{toolsetId}/config" -->
+<!-- UsageSnippet language="python" operationID="deleteToolsetConfig" method="delete" path="/toolsets/{toolsetId}/config" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models

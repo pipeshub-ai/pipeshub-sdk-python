@@ -6,15 +6,15 @@ Record management and operations
 
 ### Available Operations
 
-* [get_all_records](#get_all_records) - Get all records across knowledge bases
-* [get_kb_records](#get_kb_records) - Get records for a knowledge base
+* [get_all](#get_all) - Get all records across knowledge bases
+* [get](#get) - Get records for a knowledge base
 * [get_kb_children](#get_kb_children) - Get KB children (alias for records)
-* [get_record_by_id](#get_record_by_id) - Get record by ID
-* [update_record](#update_record) - Update record
-* [delete_record](#delete_record) - Delete record
-* [stream_record_buffer](#stream_record_buffer) - Stream record content
+* [get_by_id](#get_by_id) - Get record by ID
+* [update](#update) - Update record
+* [delete](#delete) - Delete record
+* [stream](#stream) - Stream record content
 
-## get_all_records
+## get_all
 
 Retrieve records from all knowledge bases accessible to the user.<br><br>
 <b>Overview:</b><br>
@@ -38,7 +38,7 @@ Search and filter records across your entire organization. Useful for global sea
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getAllRecords" method="get" path="/api/v1/knowledgeBase/records" -->
+<!-- UsageSnippet language="python" operationID="getAllRecords" method="get" path="/knowledgeBase/records" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -50,7 +50,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.records.get_all_records(page=1, limit=20, record_types="FILE,WEBPAGE,EMAIL", connectors="GOOGLE_DRIVE,ONEDRIVE", indexing_status="COMPLETED,FAILED", sort_by="createdAtTimestamp", sort_order="desc")
+    res = pipeshub.records.get_all(page=1, limit=20, record_types="FILE,WEBPAGE,EMAIL", connectors="GOOGLE_DRIVE,ONEDRIVE", indexing_status="COMPLETED,FAILED", sort_by="createdAtTimestamp", sort_order="desc")
 
     # Handle response
     print(res)
@@ -84,7 +84,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_kb_records
+## get
 
 Retrieve a paginated list of records within a specific knowledge base.<br><br>
 <b>Overview:</b><br>
@@ -103,7 +103,7 @@ Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getKBRecords" method="get" path="/api/v1/knowledgeBase/{kbId}/records" -->
+<!-- UsageSnippet language="python" operationID="getKBRecords" method="get" path="/knowledgeBase/{kbId}/records" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -115,7 +115,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.records.get_kb_records(kb_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
+    res = pipeshub.records.get(kb_id="<id>", page=1, limit=20, sort_by="createdAtTimestamp", sort_order="desc")
 
     # Handle response
     print(res)
@@ -168,7 +168,7 @@ Default sorts by <code>createdAtTimestamp</code> descending (newest first).
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getKBChildren" method="get" path="/api/v1/knowledgeBase/{kbId}/children" -->
+<!-- UsageSnippet language="python" operationID="getKBChildren" method="get" path="/knowledgeBase/{kbId}/children" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -214,7 +214,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## get_record_by_id
+## get_by_id
 
 Retrieve detailed information about a specific record.<br><br>
 <b>Overview:</b><br>
@@ -225,7 +225,7 @@ Use the optional <code>convertTo</code> parameter to request file format convers
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="getRecordById" method="get" path="/api/v1/knowledgeBase/record/{recordId}" -->
+<!-- UsageSnippet language="python" operationID="getRecordById" method="get" path="/knowledgeBase/record/{recordId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -237,7 +237,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.records.get_record_by_id(record_id="<id>", convert_to="txt")
+    res = pipeshub.records.get_by_id(record_id="<id>", convert_to="txt")
 
     # Handle response
     print(res)
@@ -262,7 +262,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## update_record
+## update
 
 Update a record's name and/or file content.<br><br>
 <b>Overview:</b><br>
@@ -280,7 +280,7 @@ Include a new file in the request to replace the existing content. The file exte
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="updateRecord" method="put" path="/api/v1/knowledgeBase/record/{recordId}" -->
+<!-- UsageSnippet language="python" operationID="updateRecord" method="put" path="/knowledgeBase/record/{recordId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -292,7 +292,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.records.update_record(record_id="<id>")
+    res = pipeshub.records.update(record_id="<id>")
 
     # Handle response
     print(res)
@@ -318,7 +318,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## delete_record
+## delete
 
 Permanently delete a record from the knowledge base.<br><br>
 <b>Required Permission:</b> WRITER or higher<br><br>
@@ -333,7 +333,7 @@ Permanently delete a record from the knowledge base.<br><br>
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="deleteRecord" method="delete" path="/api/v1/knowledgeBase/record/{recordId}" -->
+<!-- UsageSnippet language="python" operationID="deleteRecord" method="delete" path="/knowledgeBase/record/{recordId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -345,7 +345,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    pipeshub.records.delete_record(record_id="<id>")
+    pipeshub.records.delete(record_id="<id>")
 
     # Use the SDK ...
 
@@ -364,7 +364,7 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## stream_record_buffer
+## stream
 
 Stream the binary content of a record's file.<br><br>
 <b>Overview:</b><br>
@@ -381,7 +381,7 @@ Use <code>convertTo</code> parameter to convert between formats (e.g., DOCX to P
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="streamRecordBuffer" method="get" path="/api/v1/knowledgeBase/stream/record/{recordId}" -->
+<!-- UsageSnippet language="python" operationID="streamRecordBuffer" method="get" path="/knowledgeBase/stream/record/{recordId}" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -393,7 +393,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.records.stream_record_buffer(record_id="<id>")
+    res = pipeshub.records.stream(record_id="<id>")
 
     # Handle response
     print(res)
