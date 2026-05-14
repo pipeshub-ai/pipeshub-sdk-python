@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 from .authproviders import AuthProviders, AuthProvidersTypedDict
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+from pipeshub_sdk.types import BaseModel, UnrecognizedStr
 import pydantic
-from pydantic import model_serializer
-from typing import List, Literal, Optional, Union
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import List, Literal, Union
+from typing_extensions import Annotated, TypedDict
 
 
-InitAuthResponseAllowedMethod = Union[
+AllowedMethod = Union[
     Literal[
         "samlSso",
         "otp",
@@ -26,53 +25,37 @@ InitAuthResponseAllowedMethod = Union[
 class InitAuthResponseTypedDict(TypedDict):
     r"""Response containing available authentication methods and session info"""
 
-    current_step: NotRequired[int]
+    current_step: int
     r"""Current authentication step (0-indexed). Always 0 for initial response."""
-    allowed_methods: NotRequired[List[InitAuthResponseAllowedMethod]]
+    allowed_methods: List[AllowedMethod]
     r"""List of allowed authentication methods for the current step"""
-    message: NotRequired[str]
+    message: str
     r"""Response message"""
-    auth_providers: NotRequired[AuthProvidersTypedDict]
+    auth_providers: AuthProvidersTypedDict
     r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    jit_enabled: bool
+    r"""True when at least one allowed external provider has JIT provisioning enabled"""
 
 
 class InitAuthResponse(BaseModel):
     r"""Response containing available authentication methods and session info"""
 
-    current_step: Annotated[Optional[int], pydantic.Field(alias="currentStep")] = None
+    current_step: Annotated[int, pydantic.Field(alias="currentStep")]
     r"""Current authentication step (0-indexed). Always 0 for initial response."""
 
     allowed_methods: Annotated[
-        Optional[List[InitAuthResponseAllowedMethod]],
-        pydantic.Field(alias="allowedMethods"),
-    ] = None
+        List[AllowedMethod], pydantic.Field(alias="allowedMethods")
+    ]
     r"""List of allowed authentication methods for the current step"""
 
-    message: Optional[str] = None
+    message: str
     r"""Response message"""
 
-    auth_providers: Annotated[
-        Optional[AuthProviders], pydantic.Field(alias="authProviders")
-    ] = None
+    auth_providers: Annotated[AuthProviders, pydantic.Field(alias="authProviders")]
     r"""Configuration for external authentication providers (returned when those methods are allowed)"""
 
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(
-            ["currentStep", "allowedMethods", "message", "authProviders"]
-        )
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    jit_enabled: Annotated[bool, pydantic.Field(alias="jitEnabled")]
+    r"""True when at least one allowed external provider has JIT provisioning enabled"""
 
 
 try:

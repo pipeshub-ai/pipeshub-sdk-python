@@ -1,0 +1,9 @@
+# GetAllConversationsSorting
+
+
+## Fields
+
+| Field                                                                                                    | Type                                                                                                     | Required                                                                                                 | Description                                                                                              |
+| -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `sort_by`                                                                                                | [Optional[models.GetAllConversationsSortingSortBy]](../models/getallconversationssortingsortby.md)       | :heavy_minus_sign:                                                                                       | N/A                                                                                                      |
+| `sort_order`                                                                                             | [Optional[models.GetAllConversationsSortingSortOrder]](../models/getallconversationssortingsortorder.md) | :heavy_minus_sign:                                                                                       | N/A                                                                                                      |

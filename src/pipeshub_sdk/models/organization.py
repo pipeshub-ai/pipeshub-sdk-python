@@ -10,7 +10,7 @@ from typing import Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-OrganizationAccountType = Union[
+AccountType = Union[
     Literal[
         "individual",
         "business",
@@ -36,7 +36,7 @@ class OrganizationTypedDict(TypedDict):
     r"""Organization domain"""
     contact_email: str
     r"""Contact email address"""
-    account_type: OrganizationAccountType
+    account_type: AccountType
     r"""Type of account"""
     id: NotRequired[str]
     r"""Unique organization identifier"""
@@ -66,9 +66,7 @@ class Organization(BaseModel):
     contact_email: Annotated[str, pydantic.Field(alias="contactEmail")]
     r"""Contact email address"""
 
-    account_type: Annotated[
-        OrganizationAccountType, pydantic.Field(alias="accountType")
-    ]
+    account_type: Annotated[AccountType, pydantic.Field(alias="accountType")]
     r"""Type of account"""
 
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None

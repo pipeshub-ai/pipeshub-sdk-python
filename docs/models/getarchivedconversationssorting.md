@@ -1,0 +1,9 @@
+# GetArchivedConversationsSorting
+
+
+## Fields
+
+| Field                                                                                                              | Type                                                                                                               | Required                                                                                                           | Description                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `sort_by`                                                                                                          | [Optional[models.GetArchivedConversationsSortingSortBy]](../models/getarchivedconversationssortingsortby.md)       | :heavy_minus_sign:                                                                                                 | N/A                                                                                                                |
+| `sort_order`                                                                                                       | [Optional[models.GetArchivedConversationsSortingSortOrder]](../models/getarchivedconversationssortingsortorder.md) | :heavy_minus_sign:                                                                                                 | N/A                                                                                                                |

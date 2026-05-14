@@ -1,12 +1,19 @@
 # Filter
 
 
-## Fields
+## Values
 
-| Field                                                                | Type                                                                 | Required                                                             | Description                                                          |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `key`                                                                | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Filter field key                                                     |
-| `label`                                                              | *Optional[str]*                                                      | :heavy_minus_sign:                                                   | Display label                                                        |
-| `type`                                                               | [Optional[models.FilterOptionsType]](../models/filteroptionstype.md) | :heavy_minus_sign:                                                   | Filter input type                                                    |
-| `options`                                                            | List[[models.Option](../models/option.md)]                           | :heavy_minus_sign:                                                   | N/A                                                                  |
-| `dynamic`                                                            | *Optional[bool]*                                                     | :heavy_minus_sign:                                                   | Whether options are loaded dynamically                               |
+| Name           | Value          |
+| -------------- | -------------- |
+| `PAGE`         | page           |
+| `LIMIT`        | limit          |
+| `SEARCH`       | search         |
+| `SHARED`       | shared         |
+| `TAGS`         | tags           |
+| `MIN_MESSAGES` | minMessages    |
+| `SORT_BY`      | sortBy         |
+| `SORT_ORDER`   | sortOrder      |
+| `START_DATE`   | startDate      |
+| `END_DATE`     | endDate        |
+| `MESSAGE_TYPE` | messageType    |
+| `DATE_RANGE`   | dateRange      |

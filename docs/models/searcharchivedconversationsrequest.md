@@ -1,0 +1,10 @@
+# SearchArchivedConversationsRequest
+
+
+## Fields
+
+| Field                                                                                 | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `search`                                                                              | *str*                                                                                 | :heavy_check_mark:                                                                    | Search term to match against conversation titles and message content (max 1000 chars) |
+| `page`                                                                                | *Optional[int]*                                                                       | :heavy_minus_sign:                                                                    | Page number (1-indexed)                                                               |
+| `limit`                                                                               | *Optional[int]*                                                                       | :heavy_minus_sign:                                                                    | Items per page                                                                        |

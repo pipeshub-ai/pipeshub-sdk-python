@@ -3,13 +3,14 @@
 
 ## Values
 
-| Name                    | Value                   |
-| ----------------------- | ----------------------- |
-| `INCORRECT_INFORMATION` | incorrect_information   |
-| `MISSING_INFORMATION`   | missing_information     |
-| `OUTDATED_INFORMATION`  | outdated_information    |
-| `IRRELEVANT_RESPONSE`   | irrelevant_response     |
-| `TOO_VERBOSE`           | too_verbose             |
-| `TOO_BRIEF`             | too_brief               |
-| `FORMATTING_ISSUES`     | formatting_issues       |
-| `CITATION_ISSUES`       | citation_issues         |
+| Name                     | Value                    |
+| ------------------------ | ------------------------ |
+| `INCORRECT_INFORMATION`  | incorrect_information    |
+| `MISSING_INFORMATION`    | missing_information      |
+| `IRRELEVANT_INFORMATION` | irrelevant_information   |
+| `UNCLEAR_EXPLANATION`    | unclear_explanation      |
+| `POOR_CITATIONS`         | poor_citations           |
+| `EXCELLENT_ANSWER`       | excellent_answer         |
+| `HELPFUL_CITATIONS`      | helpful_citations        |
+| `WELL_EXPLAINED`         | well_explained           |
+| `OTHER`                  | other                    |

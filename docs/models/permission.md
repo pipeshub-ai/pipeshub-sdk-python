@@ -1,12 +1,12 @@
 # Permission
 
+Per-item permission when `include=permissions` is requested; otherwise `null`.
+
 
 ## Fields
 
 | Field              | Type               | Required           | Description        |
 | ------------------ | ------------------ | ------------------ | ------------------ |
-| `id`               | *Optional[str]*    | :heavy_minus_sign: | N/A                |
-| `name`             | *Optional[str]*    | :heavy_minus_sign: | N/A                |
-| `type`             | *Optional[str]*    | :heavy_minus_sign: | N/A                |
-| `relationship`     | *Optional[str]*    | :heavy_minus_sign: | N/A                |
-| `access_type`      | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| `role`             | *str*              | :heavy_check_mark: | N/A                |
+| `can_edit`         | *bool*             | :heavy_check_mark: | N/A                |
+| `can_delete`       | *bool*             | :heavy_check_mark: | N/A                |

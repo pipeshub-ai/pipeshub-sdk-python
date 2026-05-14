@@ -19,6 +19,8 @@ PipesHub is an enterprise-grade platform providing:
 ## Authentication
 Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
 
+**OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the OAuth **app creator**, sets the authenticated user accordingly, and forwards **`x-oauth-user-id`** to Python services on proxied calls. Do not send **`x-oauth-user-id`** yourself—the gateway removes untrusted values on ingress. See the **OAuth Provider** tag for full behavior.
+
 ## Base URLs
 All endpoints use the `/api/v1` prefix unless otherwise noted.
 <!-- End Summary [summary] -->
@@ -35,7 +37,6 @@ All endpoints use the `/api/v1` prefix unless otherwise noted.
   * [Authentication](#authentication-1)
   * [Available Resources and Operations](#available-resources-and-operations)
   * [Server-sent event streaming](#server-sent-event-streaming)
-  * [File uploads](#file-uploads)
   * [Retries](#retries)
   * [Error Handling](#error-handling)
   * [Server Selection](#server-selection)
@@ -133,7 +134,9 @@ from pipeshub_sdk import Pipeshub
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com")
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    })
 
     # Handle response
     print(res)
@@ -152,7 +155,9 @@ async def main():
 
     async with Pipeshub() as pipeshub:
 
-        res = await pipeshub.user_account.init_auth_async(email="user@example.com")
+        res = await pipeshub.user_account.init_auth_async(request={
+            "email": "user@example.com",
+        })
 
         # Handle response
         print(res)
@@ -185,7 +190,9 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com")
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    })
 
     # Handle response
     print(res)
@@ -218,230 +225,29 @@ with Pipeshub() as pipeshub:
 <details open>
 <summary>Available methods</summary>
 
-### [AgentConversations](docs/sdks/agentconversations/README.md)
-
-* [list_agent_conversations](docs/sdks/agentconversations/README.md#list_agent_conversations) - List agent conversations
-* [create_agent_conversation](docs/sdks/agentconversations/README.md#create_agent_conversation) - Create agent conversation
-* [stream_agent_conversation](docs/sdks/agentconversations/README.md#stream_agent_conversation) - Create agent conversation with streaming
-* [get_agent_conversation](docs/sdks/agentconversations/README.md#get_agent_conversation) - Get agent conversation
-* [delete_agent_conversation](docs/sdks/agentconversations/README.md#delete_agent_conversation) - Delete agent conversation
-* [add_agent_message](docs/sdks/agentconversations/README.md#add_agent_message) - Add message to agent conversation
-* [stream_agent_message](docs/sdks/agentconversations/README.md#stream_agent_message) - Add message with streaming
-* [regenerate_agent_answer](docs/sdks/agentconversations/README.md#regenerate_agent_answer) - Regenerate agent response
-
-### [AgentTemplates](docs/sdks/agenttemplates/README.md)
-
-* [list_agent_templates](docs/sdks/agenttemplates/README.md#list_agent_templates) - List agent templates
-* [create_agent_template](docs/sdks/agenttemplates/README.md#create_agent_template) - Create agent template
-* [get_agent_template](docs/sdks/agenttemplates/README.md#get_agent_template) - Get agent template
-* [update_agent_template](docs/sdks/agenttemplates/README.md#update_agent_template) - Update agent template
-* [delete_agent_template](docs/sdks/agenttemplates/README.md#delete_agent_template) - Delete agent template
-
-### [Agents](docs/sdks/agents/README.md)
-
-* [list_agents](docs/sdks/agents/README.md#list_agents) - List agents
-* [create_agent](docs/sdks/agents/README.md#create_agent) - Create agent
-* [list_agent_tools](docs/sdks/agents/README.md#list_agent_tools) - List available tools
-* [get_agent](docs/sdks/agents/README.md#get_agent) - Get agent
-* [update_agent](docs/sdks/agents/README.md#update_agent) - Update agent
-* [delete_agent](docs/sdks/agents/README.md#delete_agent) - Delete agent
-* [get_agent_permissions](docs/sdks/agents/README.md#get_agent_permissions) - Get agent permissions
-* [update_agent_permissions](docs/sdks/agents/README.md#update_agent_permissions) - Update agent permissions
-* [share_agent](docs/sdks/agents/README.md#share_agent) - Share agent
-* [unshare_agent](docs/sdks/agents/README.md#unshare_agent) - Unshare an agent
-
 ### [AIModelsProviders](docs/sdks/aimodelsproviders/README.md)
 
-* [get_models_by_type](docs/sdks/aimodelsproviders/README.md#get_models_by_type) - Get models by type
-* [get_available_models_by_type](docs/sdks/aimodelsproviders/README.md#get_available_models_by_type) - Get available models for selection
-* [add_ai_model_provider](docs/sdks/aimodelsproviders/README.md#add_ai_model_provider) - Add new AI model provider
-* [update_ai_model_provider](docs/sdks/aimodelsproviders/README.md#update_ai_model_provider) - Update AI model provider
-* [delete_ai_model_provider](docs/sdks/aimodelsproviders/README.md#delete_ai_model_provider) - Delete AI model provider
-* [set_default_ai_model](docs/sdks/aimodelsproviders/README.md#set_default_ai_model) - Set default AI model
-
-### [AuthenticationConfiguration](docs/sdks/authenticationconfiguration/README.md)
-
-* [set_azure_ad_auth_config](docs/sdks/authenticationconfiguration/README.md#set_azure_ad_auth_config) - Configure Azure AD authentication
-* [get_azure_ad_auth_config](docs/sdks/authenticationconfiguration/README.md#get_azure_ad_auth_config) - Get Azure AD configuration
-* [set_microsoft_auth_config](docs/sdks/authenticationconfiguration/README.md#set_microsoft_auth_config) - Configure Microsoft authentication
-* [get_microsoft_auth_config](docs/sdks/authenticationconfiguration/README.md#get_microsoft_auth_config) - Get Microsoft authentication configuration
-* [set_google_auth_config](docs/sdks/authenticationconfiguration/README.md#set_google_auth_config) - Configure Google authentication
-* [get_google_auth_config](docs/sdks/authenticationconfiguration/README.md#get_google_auth_config) - Get Google authentication configuration
-* [set_sso_auth_config](docs/sdks/authenticationconfiguration/README.md#set_sso_auth_config) - Configure SAML SSO authentication
-* [get_sso_auth_config](docs/sdks/authenticationconfiguration/README.md#get_sso_auth_config) - Get SAML SSO configuration
-* [set_o_auth_config](docs/sdks/authenticationconfiguration/README.md#set_o_auth_config) - Configure generic OAuth provider
-* [get_generic_o_auth_config](docs/sdks/authenticationconfiguration/README.md#get_generic_o_auth_config) - Get generic OAuth configuration
-
-### [ConfigurationManager](docs/sdks/configurationmanager/README.md)
-
-* [get_slack_bot_configs](docs/sdks/configurationmanager/README.md#get_slack_bot_configs) - Get Slack bot configurations
-* [create_slack_bot_config](docs/sdks/configurationmanager/README.md#create_slack_bot_config) - Create Slack bot configuration
-* [update_slack_bot_config](docs/sdks/configurationmanager/README.md#update_slack_bot_config) - Update Slack bot configuration
-* [delete_slack_bot_config](docs/sdks/configurationmanager/README.md#delete_slack_bot_config) - Delete Slack bot configuration
-* [set_metrics_collection_push_interval](docs/sdks/configurationmanager/README.md#set_metrics_collection_push_interval) - Set metrics push interval
-* [set_metrics_collection_remote_server](docs/sdks/configurationmanager/README.md#set_metrics_collection_remote_server) - Set metrics remote server URL
-* [get_ai_models_config](docs/sdks/configurationmanager/README.md#get_ai_models_config) - Get AI models configuration
-* [create_ai_models_config](docs/sdks/configurationmanager/README.md#create_ai_models_config) - Create AI models configuration
-* [get_ai_models_providers](docs/sdks/configurationmanager/README.md#get_ai_models_providers) - Get AI model providers
-
-### [Connector](docs/sdks/connectorsdk/README.md)
-
-* [reindex_record](docs/sdks/connectorsdk/README.md#reindex_record) - Reindex single record
-* [reindex_record_group](docs/sdks/connectorsdk/README.md#reindex_record_group) - Reindex record group
-* [resync_connector](docs/sdks/connectorsdk/README.md#resync_connector) - Resync connector
-* [get_connector_stats](docs/sdks/connectorsdk/README.md#get_connector_stats) - Get connector statistics
-
-### [ConnectorConfiguration](docs/sdks/connectorconfiguration/README.md)
-
-* [get_connector_config](docs/sdks/connectorconfiguration/README.md#get_connector_config) - Get connector configuration
-* [update_connector_config](docs/sdks/connectorconfiguration/README.md#update_connector_config) - Update connector configuration
-* [update_connector_auth_config](docs/sdks/connectorconfiguration/README.md#update_connector_auth_config) - Update authentication configuration
-* [update_connector_filters_sync_config](docs/sdks/connectorconfiguration/README.md#update_connector_filters_sync_config) - Update filters and sync configuration
-
-### [ConnectorControl](docs/sdks/connectorcontrol/README.md)
-
-* [toggle_connector](docs/sdks/connectorcontrol/README.md#toggle_connector) - Toggle connector sync or agent
-
-### [ConnectorFilters](docs/sdks/connectorfilters/README.md)
-
-* [get_connector_filters](docs/sdks/connectorfilters/README.md#get_connector_filters) - Get filter options
-* [save_connector_filters](docs/sdks/connectorfilters/README.md#save_connector_filters) - Save filter selections
-* [get_filter_field_options](docs/sdks/connectorfilters/README.md#get_filter_field_options) - Get dynamic filter options
-
-### [ConnectorInstances](docs/sdks/connectorinstances/README.md)
-
-* [list_connector_instances](docs/sdks/connectorinstances/README.md#list_connector_instances) - List connector instances
-* [create_connector_instance](docs/sdks/connectorinstances/README.md#create_connector_instance) - Create connector instance
-* [list_active_connectors](docs/sdks/connectorinstances/README.md#list_active_connectors) - List active connector instances
-* [list_inactive_connectors](docs/sdks/connectorinstances/README.md#list_inactive_connectors) - List inactive connector instances
-* [list_configured_connectors](docs/sdks/connectorinstances/README.md#list_configured_connectors) - List configured connector instances
-* [list_active_agent_connectors](docs/sdks/connectorinstances/README.md#list_active_agent_connectors) - List active agent connectors
-* [get_connector_instance](docs/sdks/connectorinstances/README.md#get_connector_instance) - Get connector instance
-* [delete_connector_instance](docs/sdks/connectorinstances/README.md#delete_connector_instance) - Delete connector instance
-* [update_connector_name](docs/sdks/connectorinstances/README.md#update_connector_name) - Update connector instance name
-
-### [ConnectorOAuth](docs/sdks/connectoroauth/README.md)
-
-* [get_o_auth_authorization_url](docs/sdks/connectoroauth/README.md#get_o_auth_authorization_url) - Get OAuth authorization URL
-* [handle_o_auth_callback](docs/sdks/connectoroauth/README.md#handle_o_auth_callback) - OAuth callback handler
-* [~~get_token_from_code~~](docs/sdks/connectoroauth/README.md#get_token_from_code) - Exchange Google authorization code for tokens :warning: **Deprecated**
-
-### [ConnectorRegistry](docs/sdks/connectorregistry/README.md)
-
-* [get_connector_registry](docs/sdks/connectorregistry/README.md#get_connector_registry) - List available connector types
-* [get_connector_schema](docs/sdks/connectorregistry/README.md#get_connector_schema) - Get connector configuration schema
+* [get_available_models_by_type](docs/sdks/aimodelsproviders/README.md#get_available_models_by_type) - Get available models by type
 
 ### [Conversations](docs/sdks/conversations/README.md)
 
-* [create_conversation](docs/sdks/conversations/README.md#create_conversation) - Create a new AI conversation
 * [stream_chat](docs/sdks/conversations/README.md#stream_chat) - Create conversation with streaming response
 * [get_all_conversations](docs/sdks/conversations/README.md#get_all_conversations) - List all conversations
 * [get_archived_conversations](docs/sdks/conversations/README.md#get_archived_conversations) - List archived conversations
+* [search_archived_conversations](docs/sdks/conversations/README.md#search_archived_conversations) - Search archived conversations
 * [get_conversation_by_id](docs/sdks/conversations/README.md#get_conversation_by_id) - Get conversation by ID
 * [delete_conversation_by_id](docs/sdks/conversations/README.md#delete_conversation_by_id) - Delete conversation
-* [add_message](docs/sdks/conversations/README.md#add_message) - Add message to conversation
-* [add_message_stream](docs/sdks/conversations/README.md#add_message_stream) - Add message with streaming response
-* [share_conversation](docs/sdks/conversations/README.md#share_conversation) - Share conversation with users
+* [add_message_stream](docs/sdks/conversations/README.md#add_message_stream) - Add message to a conversation with streaming response
 * [update_conversation_title](docs/sdks/conversations/README.md#update_conversation_title) - Update conversation title
 * [archive_conversation](docs/sdks/conversations/README.md#archive_conversation) - Archive conversation
 * [unarchive_conversation](docs/sdks/conversations/README.md#unarchive_conversation) - Unarchive conversation
 * [regenerate_answer](docs/sdks/conversations/README.md#regenerate_answer) - Regenerate AI response
 * [update_message_feedback](docs/sdks/conversations/README.md#update_message_feedback) - Submit feedback on AI response
-* [unshare_conversation_by_id](docs/sdks/conversations/README.md#unshare_conversation_by_id) - Unshare a conversation
 
-### [CrawlingJobs](docs/sdks/crawlingjobs/README.md)
+### [KnowledgeHub](docs/sdks/knowledgehub/README.md)
 
-* [schedule_crawling_job](docs/sdks/crawlingjobs/README.md#schedule_crawling_job) - Schedule a crawling job
-* [get_crawling_job_status](docs/sdks/crawlingjobs/README.md#get_crawling_job_status) - Get crawling job status
-* [remove_crawling_job](docs/sdks/crawlingjobs/README.md#remove_crawling_job) - Remove a crawling job
-* [get_all_crawling_job_status](docs/sdks/crawlingjobs/README.md#get_all_crawling_job_status) - Get all crawling job statuses
-* [remove_all_crawling_job](docs/sdks/crawlingjobs/README.md#remove_all_crawling_job) - Remove all crawling jobs
-* [pause_crawling_job](docs/sdks/crawlingjobs/README.md#pause_crawling_job) - Pause a crawling job
-* [resume_crawling_job](docs/sdks/crawlingjobs/README.md#resume_crawling_job) - Resume a crawling job
-* [get_queue_stats](docs/sdks/crawlingjobs/README.md#get_queue_stats) - Get queue statistics
-
-### [DocumentManagement](docs/sdks/documentmanagement/README.md)
-
-* [download_document](docs/sdks/documentmanagement/README.md#download_document) - Download document
-
-### [Folders](docs/sdks/folders/README.md)
-
-* [create_root_folder](docs/sdks/folders/README.md#create_root_folder) - Create root folder
-* [get_folder_contents](docs/sdks/folders/README.md#get_folder_contents) - Get folder contents
-* [update_folder](docs/sdks/folders/README.md#update_folder) - Update folder
-* [delete_folder](docs/sdks/folders/README.md#delete_folder) - Delete folder
-* [get_folder_children](docs/sdks/folders/README.md#get_folder_children) - Get folder children (alias for folder contents)
-* [create_subfolder](docs/sdks/folders/README.md#create_subfolder) - Create subfolder
-
-### [KnowledgeBases](docs/sdks/knowledgebases/README.md)
-
-* [create_knowledge_base](docs/sdks/knowledgebases/README.md#create_knowledge_base) - Create a new knowledge base
-* [list_knowledge_bases](docs/sdks/knowledgebases/README.md#list_knowledge_bases) - List all knowledge bases
-* [get_knowledge_base](docs/sdks/knowledgebases/README.md#get_knowledge_base) - Get knowledge base by ID
-* [update_knowledge_base](docs/sdks/knowledgebases/README.md#update_knowledge_base) - Update knowledge base
-* [delete_knowledge_base](docs/sdks/knowledgebases/README.md#delete_knowledge_base) - Delete knowledge base
-* [reindex_failed_records](docs/sdks/knowledgebases/README.md#reindex_failed_records) - Reindex failed records for connector
-* [move_record](docs/sdks/knowledgebases/README.md#move_record) - Move record to another location
-* [get_knowledge_hub_root_nodes](docs/sdks/knowledgebases/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
-* [get_knowledge_hub_child_nodes](docs/sdks/knowledgebases/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
-
-### [Mcp](docs/sdks/mcp/README.md)
-
-* [handle_mcp_request](docs/sdks/mcp/README.md#handle_mcp_request) - Handle MCP JSON-RPC request
-* [handle_mcp_streaming_request](docs/sdks/mcp/README.md#handle_mcp_streaming_request) - MCP SSE streaming endpoint
-
-### [MetricsCollection](docs/sdks/metricscollection/README.md)
-
-* [get_metrics_collection](docs/sdks/metricscollection/README.md#get_metrics_collection) - Get metrics collection configuration
-* [toggle_metrics_collection](docs/sdks/metricscollection/README.md#toggle_metrics_collection) - Enable or disable metrics collection
-
-### [OAuth](docs/sdks/oauthsdk/README.md)
-
-* [exchange_o_auth_code](docs/sdks/oauthsdk/README.md#exchange_o_auth_code) - Exchange OAuth authorization code for tokens
-
-### [OAuthApps](docs/sdks/oauthapps/README.md)
-
-* [list_o_auth_apps](docs/sdks/oauthapps/README.md#list_o_auth_apps) - List OAuth apps
-* [create_o_auth_app](docs/sdks/oauthapps/README.md#create_o_auth_app) - Create OAuth app
-* [list_o_auth_scopes](docs/sdks/oauthapps/README.md#list_o_auth_scopes) - List available scopes
-* [get_o_auth_app](docs/sdks/oauthapps/README.md#get_o_auth_app) - Get OAuth app details
-* [update_o_auth_app](docs/sdks/oauthapps/README.md#update_o_auth_app) - Update OAuth app
-* [delete_o_auth_app](docs/sdks/oauthapps/README.md#delete_o_auth_app) - Delete OAuth app
-* [regenerate_o_auth_app_secret](docs/sdks/oauthapps/README.md#regenerate_o_auth_app_secret) - Regenerate client secret
-* [suspend_o_auth_app](docs/sdks/oauthapps/README.md#suspend_o_auth_app) - Suspend OAuth app
-* [activate_o_auth_app](docs/sdks/oauthapps/README.md#activate_o_auth_app) - Activate suspended OAuth app
-* [list_o_auth_app_tokens](docs/sdks/oauthapps/README.md#list_o_auth_app_tokens) - List app tokens
-* [revoke_all_o_auth_app_tokens](docs/sdks/oauthapps/README.md#revoke_all_o_auth_app_tokens) - Revoke all app tokens
-
-### [OAuthConfiguration](docs/sdks/oauthconfiguration/README.md)
-
-* [list_toolset_o_auth_configs](docs/sdks/oauthconfiguration/README.md#list_toolset_o_auth_configs) - List OAuth configs by toolset type
-* [update_toolset_o_auth_config](docs/sdks/oauthconfiguration/README.md#update_toolset_o_auth_config) - Update OAuth config
-* [delete_toolset_o_auth_config](docs/sdks/oauthconfiguration/README.md#delete_toolset_o_auth_config) - Delete OAuth config
-* [get_o_auth_registry](docs/sdks/oauthconfiguration/README.md#get_o_auth_registry) - List OAuth-capable connector types
-* [get_o_auth_connector_type](docs/sdks/oauthconfiguration/README.md#get_o_auth_connector_type) - Get OAuth connector type details
-* [list_o_auth_configs](docs/sdks/oauthconfiguration/README.md#list_o_auth_configs) - List OAuth configurations
-* [list_o_auth_configs_by_type](docs/sdks/oauthconfiguration/README.md#list_o_auth_configs_by_type) - List OAuth configs for connector type
-* [create_o_auth_config](docs/sdks/oauthconfiguration/README.md#create_o_auth_config) - Create OAuth configuration
-* [get_o_auth_config](docs/sdks/oauthconfiguration/README.md#get_o_auth_config) - Get OAuth configuration
-* [update_o_auth_config](docs/sdks/oauthconfiguration/README.md#update_o_auth_config) - Update OAuth configuration
-* [delete_o_auth_config](docs/sdks/oauthconfiguration/README.md#delete_o_auth_config) - Delete OAuth configuration
-
-### [OAuthProvider](docs/sdks/oauthprovider/README.md)
-
-* [oauth_authorize](docs/sdks/oauthprovider/README.md#oauth_authorize) - Initiate OAuth authorization flow
-* [oauth_authorize_consent](docs/sdks/oauthprovider/README.md#oauth_authorize_consent) - Submit authorization consent
-* [oauth_token](docs/sdks/oauthprovider/README.md#oauth_token) - Exchange authorization code for tokens
-* [oauth_revoke](docs/sdks/oauthprovider/README.md#oauth_revoke) - Revoke an access or refresh token
-* [oauth_introspect](docs/sdks/oauthprovider/README.md#oauth_introspect) - Introspect a token
-
-### [OpenIDConnect](docs/sdks/openidconnect/README.md)
-
-* [oauth_user_info](docs/sdks/openidconnect/README.md#oauth_user_info) - Get authenticated user information
-* [openid_configuration](docs/sdks/openidconnect/README.md#openid_configuration) - OpenID Connect Discovery
-* [oauth_authorization_server_metadata](docs/sdks/openidconnect/README.md#oauth_authorization_server_metadata) - OAuth 2.0 Authorization Server Metadata
-* [jwks](docs/sdks/openidconnect/README.md#jwks) - JSON Web Key Set
-* [oauth_protected_resource](docs/sdks/openidconnect/README.md#oauth_protected_resource) - OAuth Protected Resource Metadata
+* [get_knowledge_hub_root_nodes](docs/sdks/knowledgehub/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
+* [get_knowledge_hub_child_nodes](docs/sdks/knowledgehub/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
 ### [OrganizationAuthConfig](docs/sdks/organizationauthconfig/README.md)
 
@@ -451,178 +257,24 @@ with Pipeshub() as pipeshub:
 
 ### [Organizations](docs/sdks/organizations/README.md)
 
-* [check_org_exists](docs/sdks/organizations/README.md#check_org_exists) - Check if organization exists
-* [create_organization](docs/sdks/organizations/README.md#create_organization) - Create organization
 * [get_current_organization](docs/sdks/organizations/README.md#get_current_organization) - Get current organization
-* [update_organization](docs/sdks/organizations/README.md#update_organization) - Update organization
-* [delete_organization](docs/sdks/organizations/README.md#delete_organization) - Delete organization
-* [upload_organization_logo](docs/sdks/organizations/README.md#upload_organization_logo) - Upload organization logo
-* [get_organization_logo](docs/sdks/organizations/README.md#get_organization_logo) - Get organization logo
-* [delete_organization_logo](docs/sdks/organizations/README.md#delete_organization_logo) - Delete organization logo
-* [get_onboarding_status](docs/sdks/organizations/README.md#get_onboarding_status) - Get onboarding status
-* [update_onboarding_status](docs/sdks/organizations/README.md#update_onboarding_status) - Update onboarding status
-
-### [Permissions](docs/sdks/permissionssdk/README.md)
-
-* [create_kb_permission](docs/sdks/permissionssdk/README.md#create_kb_permission) - Grant permissions
-* [list_kb_permissions](docs/sdks/permissionssdk/README.md#list_kb_permissions) - List permissions
-* [update_kb_permissions](docs/sdks/permissionssdk/README.md#update_kb_permissions) - Update permissions
-* [delete_kb_permissions](docs/sdks/permissionssdk/README.md#delete_kb_permissions) - Remove permissions
-
-### [PlatformSettings](docs/sdks/platformsettingssdk/README.md)
-
-* [set_platform_settings](docs/sdks/platformsettingssdk/README.md#set_platform_settings) - Update platform settings
-* [get_platform_settings](docs/sdks/platformsettingssdk/README.md#get_platform_settings) - Get platform settings
-* [get_available_feature_flags](docs/sdks/platformsettingssdk/README.md#get_available_feature_flags) - Get available feature flags
-* [set_custom_system_prompt](docs/sdks/platformsettingssdk/README.md#set_custom_system_prompt) - Update custom system prompt
-* [get_custom_system_prompt](docs/sdks/platformsettingssdk/README.md#get_custom_system_prompt) - Get custom system prompt
-
-### [PublicURLs](docs/sdks/publicurls/README.md)
-
-* [set_frontend_public_url](docs/sdks/publicurls/README.md#set_frontend_public_url) - Set frontend public URL
-* [get_frontend_public_url](docs/sdks/publicurls/README.md#get_frontend_public_url) - Get frontend public URL
-* [set_connector_public_url](docs/sdks/publicurls/README.md#set_connector_public_url) - Set connector public URL
-* [get_connector_public_url](docs/sdks/publicurls/README.md#get_connector_public_url) - Get connector public URL
-
-### [Records](docs/sdks/records/README.md)
-
-* [get_all_records](docs/sdks/records/README.md#get_all_records) - Get all records across knowledge bases
-* [get_kb_records](docs/sdks/records/README.md#get_kb_records) - Get records for a knowledge base
-* [get_kb_children](docs/sdks/records/README.md#get_kb_children) - Get KB children (alias for records)
-* [get_record_by_id](docs/sdks/records/README.md#get_record_by_id) - Get record by ID
-* [update_record](docs/sdks/records/README.md#update_record) - Update record
-* [delete_record](docs/sdks/records/README.md#delete_record) - Delete record
-* [stream_record_buffer](docs/sdks/records/README.md#stream_record_buffer) - Stream record content
-
-### [Saml](docs/sdks/saml/README.md)
-
-* [sign_in_via_saml](docs/sdks/saml/README.md#sign_in_via_saml) - Initiate SAML sign-in flow
-* [saml_sign_in_callback](docs/sdks/saml/README.md#saml_sign_in_callback) - SAML sign-in callback
 
 ### [SemanticSearch](docs/sdks/semanticsearch/README.md)
 
 * [search](docs/sdks/semanticsearch/README.md#search) - Perform semantic search
 * [search_history](docs/sdks/semanticsearch/README.md#search_history) - Get search history
-* [delete_all_search_history](docs/sdks/semanticsearch/README.md#delete_all_search_history) - Clear all search history
+* [delete_search_history](docs/sdks/semanticsearch/README.md#delete_search_history) - Clear all search history
 * [get_search_by_id](docs/sdks/semanticsearch/README.md#get_search_by_id) - Get search by ID
 * [delete_search_by_id](docs/sdks/semanticsearch/README.md#delete_search_by_id) - Delete search by ID
-* [share_search](docs/sdks/semanticsearch/README.md#share_search) - Share a search
-* [unshare_search](docs/sdks/semanticsearch/README.md#unshare_search) - Unshare a search
 * [archive_search](docs/sdks/semanticsearch/README.md#archive_search) - Archive a search
 * [unarchive_search](docs/sdks/semanticsearch/README.md#unarchive_search) - Unarchive a search
-
-### [SMTPConfiguration](docs/sdks/smtpconfiguration/README.md)
-
-* [create_smtp_config](docs/sdks/smtpconfiguration/README.md#create_smtp_config) - Create or update SMTP configuration
-* [get_smtp_config](docs/sdks/smtpconfiguration/README.md#get_smtp_config) - Get SMTP configuration
-
-### [StorageConfiguration](docs/sdks/storageconfiguration/README.md)
-
-* [get_storage_config](docs/sdks/storageconfiguration/README.md#get_storage_config) - Get current storage configuration
-
-### [Teams](docs/sdks/teams/README.md)
-
-* [create_team](docs/sdks/teams/README.md#create_team) - Create a team
-* [list_teams](docs/sdks/teams/README.md#list_teams) - List teams
-* [get_team_by_id](docs/sdks/teams/README.md#get_team_by_id) - Get team by ID
-* [update_team](docs/sdks/teams/README.md#update_team) - Update team
-* [delete_team](docs/sdks/teams/README.md#delete_team) - Delete team
-* [get_user_teams](docs/sdks/teams/README.md#get_user_teams) - Get current user's teams
-* [get_team_users](docs/sdks/teams/README.md#get_team_users) - Get users in team
-* [add_users_to_team](docs/sdks/teams/README.md#add_users_to_team) - Add users to team
-* [remove_user_from_team](docs/sdks/teams/README.md#remove_user_from_team) - Remove user from team
-* [update_team_users_permissions](docs/sdks/teams/README.md#update_team_users_permissions) - Update team users permissions
-* [get_user_created_teams](docs/sdks/teams/README.md#get_user_created_teams) - Get user created teams
-
-### [ToolsetConfiguration](docs/sdks/toolsetconfiguration/README.md)
-
-* [get_toolset_config](docs/sdks/toolsetconfiguration/README.md#get_toolset_config) - Get toolset configuration
-* [~~save_toolset_config~~](docs/sdks/toolsetconfiguration/README.md#save_toolset_config) - Save toolset configuration :warning: **Deprecated**
-* [update_toolset_config](docs/sdks/toolsetconfiguration/README.md#update_toolset_config) - Update toolset configuration
-* [delete_toolset_config](docs/sdks/toolsetconfiguration/README.md#delete_toolset_config) - Delete toolset configuration
-
-### [ToolsetInstances](docs/sdks/toolsetinstances/README.md)
-
-* [create_toolset](docs/sdks/toolsetinstances/README.md#create_toolset) - Create toolset instance
-* [list_configured_toolsets](docs/sdks/toolsetinstances/README.md#list_configured_toolsets) - List configured toolsets
-* [check_toolset_status](docs/sdks/toolsetinstances/README.md#check_toolset_status) - Check toolset status
-* [reauthenticate_toolset](docs/sdks/toolsetinstances/README.md#reauthenticate_toolset) - Reauthenticate toolset
-* [get_my_toolsets](docs/sdks/toolsetinstances/README.md#get_my_toolsets) - List my toolsets with auth status
-* [get_toolset_instances](docs/sdks/toolsetinstances/README.md#get_toolset_instances) - List toolset instances
-* [create_toolset_instance](docs/sdks/toolsetinstances/README.md#create_toolset_instance) - Create toolset instance
-* [get_toolset_instance](docs/sdks/toolsetinstances/README.md#get_toolset_instance) - Get toolset instance
-* [update_toolset_instance](docs/sdks/toolsetinstances/README.md#update_toolset_instance) - Update toolset instance
-* [delete_toolset_instance](docs/sdks/toolsetinstances/README.md#delete_toolset_instance) - Delete toolset instance
-* [authenticate_toolset_instance](docs/sdks/toolsetinstances/README.md#authenticate_toolset_instance) - Authenticate toolset instance
-* [remove_toolset_credentials](docs/sdks/toolsetinstances/README.md#remove_toolset_credentials) - Remove toolset credentials
-* [reauthenticate_toolset_instance](docs/sdks/toolsetinstances/README.md#reauthenticate_toolset_instance) - Mark instance for reauthentication
-* [get_toolset_instance_status](docs/sdks/toolsetinstances/README.md#get_toolset_instance_status) - Get instance authentication status
-
-### [ToolsetOAuth](docs/sdks/toolsetoauth/README.md)
-
-* [get_toolset_o_auth_url](docs/sdks/toolsetoauth/README.md#get_toolset_o_auth_url) - Get OAuth authorization URL
-* [handle_toolset_o_auth_callback](docs/sdks/toolsetoauth/README.md#handle_toolset_o_auth_callback) - Handle OAuth callback
-* [get_instance_o_auth_authorization_url](docs/sdks/toolsetoauth/README.md#get_instance_o_auth_authorization_url) - Get OAuth authorization URL for instance
-
-### [ToolsetRegistry](docs/sdks/toolsetregistry/README.md)
-
-* [list_toolset_registry](docs/sdks/toolsetregistry/README.md#list_toolset_registry) - List available toolsets
-* [get_toolset_schema](docs/sdks/toolsetregistry/README.md#get_toolset_schema) - Get toolset schema
-
-### [Upload](docs/sdks/upload/README.md)
-
-* [upload_records_to_kb](docs/sdks/upload/README.md#upload_records_to_kb) - Upload files to knowledge base
-* [upload_records_to_folder](docs/sdks/upload/README.md#upload_records_to_folder) - Upload files to folder
-* [get_upload_limits](docs/sdks/upload/README.md#get_upload_limits) - Get upload limits
 
 ### [UserAccount](docs/sdks/useraccount/README.md)
 
 * [init_auth](docs/sdks/useraccount/README.md#init_auth) - Initialize authentication session
 * [authenticate](docs/sdks/useraccount/README.md#authenticate) - Authenticate user with credentials
-* [generate_login_otp](docs/sdks/useraccount/README.md#generate_login_otp) - Generate and send OTP for login
-* [forgot_password](docs/sdks/useraccount/README.md#forgot_password) - Request password reset email
 * [reset_password_with_token](docs/sdks/useraccount/README.md#reset_password_with_token) - Reset password with email token
-* [refresh_token](docs/sdks/useraccount/README.md#refresh_token) - Refresh access token
-* [logout](docs/sdks/useraccount/README.md#logout) - Logout current session
 * [reset_password](docs/sdks/useraccount/README.md#reset_password) - Reset password
-
-### [UserGroups](docs/sdks/usergroups/README.md)
-
-* [create_user_group](docs/sdks/usergroups/README.md#create_user_group) - Create user group
-* [get_all_user_groups](docs/sdks/usergroups/README.md#get_all_user_groups) - Get all user groups
-* [get_user_group_by_id](docs/sdks/usergroups/README.md#get_user_group_by_id) - Get user group by ID
-* [update_user_group](docs/sdks/usergroups/README.md#update_user_group) - Update user group
-* [delete_user_group](docs/sdks/usergroups/README.md#delete_user_group) - Delete user group
-* [add_users_to_group](docs/sdks/usergroups/README.md#add_users_to_group) - Add users to group
-* [remove_users_from_group](docs/sdks/usergroups/README.md#remove_users_from_group) - Remove users from group
-* [get_groups_for_user](docs/sdks/usergroups/README.md#get_groups_for_user) - Get groups for a user
-* [get_users_in_group](docs/sdks/usergroups/README.md#get_users_in_group) - Get users in group
-* [get_group_statistics](docs/sdks/usergroups/README.md#get_group_statistics) - Get group statistics
-
-### [Users](docs/sdks/users/README.md)
-
-* [get_all_users](docs/sdks/users/README.md#get_all_users) - Get all users
-* [create_user](docs/sdks/users/README.md#create_user) - Create a new user
-* [get_user_by_id](docs/sdks/users/README.md#get_user_by_id) - Get user by ID
-* [update_user](docs/sdks/users/README.md#update_user) - Update user
-* [delete_user](docs/sdks/users/README.md#delete_user) - Delete user
-* [get_user_email_by_id](docs/sdks/users/README.md#get_user_email_by_id) - Get user email by ID
-* [update_email](docs/sdks/users/README.md#update_email) - Update user email
-* [upload_user_display_picture](docs/sdks/users/README.md#upload_user_display_picture) - Upload display picture
-* [get_user_display_picture](docs/sdks/users/README.md#get_user_display_picture) - Get display picture
-* [remove_user_display_picture](docs/sdks/users/README.md#remove_user_display_picture) - Remove display picture
-* [bulk_invite_users](docs/sdks/users/README.md#bulk_invite_users) - Bulk invite users
-* [resend_user_invite](docs/sdks/users/README.md#resend_user_invite) - Resend user invite
-* [list_users_graph](docs/sdks/users/README.md#list_users_graph) - List users (paginated with graph data)
-* [unblock_user](docs/sdks/users/README.md#unblock_user) - Unblock a user in organization
-* [get_all_users_with_groups](docs/sdks/users/README.md#get_all_users_with_groups) - Get all users with groups
-* [get_users_by_ids](docs/sdks/users/README.md#get_users_by_ids) - Get users by IDs
-* [update_full_name](docs/sdks/users/README.md#update_full_name) - Update user full name
-* [update_first_name](docs/sdks/users/README.md#update_first_name) - Update user first name
-* [update_last_name](docs/sdks/users/README.md#update_last_name) - Update user last name
-* [update_designation](docs/sdks/users/README.md#update_designation) - Update user designation
-* [admin_check](docs/sdks/users/README.md#admin_check) - Check if user is admin
-* [get_user_teams_via_users](docs/sdks/users/README.md#get_user_teams_via_users) - Get user teams
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -642,6 +294,7 @@ underlying connection when the context is exited.
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.utils import parse_datetime
 
 
 with Pipeshub(
@@ -653,7 +306,10 @@ with Pipeshub(
     res = pipeshub.conversations.stream_chat(query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", model_friendly_name="GPT-4 Turbo", chat_mode="balanced", timezone="America/New_York", current_time=parse_datetime("2026-04-12T16:00:00+05:30"), tools=[
+        "jira.create_issue",
+        "confluence.search_content",
+    ])
 
     with res as event_stream:
         for event in event_stream:
@@ -666,38 +322,6 @@ with Pipeshub(
 [generator]: https://book.pythontips.com/en/latest/generators.html
 [context-manager]: https://book.pythontips.com/en/latest/context_managers.html
 <!-- End Server-sent event streaming [eventstream] -->
-
-<!-- Start File uploads [file-upload] -->
-## File uploads
-
-Certain SDK methods accept file objects as part of a request body or multi-part request. It is possible and typically recommended to upload files as a stream rather than reading the entire contents into memory. This avoids excessive memory consumption and potentially crashing with out-of-memory errors when working with very large files. The following example demonstrates how to attach a file stream to a request.
-
-> [!TIP]
->
-> For endpoints that handle file uploads bytes arrays can also be used. However, using streams is recommended for large files.
->
-
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.users.upload_user_display_picture(file={
-        "file_name": "example.file",
-        "content": open("example.file", "rb"),
-    })
-
-    # Handle response
-    print(res)
-
-```
-<!-- End File uploads [file-upload] -->
 
 <!-- Start Retries [retries] -->
 ## Retries
@@ -712,7 +336,9 @@ from pipeshub_sdk.utils import BackoffStrategy, RetryConfig
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com",
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    },
         RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
 
     # Handle response
@@ -730,7 +356,9 @@ with Pipeshub(
     retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com")
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    })
 
     # Handle response
     print(res)
@@ -761,7 +389,9 @@ with Pipeshub() as pipeshub:
     res = None
     try:
 
-        res = pipeshub.user_account.init_auth(email="user@example.com")
+        res = pipeshub.user_account.init_auth(request={
+            "email": "user@example.com",
+        })
 
         # Handle response
         print(res)
@@ -776,18 +406,15 @@ with Pipeshub() as pipeshub:
         print(e.raw_response)
 
         # Depending on the method different errors may be thrown
-        if isinstance(e, errors.AuthError):
-            print(e.data.error)  # Optional[str]
-            print(e.data.message)  # Optional[str]
-            print(e.data.code)  # Optional[str]
-            print(e.data.status_code)  # Optional[int]
+        if isinstance(e, errors.ErrorResponse):
+            print(e.data.error)  # models.Error
 ```
 
 ### Error Classes
 **Primary error:**
 * [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py): The base class for HTTP error responses.
 
-<details><summary>Less common errors (10)</summary>
+<details><summary>Less common errors (28)</summary>
 
 <br />
 
@@ -798,11 +425,29 @@ with Pipeshub() as pipeshub:
 
 
 **Inherit from [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`AuthError`](./src/pipeshub_sdk/errors/autherror.py): Authentication error response with details for debugging and user feedback.<br><br> <b>Common Error Codes:</b><br> <ul> <li><code>INVALID_CREDENTIALS</code> - Wrong password or OTP</li> <li><code>ACCOUNT_BLOCKED</code> - Account locked after 5 failed attempts</li> <li><code>SESSION_EXPIRED</code> - Session token has expired</li> <li><code>OTP_EXPIRED</code> - OTP code has expired (10 min validity)</li> <li><code>USER_NOT_FOUND</code> - Email not registered</li> <li><code>INVALID_TOKEN</code> - JWT token is invalid or malformed</li> <li><code>METHOD_NOT_ALLOWED</code> - Auth method not enabled for org</li> </ul>. Applicable to 7 of 274 methods.*
-* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 5 of 274 methods.*
-* [`ResetPasswordBadRequestError`](./src/pipeshub_sdk/errors/resetpasswordbadrequesterror.py): Invalid current password or weak new password. Status code `400`. Applicable to 1 of 274 methods.*
-* [`SamlSignInCallbackBadRequestError`](./src/pipeshub_sdk/errors/samlsignincallbackbadrequesterror.py): Invalid SAML response. Status code `400`. Applicable to 1 of 274 methods.*
-* [`UnauthorizedError`](./src/pipeshub_sdk/errors/unauthorizederror.py): SAML authentication failed. Status code `401`. Applicable to 1 of 274 methods.*
+* [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). Applicable to 7 of 30 methods.*
+* [`GetKnowledgeHubRootNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesbadrequesterror.py): Invalid request parameters. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubChildNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesbadrequesterror.py): Invalid request parameters or path values. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 30 methods.*
+* [`SearchHistoryBadRequestError`](./src/pipeshub_sdk/errors/searchhistorybadrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 30 methods.*
+* [`GetSearchByIDBadRequestError`](./src/pipeshub_sdk/errors/getsearchbyidbadrequesterror.py): Invalid request — `searchId` failed Zod validation (not a valid ObjectId). Status code `400`. Applicable to 1 of 30 methods.*
+* [`GetAvailableModelsByTypeBadRequestError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypebadrequesterror.py): Invalid `modelType` path parameter.  The `modelType` value was not one of the supported enum categories. This response is produced by the Zod validation middleware **before** the handler runs. The `error.metadata.errors` array contains per-field detail about exactly which constraint failed. Status code `400`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubRootNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubChildNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 30 methods.*
+* [`SearchHistoryUnauthorizedError`](./src/pipeshub_sdk/errors/searchhistoryunauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 30 methods.*
+* [`GetSearchByIDUnauthorizedError`](./src/pipeshub_sdk/errors/getsearchbyidunauthorizederror.py): Missing or invalid bearer token. Status code `401`. Applicable to 1 of 30 methods.*
+* [`GetAvailableModelsByTypeUnauthorizedError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubRootNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubChildNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 30 methods.*
+* [`SearchHistoryForbiddenError`](./src/pipeshub_sdk/errors/searchhistoryforbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 30 methods.*
+* [`GetSearchByIDForbiddenError`](./src/pipeshub_sdk/errors/getsearchbyidforbiddenerror.py): Bearer token lacks the `semantic:read` scope. Status code `403`. Applicable to 1 of 30 methods.*
+* [`GetAvailableModelsByTypeForbiddenError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `config:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubChildNodesNotFoundError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesnotfounderror.py): Parent node not found.  The `parentId` does not correspond to an existing node of the specified `parentType`, or the node has been deleted. Status code `404`. Applicable to 1 of 30 methods.*
+* [`GetSearchByIDNotFoundError`](./src/pipeshub_sdk/errors/getsearchbyidnotfounderror.py): Reserved for parity with sibling routes; this endpoint currently returns `200` with an empty array for an unknown id rather than emitting `404`. Status code `404`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubRootNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 30 methods.*
+* [`GetKnowledgeHubChildNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 30 methods.*
+* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 30 methods.*
+* [`GetSearchByIDInternalServerError`](./src/pipeshub_sdk/errors/getsearchbyidinternalservererror.py): Server error. Possible causes:  - Explicit `InternalServerError`   or any other 500 `BaseError` thrown by the handler. - Non-`BaseError` exception caught by the   global error middleware. - Response serializer fallback. Status code `500`. Applicable to 1 of 30 methods.*
+* [`GetAvailableModelsByTypeInternalServerError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 30 methods.*
 * [`ResponseValidationError`](./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>
@@ -839,7 +484,9 @@ with Pipeshub(
     instance_url="https://app.pipeshub.com",
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com")
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    })
 
     # Handle response
     print(res)
@@ -857,23 +504,9 @@ with Pipeshub(
     server_url="https://https://app.pipeshub.com",
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com")
-
-    # Handle response
-    print(res)
-
-```
-
-### Override Server URL Per-Operation
-
-The server URL can also be overridden on a per-operation basis, provided a server list was specified for the operation. For example:
-```python
-from pipeshub_sdk import Pipeshub
-
-
-with Pipeshub() as pipeshub:
-
-    res = pipeshub.open_id_connect.openid_configuration(server_url="")
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    })
 
     # Handle response
     print(res)

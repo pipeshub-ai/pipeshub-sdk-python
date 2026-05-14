@@ -1,0 +1,13 @@
+# AuthenticateMultiStepResponse
+
+Current authentication step succeeded; additional MFA steps remain
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `status`                                                                                       | [models.AuthenticateMultiStepResponseStatus](../models/authenticatemultistepresponsestatus.md) | :heavy_check_mark:                                                                             | Step completion status                                                                         |
+| `next_step`                                                                                    | *int*                                                                                          | :heavy_check_mark:                                                                             | Next authentication step index                                                                 |
+| `allowed_methods`                                                                              | List[*str*]                                                                                    | :heavy_check_mark:                                                                             | Allowed method types for the next step                                                         |
+| `auth_providers`                                                                               | [models.AuthProviders](../models/authproviders.md)                                             | :heavy_check_mark:                                                                             | Configuration for external authentication providers (returned when those methods are allowed)  |

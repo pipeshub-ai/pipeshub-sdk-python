@@ -1,0 +1,14 @@
+# UnarchiveConversationResponse
+
+Conversation unarchived successfully
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `id`                                                                                     | *Optional[str]*                                                                          | :heavy_minus_sign:                                                                       | Conversation identifier                                                                  |
+| `status`                                                                                 | [Optional[models.UnarchiveConversationStatus]](../models/unarchiveconversationstatus.md) | :heavy_minus_sign:                                                                       | New archive status of the conversation                                                   |
+| `unarchived_by`                                                                          | *Optional[str]*                                                                          | :heavy_minus_sign:                                                                       | User who unarchived the conversation                                                     |
+| `unarchived_at`                                                                          | [date](https://docs.python.org/3/library/datetime.html#date-objects)                     | :heavy_minus_sign:                                                                       | Timestamp when the conversation was unarchived                                           |
+| `meta`                                                                                   | [Optional[models.UnarchiveConversationMeta]](../models/unarchiveconversationmeta.md)     | :heavy_minus_sign:                                                                       | N/A                                                                                      |

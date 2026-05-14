@@ -4,7 +4,7 @@ from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
 from pydantic import model_serializer
-from typing import List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -53,12 +53,13 @@ Category = Union[
     Literal[
         "incorrect_information",
         "missing_information",
-        "outdated_information",
-        "irrelevant_response",
-        "too_verbose",
-        "too_brief",
-        "formatting_issues",
-        "citation_issues",
+        "irrelevant_information",
+        "unclear_explanation",
+        "poor_citations",
+        "excellent_answer",
+        "helpful_citations",
+        "well_explained",
+        "other",
     ],
     UnrecognizedStr,
 ]
@@ -101,6 +102,8 @@ class Comments(BaseModel):
 
 
 class CitationFeedbackTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Auto-generated sub-document identifier"""
     citation_id: NotRequired[str]
     is_relevant: NotRequired[bool]
     relevance_score: NotRequired[int]
@@ -108,6 +111,9 @@ class CitationFeedbackTypedDict(TypedDict):
 
 
 class CitationFeedback(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Auto-generated sub-document identifier"""
+
     citation_id: Annotated[Optional[str], pydantic.Field(alias="citationId")] = None
 
     is_relevant: Annotated[Optional[bool], pydantic.Field(alias="isRelevant")] = None
@@ -120,7 +126,135 @@ class CitationFeedback(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["citationId", "isRelevant", "relevanceScore", "comment"])
+        optional_fields = set(
+            ["_id", "citationId", "isRelevant", "relevanceScore", "comment"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+Source = Union[
+    Literal[
+        "user",
+        "system",
+        "admin",
+        "auto",
+    ],
+    UnrecognizedStr,
+]
+r"""Origin of the feedback. Always present in responses (server applies the default `user`)."""
+
+
+class RevisionTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Auto-generated sub-document identifier"""
+    updated_fields: NotRequired[List[str]]
+    r"""Names of feedback fields modified in this revision"""
+    previous_values: NotRequired[Dict[str, Any]]
+    r"""Map of previously-set values for the fields named in `updatedFields`,
+    keyed by field name. Stored as a Mongoose Map of Mixed values.
+
+    """
+    updated_by: NotRequired[str]
+    updated_at: NotRequired[int]
+    r"""Time the revision was recorded, as epoch milliseconds."""
+
+
+class Revision(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Auto-generated sub-document identifier"""
+
+    updated_fields: Annotated[
+        Optional[List[str]], pydantic.Field(alias="updatedFields")
+    ] = None
+    r"""Names of feedback fields modified in this revision"""
+
+    previous_values: Annotated[
+        Optional[Dict[str, Any]], pydantic.Field(alias="previousValues")
+    ] = None
+    r"""Map of previously-set values for the fields named in `updatedFields`,
+    keyed by field name. Stored as a Mongoose Map of Mixed values.
+
+    """
+
+    updated_by: Annotated[Optional[str], pydantic.Field(alias="updatedBy")] = None
+
+    updated_at: Annotated[Optional[int], pydantic.Field(alias="updatedAt")] = None
+    r"""Time the revision was recorded, as epoch milliseconds."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["_id", "updatedFields", "previousValues", "updatedBy", "updatedAt"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class MetricsTypedDict(TypedDict):
+    r"""Optional telemetry captured alongside the feedback"""
+
+    time_to_feedback: NotRequired[float]
+    r"""Time from response delivery to feedback submission"""
+    user_interaction_time: NotRequired[float]
+    r"""Total time the user spent reviewing the response"""
+    feedback_session_id: NotRequired[str]
+    user_agent: NotRequired[str]
+    platform: NotRequired[str]
+
+
+class Metrics(BaseModel):
+    r"""Optional telemetry captured alongside the feedback"""
+
+    time_to_feedback: Annotated[
+        Optional[float], pydantic.Field(alias="timeToFeedback")
+    ] = None
+    r"""Time from response delivery to feedback submission"""
+
+    user_interaction_time: Annotated[
+        Optional[float], pydantic.Field(alias="userInteractionTime")
+    ] = None
+    r"""Total time the user spent reviewing the response"""
+
+    feedback_session_id: Annotated[
+        Optional[str], pydantic.Field(alias="feedbackSessionId")
+    ] = None
+
+    user_agent: Annotated[Optional[str], pydantic.Field(alias="userAgent")] = None
+
+    platform: Optional[str] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "timeToFeedback",
+                "userInteractionTime",
+                "feedbackSessionId",
+                "userAgent",
+                "platform",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
@@ -145,12 +279,28 @@ class MessageFeedbackTypedDict(TypedDict):
     r"""Overall helpfulness rating"""
     ratings: NotRequired[RatingsTypedDict]
     categories: NotRequired[List[Category]]
-    r"""Categories of issues identified"""
+    r"""Categories of issues or positive attributes identified"""
     comments: NotRequired[CommentsTypedDict]
     citation_feedback: NotRequired[List[CitationFeedbackTypedDict]]
     r"""Feedback on individual citations"""
     follow_up_questions_helpful: NotRequired[bool]
     r"""Were the suggested follow-up questions helpful"""
+    unused_follow_up_questions: NotRequired[List[str]]
+    r"""Follow-up questions that were suggested but not used by the user"""
+    source: NotRequired[Source]
+    r"""Origin of the feedback. Always present in responses (server applies the default `user`)."""
+    feedback_provider: NotRequired[str]
+    r"""User who submitted the feedback"""
+    timestamp: NotRequired[int]
+    r"""Time the feedback was created, stored as a Number (epoch milliseconds)
+    with a server-side default of `Date.now`, so always present in responses.
+    Not an ISO 8601 datetime.
+
+    """
+    revisions: NotRequired[List[RevisionTypedDict]]
+    r"""Audit trail of edits to this feedback entry"""
+    metrics: NotRequired[MetricsTypedDict]
+    r"""Optional telemetry captured alongside the feedback"""
 
 
 class MessageFeedback(BaseModel):
@@ -165,7 +315,7 @@ class MessageFeedback(BaseModel):
     ratings: Optional[Ratings] = None
 
     categories: Optional[List[Category]] = None
-    r"""Categories of issues identified"""
+    r"""Categories of issues or positive attributes identified"""
 
     comments: Optional[Comments] = None
 
@@ -179,6 +329,32 @@ class MessageFeedback(BaseModel):
     ] = None
     r"""Were the suggested follow-up questions helpful"""
 
+    unused_follow_up_questions: Annotated[
+        Optional[List[str]], pydantic.Field(alias="unusedFollowUpQuestions")
+    ] = None
+    r"""Follow-up questions that were suggested but not used by the user"""
+
+    source: Optional[Source] = "user"
+    r"""Origin of the feedback. Always present in responses (server applies the default `user`)."""
+
+    feedback_provider: Annotated[
+        Optional[str], pydantic.Field(alias="feedbackProvider")
+    ] = None
+    r"""User who submitted the feedback"""
+
+    timestamp: Optional[int] = None
+    r"""Time the feedback was created, stored as a Number (epoch milliseconds)
+    with a server-side default of `Date.now`, so always present in responses.
+    Not an ISO 8601 datetime.
+
+    """
+
+    revisions: Optional[List[Revision]] = None
+    r"""Audit trail of edits to this feedback entry"""
+
+    metrics: Optional[Metrics] = None
+    r"""Optional telemetry captured alongside the feedback"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -189,6 +365,12 @@ class MessageFeedback(BaseModel):
                 "comments",
                 "citationFeedback",
                 "followUpQuestionsHelpful",
+                "unusedFollowUpQuestions",
+                "source",
+                "feedbackProvider",
+                "timestamp",
+                "revisions",
+                "metrics",
             ]
         )
         serialized = handler(self)
@@ -207,6 +389,14 @@ class MessageFeedback(BaseModel):
 
 try:
     CitationFeedback.model_rebuild()
+except NameError:
+    pass
+try:
+    Revision.model_rebuild()
+except NameError:
+    pass
+try:
+    Metrics.model_rebuild()
 except NameError:
     pass
 try:

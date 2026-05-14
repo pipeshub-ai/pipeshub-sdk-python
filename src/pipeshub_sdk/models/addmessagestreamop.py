@@ -10,6 +10,10 @@ from typing_extensions import Annotated, TypedDict
 
 class AddMessageStreamRequestTypedDict(TypedDict):
     conversation_id: str
+    r"""Identifier of the conversation to append the message to. The
+    conversation must belong to the caller and must not be deleted.
+
+    """
     body: AddMessageRequestTypedDict
     r"""Request payload"""
 
@@ -20,6 +24,10 @@ class AddMessageStreamRequest(BaseModel):
         pydantic.Field(alias="conversationId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+    r"""Identifier of the conversation to append the message to. The
+    conversation must belong to the caller and must not be deleted.
+
+    """
 
     body: Annotated[
         AddMessageRequest,
