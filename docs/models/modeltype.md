@@ -5,11 +5,14 @@ Type of AI model
 
 ## Values
 
-| Name          | Value         |
-| ------------- | ------------- |
-| `LLM`         | llm           |
-| `EMBEDDING`   | embedding     |
-| `OCR`         | ocr           |
-| `SLM`         | slm           |
-| `REASONING`   | reasoning     |
-| `MULTI_MODAL` | multiModal    |
+| Name               | Value              |
+| ------------------ | ------------------ |
+| `LLM`              | llm                |
+| `EMBEDDING`        | embedding          |
+| `OCR`              | ocr                |
+| `SLM`              | slm                |
+| `REASONING`        | reasoning          |
+| `MULTI_MODAL`      | multiModal         |
+| `IMAGE_GENERATION` | imageGeneration    |
+| `TTS`              | tts                |
+| `STT`              | stt                |

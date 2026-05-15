@@ -2,17 +2,21 @@
 
 from __future__ import annotations
 from .modeltype import ModelType
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetAvailableModelsByTypeRequestTypedDict(TypedDict):
     model_type: ModelType
-    r"""Type of AI model"""
+    r"""Category of AI model to retrieve.
+
+    Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+
+    """
 
 
 class GetAvailableModelsByTypeRequest(BaseModel):
@@ -21,28 +25,181 @@ class GetAvailableModelsByTypeRequest(BaseModel):
         pydantic.Field(alias="modelType"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Type of AI model"""
+    r"""Category of AI model to retrieve.
+
+    Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+
+    """
 
 
-class GetAvailableModelsByTypeModelTypedDict(TypedDict):
-    model_key: NotRequired[str]
-    provider: NotRequired[str]
-    model: NotRequired[str]
-    is_default: NotRequired[bool]
+GetAvailableModelsByTypeCodeHTTPInternalServerError = Literal[
+    "HTTP_INTERNAL_SERVER_ERROR",
+]
 
 
-class GetAvailableModelsByTypeModel(BaseModel):
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+class GetAvailableModelsByTypeErrorHTTPInternalServerErrorTypedDict(TypedDict):
+    code: GetAvailableModelsByTypeCodeHTTPInternalServerError
+    message: str
 
-    provider: Optional[str] = None
 
-    model: Optional[str] = None
+class GetAvailableModelsByTypeErrorHTTPInternalServerError(BaseModel):
+    code: GetAvailableModelsByTypeCodeHTTPInternalServerError
 
-    is_default: Annotated[Optional[bool], pydantic.Field(alias="isDefault")] = None
+    message: str
+
+
+GetAvailableModelsByTypeForbiddenCode = Literal["HTTP_FORBIDDEN",]
+
+
+class GetAvailableModelsByTypeErrorHTTPForbiddenTypedDict(TypedDict):
+    code: GetAvailableModelsByTypeForbiddenCode
+    message: str
+
+
+class GetAvailableModelsByTypeErrorHTTPForbidden(BaseModel):
+    code: GetAvailableModelsByTypeForbiddenCode
+
+    message: str
+
+
+GetAvailableModelsByTypeUnauthorizedCode = Literal["HTTP_UNAUTHORIZED",]
+
+
+class GetAvailableModelsByTypeErrorHTTPUnauthorizedTypedDict(TypedDict):
+    code: GetAvailableModelsByTypeUnauthorizedCode
+    message: str
+
+
+class GetAvailableModelsByTypeErrorHTTPUnauthorized(BaseModel):
+    code: GetAvailableModelsByTypeUnauthorizedCode
+
+    message: str
+
+
+GetAvailableModelsByTypeCodeValidationError = Literal["VALIDATION_ERROR",]
+
+
+MetadataCode = Union[
+    Literal[
+        "INVALID_TYPE",
+        "INVALID_LITERAL",
+        "INVALID_ENUM",
+        "INVALID_UNION",
+        "INVALID_DISCRIMINATOR",
+        "INVALID_ARGUMENTS",
+        "TOO_SMALL",
+        "TOO_BIG",
+    ],
+    UnrecognizedStr,
+]
+r"""Machine-readable error code mapped from the Zod issue code."""
+
+
+class MetadataErrorTypedDict(TypedDict):
+    field: str
+    r"""Dot-separated path to the failing field within the request (params, body, query)."""
+    message: str
+    r"""Human-readable Zod validation message."""
+    code: MetadataCode
+    r"""Machine-readable error code mapped from the Zod issue code."""
+    value: str
+    r"""The rejected value stringified. May be an empty string when the value is not easily serialisable."""
+
+
+class MetadataError(BaseModel):
+    field: str
+    r"""Dot-separated path to the failing field within the request (params, body, query)."""
+
+    message: str
+    r"""Human-readable Zod validation message."""
+
+    code: MetadataCode
+    r"""Machine-readable error code mapped from the Zod issue code."""
+
+    value: str
+    r"""The rejected value stringified. May be an empty string when the value is not easily serialisable."""
+
+
+class GetAvailableModelsByTypeMetadataTypedDict(TypedDict):
+    r"""Per-field validation detail from Zod."""
+
+    errors: List[MetadataErrorTypedDict]
+
+
+class GetAvailableModelsByTypeMetadata(BaseModel):
+    r"""Per-field validation detail from Zod."""
+
+    errors: List[MetadataError]
+
+
+class GetAvailableModelsByTypeErrorValidationErrorTypedDict(TypedDict):
+    code: GetAvailableModelsByTypeCodeValidationError
+    message: str
+    metadata: GetAvailableModelsByTypeMetadataTypedDict
+    r"""Per-field validation detail from Zod."""
+
+
+class GetAvailableModelsByTypeErrorValidationError(BaseModel):
+    code: GetAvailableModelsByTypeCodeValidationError
+
+    message: str
+
+    metadata: GetAvailableModelsByTypeMetadata
+    r"""Per-field validation detail from Zod."""
+
+
+GetAvailableModelsByTypeStatus = Literal["success",]
+
+
+class ModelTypedDict(TypedDict):
+    model_type: ModelType
+    r"""Model category — always matches the `{modelType}` path parameter."""
+    provider: str
+    r"""Provider identifier as stored in configuration (e.g. `openAI`, `azureOpenAI`, `anthropic`, `gemini`, `ollama`)."""
+    model_name: str
+    r"""Specific model name/identifier forwarded to the provider API when making inference calls."""
+    model_key: str
+    r"""UUID that uniquely identifies the provider configuration entry this model was expanded from. Use this key when calling update/delete endpoints."""
+    is_multimodal: bool
+    r"""`true` when this model accepts multi-modal inputs (text + images). Always present; defaults to `false` when not explicitly set."""
+    is_reasoning: bool
+    r"""`true` when this is a reasoning / chain-of-thought model. Always present; defaults to `false` when not explicitly set."""
+    is_default: bool
+    r"""`true` for the first model in the provider entry that was marked as default. At most one entry per `modelType` will have this set to `true`."""
+    model_friendly_name: NotRequired[str]
+    r"""Optional human-readable display name. Only present when the provider configuration entry contains exactly one model name (not a comma-separated list) **and** a friendly name was added during configuration."""
+
+
+class Model(BaseModel):
+    model_type: Annotated[ModelType, pydantic.Field(alias="modelType")]
+    r"""Model category — always matches the `{modelType}` path parameter."""
+
+    provider: str
+    r"""Provider identifier as stored in configuration (e.g. `openAI`, `azureOpenAI`, `anthropic`, `gemini`, `ollama`)."""
+
+    model_name: Annotated[str, pydantic.Field(alias="modelName")]
+    r"""Specific model name/identifier forwarded to the provider API when making inference calls."""
+
+    model_key: Annotated[str, pydantic.Field(alias="modelKey")]
+    r"""UUID that uniquely identifies the provider configuration entry this model was expanded from. Use this key when calling update/delete endpoints."""
+
+    is_multimodal: Annotated[bool, pydantic.Field(alias="isMultimodal")]
+    r"""`true` when this model accepts multi-modal inputs (text + images). Always present; defaults to `false` when not explicitly set."""
+
+    is_reasoning: Annotated[bool, pydantic.Field(alias="isReasoning")]
+    r"""`true` when this is a reasoning / chain-of-thought model. Always present; defaults to `false` when not explicitly set."""
+
+    is_default: Annotated[bool, pydantic.Field(alias="isDefault")]
+    r"""`true` for the first model in the provider entry that was marked as default. At most one entry per `modelType` will have this set to `true`."""
+
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Optional human-readable display name. Only present when the provider configuration entry contains exactly one model name (not a comma-separated list) **and** a friendly name was added during configuration."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelKey", "provider", "model", "isDefault"])
+        optional_fields = set(["modelFriendlyName"])
         serialized = handler(self)
         m = {}
 
@@ -58,40 +215,56 @@ class GetAvailableModelsByTypeModel(BaseModel):
 
 
 class GetAvailableModelsByTypeResponseTypedDict(TypedDict):
-    r"""Available models retrieved"""
+    r"""Available models retrieved successfully.
 
-    status: NotRequired[str]
-    message: NotRequired[str]
-    models: NotRequired[List[GetAvailableModelsByTypeModelTypedDict]]
+    An empty `models` array (with HTTP 200) is returned when no providers of
+    the requested type have been configured — treat this as a valid, empty
+    state, not an error.
+
+    """
+
+    status: GetAvailableModelsByTypeStatus
+    message: str
+    r"""Human-readable summary. Two formats are possible:
+    - `\"Found {n} {modelType} models\"` — the `modelType` key
+    exists in the stored config (returned even when `n` is 0,
+    e.g. `\"Found 0 ocr models\"`).
+
+    - `\"No {modelType} models found\"` — no AI config has been
+    stored yet, or the `modelType` key is absent from the
+    stored config entirely.
+    """
+    models: List[ModelTypedDict]
+    r"""Flat list of individual model entries. Each entry represents one model name from one provider configuration."""
 
 
 class GetAvailableModelsByTypeResponse(BaseModel):
-    r"""Available models retrieved"""
+    r"""Available models retrieved successfully.
 
-    status: Optional[str] = None
+    An empty `models` array (with HTTP 200) is returned when no providers of
+    the requested type have been configured — treat this as a valid, empty
+    state, not an error.
 
-    message: Optional[str] = None
+    """
 
-    models: Optional[List[GetAvailableModelsByTypeModel]] = None
+    status: GetAvailableModelsByTypeStatus
 
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["status", "message", "models"])
-        serialized = handler(self)
-        m = {}
+    message: str
+    r"""Human-readable summary. Two formats are possible:
+    - `\"Found {n} {modelType} models\"` — the `modelType` key
+    exists in the stored config (returned even when `n` is 0,
+    e.g. `\"Found 0 ocr models\"`).
 
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
+    - `\"No {modelType} models found\"` — no AI config has been
+    stored yet, or the `modelType` key is absent from the
+    stored config entirely.
+    """
 
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
+    models: List[Model]
+    r"""Flat list of individual model entries. Each entry represents one model name from one provider configuration."""
 
 
 try:
-    GetAvailableModelsByTypeModel.model_rebuild()
+    Model.model_rebuild()
 except NameError:
     pass

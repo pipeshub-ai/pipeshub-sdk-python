@@ -10,15 +10,17 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class SemanticSearchRequestTypedDict(TypedDict):
-    r"""Request body for performing semantic search across the enterprise knowledge base.<br><br>
-    <b>How Semantic Search Works:</b><br>
-    <ol>
-    <li>Query is converted to vector embeddings</li>
-    <li>Similar content is found using vector similarity</li>
-    <li>Results are ranked by relevance score</li>
-    <li>Matching chunks with metadata are returned</li>
-    </ol>
-    <b>Filtering:</b><br>
+    r"""Request body for performing semantic search across the enterprise knowledge base.
+
+    **How Semantic Search Works:**
+
+    1. Query is converted to vector embeddings
+    2. Similar content is found using vector similarity
+    3. Results are ranked by relevance score
+    4. Matching chunks with metadata are returned
+
+    **Filtering:**
+
     Use filters to narrow search scope to specific apps or knowledge bases.
 
     """
@@ -29,26 +31,38 @@ class SemanticSearchRequestTypedDict(TypedDict):
 
     """
     filters: NotRequired[FiltersTypedDict]
+    r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
+    for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
+    For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
+    to let the service use the agent’s stored knowledge and tool configuration. Sending
+    `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
+    turn (it is not “full org default”).
+
+    """
     limit: NotRequired[int]
     r"""Maximum number of results to return"""
     model_key: NotRequired[str]
     r"""AI model to use for embeddings"""
     model_name: NotRequired[str]
     r"""Display name of the model"""
+    model_friendly_name: NotRequired[str]
+    r"""Friendly display name of the model"""
     chat_mode: NotRequired[str]
     r"""Processing mode configuration"""
 
 
 class SemanticSearchRequest(BaseModel):
-    r"""Request body for performing semantic search across the enterprise knowledge base.<br><br>
-    <b>How Semantic Search Works:</b><br>
-    <ol>
-    <li>Query is converted to vector embeddings</li>
-    <li>Similar content is found using vector similarity</li>
-    <li>Results are ranked by relevance score</li>
-    <li>Matching chunks with metadata are returned</li>
-    </ol>
-    <b>Filtering:</b><br>
+    r"""Request body for performing semantic search across the enterprise knowledge base.
+
+    **How Semantic Search Works:**
+
+    1. Query is converted to vector embeddings
+    2. Similar content is found using vector similarity
+    3. Results are ranked by relevance score
+    4. Matching chunks with metadata are returned
+
+    **Filtering:**
+
     Use filters to narrow search scope to specific apps or knowledge bases.
 
     """
@@ -60,6 +74,14 @@ class SemanticSearchRequest(BaseModel):
     """
 
     filters: Optional[Filters] = None
+    r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
+    for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
+    For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
+    to let the service use the agent’s stored knowledge and tool configuration. Sending
+    `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
+    turn (it is not “full org default”).
+
+    """
 
     limit: Optional[int] = 10
     r"""Maximum number of results to return"""
@@ -70,12 +92,26 @@ class SemanticSearchRequest(BaseModel):
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
     r"""Display name of the model"""
 
+    model_friendly_name: Annotated[
+        Optional[str], pydantic.Field(alias="modelFriendlyName")
+    ] = None
+    r"""Friendly display name of the model"""
+
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
     r"""Processing mode configuration"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["filters", "limit", "modelKey", "modelName", "chatMode"])
+        optional_fields = set(
+            [
+                "filters",
+                "limit",
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "chatMode",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

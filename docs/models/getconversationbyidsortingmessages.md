@@ -1,0 +1,11 @@
+# GetConversationByIDSortingMessages
+
+Sort applied to messages within the conversation (separate from the conversation-list `sorting` block).
+
+
+## Fields
+
+| Field                                                                                                                    | Type                                                                                                                     | Required                                                                                                                 | Description                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `sort_by`                                                                                                                | [Optional[models.GetConversationByIDSortingMessagesSortBy]](../models/getconversationbyidsortingmessagessortby.md)       | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |
+| `sort_order`                                                                                                             | [Optional[models.GetConversationByIDSortingMessagesSortOrder]](../models/getconversationbyidsortingmessagessortorder.md) | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |

@@ -3,15 +3,13 @@
 from .basesdk import BaseSDK
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import BaseModel, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, List, Mapping, Optional, Union, cast
+from typing import Any, List, Mapping, Optional, Union
 
 
 class OrganizationAuthConfig(BaseSDK):
-    r"""Admin configuration of authentication methods including MFA steps and allowed providers"""
-
     def get_auth_methods(
         self,
         *,
@@ -23,23 +21,25 @@ class OrganizationAuthConfig(BaseSDK):
         r"""Get organization authentication methods
 
         Retrieve the configured authentication methods for the organization.
-        <br><br>
-        <b>Response Structure:</b><br>
-        Returns an array of authentication steps, each containing:<br>
-        - <code>order</code>: Step number (1-3)<br>
-        - <code>allowedMethods</code>: Array of methods allowed for that step
-        <br><br>
-        <b>Example Response:</b><br>
-        <pre>
+
+        **Response Structure:**
+
+        Returns an array of authentication steps, each containing:
+        - `order`: Step number (1-3)
+        - `allowedMethods`: Array of methods allowed for that step
+
+        **Example Response:**
+
+        ```json
         {
         \"authMethods\": [
         { \"order\": 1, \"allowedMethods\": [{ \"type\": \"password\" }, { \"type\": \"google\" }] },
         { \"order\": 2, \"allowedMethods\": [{ \"type\": \"otp\" }] }
         ]
         }
-        </pre>
-        <br>
-        <b>Admin Access Required:</b> Only organization admins can view auth configuration.
+        ```
+
+        **Admin Access Required:** Only organization admins can view auth configuration.
 
 
         :param retries: Override the default retry configuration for this method
@@ -92,13 +92,20 @@ class OrganizationAuthConfig(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthConfig, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -122,23 +129,25 @@ class OrganizationAuthConfig(BaseSDK):
         r"""Get organization authentication methods
 
         Retrieve the configured authentication methods for the organization.
-        <br><br>
-        <b>Response Structure:</b><br>
-        Returns an array of authentication steps, each containing:<br>
-        - <code>order</code>: Step number (1-3)<br>
-        - <code>allowedMethods</code>: Array of methods allowed for that step
-        <br><br>
-        <b>Example Response:</b><br>
-        <pre>
+
+        **Response Structure:**
+
+        Returns an array of authentication steps, each containing:
+        - `order`: Step number (1-3)
+        - `allowedMethods`: Array of methods allowed for that step
+
+        **Example Response:**
+
+        ```json
         {
         \"authMethods\": [
         { \"order\": 1, \"allowedMethods\": [{ \"type\": \"password\" }, { \"type\": \"google\" }] },
         { \"order\": 2, \"allowedMethods\": [{ \"type\": \"otp\" }] }
         ]
         }
-        </pre>
-        <br>
-        <b>Admin Access Required:</b> Only organization admins can view auth configuration.
+        ```
+
+        **Admin Access Required:** Only organization admins can view auth configuration.
 
 
         :param retries: Override the default retry configuration for this method
@@ -191,13 +200,20 @@ class OrganizationAuthConfig(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthConfig, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -213,7 +229,7 @@ class OrganizationAuthConfig(BaseSDK):
     def update_auth_method(
         self,
         *,
-        auth_methods: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
+        auth_method: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -223,46 +239,48 @@ class OrganizationAuthConfig(BaseSDK):
 
         Update the authentication methods configuration for an organization.
         This allows admins to configure single or multi-factor authentication.
-        <br><br>
-        <b>Validation Rules:</b><br>
-        - Minimum 1 step, maximum 3 steps<br>
-        - Each step must have a unique order (1, 2, or 3)<br>
-        - No duplicate methods within the same step<br>
-        - No method can appear in multiple steps<br>
+
+        **Validation Rules:**
+        - Minimum 1 step, maximum 3 steps
+        - Each step must have a unique order (1, 2, or 3)
+        - No duplicate methods within the same step
+        - No method can appear in multiple steps
         - Each step must have at least one allowed method
-        <br><br>
-        <b>Available Methods:</b><br>
-        - <code>password</code>: Email/password authentication<br>
-        - <code>otp</code>: One-time password via email<br>
-        - <code>google</code>: Google OAuth 2.0<br>
-        - <code>microsoft</code>: Microsoft OAuth 2.0<br>
-        - <code>azureAd</code>: Azure Active Directory<br>
-        - <code>samlSso</code>: SAML 2.0 Single Sign-On<br>
-        - <code>oauth</code>: Generic OAuth 2.0 provider
-        <br><br>
-        <b>Example - Single Factor (Password or Google):</b><br>
-        <pre>
+
+        **Available Methods:**
+        - `password`: Email/password authentication
+        - `otp`: One-time password via email
+        - `google`: Google OAuth 2.0
+        - `microsoft`: Microsoft OAuth 2.0
+        - `azureAd`: Azure Active Directory
+        - `samlSso`: SAML 2.0 Single Sign-On
+        - `oauth`: Generic OAuth 2.0 provider
+
+        **Example - Single Factor (Password or Google):**
+
+        ```json
         {
-        \"authMethods\": [
+        \"authMethod\": [
         { \"order\": 1, \"allowedMethods\": [{ \"type\": \"password\" }, { \"type\": \"google\" }] }
         ]
         }
-        </pre>
-        <br>
-        <b>Example - Two Factor (Password + OTP):</b><br>
-        <pre>
+        ```
+
+        **Example - Two Factor (Password + OTP):**
+
+        ```json
         {
-        \"authMethods\": [
+        \"authMethod\": [
         { \"order\": 1, \"allowedMethods\": [{ \"type\": \"password\" }] },
         { \"order\": 2, \"allowedMethods\": [{ \"type\": \"otp\" }] }
         ]
         }
-        </pre>
-        <br>
-        <b>Admin Access Required:</b> Only organization admins can update auth configuration.
+        ```
+
+        **Admin Access Required:** Only organization admins can update auth configuration.
 
 
-        :param auth_methods: List of authentication steps in order
+        :param auth_method: Authentication steps to set for the organization (1-3 steps)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -278,8 +296,8 @@ class OrganizationAuthConfig(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.AuthConfig(
-            auth_methods=utils.get_pydantic_model(auth_methods, List[models.AuthStep]),
+        request = models.UpdateAuthMethodRequest(
+            auth_method=utils.get_pydantic_model(auth_method, List[models.AuthStep]),
         )
 
         req = self._build_request(
@@ -296,7 +314,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.AuthConfig
+                request, False, False, "json", models.UpdateAuthMethodRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -321,17 +339,20 @@ class OrganizationAuthConfig(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateAuthMethodResponse, http_res)
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(errors.AuthErrorData, http_res)
-            raise errors.AuthError(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -347,7 +368,7 @@ class OrganizationAuthConfig(BaseSDK):
     async def update_auth_method_async(
         self,
         *,
-        auth_methods: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
+        auth_method: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -357,46 +378,48 @@ class OrganizationAuthConfig(BaseSDK):
 
         Update the authentication methods configuration for an organization.
         This allows admins to configure single or multi-factor authentication.
-        <br><br>
-        <b>Validation Rules:</b><br>
-        - Minimum 1 step, maximum 3 steps<br>
-        - Each step must have a unique order (1, 2, or 3)<br>
-        - No duplicate methods within the same step<br>
-        - No method can appear in multiple steps<br>
+
+        **Validation Rules:**
+        - Minimum 1 step, maximum 3 steps
+        - Each step must have a unique order (1, 2, or 3)
+        - No duplicate methods within the same step
+        - No method can appear in multiple steps
         - Each step must have at least one allowed method
-        <br><br>
-        <b>Available Methods:</b><br>
-        - <code>password</code>: Email/password authentication<br>
-        - <code>otp</code>: One-time password via email<br>
-        - <code>google</code>: Google OAuth 2.0<br>
-        - <code>microsoft</code>: Microsoft OAuth 2.0<br>
-        - <code>azureAd</code>: Azure Active Directory<br>
-        - <code>samlSso</code>: SAML 2.0 Single Sign-On<br>
-        - <code>oauth</code>: Generic OAuth 2.0 provider
-        <br><br>
-        <b>Example - Single Factor (Password or Google):</b><br>
-        <pre>
+
+        **Available Methods:**
+        - `password`: Email/password authentication
+        - `otp`: One-time password via email
+        - `google`: Google OAuth 2.0
+        - `microsoft`: Microsoft OAuth 2.0
+        - `azureAd`: Azure Active Directory
+        - `samlSso`: SAML 2.0 Single Sign-On
+        - `oauth`: Generic OAuth 2.0 provider
+
+        **Example - Single Factor (Password or Google):**
+
+        ```json
         {
-        \"authMethods\": [
+        \"authMethod\": [
         { \"order\": 1, \"allowedMethods\": [{ \"type\": \"password\" }, { \"type\": \"google\" }] }
         ]
         }
-        </pre>
-        <br>
-        <b>Example - Two Factor (Password + OTP):</b><br>
-        <pre>
+        ```
+
+        **Example - Two Factor (Password + OTP):**
+
+        ```json
         {
-        \"authMethods\": [
+        \"authMethod\": [
         { \"order\": 1, \"allowedMethods\": [{ \"type\": \"password\" }] },
         { \"order\": 2, \"allowedMethods\": [{ \"type\": \"otp\" }] }
         ]
         }
-        </pre>
-        <br>
-        <b>Admin Access Required:</b> Only organization admins can update auth configuration.
+        ```
+
+        **Admin Access Required:** Only organization admins can update auth configuration.
 
 
-        :param auth_methods: List of authentication steps in order
+        :param auth_method: Authentication steps to set for the organization (1-3 steps)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -412,8 +435,8 @@ class OrganizationAuthConfig(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.AuthConfig(
-            auth_methods=utils.get_pydantic_model(auth_methods, List[models.AuthStep]),
+        request = models.UpdateAuthMethodRequest(
+            auth_method=utils.get_pydantic_model(auth_method, List[models.AuthStep]),
         )
 
         req = self._build_request_async(
@@ -430,7 +453,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.AuthConfig
+                request, False, False, "json", models.UpdateAuthMethodRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -455,17 +478,20 @@ class OrganizationAuthConfig(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateAuthMethodResponse, http_res)
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(errors.AuthErrorData, http_res)
-            raise errors.AuthError(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -481,20 +507,24 @@ class OrganizationAuthConfig(BaseSDK):
     def set_up_auth_config(
         self,
         *,
-        request: Union[
-            models.SetUpAuthConfigRequest, models.SetUpAuthConfigRequestTypedDict
-        ],
+        contact_email: str,
+        registered_name: str,
+        admin_full_name: str,
+        send_email: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.SetUpAuthConfigResponse:
+    ) -> models.OrgAuthConfigSetupResponse:
         r"""Set up auth configuration
 
         Set up or initialize the organization's authentication configuration.
 
 
-        :param request: The request object to send.
+        :param contact_email: Organization contact email
+        :param registered_name: Organization registered name
+        :param admin_full_name: Admin user full name
+        :param send_email: Whether to send welcome email
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -510,13 +540,16 @@ class OrganizationAuthConfig(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.SetUpAuthConfigRequest)
-        request = cast(models.SetUpAuthConfigRequest, request)
+        request = models.OrgAuthConfigCreateRequest(
+            contact_email=contact_email,
+            registered_name=registered_name,
+            admin_full_name=admin_full_name,
+            send_email=send_email,
+        )
 
         req = self._build_request(
             method="POST",
-            path="/orgAuthConfig/",
+            path="/orgAuthConfig",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -528,7 +561,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.SetUpAuthConfigRequest
+                request, False, False, "json", models.OrgAuthConfigCreateRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -553,13 +586,20 @@ class OrganizationAuthConfig(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "5XX"],
+            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.SetUpAuthConfigResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        response_data: Any = None
+        if utils.match_response(http_res, ["200", "201"], "application/json"):
+            return unmarshal_json_response(models.OrgAuthConfigSetupResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -575,20 +615,24 @@ class OrganizationAuthConfig(BaseSDK):
     async def set_up_auth_config_async(
         self,
         *,
-        request: Union[
-            models.SetUpAuthConfigRequest, models.SetUpAuthConfigRequestTypedDict
-        ],
+        contact_email: str,
+        registered_name: str,
+        admin_full_name: str,
+        send_email: Optional[bool] = False,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.SetUpAuthConfigResponse:
+    ) -> models.OrgAuthConfigSetupResponse:
         r"""Set up auth configuration
 
         Set up or initialize the organization's authentication configuration.
 
 
-        :param request: The request object to send.
+        :param contact_email: Organization contact email
+        :param registered_name: Organization registered name
+        :param admin_full_name: Admin user full name
+        :param send_email: Whether to send welcome email
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -604,13 +648,16 @@ class OrganizationAuthConfig(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        if not isinstance(request, BaseModel):
-            request = utils.unmarshal(request, models.SetUpAuthConfigRequest)
-        request = cast(models.SetUpAuthConfigRequest, request)
+        request = models.OrgAuthConfigCreateRequest(
+            contact_email=contact_email,
+            registered_name=registered_name,
+            admin_full_name=admin_full_name,
+            send_email=send_email,
+        )
 
         req = self._build_request_async(
             method="POST",
-            path="/orgAuthConfig/",
+            path="/orgAuthConfig",
             base_url=base_url,
             url_variables=url_variables,
             request=request,
@@ -622,7 +669,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.SetUpAuthConfigRequest
+                request, False, False, "json", models.OrgAuthConfigCreateRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -647,13 +694,20 @@ class OrganizationAuthConfig(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "5XX"],
+            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.SetUpAuthConfigResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        response_data: Any = None
+        if utils.match_response(http_res, ["200", "201"], "application/json"):
+            return unmarshal_json_response(models.OrgAuthConfigSetupResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

@@ -1,0 +1,9 @@
+# GetAllConversationsApplied
+
+
+## Fields
+
+| Field                                                                                                     | Type                                                                                                      | Required                                                                                                  | Description                                                                                               |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `filters`                                                                                                 | List[*str*]                                                                                               | :heavy_check_mark:                                                                                        | Names of filters currently applied.                                                                       |
+| `values`                                                                                                  | [models.GetAllConversationsValues](../models/getallconversationsvalues.md)                                | :heavy_check_mark:                                                                                        | Current value for each applied filter. Only keys<br/>present in `filters` are populated; others are<br/>omitted.<br/> |

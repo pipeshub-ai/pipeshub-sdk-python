@@ -6,7 +6,9 @@ from pipeshub_sdk import Pipeshub
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.init_auth(email="user@example.com")
+    res = pipeshub.user_account.init_auth(request={
+        "email": "user@example.com",
+    })
 
     # Handle response
     print(res)
@@ -25,7 +27,9 @@ async def main():
 
     async with Pipeshub() as pipeshub:
 
-        res = await pipeshub.user_account.init_auth_async(email="user@example.com")
+        res = await pipeshub.user_account.init_auth_async(request={
+            "email": "user@example.com",
+        })
 
         # Handle response
         print(res)

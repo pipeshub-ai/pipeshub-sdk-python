@@ -1,0 +1,9 @@
+# GetSearchByIDErrorValidationError
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `code`                                                                                             | [models.GetSearchByIDCodeValidationError](../models/getsearchbyidcodevalidationerror.md)           | :heavy_check_mark:                                                                                 | Machine-readable error code. `VALIDATION_ERROR`<br/>is emitted when the request fails Zod<br/>validation.<br/> |
+| `message`                                                                                          | *str*                                                                                              | :heavy_check_mark:                                                                                 | Human-readable description of the failure.                                                         |

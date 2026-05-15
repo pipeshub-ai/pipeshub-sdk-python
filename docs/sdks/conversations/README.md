@@ -2,151 +2,69 @@
 
 ## Overview
 
-AI-powered conversational chat management with citations and follow-up questions
-
 ### Available Operations
 
-* [create_conversation](#create_conversation) - Create a new AI conversation
 * [stream_chat](#stream_chat) - Create conversation with streaming response
 * [get_all_conversations](#get_all_conversations) - List all conversations
 * [get_archived_conversations](#get_archived_conversations) - List archived conversations
+* [search_archived_conversations](#search_archived_conversations) - Search archived conversations
 * [get_conversation_by_id](#get_conversation_by_id) - Get conversation by ID
 * [delete_conversation_by_id](#delete_conversation_by_id) - Delete conversation
-* [add_message](#add_message) - Add message to conversation
-* [add_message_stream](#add_message_stream) - Add message with streaming response
-* [share_conversation](#share_conversation) - Share conversation with users
+* [add_message_stream](#add_message_stream) - Add message to a conversation with streaming response
 * [update_conversation_title](#update_conversation_title) - Update conversation title
 * [archive_conversation](#archive_conversation) - Archive conversation
 * [unarchive_conversation](#unarchive_conversation) - Unarchive conversation
 * [regenerate_answer](#regenerate_answer) - Regenerate AI response
 * [update_message_feedback](#update_message_feedback) - Submit feedback on AI response
-* [unshare_conversation_by_id](#unshare_conversation_by_id) - Unshare a conversation
-
-## create_conversation
-
-Start a new conversation with PipesHub's AI assistant.<br><br>
-<b>Overview:</b><br>
-This endpoint creates a new conversation session and processes the initial query.
-The AI searches your organization's knowledge bases for relevant information and
-generates a response with citations to source documents.<br><br>
-<b>How It Works:</b><br>
-<ol>
-<li>Your query is analyzed and converted to semantic embeddings</li>
-<li>Relevant content is retrieved from indexed knowledge bases</li>
-<li>The AI generates a response using the retrieved context</li>
-<li>Citations link back to source documents for verification</li>
-<li>Follow-up questions are suggested based on the conversation</li>
-</ol>
-<b>Filtering Options:</b><br>
-<ul>
-<li><b>recordIds:</b> Limit search to specific documents</li>
-<li><b>filters.apps:</b> Search only specific connector apps</li>
-<li><b>filters.kb:</b> Search only specific knowledge bases</li>
-</ul>
-<b>Model Selection:</b><br>
-Use <code>modelKey</code> to select different AI models configured for your organization.
-Each model may have different capabilities, speed, and accuracy trade-offs.
-
-
-### Example Usage: filtered
-
-<!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/conversations/create" example="filtered" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.conversations.create_conversation(query="Summarize the Q4 sales report", record_ids=[
-        "507f1f77bcf86cd799439011",
-        "507f1f77bcf86cd799439012",
-    ], filters={
-        "kb": [
-            "550e8400-e29b-41d4-a716-446655440000",
-        ],
-    }, model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
-
-    # Handle response
-    print(res)
-
-```
-### Example Usage: simple
-
-<!-- UsageSnippet language="python" operationID="createConversation" method="post" path="/conversations/create" example="simple" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.conversations.create_conversation(query="What is our company's vacation policy?", record_ids=[
-        "507f1f77bcf86cd799439011",
-        "507f1f77bcf86cd799439012",
-    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                                                                      | Type                                                                                                                           | Required                                                                                                                       | Description                                                                                                                    | Example                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `query`                                                                                                                        | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>         | What are the key findings from our Q4 financial report?                                                                        |
-| `record_ids`                                                                                                                   | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/> | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                         |
-| `departments`                                                                                                                  | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Filter by department IDs to scope the search                                                                                   |                                                                                                                                |
-| `filters`                                                                                                                      | [Optional[models.Filters]](../../models/filters.md)                                                                            | :heavy_minus_sign:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
-| `model_key`                                                                                                                    | *Optional[str]*                                                                                                                | :heavy_minus_sign:                                                                                                             | Identifier for the AI model configuration to use.<br/>Available models depend on organization settings.<br/>                   | gpt-4-turbo                                                                                                                    |
-| `model_name`                                                                                                                   | *Optional[str]*                                                                                                                | :heavy_minus_sign:                                                                                                             | Display name of the AI model                                                                                                   | GPT-4 Turbo                                                                                                                    |
-| `chat_mode`                                                                                                                    | *Optional[str]*                                                                                                                | :heavy_minus_sign:                                                                                                             | Chat mode affecting response behavior.<br/>Different modes optimize for different use cases.<br/>                              | balanced                                                                                                                       |
-| `retries`                                                                                                                      | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                               | :heavy_minus_sign:                                                                                                             | Configuration to override the default retry behavior of the client.                                                            |                                                                                                                                |
-
-### Response
-
-**[models.Conversation](../../models/conversation.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
 ## stream_chat
 
-Start a new conversation with real-time streaming response using Server-Sent Events (SSE).<br><br>
-<b>Overview:</b><br>
-This endpoint works like <code>/conversations/create</code> but streams the AI response
-in real-time as it's generated, providing a more interactive user experience.<br><br>
-<b>SSE Event Types:</b><br>
-<ul>
-<li><code>connected</code> - Connection established, processing started</li>
-<li><code>chunk</code> - Partial response text (stream these to show typing effect)</li>
-<li><code>citation</code> - Citation reference found during generation</li>
-<li><code>complete</code> - Final message with full response, citations, and follow-up questions</li>
-<li><code>error</code> - Error occurred during processing</li>
-</ul>
-<b>Client Implementation:</b><br>
-<code>
-const eventSource = new EventSource('/conversations/stream');<br>
-eventSource.onmessage = (event) => {<br>
-&nbsp;&nbsp;const data = JSON.parse(event.data);<br>
-&nbsp;&nbsp;// Handle different event types<br>
-};
-</code><br><br>
-<b>Error Handling:</b><br>
-If an error occurs mid-stream, an <code>error</code> event is sent and the stream closes.
-The conversation is marked as FAILED with the error reason stored.
+Start a new conversation and stream the AI response over Server-Sent
+Events (SSE). Behaves like `POST /conversations` but emits tokens,
+tool activity, and status updates incrementally instead of returning
+a single JSON response at the end.
+
+**Lifecycle**
+
+1. The server validates `query`, persists an in-progress
+   conversation, then opens the SSE stream with HTTP `200`.
+2. A `connected` event is emitted immediately with the new
+   `conversationId` so the client can link the stream (sidebar,
+   parallel tabs, deep links) without an extra request.
+3. AI-backend events stream through (token chunks, tool calls,
+   status, etc.).
+4. On success a single `complete` event is emitted carrying the
+   full persisted conversation.
+5. On failure an `error` event is emitted and the conversation is
+   marked FAILED before the stream closes.
+
+**Event vocabulary**
+
+Three events have stable, server-defined `data` shapes:
+
+- `connected` — `{ "message": string, "conversationId": string,
+  "title": string }`
+- `complete` — `{ "conversation": Conversation,
+  "meta": { "requestId": string, "timestamp": string,
+  "duration": number } }`
+- `error` — `{ "error": string, "details"?: string }`
+
+The forwarded events are `status`, `answer_chunk`, `tool_calls`,
+`restreaming`, `metadata`, and `tool_execution_complete`. Their
+payloads come from the Python query service and may evolve. Note
+that raw `tool_call` / `tool_success` / `tool_error` / `tool_result`
+events emitted by the LLM tool runtime are rewrapped as `status` by
+the upstream wrapper before they reach this route, so clients on
+`/conversations/stream` never see those names directly. Clients
+should ignore unknown event names rather than treating them as
+errors.
+
+**Agent mode**
+
+When `chatMode` selects an agent mode (for example `agent:auto`),
+the optional `tools` list restricts which tools the agent may
+invoke for this turn. Outside agent modes the `tools` field is
+ignored.
 
 
 ### Example Usage
@@ -155,6 +73,7 @@ The conversation is marked as FAILED with the error reason stored.
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.utils import parse_datetime
 
 
 with Pipeshub(
@@ -166,7 +85,10 @@ with Pipeshub(
     res = pipeshub.conversations.stream_chat(query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", chat_mode="balanced")
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", model_friendly_name="GPT-4 Turbo", chat_mode="balanced", timezone="America/New_York", current_time=parse_datetime("2026-04-12T16:00:00+05:30"), tools=[
+        "jira.create_issue",
+        "confluence.search_content",
+    ])
 
     with res as event_stream:
         for event in event_stream:
@@ -177,20 +99,25 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                                                                      | Type                                                                                                                           | Required                                                                                                                       | Description                                                                                                                    | Example                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `query`                                                                                                                        | *str*                                                                                                                          | :heavy_check_mark:                                                                                                             | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>         | What are the key findings from our Q4 financial report?                                                                        |
-| `record_ids`                                                                                                                   | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/> | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                         |
-| `departments`                                                                                                                  | List[*str*]                                                                                                                    | :heavy_minus_sign:                                                                                                             | Filter by department IDs to scope the search                                                                                   |                                                                                                                                |
-| `filters`                                                                                                                      | [Optional[models.Filters]](../../models/filters.md)                                                                            | :heavy_minus_sign:                                                                                                             | N/A                                                                                                                            |                                                                                                                                |
-| `model_key`                                                                                                                    | *Optional[str]*                                                                                                                | :heavy_minus_sign:                                                                                                             | Identifier for the AI model configuration to use.<br/>Available models depend on organization settings.<br/>                   | gpt-4-turbo                                                                                                                    |
-| `model_name`                                                                                                                   | *Optional[str]*                                                                                                                | :heavy_minus_sign:                                                                                                             | Display name of the AI model                                                                                                   | GPT-4 Turbo                                                                                                                    |
-| `chat_mode`                                                                                                                    | *Optional[str]*                                                                                                                | :heavy_minus_sign:                                                                                                             | Chat mode affecting response behavior.<br/>Different modes optimize for different use cases.<br/>                              | balanced                                                                                                                       |
-| `retries`                                                                                                                      | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                               | :heavy_minus_sign:                                                                                                             | Configuration to override the default retry behavior of the client.                                                            |                                                                                                                                |
+| Parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Required                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Example                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `query`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | *str*                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | The user's question or prompt to start the conversation.<br/>Supports natural language queries of any complexity.<br/>                                                                                                                                                                                                                                                                                                                                                            | What are the key findings from our Q4 financial report?                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `record_ids`                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | List[*str*]                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Limit the AI's knowledge scope to specific records/documents.<br/>When provided, only these records will be searched for context.<br/>                                                                                                                                                                                                                                                                                                                                            | [<br/>"507f1f77bcf86cd799439011",<br/>"507f1f77bcf86cd799439012"<br/>]                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `departments`                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | List[*str*]                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Filter by department IDs to scope the search                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `filters`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | [Optional[models.Filters]](../../models/filters.md)                                                                                                                                                                                                                                                                                                                                                                                                                               | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | App connector instance ids and knowledge-base / record-group ids that narrow retrieval<br/>for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.<br/>For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)<br/>to let the service use the agent’s stored knowledge and tool configuration. Sending<br/>`{ "apps": [], "kb": [] }` on an agent stream means **no** knowledge sources for that<br/>turn (it is not “full org default”).<br/> |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `applied_filters`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | [Optional[models.AppliedFilters]](../../models/appliedfilters.md)                                                                                                                                                                                                                                                                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Rich filter state selected by the user, used for display and persistence only.<br/>This mirrors the active selection shown in the UI and is distinct from the<br/>machine-readable `filters` field used for retrieval scoping.<br/>                                                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `model_key`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Identifier for the AI model configuration to use.<br/>Available models depend on organization settings.<br/>                                                                                                                                                                                                                                                                                                                                                                      | gpt-4-turbo                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `model_name`                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Display name of the AI model                                                                                                                                                                                                                                                                                                                                                                                                                                                      | GPT-4 Turbo                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `model_friendly_name`                                                                                                                                                                                                                                                                                                                                                                                                                                                             | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Friendly display name of the selected model                                                                                                                                                                                                                                                                                                                                                                                                                                       | GPT-4 Turbo                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `chat_mode`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Chat mode affecting response behavior.<br/>Different modes optimize for different use cases.<br/>                                                                                                                                                                                                                                                                                                                                                                                 | balanced                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `timezone`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | IANA timezone identifier from the client (top-level field).<br/>Used to provide time-aware context to the AI.<br/>                                                                                                                                                                                                                                                                                                                                                                | America/New_York                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `current_time`                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                                                                                                                                                                                                                                                                                                                                                                                              | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | ISO 8601 / RFC 3339 datetime from the client (top-level field; UTC `Z` or numeric offset).<br/>                                                                                                                                                                                                                                                                                                                                                                                   | 2026-04-12 16:00:00 +0530 +0530                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `tools`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | List[*str*]                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Optional list of tool identifiers (fully-qualified action names such as<br/>"jira.create_issue") that the AI agent is permitted to invoke for this<br/>request. When omitted the agent may use any configured tool. Applicable<br/>only when chatMode is an agent mode (e.g. "agent:auto").<br/>                                                                                                                                                                                  | [<br/>"jira.create_issue",<br/>"confluence.search_content"<br/>]                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `retries`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                                                                                                                                                                                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Configuration to override the default retry behavior of the client.                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ### Response
 
-**[Union[eventstreaming.EventStream[models.SSEEvent], eventstreaming.EventStreamAsync[models.SSEEvent]]](../../models/.md)**
+**[Union[eventstreaming.EventStream[models.AssistantStreamSSEEvent], eventstreaming.EventStreamAsync[models.AssistantStreamSSEEvent]]](../../models/.md)**
 
 ### Errors
 
@@ -200,17 +127,24 @@ with Pipeshub(
 
 ## get_all_conversations
 
-Retrieve all conversations for the authenticated user.<br><br>
-<b>Overview:</b><br>
-Returns a list of all conversations owned by or shared with the current user.
-Conversations are returned with their messages, status, and metadata.<br><br>
-<b>Filtering:</b><br>
-<ul>
-<li>Only non-archived conversations are returned by default</li>
-<li>Use <code>/conversations/show/archives</code> for archived conversations</li>
-</ul>
-<b>Sorting:</b><br>
-Conversations are sorted by last activity timestamp (most recent first).
+Retrieve paginated conversations for the authenticated user.
+
+**Overview:**
+
+Use the optional `source` query parameter to choose which list to return:
+`owned` — only conversations you own (`userId` matches the current user).
+`shared` — conversations where you have recipient access
+(`isShared` and your user appears in `sharedWith`), without the owner-only branch.
+Defaults to `owned` when omitted. Each call returns one list; call twice if you need both.
+
+**Filtering:**
+
+- Only non-archived conversations are returned by default
+- Use `/conversations/show/archives` for archived conversations
+
+**Sorting:**
+
+Conversations are sorted by last activity timestamp (most recent first) by default.
 
 
 ### Example Usage
@@ -227,7 +161,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.get_all_conversations()
+    res = pipeshub.conversations.get_all_conversations(source="owned")
 
     # Handle response
     print(res)
@@ -236,9 +170,19 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                                                         | Type                                                                                                                                              | Required                                                                                                                                          | Description                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`                                                                                                                                          | [Optional[models.QueryParamSource]](../../models/queryparamsource.md)                                                                             | :heavy_minus_sign:                                                                                                                                | `owned` — owner list (`userId` filter only).<br/>`shared` — explicit share grant list (`isShared` + `sharedWith`).<br/>Defaults to `owned` when omitted.<br/> |
+| `page`                                                                                                                                            | *Optional[int]*                                                                                                                                   | :heavy_minus_sign:                                                                                                                                | Page number (1-based). Defaults to 1.                                                                                                             |
+| `limit`                                                                                                                                           | *Optional[int]*                                                                                                                                   | :heavy_minus_sign:                                                                                                                                | Page size. Defaults to 20; capped by the server (max 100).                                                                                        |
+| `sort_by`                                                                                                                                         | [Optional[models.GetAllConversationsSortByEnum]](../../models/getallconversationssortbyenum.md)                                                   | :heavy_minus_sign:                                                                                                                                | Sort field. Invalid values fall back to `lastActivityAt`.                                                                                         |
+| `sort_order`                                                                                                                                      | [Optional[models.GetAllConversationsSortOrderEnum]](../../models/getallconversationssortorderenum.md)                                             | :heavy_minus_sign:                                                                                                                                | Sort direction. Defaults to `desc` unless set to `asc`.                                                                                           |
+| `conversation_id`                                                                                                                                 | *Optional[str]*                                                                                                                                   | :heavy_minus_sign:                                                                                                                                | When set, restricts results to that conversation ID (if visible under the chosen `source`).                                                       |
+| `search`                                                                                                                                          | *Optional[str]*                                                                                                                                   | :heavy_minus_sign:                                                                                                                                | Case-insensitive match on title and message content (max 1000 characters).                                                                        |
+| `start_date`                                                                                                                                      | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                                                              | :heavy_minus_sign:                                                                                                                                | Filter by `createdAt` ≥ this ISO date.                                                                                                            |
+| `end_date`                                                                                                                                        | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                                                              | :heavy_minus_sign:                                                                                                                                | Filter by `createdAt` ≤ this ISO date.                                                                                                            |
+| `shared`                                                                                                                                          | *Optional[str]*                                                                                                                                   | :heavy_minus_sign:                                                                                                                                | When set, filters by `isShared`. Accepts case-insensitive<br/>`true`/`false`, or `1`/`0`.<br/>                                                    |
+| `retries`                                                                                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                  | :heavy_minus_sign:                                                                                                                                | Configuration to override the default retry behavior of the client.                                                                               |
 
 ### Response
 
@@ -252,12 +196,23 @@ with Pipeshub(
 
 ## get_archived_conversations
 
-Retrieve all archived conversations for the authenticated user.<br><br>
-<b>Overview:</b><br>
+Retrieve all archived conversations for the authenticated user.
+
+**Overview:**
+
 Archived conversations are hidden from the main list but preserved for reference.
-This endpoint returns only conversations where <code>isArchived: true</code>.<br><br>
-<b>Unarchiving:</b><br>
-Use <code>PATCH /conversations/{id}/unarchive</code> to restore a conversation
+This endpoint returns only conversations where `isArchived: true` and `archivedBy`
+is set. Results include conversations the caller owns and those shared with them.
+
+**Filtering and sorting:**
+
+Results can be narrowed using `search`, `shared`, `startDate`, `endDate`, and
+`conversationId`. Sorting is controlled by `sortBy` and `sortOrder`. Pagination
+is controlled by `page` and `limit`.
+
+**Unarchiving:**
+
+Use `PATCH /conversations/{conversationId}/unarchive` to restore a conversation
 to the active list.
 
 
@@ -275,7 +230,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.get_archived_conversations()
+    res = pipeshub.conversations.get_archived_conversations(page=1, limit=20, sort_by="lastActivityAt", sort_order="desc")
 
     # Handle response
     print(res)
@@ -284,9 +239,18 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                       | Type                                                                                                            | Required                                                                                                        | Description                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `page`                                                                                                          | *Optional[int]*                                                                                                 | :heavy_minus_sign:                                                                                              | Page number (1-indexed)                                                                                         |
+| `limit`                                                                                                         | *Optional[int]*                                                                                                 | :heavy_minus_sign:                                                                                              | Items per page                                                                                                  |
+| `sort_by`                                                                                                       | [Optional[models.GetArchivedConversationsSortByEnum]](../../models/getarchivedconversationssortbyenum.md)       | :heavy_minus_sign:                                                                                              | Field to sort by                                                                                                |
+| `sort_order`                                                                                                    | [Optional[models.GetArchivedConversationsSortOrderEnum]](../../models/getarchivedconversationssortorderenum.md) | :heavy_minus_sign:                                                                                              | Sort direction                                                                                                  |
+| `search`                                                                                                        | *Optional[str]*                                                                                                 | :heavy_minus_sign:                                                                                              | Case-insensitive substring match against title and message content (max 1000 chars)                             |
+| `shared`                                                                                                        | *Optional[bool]*                                                                                                | :heavy_minus_sign:                                                                                              | Filter by shared status                                                                                         |
+| `start_date`                                                                                                    | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                            | :heavy_minus_sign:                                                                                              | Include conversations created on or after this timestamp                                                        |
+| `end_date`                                                                                                      | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                            | :heavy_minus_sign:                                                                                              | Include conversations created on or before this timestamp                                                       |
+| `conversation_id`                                                                                               | *Optional[str]*                                                                                                 | :heavy_minus_sign:                                                                                              | Restrict results to a single conversation by identifier                                                         |
+| `retries`                                                                                                       | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                | :heavy_minus_sign:                                                                                              | Configuration to override the default retry behavior of the client.                                             |
 
 ### Response
 
@@ -298,21 +262,93 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
+## search_archived_conversations
+
+Search across all archived conversations (assistant and agent) for the authenticated user.
+
+**Overview:**
+
+Performs a case-insensitive substring match against conversation titles and message content
+across both assistant (`Conversation`) and agent (`AgentConversation`) archived collections.
+Results are merged server-side and sorted by `lastActivityAt` descending.
+
+**Search parameter:**
+
+The `search` query parameter is required, must be a non-empty string, and is capped at
+1000 characters. Requests that omit it or exceed the cap return `400`.
+
+**Pagination:**
+
+Results are paginated using `page` and `limit`. The response includes a `pagination`
+block with total counts and a `summary` block that breaks matches down by source.
+
+**Item shape:**
+
+Each item is a conversation list entry (no `messages` payload — that field is omitted
+for performance) tagged with `source`, plus computed `isOwner`, `accessLevel`,
+`archivedAt`, and `archivedBy`. `agentKey` is present only when `source` is `agent`.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="searchArchivedConversations" method="get" path="/conversations/show/archives/search" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.conversations.search_archived_conversations(search="<value>", page=1, limit=20)
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                                             | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `search`                                                                              | *str*                                                                                 | :heavy_check_mark:                                                                    | Search term to match against conversation titles and message content (max 1000 chars) |
+| `page`                                                                                | *Optional[int]*                                                                       | :heavy_minus_sign:                                                                    | Page number (1-indexed)                                                               |
+| `limit`                                                                               | *Optional[int]*                                                                       | :heavy_minus_sign:                                                                    | Items per page                                                                        |
+| `retries`                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                      | :heavy_minus_sign:                                                                    | Configuration to override the default retry behavior of the client.                   |
+
+### Response
+
+**[models.SearchArchivedConversationsResponse](../../models/searcharchivedconversationsresponse.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
 ## get_conversation_by_id
 
-Retrieve a specific conversation with its full message history.<br><br>
-<b>Overview:</b><br>
+Retrieve a specific conversation with its full message history.
+
+**Overview:**
+
 Returns the complete conversation including all messages, citations,
-feedback, and metadata. Messages can be paginated for long conversations.<br><br>
-<b>Message Pagination:</b><br>
+feedback, and metadata. Messages can be paginated for long conversations.
+
+**Message Pagination:**
+
 For conversations with many messages, use pagination parameters:
-<ul>
-<li><code>page</code>: Page number (default: 1)</li>
-<li><code>limit</code>: Messages per page (default: 10)</li>
-<li><code>sortBy</code>: Sort field (default: createdAt)</li>
-<li><code>sortOrder</code>: 'asc' or 'desc' (default: desc)</li>
-</ul>
-<b>Access Control:</b><br>
+
+- `page`: Page number (default: 1)
+- `limit`: Messages per page (default: 10)
+- `sortBy`: Sort field (default: createdAt)
+- `sortOrder`: 'asc' or 'desc' (default: desc)
+
+**Access Control:**
+
 Users can access conversations they own or that have been shared with them.
 
 
@@ -330,7 +366,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.get_conversation_by_id(conversation_id="507f1f77bcf86cd799439011", page=1, limit=10, sort_by="createdAt", sort_order="desc")
+    res = pipeshub.conversations.get_conversation_by_id(conversation_id="507f1f77bcf86cd799439011", page=1, limit=20, sort_by="createdAt", sort_order="desc")
 
     # Handle response
     print(res)
@@ -339,14 +375,19 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                                     | Type                                                                                          | Required                                                                                      | Description                                                                                   | Example                                                                                       |
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `conversation_id`                                                                             | *str*                                                                                         | :heavy_check_mark:                                                                            | Unique conversation identifier                                                                | 507f1f77bcf86cd799439011                                                                      |
-| `page`                                                                                        | *Optional[int]*                                                                               | :heavy_minus_sign:                                                                            | Page number for message pagination                                                            |                                                                                               |
-| `limit`                                                                                       | *Optional[int]*                                                                               | :heavy_minus_sign:                                                                            | Number of messages per page                                                                   |                                                                                               |
-| `sort_by`                                                                                     | *Optional[str]*                                                                               | :heavy_minus_sign:                                                                            | Field to sort messages by                                                                     |                                                                                               |
-| `sort_order`                                                                                  | [Optional[models.GetConversationByIDSortOrder]](../../models/getconversationbyidsortorder.md) | :heavy_minus_sign:                                                                            | Sort direction                                                                                |                                                                                               |
-| `retries`                                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                              | :heavy_minus_sign:                                                                            | Configuration to override the default retry behavior of the client.                           |                                                                                               |
+| Parameter                                                                                             | Type                                                                                                  | Required                                                                                              | Description                                                                                           | Example                                                                                               |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                                     | *str*                                                                                                 | :heavy_check_mark:                                                                                    | Unique conversation identifier                                                                        | 507f1f77bcf86cd799439011                                                                              |
+| `page`                                                                                                | *Optional[int]*                                                                                       | :heavy_minus_sign:                                                                                    | Page number for message pagination                                                                    |                                                                                                       |
+| `limit`                                                                                               | *Optional[int]*                                                                                       | :heavy_minus_sign:                                                                                    | Number of messages per page                                                                           |                                                                                                       |
+| `sort_by`                                                                                             | [Optional[models.GetConversationByIDSortByEnum]](../../models/getconversationbyidsortbyenum.md)       | :heavy_minus_sign:                                                                                    | Field to sort messages by                                                                             |                                                                                                       |
+| `sort_order`                                                                                          | [Optional[models.GetConversationByIDSortOrderEnum]](../../models/getconversationbyidsortorderenum.md) | :heavy_minus_sign:                                                                                    | Sort direction                                                                                        |                                                                                                       |
+| `search`                                                                                              | *Optional[str]*                                                                                       | :heavy_minus_sign:                                                                                    | Case-insensitive search across conversation title and message content                                 |                                                                                                       |
+| `start_date`                                                                                          | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                  | :heavy_minus_sign:                                                                                    | Filter messages created on or after this date (ISO 8601)                                              |                                                                                                       |
+| `end_date`                                                                                            | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                  | :heavy_minus_sign:                                                                                    | Filter messages created on or before this date (ISO 8601)                                             |                                                                                                       |
+| `shared`                                                                                              | *Optional[bool]*                                                                                      | :heavy_minus_sign:                                                                                    | Filter by shared status of the conversation                                                           |                                                                                                       |
+| `message_type`                                                                                        | [Optional[models.QueryParamMessageType]](../../models/queryparammessagetype.md)                       | :heavy_minus_sign:                                                                                    | Filter messages by type                                                                               |                                                                                                       |
+| `retries`                                                                                             | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                      | :heavy_minus_sign:                                                                                    | Configuration to override the default retry behavior of the client.                                   |                                                                                                       |
 
 ### Response
 
@@ -360,13 +401,19 @@ with Pipeshub(
 
 ## delete_conversation_by_id
 
-Delete a conversation by its ID.<br><br>
-<b>Overview:</b><br>
-Performs a soft delete by setting <code>isDeleted: true</code>.
-The conversation is removed from listings but preserved in the database.<br><br>
-<b>Permissions:</b><br>
-Only the conversation owner (initiator) can delete it.
-Shared users cannot delete conversations.
+Delete a conversation by its ID.
+
+**Overview:**
+
+Performs a soft delete by setting `isDeleted: true`. The conversation is
+removed from listings but preserved in the database. All citations
+referenced by messages in the conversation are also soft-deleted.
+
+**Permissions:**
+
+The conversation initiator can always delete. Users the conversation has
+been shared with may delete it only when their `sharedWith.accessLevel`
+is `write`.
 
 
 ### Example Usage
@@ -407,74 +454,19 @@ with Pipeshub(
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## add_message
-
-Add a follow-up message to an existing conversation.<br><br>
-<b>Overview:</b><br>
-Continues an existing conversation by adding a new user query.
-The AI maintains context from previous messages when generating the response.<br><br>
-<b>Context Handling:</b><br>
-<ul>
-<li>Previous messages provide context for the new query</li>
-<li>Citations from earlier messages may be referenced</li>
-<li>The AI can refer back to previous topics discussed</li>
-</ul>
-<b>Model Override:</b><br>
-You can specify a different model for this message using <code>modelKey</code>.
-This allows switching models mid-conversation if needed.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="addMessage" method="post" path="/conversations/{conversationId}/messages" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.conversations.add_message(conversation_id="<value>", query="Can you elaborate on the revenue trends?")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Unique conversation identifier                                      |                                                                     |
-| `query`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The follow-up question or message content                           | Can you elaborate on the revenue trends?                            |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override the model for this specific message                        |                                                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Display name of the model                                           |                                                                     |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Chat mode for this message                                          |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
-
-### Response
-
-**[models.Conversation](../../models/conversation.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
 ## add_message_stream
 
-Add a follow-up message to an existing conversation with real-time SSE streaming.<br><br>
-<b>Overview:</b><br>
-Same as <code>POST /conversations/{id}/messages</code> but with streaming response.
-Provides real-time feedback as the AI generates its response.<br><br>
-<b>SSE Events:</b><br>
-See <code>/conversations/stream</code> for event type documentation.
+Add a follow-up message to an existing conversation and stream the
+assistant's response over Server-Sent Events.
+
+Functionally equivalent to `POST /conversations/{conversationId}/messages`
+but the response is delivered as an SSE stream so clients can render
+the answer incrementally.
+
+The wire vocabulary is described by `AssistantMessageStreamSSEEvent`.
+It is the same event set as `/conversations/stream`; only the
+`connected` and `complete` payloads differ because the conversation
+already exists when this route is called.
 
 
 ### Example Usage
@@ -483,6 +475,7 @@ See <code>/conversations/stream</code> for event type documentation.
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.utils import parse_datetime
 
 
 with Pipeshub(
@@ -491,7 +484,10 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.add_message_stream(conversation_id="<value>", query="Can you elaborate on the revenue trends?")
+    res = pipeshub.conversations.add_message_stream(conversation_id="<value>", query="Can you elaborate on the revenue trends?", timezone="America/New_York", current_time=parse_datetime("2026-04-12T16:00:00+05:30"), tools=[
+        "jira.create_issue",
+        "confluence.search_content",
+    ])
 
     with res as event_stream:
         for event in event_stream:
@@ -502,77 +498,24 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
-| `query`                                                             | *str*                                                               | :heavy_check_mark:                                                  | The follow-up question or message content                           | Can you elaborate on the revenue trends?                            |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |                                                                     |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override the model for this specific message                        |                                                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Display name of the model                                           |                                                                     |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Chat mode for this message                                          |                                                                     |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+| Parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Required                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Example                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | *str*                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Identifier of the conversation to append the message to. The<br/>conversation must belong to the caller and must not be deleted.<br/>                                                                                                                                                                                                                                                                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `query`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | *str*                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | The follow-up question or message content                                                                                                                                                                                                                                                                                                                                                                                                                                         | Can you elaborate on the revenue trends?                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `filters`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | [Optional[models.Filters]](../../models/filters.md)                                                                                                                                                                                                                                                                                                                                                                                                                               | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | App connector instance ids and knowledge-base / record-group ids that narrow retrieval<br/>for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.<br/>For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)<br/>to let the service use the agent’s stored knowledge and tool configuration. Sending<br/>`{ "apps": [], "kb": [] }` on an agent stream means **no** knowledge sources for that<br/>turn (it is not “full org default”).<br/> |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `applied_filters`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | [Optional[models.AppliedFilters]](../../models/appliedfilters.md)                                                                                                                                                                                                                                                                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Rich filter state selected by the user, used for display and persistence only.<br/>This mirrors the active selection shown in the UI and is distinct from the<br/>machine-readable `filters` field used for retrieval scoping.<br/>                                                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `model_key`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Override the model for this specific message                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `model_name`                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Display name of the model                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `model_friendly_name`                                                                                                                                                                                                                                                                                                                                                                                                                                                             | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Friendly display name of the model                                                                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `chat_mode`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Chat mode for this message                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `timezone`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | IANA timezone identifier from the client (top-level field).<br/>Used to provide time-aware context to the AI.<br/>                                                                                                                                                                                                                                                                                                                                                                | America/New_York                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `current_time`                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                                                                                                                                                                                                                                                                                                                                                                                              | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | ISO 8601 / RFC 3339 datetime from the client (top-level field; UTC `Z` or numeric offset).<br/>                                                                                                                                                                                                                                                                                                                                                                                   | 2026-04-12 16:00:00 +0530 +0530                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `tools`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | List[*str*]                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Optional list of tool identifiers the agent may invoke for this<br/>follow-up message. Semantics are identical to the create-conversation<br/>tools field.<br/>                                                                                                                                                                                                                                                                                                                   | [<br/>"jira.create_issue",<br/>"confluence.search_content"<br/>]                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `retries`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                                                                                                                                                                                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Configuration to override the default retry behavior of the client.                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ### Response
 
-**[Union[eventstreaming.EventStream[models.SSEEvent], eventstreaming.EventStreamAsync[models.SSEEvent]]](../../models/.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## share_conversation
-
-Share a conversation with other users in your organization.<br><br>
-<b>Overview:</b><br>
-Allows the conversation owner to grant access to other users.
-Shared users can view the conversation and optionally add messages.<br><br>
-<b>Access Levels:</b><br>
-<ul>
-<li><code>read</code> - Can view conversation and messages (default)</li>
-<li><code>write</code> - Can view and add new messages</li>
-</ul>
-<b>Permissions:</b><br>
-Only the conversation initiator (owner) can share. Users must belong
-to the same organization.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="shareConversation" method="post" path="/conversations/{conversationId}/share" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.conversations.share_conversation(conversation_id="<value>", user_ids=[
-        "507f1f77bcf86cd799439011",
-    ], access_level="read")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                                                                                                | Type                                                                                                                                     | Required                                                                                                                                 | Description                                                                                                                              | Example                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `conversation_id`                                                                                                                        | *str*                                                                                                                                    | :heavy_check_mark:                                                                                                                       | N/A                                                                                                                                      |                                                                                                                                          |
-| `user_ids`                                                                                                                               | List[*str*]                                                                                                                              | :heavy_check_mark:                                                                                                                       | IDs of users to share with                                                                                                               | [<br/>"507f1f77bcf86cd799439011"<br/>]                                                                                                   |
-| `access_level`                                                                                                                           | [Optional[models.ShareRequestAccessLevel]](../../models/sharerequestaccesslevel.md)                                                      | :heavy_minus_sign:                                                                                                                       | Permission level for shared users:<br/><ul><br/><li><code>read</code> - Can view only</li><br/><li><code>write</code> - Can add messages</li><br/></ul><br/> |                                                                                                                                          |
-| `retries`                                                                                                                                | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                         | :heavy_minus_sign:                                                                                                                       | Configuration to override the default retry behavior of the client.                                                                      |                                                                                                                                          |
-
-### Response
-
-**[models.Conversation](../../models/conversation.md)**
+**[Union[eventstreaming.EventStream[models.AssistantMessageStreamSSEEvent], eventstreaming.EventStreamAsync[models.AssistantMessageStreamSSEEvent]]](../../models/.md)**
 
 ### Errors
 
@@ -582,15 +525,22 @@ with Pipeshub(
 
 ## update_conversation_title
 
-Update the title of a conversation.<br><br>
-<b>Overview:</b><br>
+Update the title of a conversation.
+
+**Overview:**
+
 Conversation titles are auto-generated from the first query by default.
-Use this endpoint to set a custom, more descriptive title.<br><br>
-<b>Title Limits:</b><br>
-<ul>
-<li>Minimum: 1 character</li>
-<li>Maximum: 200 characters</li>
-</ul>
+Use this endpoint to set a custom, more descriptive title.
+
+**Title limits:**
+
+- Minimum: 1 character
+- Maximum: 200 characters
+
+**Permissions:**
+
+The conversation must exist, belong to the calling user's organization,
+be owned by the caller (matched on `userId`), and not be soft-deleted.
 
 
 ### Example Usage
@@ -618,13 +568,13 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
+| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Unique conversation identifier                                      |                                                                     |
 | `title`                                                             | *str*                                                               | :heavy_check_mark:                                                  | New conversation title                                              | Q4 Sales Analysis Discussion                                        |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.UpdateConversationTitleResponse](../../models/updateconversationtitleresponse.md)**
 
 ### Errors
 
@@ -634,12 +584,22 @@ with Pipeshub(
 
 ## archive_conversation
 
-Archive a conversation to hide it from the main list.<br><br>
-<b>Overview:</b><br>
+Archive a conversation to hide it from the main list.
+
+**Overview:**
+
 Archived conversations are preserved but hidden from the default conversation list.
-Use archiving to clean up your workspace without permanently deleting conversations.<br><br>
-<b>Retrieval:</b><br>
-View archived conversations using <code>GET /conversations/show/archives</code>.
+Use archiving to clean up your workspace without permanently deleting conversations.
+
+**Access:**
+
+The caller must be the conversation's initiator, or be listed in `sharedWith`
+with `accessLevel: write`. Already-archived conversations return `400`.
+
+**Retrieval:**
+
+View archived conversations using `GET /conversations/show/archives`.
+Restore one with `PATCH /conversations/{conversationId}/unarchive`.
 
 
 ### Example Usage
@@ -667,12 +627,12 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Conversation identifier                                             |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.ArchiveConversationResponse](../../models/archiveconversationresponse.md)**
 
 ### Errors
 
@@ -682,9 +642,11 @@ with Pipeshub(
 
 ## unarchive_conversation
 
-Restore an archived conversation to the active list.<br><br>
-<b>Overview:</b><br>
-Removes the archived flag, making the conversation visible in the main list again.
+Restore an archived conversation.
+
+- Path params: `conversationId`
+- Query params: none
+- Body: none
 
 
 ### Example Usage
@@ -712,12 +674,12 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | Conversation identifier                                             |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[models.UnarchiveConversationResponse](../../models/unarchiveconversationresponse.md)**
 
 ### Errors
 
@@ -727,19 +689,44 @@ with Pipeshub(
 
 ## regenerate_answer
 
-Regenerate the AI response for a specific message.<br><br>
-<b>Overview:</b><br>
+Regenerate the AI response for a specific message and stream the new
+answer over Server-Sent Events.
+
+**Overview:**
+
 If you're not satisfied with an AI response, use this endpoint to generate
-a new answer. The AI will re-process the original query and may produce
-a different response.<br><br>
-<b>Use Cases:</b><br>
-<ul>
-<li>Response was incomplete or unclear</li>
-<li>Want to try a different AI model</li>
-<li>New documents have been indexed since original response</li>
-</ul>
-<b>Model Override:</b><br>
-Specify <code>modelKey</code> to use a different model for regeneration.
+a new answer. The original user query is re-processed and a new bot
+response replaces the previous one in place.
+
+**Constraints:**
+
+- Only the *last* message of the conversation can be regenerated.
+- The target message must be of type `bot_response`.
+
+**Use Cases:**
+
+- Response was incomplete or unclear
+- Want to try a different AI model
+- New documents have been indexed since original response
+
+**Model Override:**
+
+Specify `modelKey` to use a different model for regeneration.
+
+**Streaming:**
+
+The response is delivered as an SSE (`text/event-stream`) stream. The
+exact event vocabulary depends on `chatMode`:
+
+- For non-agent modes (e.g. `internal_search`, `web_search`) the
+  request is dispatched to the assistant chat backend.
+- For agent modes (e.g. `agent:auto`) the request is dispatched to
+  the agent backend with a placeholder agent built from the caller's
+  workspace, which can additionally emit `tool_result` and
+  `tool_execution_complete` events.
+
+See `SSEEvent` for the full union of event names this endpoint can
+emit across both backends.
 
 
 ### Example Usage
@@ -748,6 +735,7 @@ Specify <code>modelKey</code> to use a different model for regeneration.
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.utils import parse_datetime
 
 
 with Pipeshub(
@@ -756,28 +744,37 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.conversations.regenerate_answer(conversation_id="<value>", message_id="<value>")
+    res = pipeshub.conversations.regenerate_answer(conversation_id="<value>", message_id="<value>", model_key="05438a37-68f2-4641-a8dc-6c47e63278ca", model_name="gpt-5.4-mini", model_friendly_name="mini", chat_mode="internal_search", timezone="Asia/Calcutta", current_time=parse_datetime("2026-05-11T15:43:21+05:30"), tools=[
+        "jira.create_issue",
+        "confluence.search_content",
+    ])
 
-    # Handle response
-    print(res)
+    with res as event_stream:
+        for event in event_stream:
+            # handle event
+            print(event, flush=True)
 
 ```
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `message_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | ID of the message to regenerate response for                        |
-| `filters`                                                           | [Optional[models.Filters]](../../models/filters.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `model_key`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Override model for regeneration                                     |
-| `model_name`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `chat_mode`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Required                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Example                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | *str*                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | N/A                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `message_id`                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | *str*                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | ID of the message to regenerate response for                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `filters`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | [Optional[models.Filters]](../../models/filters.md)                                                                                                                                                                                                                                                                                                                                                                                                                               | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | App connector instance ids and knowledge-base / record-group ids that narrow retrieval<br/>for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.<br/>For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)<br/>to let the service use the agent’s stored knowledge and tool configuration. Sending<br/>`{ "apps": [], "kb": [] }` on an agent stream means **no** knowledge sources for that<br/>turn (it is not “full org default”).<br/> |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `model_key`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Identifier of the AI model configuration to use for regeneration.<br/>Typically a UUID returned by the model-management endpoints. When<br/>omitted, the model used for the original message is reused.<br/>                                                                                                                                                                                                                                                                      | 05438a37-68f2-4641-a8dc-6c47e63278ca                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `model_name`                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Provider model name (e.g. the underlying LLM identifier).                                                                                                                                                                                                                                                                                                                                                                                                                         | gpt-5.4-mini                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `model_friendly_name`                                                                                                                                                                                                                                                                                                                                                                                                                                                             | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Friendly display name of the selected model.                                                                                                                                                                                                                                                                                                                                                                                                                                      | mini                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `chat_mode`                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Chat mode used for regeneration (for example `internal_search`,<br/>`web_search`, or an agent mode such as `agent:auto`).<br/>                                                                                                                                                                                                                                                                                                                                                    | internal_search                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `timezone`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | IANA timezone identifier from the client. Used to provide<br/>time-aware context to the AI during regeneration.<br/>                                                                                                                                                                                                                                                                                                                                                              | Asia/Calcutta                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `current_time`                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | [date](https://docs.python.org/3/library/datetime.html#date-objects)                                                                                                                                                                                                                                                                                                                                                                                                              | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | ISO 8601 / RFC 3339 datetime from the client (UTC `Z` or numeric<br/>offset). Used to anchor any relative time references in the query.<br/>                                                                                                                                                                                                                                                                                                                                      | 2026-05-11 15:43:21 +0530 +0530                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `tools`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | List[*str*]                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Optional list of tool identifiers (fully-qualified action names<br/>such as `jira.create_issue`) the agent may invoke when<br/>regenerating. Applicable only in agent chat modes.<br/>                                                                                                                                                                                                                                                                                            | [<br/>"jira.create_issue",<br/>"confluence.search_content"<br/>]                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `retries`                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                                                                                                                                                                                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Configuration to override the default retry behavior of the client.                                                                                                                                                                                                                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
+**[Union[eventstreaming.EventStream[models.SSEEvent], eventstreaming.EventStreamAsync[models.SSEEvent]]](../../models/.md)**
 
 ### Errors
 
@@ -787,21 +784,29 @@ with Pipeshub(
 
 ## update_message_feedback
 
-Provide feedback on an AI-generated response.<br><br>
-<b>Overview:</b><br>
-Feedback helps improve AI response quality over time. You can rate
-various aspects of the response and provide detailed comments.<br><br>
-<b>Feedback Options:</b><br>
-<ul>
-<li><b>isHelpful:</b> Overall thumbs up/down</li>
-<li><b>ratings:</b> 1-5 scale for accuracy, relevance, completeness, clarity</li>
-<li><b>categories:</b> Issue categories (incorrect info, too verbose, etc.)</li>
-<li><b>comments:</b> Free-text positive/negative feedback and suggestions</li>
-<li><b>citationFeedback:</b> Rate individual citations</li>
-</ul>
-<b>Restrictions:</b><br>
-Feedback can only be submitted on <code>bot_response</code> messages,
-not on user queries or system messages.
+Append a feedback entry to a bot-response message.
+
+**Overview**
+
+Feedback helps improve AI response quality over time. You can record an
+overall helpfulness signal, per-aspect ratings, issue categories, and
+free-text comments. Each call appends a new entry to the message;
+previous entries are preserved.
+
+**Feedback options**
+
+- `isHelpful` — overall thumbs up/down.
+- `ratings` — 1–5 scores keyed by an aspect name you choose
+  (e.g. `accuracy`, `relevance`, `completeness`, `clarity`).
+- `categories` — issue or positive categories from a fixed list.
+- `comments` — free-text `positive`, `negative`, and `suggestions`.
+- `metrics` — optional client-side telemetry
+  (`userInteractionTime`, `feedbackSessionId`).
+
+**Restrictions**
+
+Feedback can only be submitted on `bot_response` messages — user
+queries and system messages are rejected with `400`.
 
 
 ### Example Usage
@@ -827,66 +832,20 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `message_id`                                                        | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `is_helpful`                                                        | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Overall helpfulness rating                                          |
-| `ratings`                                                           | [Optional[models.Ratings]](../../models/ratings.md)                 | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `categories`                                                        | List[[models.Category](../../models/category.md)]                   | :heavy_minus_sign:                                                  | Categories of issues identified                                     |
-| `comments`                                                          | [Optional[models.Comments]](../../models/comments.md)               | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `citation_feedback`                                                 | List[[models.CitationFeedback](../../models/citationfeedback.md)]   | :heavy_minus_sign:                                                  | Feedback on individual citations                                    |
-| `follow_up_questions_helpful`                                       | *Optional[bool]*                                                    | :heavy_minus_sign:                                                  | Were the suggested follow-up questions helpful                      |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                                                                                     | Type                                                                                                                                                                          | Required                                                                                                                                                                      | Description                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                                                                                                             | *str*                                                                                                                                                                         | :heavy_check_mark:                                                                                                                                                            | Unique conversation identifier.                                                                                                                                               |
+| `message_id`                                                                                                                                                                  | *str*                                                                                                                                                                         | :heavy_check_mark:                                                                                                                                                            | Identifier of the bot-response message being rated.                                                                                                                           |
+| `is_helpful`                                                                                                                                                                  | *Optional[bool]*                                                                                                                                                              | :heavy_minus_sign:                                                                                                                                                            | Overall helpfulness signal (thumbs up/down).                                                                                                                                  |
+| `ratings`                                                                                                                                                                     | Dict[str, *float*]                                                                                                                                                            | :heavy_minus_sign:                                                                                                                                                            | Per-aspect ratings. Keys are arbitrary aspect names chosen<br/>by the client (typically `accuracy`, `relevance`,<br/>`completeness`, `clarity`); values are scores in the range<br/>1–5.<br/> |
+| `categories`                                                                                                                                                                  | List[[models.CategoryRequest](../../models/categoryrequest.md)]                                                                                                               | :heavy_minus_sign:                                                                                                                                                            | Issue or positive categories that apply to the response.                                                                                                                      |
+| `comments`                                                                                                                                                                    | [Optional[models.CommentsRequest]](../../models/commentsrequest.md)                                                                                                           | :heavy_minus_sign:                                                                                                                                                            | Free-text comments grouped by sentiment.                                                                                                                                      |
+| `metrics`                                                                                                                                                                     | [Optional[models.MetricsRequest]](../../models/metricsrequest.md)                                                                                                             | :heavy_minus_sign:                                                                                                                                                            | Optional client-supplied telemetry.                                                                                                                                           |
+| `retries`                                                                                                                                                                     | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                              | :heavy_minus_sign:                                                                                                                                                            | Configuration to override the default retry behavior of the client.                                                                                                           |
 
 ### Response
 
-**[models.Conversation](../../models/conversation.md)**
-
-### Errors
-
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
-
-## unshare_conversation_by_id
-
-Revoke sharing for a conversation, making it private again.
-
-
-### Example Usage
-
-<!-- UsageSnippet language="python" operationID="unshareConversationById" method="post" path="/conversations/{conversationId}/unshare" -->
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.conversations.unshare_conversation_by_id(conversation_id="<value>")
-
-    # Handle response
-    print(res)
-
-```
-
-### Parameters
-
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `conversation_id`                                                   | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
-| `user_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `team_ids`                                                          | List[*str*]                                                         | :heavy_minus_sign:                                                  | N/A                                                                 |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
-
-### Response
-
-**[models.UnshareConversationByIDResponse](../../models/unshareconversationbyidresponse.md)**
+**[models.UpdateMessageFeedbackResponse](../../models/updatemessagefeedbackresponse.md)**
 
 ### Errors
 

@@ -1,12 +1,13 @@
 # NodeType
 
+Type of the node.
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `KB`        | kb          |
-| `FOLDER`    | folder      |
-| `RECORD`    | record      |
-| `CONNECTOR` | connector   |
-| `APP`       | app         |
+| Name           | Value          |
+| -------------- | -------------- |
+| `APP`          | app            |
+| `RECORD_GROUP` | recordGroup    |
+| `FOLDER`       | folder         |
+| `RECORD`       | record         |

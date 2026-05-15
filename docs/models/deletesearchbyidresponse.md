@@ -1,10 +1,10 @@
 # DeleteSearchByIDResponse
 
-Search deleted successfully
+Search deleted successfully.
 
 
 ## Fields
 
-| Field                       | Type                        | Required                    | Description                 | Example                     |
-| --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |
-| `message`                   | *Optional[str]*             | :heavy_minus_sign:          | N/A                         | Search deleted successfully |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `message`          | *str*              | :heavy_check_mark: | N/A                |

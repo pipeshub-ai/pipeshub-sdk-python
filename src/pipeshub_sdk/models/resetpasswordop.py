@@ -13,6 +13,8 @@ class ResetPasswordRequestTypedDict(TypedDict):
 
     current_password: str
     new_password: str
+    cf_turnstile_response: NotRequired[str]
+    r"""Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)"""
 
 
 class ResetPasswordRequest(BaseModel):
@@ -22,21 +24,14 @@ class ResetPasswordRequest(BaseModel):
 
     new_password: Annotated[str, pydantic.Field(alias="newPassword")]
 
-
-class ResetPasswordResponseTypedDict(TypedDict):
-    r"""Password reset successfully"""
-
-    message: NotRequired[str]
-
-
-class ResetPasswordResponse(BaseModel):
-    r"""Password reset successfully"""
-
-    message: Optional[str] = None
+    cf_turnstile_response: Annotated[
+        Optional[str], pydantic.Field(alias="cf-turnstile-response")
+    ] = None
+    r"""Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["message"])
+        optional_fields = set(["cf-turnstile-response"])
         serialized = handler(self)
         m = {}
 

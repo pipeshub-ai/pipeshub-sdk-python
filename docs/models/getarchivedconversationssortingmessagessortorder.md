@@ -1,0 +1,11 @@
+# GetArchivedConversationsSortingMessagesSortOrder
+
+
+## Fields
+
+| Field                                                                          | Type                                                                           | Required                                                                       | Description                                                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `values`                                                                       | List[[models.SortingMessagesValue](../models/sortingmessagesvalue.md)]         | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `default`                                                                      | [Optional[models.SortingMessagesDefault]](../models/sortingmessagesdefault.md) | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `description`                                                                  | *Optional[str]*                                                                | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `current`                                                                      | [Optional[models.SortingMessagesCurrent]](../models/sortingmessagescurrent.md) | :heavy_minus_sign:                                                             | N/A                                                                            |

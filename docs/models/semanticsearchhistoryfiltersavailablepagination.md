@@ -1,0 +1,9 @@
+# SemanticSearchHistoryFiltersAvailablePagination
+
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `page`                                                                                           | [models.SemanticSearchHistoryPaginationField](../models/semanticsearchhistorypaginationfield.md) | :heavy_check_mark:                                                                               | N/A                                                                                              |
+| `limit`                                                                                          | [models.SemanticSearchHistoryPaginationField](../models/semanticsearchhistorypaginationfield.md) | :heavy_check_mark:                                                                               | N/A                                                                                              |

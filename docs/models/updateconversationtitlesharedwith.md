@@ -1,0 +1,9 @@
+# UpdateConversationTitleSharedWith
+
+
+## Fields
+
+| Field                                                                                                  | Type                                                                                                   | Required                                                                                               | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `user_id`                                                                                              | *str*                                                                                                  | :heavy_check_mark:                                                                                     | N/A                                                                                                    |
+| `access_level`                                                                                         | [Optional[models.UpdateConversationTitleAccessLevel]](../models/updateconversationtitleaccesslevel.md) | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
