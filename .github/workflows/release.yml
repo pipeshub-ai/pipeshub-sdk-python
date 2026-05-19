@@ -28,9 +28,11 @@ jobs:
       - name: Publish to PyPI
         run: uv publish --token ${{ secrets.PYPI_TOKEN }}
 
-      - name: Extract version from pyproject.toml
+      - name: Extract version from .speakeasy/gen.yaml
         id: version
-        run: echo "VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(python -c "import yaml; data=yaml.safe_load(open('.speakeasy/gen.yaml')); print(data['python']['version'])")
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create and push tag
         run: |
