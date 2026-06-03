@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .appliedfilters import AppliedFilters, AppliedFiltersTypedDict
+from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .citationreference import CitationReference, CitationReferenceTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
@@ -10,11 +11,11 @@ from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-MessageType = Union[
+MessageMessageType = Union[
     Literal[
         "user_query",
         "bot_response",
@@ -36,7 +37,7 @@ r"""Type of message:
 """
 
 
-ContentFormat = Union[
+MessageContentFormat = Union[
     Literal[
         "MARKDOWN",
         "JSON",
@@ -47,7 +48,7 @@ ContentFormat = Union[
 r"""Format of the content for rendering"""
 
 
-class MetadataTypedDict(TypedDict):
+class MessageMetadataTypedDict(TypedDict):
     processing_time_ms: NotRequired[float]
     r"""Time taken to generate response in milliseconds"""
     model_version: NotRequired[str]
@@ -58,7 +59,7 @@ class MetadataTypedDict(TypedDict):
     r"""Additional context or reasoning"""
 
 
-class Metadata(BaseModel):
+class MessageMetadata(BaseModel):
     processing_time_ms: Annotated[
         Optional[float], pydantic.Field(alias="processingTimeMs")
     ] = None
@@ -94,7 +95,7 @@ class Metadata(BaseModel):
         return m
 
 
-class ReferenceDatumTypedDict(TypedDict):
+class MessageReferenceDatumTypedDict(TypedDict):
     name: NotRequired[str]
     r"""Display name shown to the user."""
     id: NotRequired[str]
@@ -115,7 +116,7 @@ class ReferenceDatumTypedDict(TypedDict):
     """
 
 
-class ReferenceDatum(BaseModel):
+class MessageReferenceDatum(BaseModel):
     name: Optional[str] = None
     r"""Display name shown to the user."""
 
@@ -165,7 +166,7 @@ class MessageTypedDict(TypedDict):
 
     id: NotRequired[str]
     r"""Unique message identifier"""
-    message_type: NotRequired[MessageType]
+    message_type: NotRequired[MessageMessageType]
     r"""Type of message:
     <ul>
     <li><code>user_query</code> - User's question or input</li>
@@ -178,7 +179,7 @@ class MessageTypedDict(TypedDict):
     """
     content: NotRequired[str]
     r"""The message text content"""
-    content_format: NotRequired[ContentFormat]
+    content_format: NotRequired[MessageContentFormat]
     r"""Format of the content for rendering"""
     citations: NotRequired[List[CitationReferenceTypedDict]]
     r"""References to source documents used in the response"""
@@ -188,7 +189,7 @@ class MessageTypedDict(TypedDict):
     r"""Suggested follow-up questions"""
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     r"""User feedback on this message"""
-    metadata: NotRequired[MetadataTypedDict]
+    metadata: NotRequired[MessageMetadataTypedDict]
     model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration recorded against a conversation or message."""
     applied_filters: NotRequired[AppliedFiltersTypedDict]
@@ -197,13 +198,16 @@ class MessageTypedDict(TypedDict):
     machine-readable `filters` field used for retrieval scoping.
 
     """
-    reference_data: NotRequired[List[ReferenceDatumTypedDict]]
+    reference_data: NotRequired[List[MessageReferenceDatumTypedDict]]
     r"""Reference identifiers extracted from tool responses, used to scope
     follow-up queries (for example Jira project keys or record IDs).
 
     """
-    attachments: NotRequired[List[Dict[str, Any]]]
-    r"""Files or media attached to this message"""
+    attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
+    r"""Files uploaded for this message turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -218,7 +222,7 @@ class Message(BaseModel):
     r"""Unique message identifier"""
 
     message_type: Annotated[
-        Optional[MessageType], pydantic.Field(alias="messageType")
+        Optional[MessageMessageType], pydantic.Field(alias="messageType")
     ] = None
     r"""Type of message:
     <ul>
@@ -235,7 +239,7 @@ class Message(BaseModel):
     r"""The message text content"""
 
     content_format: Annotated[
-        Optional[ContentFormat], pydantic.Field(alias="contentFormat")
+        Optional[MessageContentFormat], pydantic.Field(alias="contentFormat")
     ] = "MARKDOWN"
     r"""Format of the content for rendering"""
 
@@ -253,7 +257,7 @@ class Message(BaseModel):
     feedback: Optional[List[MessageFeedback]] = None
     r"""User feedback on this message"""
 
-    metadata: Optional[Metadata] = None
+    metadata: Optional[MessageMetadata] = None
 
     model_info: Annotated[
         Optional[ConversationModelInfo], pydantic.Field(alias="modelInfo")
@@ -270,15 +274,18 @@ class Message(BaseModel):
     """
 
     reference_data: Annotated[
-        Optional[List[ReferenceDatum]], pydantic.Field(alias="referenceData")
+        Optional[List[MessageReferenceDatum]], pydantic.Field(alias="referenceData")
     ] = None
     r"""Reference identifiers extracted from tool responses, used to scope
     follow-up queries (for example Jira project keys or record IDs).
 
     """
 
-    attachments: Optional[List[Dict[str, Any]]] = None
-    r"""Files or media attached to this message"""
+    attachments: Optional[List[ChatAttachmentRef]] = None
+    r"""Files uploaded for this message turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
@@ -320,11 +327,11 @@ class Message(BaseModel):
 
 
 try:
-    Metadata.model_rebuild()
+    MessageMetadata.model_rebuild()
 except NameError:
     pass
 try:
-    ReferenceDatum.model_rebuild()
+    MessageReferenceDatum.model_rebuild()
 except NameError:
     pass
 try:

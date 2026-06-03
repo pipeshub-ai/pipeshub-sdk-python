@@ -151,7 +151,7 @@ class GetAvailableModelsByTypeErrorValidationError(BaseModel):
 GetAvailableModelsByTypeStatus = Literal["success",]
 
 
-class ModelTypedDict(TypedDict):
+class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     model_type: ModelType
     r"""Model category — always matches the `{modelType}` path parameter."""
     provider: str
@@ -170,7 +170,7 @@ class ModelTypedDict(TypedDict):
     r"""Optional human-readable display name. Only present when the provider configuration entry contains exactly one model name (not a comma-separated list) **and** a friendly name was added during configuration."""
 
 
-class Model(BaseModel):
+class GetAvailableModelsByTypeModel(BaseModel):
     model_type: Annotated[ModelType, pydantic.Field(alias="modelType")]
     r"""Model category — always matches the `{modelType}` path parameter."""
 
@@ -234,7 +234,7 @@ class GetAvailableModelsByTypeResponseTypedDict(TypedDict):
     stored yet, or the `modelType` key is absent from the
     stored config entirely.
     """
-    models: List[ModelTypedDict]
+    models: List[GetAvailableModelsByTypeModelTypedDict]
     r"""Flat list of individual model entries. Each entry represents one model name from one provider configuration."""
 
 
@@ -260,11 +260,11 @@ class GetAvailableModelsByTypeResponse(BaseModel):
     stored config entirely.
     """
 
-    models: List[Model]
+    models: List[GetAvailableModelsByTypeModel]
     r"""Flat list of individual model entries. Each entry represents one model name from one provider configuration."""
 
 
 try:
-    Model.model_rebuild()
+    GetAvailableModelsByTypeModel.model_rebuild()
 except NameError:
     pass

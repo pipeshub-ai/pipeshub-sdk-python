@@ -15,13 +15,18 @@ from typing import Callable, Dict, List, Optional, TYPE_CHECKING, Union, cast
 import weakref
 
 if TYPE_CHECKING:
+    from pipeshub_sdk.agents import Agents
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
     from pipeshub_sdk.conversations import Conversations
     from pipeshub_sdk.knowledge_hub import KnowledgeHub
+    from pipeshub_sdk.oauth_apps import OAuthApps
+    from pipeshub_sdk.oauth_provider import OAuthProvider
+    from pipeshub_sdk.openid_connect import OpenIDConnect
     from pipeshub_sdk.organization_auth_config import OrganizationAuthConfig
     from pipeshub_sdk.organizations import Organizations
     from pipeshub_sdk.semantic_search import SemanticSearch
     from pipeshub_sdk.user_account import UserAccount
+    from pipeshub_sdk.web_search_sdk import WebSearchSDK
 
 
 class Pipeshub(BaseSDK):
@@ -47,14 +52,101 @@ class Pipeshub(BaseSDK):
 
     """
 
+    o_auth_provider: "OAuthProvider"
+    r"""PipesHub OAuth 2.0 Authorization Server implementing RFC 6749, RFC 7636 (PKCE), and OpenID Connect.
+
+    **Supported Grant Types:**
+    - `authorization_code` - Standard OAuth flow with PKCE support
+    - `client_credentials` - Machine-to-machine authentication
+    - `refresh_token` - Token refresh for long-lived access
+
+    **Security Features:**
+    - PKCE (Proof Key for Code Exchange) for public clients
+    - State parameter for CSRF protection
+    - Configurable token lifetimes
+    - Token revocation and introspection
+
+    **OpenID Connect:**
+    - ID tokens with standard claims
+    - UserInfo endpoint for profile data
+    - Discovery endpoint for automatic configuration
+
+    **Machine tokens (`client_credentials`) — gateway and downstream identity:**
+    Access tokens may encode **`userId === client_id`**. The **Node.js API gateway** resolves the effective user to the OAuth **app creator**: first using the JWT **`createdBy`** claim when present, otherwise by loading the OAuth app by **`client_id`** from the registry. After verification it sets the authenticated session to that creator and may attach **`x-oauth-user-id`** (resolved user id) on **outbound** HTTP calls to Python microservices so authorization and retrieval match the same principal. **Inbound** `x-oauth-user-id` from external clients is **removed** at the gateway to prevent spoofing.
+
+    **Python services:** Validate `Authorization: Bearer` as today. When **`x-oauth-user-id`** is present (normally only when the Node gateway added it), use it as the effective **`userId`** for scopes and user-scoped logic; otherwise use the JWT payload’s **`userId`** as-is (which may still equal **`client_id`** if the caller bypassed the gateway).
+
+    **Operational note:** Prefer tokens whose JWT already carries the creator as **`userId`**; use **`POST /oauth-clients/{appId}/revoke-all-tokens`** and obtain new tokens from **`POST /oauth2/token`** when rotating integrations.
+
+    """
+    open_id_connect: "OpenIDConnect"
+    r"""OpenID Connect 1.0 endpoints for identity federation and discovery.
+
+    **Discovery:**
+    - `/.well-known/openid-configuration` - Authorization server metadata
+    - `/.well-known/oauth-authorization-server` - Authorization server metadata (RFC 8414)
+    - `/.well-known/oauth-protected-resource/mcp` - Protected resource metadata (RFC 9728)
+    - `/.well-known/jwks.json` - Public keys for token verification
+
+    **UserInfo:**
+    - `/oauth2/userinfo` - Get authenticated user's profile information
+
+    **Supported Claims:**
+    - `user_id` - User identifier
+    - `email`, `email_verified` - Email information
+    - `name`, `given_name`, `family_name` - Name information
+
+    """
+    o_auth_apps: "OAuthApps"
+    r"""Manage OAuth 2.0 client applications registered with PipesHub.
+
+    OAuth apps allow third-party applications to access PipesHub APIs on behalf of users
+    or organizations. Each app receives a client ID and secret for authentication.
+
+    **Who can see which apps**
+    - **Everyone (including org admins)** sees and manages only OAuth apps **they created** (`createdBy`). Other members' apps are hidden (not listed; individual operations return not found).
+
+    **Who authorizes vs. client credentials**
+    - **Authorization code:** Any authenticated user in the workspace may complete consent for a valid `client_id`; issued tokens represent **that user**.
+    - **Client credentials:** Access tokens represent the **OAuth app creator** (who registered the client), not the caller.
+
+    **Scopes**
+    - `GET /oauth-clients/scopes` returns scopes grouped by category for the **signed-in user's role**.
+    - **Org admins** may register apps that request additional **admin-only** scopes; non-admins cannot select those scopes when creating or updating an app.
+
+    **App Types:**
+    - **Confidential clients**: Server-side apps that can securely store secrets
+    - **Public clients**: Browser/mobile apps that cannot securely store secrets (use PKCE)
+
+    **App Lifecycle:**
+    - Create apps with name, redirect URIs, allowed scopes, and optional URLs (homepage, privacy, terms)
+    - Regenerate secrets if compromised
+    - Suspend/activate apps to control access
+    - Revoke all tokens for emergency access removal
+
+    """
     user_account: "UserAccount"
+    r"""User authentication including multi-step MFA, password reset, OTP login, and token management"""
     organization_auth_config: "OrganizationAuthConfig"
+    r"""Admin configuration of authentication methods including MFA steps and allowed providers"""
     organizations: "Organizations"
+    r"""Organization management operations"""
     knowledge_hub: "KnowledgeHub"
+    r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
     conversations: "Conversations"
+    r"""AI-powered conversational chat management with citations and follow-up questions"""
     semantic_search: "SemanticSearch"
+    r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
+    agents: "Agents"
+    r"""Custom AI agents with specialized capabilities and tool integrations"""
     ai_models_providers: "AIModelsProviders"
+    r"""Manage individual AI model providers - add, update, delete, and set defaults."""
+    web_search: "WebSearchSDK"
+    r"""Manage web search providers (DuckDuckGo, Serper, Tavily, Exa) and settings for internet search."""
     _sub_sdk_map = {
+        "o_auth_provider": ("pipeshub_sdk.oauth_provider", "OAuthProvider"),
+        "open_id_connect": ("pipeshub_sdk.openid_connect", "OpenIDConnect"),
+        "o_auth_apps": ("pipeshub_sdk.oauth_apps", "OAuthApps"),
         "user_account": ("pipeshub_sdk.user_account", "UserAccount"),
         "organization_auth_config": (
             "pipeshub_sdk.organization_auth_config",
@@ -64,10 +156,12 @@ class Pipeshub(BaseSDK):
         "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
+        "agents": ("pipeshub_sdk.agents", "Agents"),
         "ai_models_providers": (
             "pipeshub_sdk.ai_models_providers",
             "AIModelsProviders",
         ),
+        "web_search": ("pipeshub_sdk.web_search_sdk", "WebSearchSDK"),
     }
 
     def __init__(

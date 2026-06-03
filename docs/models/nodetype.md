@@ -1,6 +1,6 @@
 # NodeType
 
-Type of the node.
+Type of the node (app, recordGroup, folder, or record).
 
 
 ## Values

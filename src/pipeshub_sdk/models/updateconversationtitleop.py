@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .appliedfilternode import AppliedFilterNode, AppliedFilterNodeTypedDict
+from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .citationreference import CitationReference, CitationReferenceTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
@@ -238,6 +239,11 @@ class UpdateConversationTitleMessageTypedDict(TypedDict):
     model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration recorded against a conversation or message."""
     applied_filters: NotRequired[UpdateConversationTitleAppliedFiltersTypedDict]
+    attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
+    r"""Files uploaded for this message turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
     metadata: NotRequired[UpdateConversationTitleMetadataTypedDict]
 
 
@@ -298,12 +304,25 @@ class UpdateConversationTitleMessage(BaseModel):
         pydantic.Field(alias="appliedFilters"),
     ] = None
 
+    attachments: Optional[List[ChatAttachmentRef]] = None
+    r"""Files uploaded for this message turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
+
     metadata: Optional[UpdateConversationTitleMetadata] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["contentFormat", "confidence", "modelInfo", "appliedFilters", "metadata"]
+            [
+                "contentFormat",
+                "confidence",
+                "modelInfo",
+                "appliedFilters",
+                "attachments",
+                "metadata",
+            ]
         )
         serialized = handler(self)
         m = {}

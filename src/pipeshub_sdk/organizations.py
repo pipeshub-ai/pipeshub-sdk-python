@@ -6,10 +6,12 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional
+from typing import Any, Mapping, Optional
 
 
 class Organizations(BaseSDK):
+    r"""Organization management operations"""
+
     def get_current_organization(
         self,
         *,
@@ -20,26 +22,24 @@ class Organizations(BaseSDK):
     ) -> models.Organization:
         r"""Get current organization
 
-        Retrieve details about the authenticated user's organization.<br><br>
-        <b>Overview:</b><br>
-        This endpoint returns complete information about the current user's organization, including profile data, settings, and configuration. Use this for organization profile pages and settings.<br><br>
-        <b>Response Includes:</b><br>
-        <ul>
-        <li>Organization profile (name, email, address)</li>
-        <li>Account type and billing status</li>
-        <li>Feature flags and limits</li>
-        <li>Branding settings (logo, colors)</li>
-        <li>Creation and modification timestamps</li>
-        </ul>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Organization profile pages</li>
-        <li>Settings and configuration screens</li>
-        <li>Billing and subscription displays</li>
-        <li>White-label branding retrieval</li>
-        </ul>
-        <b>Note:</b><br>
-        All authenticated users can access this endpoint to view their organization's details.
+        Retrieve details about the authenticated user's organization.
+
+        **Overview:**
+
+        This endpoint returns the organization document for the current user's org, including profile data and configuration.
+
+        **Response Includes:**
+
+        - Organization profile (registeredName, shortName, contactEmail, domain)
+        - Account type
+        - Onboarding status
+        - Permanent address
+        - Creation and modification timestamps
+
+        **Use Cases:**
+
+        - Organization profile pages
+        - Settings and configuration screens
 
 
         :param retries: Override the default retry configuration for this method
@@ -92,13 +92,20 @@ class Organizations(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
+            error_status_codes=["401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.Organization, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -121,26 +128,24 @@ class Organizations(BaseSDK):
     ) -> models.Organization:
         r"""Get current organization
 
-        Retrieve details about the authenticated user's organization.<br><br>
-        <b>Overview:</b><br>
-        This endpoint returns complete information about the current user's organization, including profile data, settings, and configuration. Use this for organization profile pages and settings.<br><br>
-        <b>Response Includes:</b><br>
-        <ul>
-        <li>Organization profile (name, email, address)</li>
-        <li>Account type and billing status</li>
-        <li>Feature flags and limits</li>
-        <li>Branding settings (logo, colors)</li>
-        <li>Creation and modification timestamps</li>
-        </ul>
-        <b>Use Cases:</b><br>
-        <ul>
-        <li>Organization profile pages</li>
-        <li>Settings and configuration screens</li>
-        <li>Billing and subscription displays</li>
-        <li>White-label branding retrieval</li>
-        </ul>
-        <b>Note:</b><br>
-        All authenticated users can access this endpoint to view their organization's details.
+        Retrieve details about the authenticated user's organization.
+
+        **Overview:**
+
+        This endpoint returns the organization document for the current user's org, including profile data and configuration.
+
+        **Response Includes:**
+
+        - Organization profile (registeredName, shortName, contactEmail, domain)
+        - Account type
+        - Onboarding status
+        - Permanent address
+        - Creation and modification timestamps
+
+        **Use Cases:**
+
+        - Organization profile pages
+        - Settings and configuration screens
 
 
         :param retries: Override the default retry configuration for this method
@@ -193,13 +198,20 @@ class Organizations(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "404", "4XX", "5XX"],
+            error_status_codes=["401", "404", "4XX", "500", "5XX"],
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.Organization, http_res)
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["401", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

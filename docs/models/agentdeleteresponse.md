@@ -1,0 +1,10 @@
+# AgentDeleteResponse
+
+
+## Fields
+
+| Field                                                                      | Type                                                                       | Required                                                                   | Description                                                                | Example                                                                    |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `status`                                                                   | [models.AgentDeleteResponseStatus](../models/agentdeleteresponsestatus.md) | :heavy_check_mark:                                                         | N/A                                                                        |                                                                            |
+| `message`                                                                  | *str*                                                                      | :heavy_check_mark:                                                         | N/A                                                                        | Agent deleted successfully                                                 |
+| `deleted`                                                                  | [models.Deleted](../models/deleted.md)                                     | :heavy_check_mark:                                                         | N/A                                                                        |                                                                            |

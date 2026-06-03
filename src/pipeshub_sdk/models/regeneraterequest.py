@@ -12,10 +12,18 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class RegenerateRequestTypedDict(TypedDict):
     r"""Request body for regenerating an AI response. All fields are optional;
-    when omitted the model and context originally used for the message are
-    reused. Provide `modelKey` (and the matching display fields) to switch
-    models, or `filters` to narrow the knowledge sources considered during
-    regeneration.
+    when omitted the model selection and execution context from the
+    original message are reused.
+
+    Supported fields:
+    - `filters` — optional `{ apps?, kb? }` filter object
+    - `chatMode` — optional non-empty chat mode string
+    - `modelKey`, `modelName`, `modelFriendlyName` —
+    optional non-empty model override fields
+    - `timezone` — optional non-empty client timezone string
+    - `currentTime` — optional ISO 8601 / RFC 3339 datetime string with
+    UTC `Z` or a numeric offset
+    - `tools` — optional array of non-empty tool identifiers
 
     """
 
@@ -63,10 +71,18 @@ class RegenerateRequestTypedDict(TypedDict):
 
 class RegenerateRequest(BaseModel):
     r"""Request body for regenerating an AI response. All fields are optional;
-    when omitted the model and context originally used for the message are
-    reused. Provide `modelKey` (and the matching display fields) to switch
-    models, or `filters` to narrow the knowledge sources considered during
-    regeneration.
+    when omitted the model selection and execution context from the
+    original message are reused.
+
+    Supported fields:
+    - `filters` — optional `{ apps?, kb? }` filter object
+    - `chatMode` — optional non-empty chat mode string
+    - `modelKey`, `modelName`, `modelFriendlyName` —
+    optional non-empty model override fields
+    - `timezone` — optional non-empty client timezone string
+    - `currentTime` — optional ISO 8601 / RFC 3339 datetime string with
+    UTC `Z` or a numeric offset
+    - `tools` — optional array of non-empty tool identifiers
 
     """
 

@@ -1,0 +1,13 @@
+# AgentCreateToolset
+
+
+## Fields
+
+| Field                                                                     | Type                                                                      | Required                                                                  | Description                                                               |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `name`                                                                    | [models.AgentCreateToolsetName](../models/agentcreatetoolsetname.md)      | :heavy_check_mark:                                                        | Registered toolset name (lowercase) accepted by the create-agent gateway. |
+| `display_name`                                                            | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `type`                                                                    | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `instance_id`                                                             | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `instance_name`                                                           | *Optional[str]*                                                           | :heavy_minus_sign:                                                        | N/A                                                                       |
+| `tools`                                                                   | List[[models.AgentCreateToolRef](../models/agentcreatetoolref.md)]        | :heavy_minus_sign:                                                        | N/A                                                                       |

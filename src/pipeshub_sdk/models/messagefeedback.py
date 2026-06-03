@@ -49,7 +49,7 @@ class Ratings(BaseModel):
         return m
 
 
-Category = Union[
+MessageFeedbackCategory = Union[
     Literal[
         "incorrect_information",
         "missing_information",
@@ -65,7 +65,7 @@ Category = Union[
 ]
 
 
-class CommentsTypedDict(TypedDict):
+class MessageFeedbackCommentsTypedDict(TypedDict):
     positive: NotRequired[str]
     r"""What was good about the response"""
     negative: NotRequired[str]
@@ -74,7 +74,7 @@ class CommentsTypedDict(TypedDict):
     r"""Specific suggestions for improvement"""
 
 
-class Comments(BaseModel):
+class MessageFeedbackComments(BaseModel):
     positive: Optional[str] = None
     r"""What was good about the response"""
 
@@ -278,9 +278,9 @@ class MessageFeedbackTypedDict(TypedDict):
     is_helpful: NotRequired[bool]
     r"""Overall helpfulness rating"""
     ratings: NotRequired[RatingsTypedDict]
-    categories: NotRequired[List[Category]]
+    categories: NotRequired[List[MessageFeedbackCategory]]
     r"""Categories of issues or positive attributes identified"""
-    comments: NotRequired[CommentsTypedDict]
+    comments: NotRequired[MessageFeedbackCommentsTypedDict]
     citation_feedback: NotRequired[List[CitationFeedbackTypedDict]]
     r"""Feedback on individual citations"""
     follow_up_questions_helpful: NotRequired[bool]
@@ -314,10 +314,10 @@ class MessageFeedback(BaseModel):
 
     ratings: Optional[Ratings] = None
 
-    categories: Optional[List[Category]] = None
+    categories: Optional[List[MessageFeedbackCategory]] = None
     r"""Categories of issues or positive attributes identified"""
 
-    comments: Optional[Comments] = None
+    comments: Optional[MessageFeedbackComments] = None
 
     citation_feedback: Annotated[
         Optional[List[CitationFeedback]], pydantic.Field(alias="citationFeedback")

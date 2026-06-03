@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .appliedfilternode import AppliedFilterNode, AppliedFilterNodeTypedDict
+from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .citation import Citation, CitationTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
@@ -37,7 +38,7 @@ GetConversationByIDSortOrderEnum = Literal[
 r"""Sort direction"""
 
 
-QueryParamMessageType = Literal[
+GetConversationByIDQueryParamMessageType = Literal[
     "user_query",
     "bot_response",
     "error",
@@ -66,7 +67,7 @@ class GetConversationByIDRequestTypedDict(TypedDict):
     r"""Filter messages created on or before this date (ISO 8601)"""
     shared: NotRequired[bool]
     r"""Filter by shared status of the conversation"""
-    message_type: NotRequired[QueryParamMessageType]
+    message_type: NotRequired[GetConversationByIDQueryParamMessageType]
     r"""Filter messages by type"""
 
 
@@ -131,7 +132,7 @@ class GetConversationByIDRequest(BaseModel):
     r"""Filter by shared status of the conversation"""
 
     message_type: Annotated[
-        Optional[QueryParamMessageType],
+        Optional[GetConversationByIDQueryParamMessageType],
         pydantic.Field(alias="messageType"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
@@ -238,7 +239,7 @@ GetConversationByIDContentFormat = Union[
 ]
 
 
-Confidence = Union[
+GetConversationByIDConfidence = Union[
     Literal[
         "Very High",
         "High",
@@ -419,7 +420,7 @@ class GetConversationByIDMessageTypedDict(TypedDict):
     message_type: NotRequired[GetConversationByIDMessageMessageType]
     content: NotRequired[str]
     content_format: NotRequired[GetConversationByIDContentFormat]
-    confidence: NotRequired[Confidence]
+    confidence: NotRequired[Nullable[GetConversationByIDConfidence]]
     r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block."""
     citations: NotRequired[List[GetConversationByIDCitationTypedDict]]
     r"""Citations attached to this message. `citationData` is the populated citation document."""
@@ -430,6 +431,11 @@ class GetConversationByIDMessageTypedDict(TypedDict):
     model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration recorded against a conversation or message."""
     applied_filters: NotRequired[GetConversationByIDAppliedFiltersTypedDict]
+    attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
+    r"""Files uploaded for this message turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
     metadata: NotRequired[GetConversationByIDMetadataTypedDict]
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
@@ -450,7 +456,7 @@ class GetConversationByIDMessage(BaseModel):
         pydantic.Field(alias="contentFormat"),
     ] = None
 
-    confidence: Optional[Confidence] = None
+    confidence: OptionalNullable[GetConversationByIDConfidence] = UNSET
     r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block."""
 
     citations: Optional[List[GetConversationByIDCitation]] = None
@@ -478,6 +484,12 @@ class GetConversationByIDMessage(BaseModel):
         pydantic.Field(alias="appliedFilters"),
     ] = None
 
+    attachments: Optional[List[ChatAttachmentRef]] = None
+    r"""Files uploaded for this message turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
+
     metadata: Optional[GetConversationByIDMetadata] = None
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
@@ -499,31 +511,41 @@ class GetConversationByIDMessage(BaseModel):
                 "referenceData",
                 "modelInfo",
                 "appliedFilters",
+                "attachments",
                 "metadata",
                 "createdAt",
                 "updatedAt",
             ]
         )
+        nullable_fields = set(["confidence"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k)
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
                     m[k] = val
 
         return m
 
 
-class MessageRangeTypedDict(TypedDict):
+class GetConversationByIDMessageRangeTypedDict(TypedDict):
     start: NotRequired[int]
     end: NotRequired[int]
 
 
-class MessageRange(BaseModel):
+class GetConversationByIDMessageRange(BaseModel):
     start: Optional[int] = None
 
     end: Optional[int] = None
@@ -561,7 +583,7 @@ class ConversationPaginationTypedDict(TypedDict):
     r"""True if there are older messages available"""
     has_prev_page: NotRequired[bool]
     r"""True if there are newer messages available"""
-    message_range: NotRequired[MessageRangeTypedDict]
+    message_range: NotRequired[GetConversationByIDMessageRangeTypedDict]
 
 
 class ConversationPagination(BaseModel):
@@ -587,7 +609,7 @@ class ConversationPagination(BaseModel):
     r"""True if there are newer messages available"""
 
     message_range: Annotated[
-        Optional[MessageRange], pydantic.Field(alias="messageRange")
+        Optional[GetConversationByIDMessageRange], pydantic.Field(alias="messageRange")
     ] = None
 
     @model_serializer(mode="wrap")

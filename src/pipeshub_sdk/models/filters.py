@@ -18,9 +18,19 @@ class FiltersTypedDict(TypedDict):
     """
 
     apps: NotRequired[List[str]]
-    r"""Filter by application connector instance IDs"""
+    r"""Connector instance ids to scope retrieval for this turn. Each element
+    must be a UUID (connector instance id, record-group id, etc.) or the
+    org knowledge-base collection sentinel `knowledgeBase_<orgId>`
+    (pattern `knowledgeBase_[a-zA-Z0-9_-]+`). Gateway validation matches
+    Zod `appOrKbIdSchema`.
+
+    """
     kb: NotRequired[List[str]]
-    r"""Filter by knowledge base IDs"""
+    r"""Knowledge-base / record-group ids to scope retrieval for this turn.
+    Each element uses the same accepted formats as `apps`: a UUID or
+    `knowledgeBase_<orgId>` (pattern `knowledgeBase_[a-zA-Z0-9_-]+`).
+
+    """
 
 
 class Filters(BaseModel):
@@ -34,10 +44,20 @@ class Filters(BaseModel):
     """
 
     apps: Optional[List[str]] = None
-    r"""Filter by application connector instance IDs"""
+    r"""Connector instance ids to scope retrieval for this turn. Each element
+    must be a UUID (connector instance id, record-group id, etc.) or the
+    org knowledge-base collection sentinel `knowledgeBase_<orgId>`
+    (pattern `knowledgeBase_[a-zA-Z0-9_-]+`). Gateway validation matches
+    Zod `appOrKbIdSchema`.
+
+    """
 
     kb: Optional[List[str]] = None
-    r"""Filter by knowledge base IDs"""
+    r"""Knowledge-base / record-group ids to scope retrieval for this turn.
+    Each element uses the same accepted formats as `apps`: a UUID or
+    `knowledgeBase_<orgId>` (pattern `knowledgeBase_[a-zA-Z0-9_-]+`).
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

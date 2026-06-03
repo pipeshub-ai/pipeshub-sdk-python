@@ -1,0 +1,14 @@
+# Toolset
+
+
+## Fields
+
+| Field                                                                          | Type                                                                           | Required                                                                       | Description                                                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `name`                                                                         | [Optional[models.AgentCreateToolsetName]](../models/agentcreatetoolsetname.md) | :heavy_minus_sign:                                                             | Integration / toolset type key.                                                |
+| `display_name`                                                                 | *Optional[str]*                                                                | :heavy_minus_sign:                                                             | Human-readable toolset product label (for example `Jira` or `Slack`).          |
+| `type`                                                                         | *Optional[str]*                                                                | :heavy_minus_sign:                                                             | N/A                                                                            |
+| `instance_id`                                                                  | *Optional[str]*                                                                | :heavy_minus_sign:                                                             | Admin-created toolset instance id                                              |
+| `instance_name`                                                                | *Optional[str]*                                                                | :heavy_minus_sign:                                                             | Human-readable instance label (e.g. sidebar instance name)                     |
+| `icon_path`                                                                    | *Optional[str]*                                                                | :heavy_minus_sign:                                                             | Optional branded icon URL or path                                              |
+| `tools`                                                                        | List[[models.Tool](../models/tool.md)]                                         | :heavy_minus_sign:                                                             | N/A                                                                            |

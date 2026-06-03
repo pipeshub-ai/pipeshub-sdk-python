@@ -10,6 +10,8 @@ from typing import Any, Mapping, Optional, Union, cast
 
 
 class UserAccount(BaseSDK):
+    r"""User authentication including multi-step MFA, password reset, OTP login, and token management"""
+
     def init_auth(
         self,
         *,
@@ -540,40 +542,39 @@ class UserAccount(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def reset_password_with_token(
+    def refresh_token(
         self,
         *,
         security: Union[
-            models.ResetPasswordWithTokenSecurity,
-            models.ResetPasswordWithTokenSecurityTypedDict,
+            models.RefreshTokenSecurity, models.RefreshTokenSecurityTypedDict
         ],
-        password: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.DataStringResponse:
-        r"""Reset password with email token
+    ) -> models.RefreshTokenResponse:
+        r"""Refresh access token
 
-        Reset password using a token received via email from the forgot password flow.
+        Get a new access token using a valid refresh token.
 
-        **Password Requirements:**
+        **Usage:**
 
-        - Minimum 8 characters
-        - At least 1 uppercase letter
-        - At least 1 lowercase letter
-        - At least 1 number
-        - At least 1 special character (#?!@$%^&*-)
+        - Pass the refresh token as a Bearer token in the Authorization header
+        - Returns a new access token and basic user information
 
-        **Security Notes:**
+        **Token Lifetimes:**
 
-        - Token is single-use and expires after a set time
-        - Response body contains a confirmation string in `data`
+        - Access token: 24 hours (configurable via `ACCESS_TOKEN_EXPIRY` environment variable)
+        - Refresh token: 30 days (configurable via `REFRESH_TOKEN_EXPIRY` environment variable)
+
+        **Best Practices:**
+
+        - Call this endpoint before the access token expires
+        - Store the new access token and continue using it for authenticated requests
+        - If refresh fails with 401, redirect user to login flow
 
 
         :param security:
-        :param password: New password (must meet password requirements)
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -588,29 +589,19 @@ class UserAccount(BaseSDK):
             base_url = server_url
         else:
             base_url = self._get_url(base_url, url_variables)
-
-        request = models.TokenPasswordResetRequest(
-            password=password,
-        )
-
         req = self._build_request(
             method="POST",
-            path="/userAccount/password/reset/token",
+            path="/userAccount/refresh/token",
             base_url=base_url,
             url_variables=url_variables,
-            request=request,
-            request_body_required=True,
+            request=None,
+            request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=utils.get_pydantic_model(
-                security, models.ResetPasswordWithTokenSecurity
-            ),
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.TokenPasswordResetRequest
-            ),
+            security=utils.get_pydantic_model(security, models.RefreshTokenSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -627,7 +618,7 @@ class UserAccount(BaseSDK):
             hook_ctx=HookContext(
                 config=self.sdk_configuration,
                 base_url=base_url or "",
-                operation_id="resetPasswordWithToken",
+                operation_id="refreshToken",
                 oauth2_scopes=None,
                 security_source=get_security_from_env(security, models.Security),
             ),
@@ -638,7 +629,7 @@ class UserAccount(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.DataStringResponse, http_res)
+            return unmarshal_json_response(models.RefreshTokenResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -658,40 +649,39 @@ class UserAccount(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    async def reset_password_with_token_async(
+    async def refresh_token_async(
         self,
         *,
         security: Union[
-            models.ResetPasswordWithTokenSecurity,
-            models.ResetPasswordWithTokenSecurityTypedDict,
+            models.RefreshTokenSecurity, models.RefreshTokenSecurityTypedDict
         ],
-        password: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.DataStringResponse:
-        r"""Reset password with email token
+    ) -> models.RefreshTokenResponse:
+        r"""Refresh access token
 
-        Reset password using a token received via email from the forgot password flow.
+        Get a new access token using a valid refresh token.
 
-        **Password Requirements:**
+        **Usage:**
 
-        - Minimum 8 characters
-        - At least 1 uppercase letter
-        - At least 1 lowercase letter
-        - At least 1 number
-        - At least 1 special character (#?!@$%^&*-)
+        - Pass the refresh token as a Bearer token in the Authorization header
+        - Returns a new access token and basic user information
 
-        **Security Notes:**
+        **Token Lifetimes:**
 
-        - Token is single-use and expires after a set time
-        - Response body contains a confirmation string in `data`
+        - Access token: 24 hours (configurable via `ACCESS_TOKEN_EXPIRY` environment variable)
+        - Refresh token: 30 days (configurable via `REFRESH_TOKEN_EXPIRY` environment variable)
+
+        **Best Practices:**
+
+        - Call this endpoint before the access token expires
+        - Store the new access token and continue using it for authenticated requests
+        - If refresh fails with 401, redirect user to login flow
 
 
         :param security:
-        :param password: New password (must meet password requirements)
-
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -706,29 +696,19 @@ class UserAccount(BaseSDK):
             base_url = server_url
         else:
             base_url = self._get_url(base_url, url_variables)
-
-        request = models.TokenPasswordResetRequest(
-            password=password,
-        )
-
         req = self._build_request_async(
             method="POST",
-            path="/userAccount/password/reset/token",
+            path="/userAccount/refresh/token",
             base_url=base_url,
             url_variables=url_variables,
-            request=request,
-            request_body_required=True,
+            request=None,
+            request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
             user_agent_header="user-agent",
             accept_header_value="application/json",
             http_headers=http_headers,
-            security=utils.get_pydantic_model(
-                security, models.ResetPasswordWithTokenSecurity
-            ),
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.TokenPasswordResetRequest
-            ),
+            security=utils.get_pydantic_model(security, models.RefreshTokenSecurity),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
         )
@@ -745,7 +725,7 @@ class UserAccount(BaseSDK):
             hook_ctx=HookContext(
                 config=self.sdk_configuration,
                 base_url=base_url or "",
-                operation_id="resetPasswordWithToken",
+                operation_id="refreshToken",
                 oauth2_scopes=None,
                 security_source=get_security_from_env(security, models.Security),
             ),
@@ -756,7 +736,7 @@ class UserAccount(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.DataStringResponse, http_res)
+            return unmarshal_json_response(models.RefreshTokenResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)

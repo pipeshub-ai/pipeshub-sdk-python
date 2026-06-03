@@ -2,11 +2,13 @@
 
 ## Overview
 
+User authentication including multi-step MFA, password reset, OTP login, and token management
+
 ### Available Operations
 
 * [init_auth](#init_auth) - Initialize authentication session
 * [authenticate](#authenticate) - Authenticate user with credentials
-* [reset_password_with_token](#reset_password_with_token) - Reset password with email token
+* [refresh_token](#refresh_token) - Refresh access token
 * [reset_password](#reset_password) - Reset password
 
 ## init_auth
@@ -149,27 +151,30 @@ with Pipeshub() as pipeshub:
 | errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
-## reset_password_with_token
+## refresh_token
 
-Reset password using a token received via email from the forgot password flow.
+Get a new access token using a valid refresh token.
 
-**Password Requirements:**
+**Usage:**
 
-- Minimum 8 characters
-- At least 1 uppercase letter
-- At least 1 lowercase letter
-- At least 1 number
-- At least 1 special character (#?!@$%^&*-)
+- Pass the refresh token as a Bearer token in the Authorization header
+- Returns a new access token and basic user information
 
-**Security Notes:**
+**Token Lifetimes:**
 
-- Token is single-use and expires after a set time
-- Response body contains a confirmation string in `data`
+- Access token: 24 hours (configurable via `ACCESS_TOKEN_EXPIRY` environment variable)
+- Refresh token: 30 days (configurable via `REFRESH_TOKEN_EXPIRY` environment variable)
+
+**Best Practices:**
+
+- Call this endpoint before the access token expires
+- Store the new access token and continue using it for authenticated requests
+- If refresh fails with 401, redirect user to login flow
 
 
 ### Example Usage
 
-<!-- UsageSnippet language="python" operationID="resetPasswordWithToken" method="post" path="/userAccount/password/reset/token" -->
+<!-- UsageSnippet language="python" operationID="refreshToken" method="post" path="/userAccount/refresh/token" -->
 ```python
 import os
 from pipeshub_sdk import Pipeshub, models
@@ -177,9 +182,9 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.reset_password_with_token(security=models.ResetPasswordWithTokenSecurity(
+    res = pipeshub.user_account.refresh_token(security=models.RefreshTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
-    ), password="H9GEHoL829GXj06")
+    ))
 
     # Handle response
     print(res)
@@ -188,15 +193,14 @@ with Pipeshub() as pipeshub:
 
 ### Parameters
 
-| Parameter                                                                               | Type                                                                                    | Required                                                                                | Description                                                                             |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `security`                                                                              | [models.ResetPasswordWithTokenSecurity](../../models/resetpasswordwithtokensecurity.md) | :heavy_check_mark:                                                                      | N/A                                                                                     |
-| `password`                                                                              | *str*                                                                                   | :heavy_check_mark:                                                                      | New password (must meet password requirements)<br/>                                     |
-| `retries`                                                                               | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                        | :heavy_minus_sign:                                                                      | Configuration to override the default retry behavior of the client.                     |
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `security`                                                          | [models.RefreshTokenSecurity](../../refreshtokensecurity.md)        | :heavy_check_mark:                                                  | The security requirements to use for the request.                   |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
 
-**[models.DataStringResponse](../../models/datastringresponse.md)**
+**[models.RefreshTokenResponse](../../models/refreshtokenresponse.md)**
 
 ### Errors
 

@@ -10,6 +10,8 @@ from typing import Any, List, Mapping, Optional, Union
 
 
 class OrganizationAuthConfig(BaseSDK):
+    r"""Admin configuration of authentication methods including MFA steps and allowed providers"""
+
     def get_auth_methods(
         self,
         *,

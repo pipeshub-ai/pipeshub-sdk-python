@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from typing_extensions import NotRequired, TypedDict
 
 
-class ErrorTypedDict(TypedDict):
+class ErrorResponseErrorTypedDict(TypedDict):
     code: str
     r"""Machine-readable error code. For application errors it takes the form `HTTP_<VARIANT>`
     For unhandled runtime errors (e.g. database unavailable) it is `INTERNAL_ERROR`.
@@ -19,7 +19,7 @@ class ErrorTypedDict(TypedDict):
     r"""Additional context (only present in development environments)"""
 
 
-class Error(BaseModel):
+class ErrorResponseError(BaseModel):
     code: str
     r"""Machine-readable error code. For application errors it takes the form `HTTP_<VARIANT>`
     For unhandled runtime errors (e.g. database unavailable) it is `INTERNAL_ERROR`.

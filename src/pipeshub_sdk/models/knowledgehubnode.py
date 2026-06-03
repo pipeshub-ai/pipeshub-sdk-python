@@ -17,7 +17,7 @@ NodeType = Union[
     ],
     UnrecognizedStr,
 ]
-r"""Type of the node."""
+r"""Type of the node (app, recordGroup, folder, or record)."""
 
 
 Origin = Union[
@@ -59,7 +59,7 @@ class KnowledgeHubNodeTypedDict(TypedDict):
     name: str
     r"""Display name of the node."""
     node_type: NodeType
-    r"""Type of the node."""
+    r"""Type of the node (app, recordGroup, folder, or record)."""
     parent_id: Nullable[str]
     r"""Parent node ID, or `null` at the root browse level."""
     origin: Origin
@@ -110,7 +110,7 @@ class KnowledgeHubNode(BaseModel):
     r"""Display name of the node."""
 
     node_type: Annotated[NodeType, pydantic.Field(alias="nodeType")]
-    r"""Type of the node."""
+    r"""Type of the node (app, recordGroup, folder, or record)."""
 
     parent_id: Annotated[Nullable[str], pydantic.Field(alias="parentId")]
     r"""Parent node ID, or `null` at the root browse level."""

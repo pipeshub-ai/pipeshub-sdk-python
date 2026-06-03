@@ -7,24 +7,30 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Dict, List, Mapping, Optional, Union
+from typing import List, Mapping, Optional, Union
 
 
 class Conversations(BaseSDK):
+    r"""AI-powered conversational chat management with citations and follow-up questions"""
+
     def stream_chat(
         self,
         *,
         query: str,
         record_ids: Optional[List[str]] = None,
-        departments: Optional[List[str]] = None,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
         ] = None,
+        attachments: Optional[
+            Union[
+                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+            ]
+        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
+        chat_mode: Optional[models.CreateConversationRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
@@ -89,7 +95,6 @@ class Conversations(BaseSDK):
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
-        :param departments: Filter by department IDs to scope the search
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
             for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
             For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
@@ -101,13 +106,15 @@ class Conversations(BaseSDK):
             This mirrors the active selection shown in the UI and is distinct from the
             machine-readable `filters` field used for retrieval scoping.
 
+        :param attachments: Uploaded chat attachments to associate with this conversation turn (see
+            `POST /conversations/attachments/upload`).
+
         :param model_key: Identifier for the AI model configuration to use.
             Available models depend on organization settings.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
         :param chat_mode: Chat mode affecting response behavior.
-            Different modes optimize for different use cases.
 
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
@@ -137,10 +144,12 @@ class Conversations(BaseSDK):
         request = models.CreateConversationRequest(
             query=query,
             record_ids=record_ids,
-            departments=departments,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             applied_filters=utils.get_pydantic_model(
                 applied_filters, Optional[models.AppliedFilters]
+            ),
+            attachments=utils.get_pydantic_model(
+                attachments, Optional[List[models.ChatAttachmentRef]]
             ),
             model_key=model_key,
             model_name=model_name,
@@ -222,15 +231,19 @@ class Conversations(BaseSDK):
         *,
         query: str,
         record_ids: Optional[List[str]] = None,
-        departments: Optional[List[str]] = None,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
         ] = None,
+        attachments: Optional[
+            Union[
+                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+            ]
+        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
+        chat_mode: Optional[models.CreateConversationRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
@@ -295,7 +308,6 @@ class Conversations(BaseSDK):
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
-        :param departments: Filter by department IDs to scope the search
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
             for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
             For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
@@ -307,13 +319,15 @@ class Conversations(BaseSDK):
             This mirrors the active selection shown in the UI and is distinct from the
             machine-readable `filters` field used for retrieval scoping.
 
+        :param attachments: Uploaded chat attachments to associate with this conversation turn (see
+            `POST /conversations/attachments/upload`).
+
         :param model_key: Identifier for the AI model configuration to use.
             Available models depend on organization settings.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
         :param chat_mode: Chat mode affecting response behavior.
-            Different modes optimize for different use cases.
 
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
@@ -343,10 +357,12 @@ class Conversations(BaseSDK):
         request = models.CreateConversationRequest(
             query=query,
             record_ids=record_ids,
-            departments=departments,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             applied_filters=utils.get_pydantic_model(
                 applied_filters, Optional[models.AppliedFilters]
+            ),
+            attachments=utils.get_pydantic_model(
+                attachments, Optional[List[models.ChatAttachmentRef]]
             ),
             model_key=model_key,
             model_name=model_name,
@@ -1213,7 +1229,7 @@ class Conversations(BaseSDK):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         shared: Optional[bool] = None,
-        message_type: Optional[models.QueryParamMessageType] = None,
+        message_type: Optional[models.GetConversationByIDQueryParamMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1347,7 +1363,7 @@ class Conversations(BaseSDK):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         shared: Optional[bool] = None,
-        message_type: Optional[models.QueryParamMessageType] = None,
+        message_type: Optional[models.GetConversationByIDQueryParamMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1684,10 +1700,15 @@ class Conversations(BaseSDK):
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
         ] = None,
+        attachments: Optional[
+            Union[
+                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+            ]
+        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
+        chat_mode: Optional[models.AddMessageRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
@@ -1726,6 +1747,9 @@ class Conversations(BaseSDK):
             This mirrors the active selection shown in the UI and is distinct from the
             machine-readable `filters` field used for retrieval scoping.
 
+        :param attachments: Uploaded chat attachments for this follow-up turn (see
+            `POST /conversations/attachments/upload`).
+
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
@@ -1761,6 +1785,9 @@ class Conversations(BaseSDK):
                 filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
                 applied_filters=utils.get_pydantic_model(
                     applied_filters, Optional[models.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models.ChatAttachmentRef]]
                 ),
                 model_key=model_key,
                 model_name=model_name,
@@ -1849,10 +1876,15 @@ class Conversations(BaseSDK):
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
         ] = None,
+        attachments: Optional[
+            Union[
+                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+            ]
+        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
+        chat_mode: Optional[models.AddMessageRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
@@ -1891,6 +1923,9 @@ class Conversations(BaseSDK):
             This mirrors the active selection shown in the UI and is distinct from the
             machine-readable `filters` field used for retrieval scoping.
 
+        :param attachments: Uploaded chat attachments for this follow-up turn (see
+            `POST /conversations/attachments/upload`).
+
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
@@ -1926,6 +1961,9 @@ class Conversations(BaseSDK):
                 filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
                 applied_filters=utils.get_pydantic_model(
                     applied_filters, Optional[models.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models.ChatAttachmentRef]]
                 ),
                 model_key=model_key,
                 model_name=model_name,
@@ -3021,19 +3059,18 @@ class Conversations(BaseSDK):
         conversation_id: str,
         message_id: str,
         is_helpful: Optional[bool] = None,
-        ratings: Optional[Dict[str, float]] = None,
-        categories: Optional[List[models.CategoryRequest]] = None,
+        categories: Optional[List[models.MessageFeedbackSubmitRequestCategory]] = None,
         comments: Optional[
-            Union[models.CommentsRequest, models.CommentsRequestTypedDict]
-        ] = None,
-        metrics: Optional[
-            Union[models.MetricsRequest, models.MetricsRequestTypedDict]
+            Union[
+                models.MessageFeedbackSubmitRequestComments,
+                models.MessageFeedbackSubmitRequestCommentsTypedDict,
+            ]
         ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateMessageFeedbackResponse:
+    ) -> models.MessageFeedbackUpdateResponse:
         r"""Submit feedback on AI response
 
         Append a feedback entry to a bot-response message.
@@ -3041,19 +3078,15 @@ class Conversations(BaseSDK):
         **Overview**
 
         Feedback helps improve AI response quality over time. You can record an
-        overall helpfulness signal, per-aspect ratings, issue categories, and
-        free-text comments. Each call appends a new entry to the message;
-        previous entries are preserved.
+        overall helpfulness signal, issue categories, and free-text comments.
+        Each call appends a new entry to the message; previous entries are
+        preserved.
 
         **Feedback options**
 
         - `isHelpful` — overall thumbs up/down.
-        - `ratings` — 1–5 scores keyed by an aspect name you choose
-        (e.g. `accuracy`, `relevance`, `completeness`, `clarity`).
         - `categories` — issue or positive categories from a fixed list.
-        - `comments` — free-text `positive`, `negative`, and `suggestions`.
-        - `metrics` — optional client-side telemetry
-        (`userInteractionTime`, `feedbackSessionId`).
+        - `comments` — free-text `positive` and `negative`.
 
         **Restrictions**
 
@@ -3064,14 +3097,8 @@ class Conversations(BaseSDK):
         :param conversation_id: Unique conversation identifier.
         :param message_id: Identifier of the bot-response message being rated.
         :param is_helpful: Overall helpfulness signal (thumbs up/down).
-        :param ratings: Per-aspect ratings. Keys are arbitrary aspect names chosen
-            by the client (typically `accuracy`, `relevance`,
-            `completeness`, `clarity`); values are scores in the range
-            1–5.
-
         :param categories: Issue or positive categories that apply to the response.
         :param comments: Free-text comments grouped by sentiment.
-        :param metrics: Optional client-supplied telemetry.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3090,15 +3117,11 @@ class Conversations(BaseSDK):
         request = models.UpdateMessageFeedbackRequest(
             conversation_id=conversation_id,
             message_id=message_id,
-            body=models.UpdateMessageFeedbackRequestBody(
+            body=models.MessageFeedbackSubmitRequest(
                 is_helpful=is_helpful,
-                ratings=ratings,
                 categories=categories,
                 comments=utils.get_pydantic_model(
-                    comments, Optional[models.CommentsRequest]
-                ),
-                metrics=utils.get_pydantic_model(
-                    metrics, Optional[models.MetricsRequest]
+                    comments, Optional[models.MessageFeedbackSubmitRequestComments]
                 ),
             ),
         )
@@ -3117,11 +3140,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateMessageFeedbackRequestBody,
+                request.body, False, False, "json", models.MessageFeedbackSubmitRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -3152,7 +3171,7 @@ class Conversations(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
-                models.UpdateMessageFeedbackResponse, http_res
+                models.MessageFeedbackUpdateResponse, http_res
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -3173,19 +3192,18 @@ class Conversations(BaseSDK):
         conversation_id: str,
         message_id: str,
         is_helpful: Optional[bool] = None,
-        ratings: Optional[Dict[str, float]] = None,
-        categories: Optional[List[models.CategoryRequest]] = None,
+        categories: Optional[List[models.MessageFeedbackSubmitRequestCategory]] = None,
         comments: Optional[
-            Union[models.CommentsRequest, models.CommentsRequestTypedDict]
-        ] = None,
-        metrics: Optional[
-            Union[models.MetricsRequest, models.MetricsRequestTypedDict]
+            Union[
+                models.MessageFeedbackSubmitRequestComments,
+                models.MessageFeedbackSubmitRequestCommentsTypedDict,
+            ]
         ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateMessageFeedbackResponse:
+    ) -> models.MessageFeedbackUpdateResponse:
         r"""Submit feedback on AI response
 
         Append a feedback entry to a bot-response message.
@@ -3193,19 +3211,15 @@ class Conversations(BaseSDK):
         **Overview**
 
         Feedback helps improve AI response quality over time. You can record an
-        overall helpfulness signal, per-aspect ratings, issue categories, and
-        free-text comments. Each call appends a new entry to the message;
-        previous entries are preserved.
+        overall helpfulness signal, issue categories, and free-text comments.
+        Each call appends a new entry to the message; previous entries are
+        preserved.
 
         **Feedback options**
 
         - `isHelpful` — overall thumbs up/down.
-        - `ratings` — 1–5 scores keyed by an aspect name you choose
-        (e.g. `accuracy`, `relevance`, `completeness`, `clarity`).
         - `categories` — issue or positive categories from a fixed list.
-        - `comments` — free-text `positive`, `negative`, and `suggestions`.
-        - `metrics` — optional client-side telemetry
-        (`userInteractionTime`, `feedbackSessionId`).
+        - `comments` — free-text `positive` and `negative`.
 
         **Restrictions**
 
@@ -3216,14 +3230,8 @@ class Conversations(BaseSDK):
         :param conversation_id: Unique conversation identifier.
         :param message_id: Identifier of the bot-response message being rated.
         :param is_helpful: Overall helpfulness signal (thumbs up/down).
-        :param ratings: Per-aspect ratings. Keys are arbitrary aspect names chosen
-            by the client (typically `accuracy`, `relevance`,
-            `completeness`, `clarity`); values are scores in the range
-            1–5.
-
         :param categories: Issue or positive categories that apply to the response.
         :param comments: Free-text comments grouped by sentiment.
-        :param metrics: Optional client-supplied telemetry.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3242,15 +3250,11 @@ class Conversations(BaseSDK):
         request = models.UpdateMessageFeedbackRequest(
             conversation_id=conversation_id,
             message_id=message_id,
-            body=models.UpdateMessageFeedbackRequestBody(
+            body=models.MessageFeedbackSubmitRequest(
                 is_helpful=is_helpful,
-                ratings=ratings,
                 categories=categories,
                 comments=utils.get_pydantic_model(
-                    comments, Optional[models.CommentsRequest]
-                ),
-                metrics=utils.get_pydantic_model(
-                    metrics, Optional[models.MetricsRequest]
+                    comments, Optional[models.MessageFeedbackSubmitRequestComments]
                 ),
             ),
         )
@@ -3269,11 +3273,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.UpdateMessageFeedbackRequestBody,
+                request.body, False, False, "json", models.MessageFeedbackSubmitRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -3304,7 +3304,7 @@ class Conversations(BaseSDK):
 
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
-                models.UpdateMessageFeedbackResponse, http_res
+                models.MessageFeedbackUpdateResponse, http_res
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)

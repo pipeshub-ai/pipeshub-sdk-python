@@ -1,0 +1,10 @@
+# UpdateAgentConversationTitleRequest
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `agent_key`                                                                                    | *str*                                                                                          | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `conversation_id`                                                                              | *str*                                                                                          | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `body`                                                                                         | [models.ConversationTitleUpdateRequest](../models/conversationtitleupdaterequest.md)           | :heavy_check_mark:                                                                             | New title for the agent conversation.<br/><br/>The server trims the provided string before saving it.<br/> |

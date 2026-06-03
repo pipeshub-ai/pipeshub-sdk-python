@@ -6,6 +6,14 @@ from typing import Any, TYPE_CHECKING
 from pipeshub_sdk.utils.dynamic_imports import lazy_getattr, lazy_dir
 
 if TYPE_CHECKING:
+    from .applicationjsonerrorresponse import (
+        ApplicationJSONErrorResponse,
+        ApplicationJSONErrorResponseData,
+    )
+    from .deleteagentconversationchatattachmentop import (
+        DeleteAgentConversationChatAttachmentBadRequestError,
+        DeleteAgentConversationChatAttachmentBadRequestErrorData,
+    )
     from .errorresponse import ErrorResponse, ErrorResponseData
     from .getavailablemodelsbytypeop import (
         GetAvailableModelsByTypeBadRequestError,
@@ -52,6 +60,11 @@ if TYPE_CHECKING:
         GetSearchByIDUnauthorizedErrorData,
     )
     from .no_response_error import NoResponseError
+    from .oauthclientmanagementratelimiterror import (
+        OAuthClientManagementRateLimitError,
+        OAuthClientManagementRateLimitErrorData,
+    )
+    from .oautherrorresponse import OAuthErrorResponse, OAuthErrorResponseData
     from .pipeshubdefaulterror import PipeshubDefaultError
     from .responsevalidationerror import ResponseValidationError
     from .searchhistoryop import (
@@ -66,6 +79,10 @@ if TYPE_CHECKING:
     )
 
 __all__ = [
+    "ApplicationJSONErrorResponse",
+    "ApplicationJSONErrorResponseData",
+    "DeleteAgentConversationChatAttachmentBadRequestError",
+    "DeleteAgentConversationChatAttachmentBadRequestErrorData",
     "ErrorResponse",
     "ErrorResponseData",
     "GetAvailableModelsByTypeBadRequestError",
@@ -105,6 +122,10 @@ __all__ = [
     "GetSearchByIDUnauthorizedError",
     "GetSearchByIDUnauthorizedErrorData",
     "NoResponseError",
+    "OAuthClientManagementRateLimitError",
+    "OAuthClientManagementRateLimitErrorData",
+    "OAuthErrorResponse",
+    "OAuthErrorResponseData",
     "PipeshubDefaultError",
     "PipeshubError",
     "ResponseValidationError",
@@ -119,6 +140,10 @@ __all__ = [
 ]
 
 _dynamic_imports: dict[str, str] = {
+    "ApplicationJSONErrorResponse": ".applicationjsonerrorresponse",
+    "ApplicationJSONErrorResponseData": ".applicationjsonerrorresponse",
+    "DeleteAgentConversationChatAttachmentBadRequestError": ".deleteagentconversationchatattachmentop",
+    "DeleteAgentConversationChatAttachmentBadRequestErrorData": ".deleteagentconversationchatattachmentop",
     "ErrorResponse": ".errorresponse",
     "ErrorResponseData": ".errorresponse",
     "GetAvailableModelsByTypeBadRequestError": ".getavailablemodelsbytypeop",
@@ -158,6 +183,10 @@ _dynamic_imports: dict[str, str] = {
     "GetSearchByIDUnauthorizedError": ".getsearchbyidop",
     "GetSearchByIDUnauthorizedErrorData": ".getsearchbyidop",
     "NoResponseError": ".no_response_error",
+    "OAuthClientManagementRateLimitError": ".oauthclientmanagementratelimiterror",
+    "OAuthClientManagementRateLimitErrorData": ".oauthclientmanagementratelimiterror",
+    "OAuthErrorResponse": ".oautherrorresponse",
+    "OAuthErrorResponseData": ".oautherrorresponse",
     "PipeshubDefaultError": ".pipeshubdefaulterror",
     "ResponseValidationError": ".responsevalidationerror",
     "SearchHistoryBadRequestError": ".searchhistoryop",

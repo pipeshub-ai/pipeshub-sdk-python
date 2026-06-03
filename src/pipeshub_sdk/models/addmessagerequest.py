@@ -2,13 +2,21 @@
 
 from __future__ import annotations
 from .appliedfilters import AppliedFilters, AppliedFiltersTypedDict
+from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .filters import Filters, FiltersTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+AddMessageRequestChatMode = Literal[
+    "web_search",
+    "internal_search",
+]
+r"""Chat mode for this message"""
 
 
 class AddMessageRequestTypedDict(TypedDict):
@@ -31,13 +39,18 @@ class AddMessageRequestTypedDict(TypedDict):
     machine-readable `filters` field used for retrieval scoping.
 
     """
+    attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
+    r"""Uploaded chat attachments for this follow-up turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
     model_key: NotRequired[str]
     r"""Override the model for this specific message"""
     model_name: NotRequired[str]
     r"""Display name of the model"""
     model_friendly_name: NotRequired[str]
     r"""Friendly display name of the model"""
-    chat_mode: NotRequired[str]
+    chat_mode: NotRequired[AddMessageRequestChatMode]
     r"""Chat mode for this message"""
     timezone: NotRequired[str]
     r"""IANA timezone identifier from the client (top-level field).
@@ -81,6 +94,12 @@ class AddMessageRequest(BaseModel):
 
     """
 
+    attachments: Optional[List[ChatAttachmentRef]] = None
+    r"""Uploaded chat attachments for this follow-up turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
+
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""Override the model for this specific message"""
 
@@ -92,7 +111,9 @@ class AddMessageRequest(BaseModel):
     ] = None
     r"""Friendly display name of the model"""
 
-    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
+    chat_mode: Annotated[
+        Optional[AddMessageRequestChatMode], pydantic.Field(alias="chatMode")
+    ] = None
     r"""Chat mode for this message"""
 
     timezone: Optional[str] = None
@@ -121,6 +142,7 @@ class AddMessageRequest(BaseModel):
             [
                 "filters",
                 "appliedFilters",
+                "attachments",
                 "modelKey",
                 "modelName",
                 "modelFriendlyName",
