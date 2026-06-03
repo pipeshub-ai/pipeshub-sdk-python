@@ -2,13 +2,23 @@
 
 from __future__ import annotations
 from .appliedfilters import AppliedFilters, AppliedFiltersTypedDict
+from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .filters import Filters, FiltersTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+CreateConversationRequestChatMode = Literal[
+    "web_search",
+    "internal_search",
+]
+r"""Chat mode affecting response behavior.
+
+"""
 
 
 class CreateConversationRequestTypedDict(TypedDict):
@@ -35,8 +45,6 @@ class CreateConversationRequestTypedDict(TypedDict):
     When provided, only these records will be searched for context.
 
     """
-    departments: NotRequired[List[str]]
-    r"""Filter by department IDs to scope the search"""
     filters: NotRequired[FiltersTypedDict]
     r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
     for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
@@ -52,6 +60,11 @@ class CreateConversationRequestTypedDict(TypedDict):
     machine-readable `filters` field used for retrieval scoping.
 
     """
+    attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
+    r"""Uploaded chat attachments to associate with this conversation turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
     model_key: NotRequired[str]
     r"""Identifier for the AI model configuration to use.
     Available models depend on organization settings.
@@ -61,9 +74,8 @@ class CreateConversationRequestTypedDict(TypedDict):
     r"""Display name of the AI model"""
     model_friendly_name: NotRequired[str]
     r"""Friendly display name of the selected model"""
-    chat_mode: NotRequired[str]
+    chat_mode: NotRequired[CreateConversationRequestChatMode]
     r"""Chat mode affecting response behavior.
-    Different modes optimize for different use cases.
 
     """
     timezone: NotRequired[str]
@@ -110,9 +122,6 @@ class CreateConversationRequest(BaseModel):
 
     """
 
-    departments: Optional[List[str]] = None
-    r"""Filter by department IDs to scope the search"""
-
     filters: Optional[Filters] = None
     r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
     for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
@@ -132,6 +141,12 @@ class CreateConversationRequest(BaseModel):
 
     """
 
+    attachments: Optional[List[ChatAttachmentRef]] = None
+    r"""Uploaded chat attachments to associate with this conversation turn (see
+    `POST /conversations/attachments/upload`).
+
+    """
+
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""Identifier for the AI model configuration to use.
     Available models depend on organization settings.
@@ -146,9 +161,10 @@ class CreateConversationRequest(BaseModel):
     ] = None
     r"""Friendly display name of the selected model"""
 
-    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
+    chat_mode: Annotated[
+        Optional[CreateConversationRequestChatMode], pydantic.Field(alias="chatMode")
+    ] = None
     r"""Chat mode affecting response behavior.
-    Different modes optimize for different use cases.
 
     """
 
@@ -178,9 +194,9 @@ class CreateConversationRequest(BaseModel):
         optional_fields = set(
             [
                 "recordIds",
-                "departments",
                 "filters",
                 "appliedFilters",
+                "attachments",
                 "modelKey",
                 "modelName",
                 "modelFriendlyName",

@@ -2,6 +2,8 @@
 
 ## Overview
 
+Admin configuration of authentication methods including MFA steps and allowed providers
+
 ### Available Operations
 
 * [get_auth_methods](#get_auth_methods) - Get organization authentication methods

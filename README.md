@@ -37,6 +37,7 @@ All endpoints use the `/api/v1` prefix unless otherwise noted.
   * [Authentication](#authentication-1)
   * [Available Resources and Operations](#available-resources-and-operations)
   * [Server-sent event streaming](#server-sent-event-streaming)
+  * [File uploads](#file-uploads)
   * [Retries](#retries)
   * [Error Handling](#error-handling)
   * [Server Selection](#server-selection)
@@ -134,9 +135,7 @@ from pipeshub_sdk import Pipeshub
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    })
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -155,9 +154,7 @@ async def main():
 
     async with Pipeshub() as pipeshub:
 
-        res = await pipeshub.user_account.init_auth_async(request={
-            "email": "user@example.com",
-        })
+        res = await pipeshub.o_auth_provider.oauth_token_async(grant_type="client_credentials")
 
         # Handle response
         print(res)
@@ -190,9 +187,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    })
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -209,9 +204,9 @@ from pipeshub_sdk import Pipeshub, models
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.reset_password_with_token(security=models.ResetPasswordWithTokenSecurity(
+    res = pipeshub.user_account.refresh_token(security=models.RefreshTokenSecurity(
         scoped_token=os.getenv("PIPESHUB_SCOPED_TOKEN", ""),
-    ), password="H9GEHoL829GXj06")
+    ))
 
     # Handle response
     print(res)
@@ -224,6 +219,28 @@ with Pipeshub() as pipeshub:
 
 <details open>
 <summary>Available methods</summary>
+
+### [Agents](docs/sdks/agents/README.md)
+
+* [list_agents](docs/sdks/agents/README.md#list_agents) - List agents
+* [create_agent](docs/sdks/agents/README.md#create_agent) - Create agent
+* [get_agent](docs/sdks/agents/README.md#get_agent) - Get agent
+* [update_agent](docs/sdks/agents/README.md#update_agent) - Update agent
+* [delete_agent](docs/sdks/agents/README.md#delete_agent) - Delete agent
+* [list_agent_archived_conversations_grouped](docs/sdks/agents/README.md#list_agent_archived_conversations_grouped) - List archived agent conversations grouped by agent
+* [list_agent_conversation_archives](docs/sdks/agents/README.md#list_agent_conversation_archives) - List archived conversations for an agent
+* [upload_agent_conversation_chat_attachments](docs/sdks/agents/README.md#upload_agent_conversation_chat_attachments) - Upload agent chat attachments
+* [delete_agent_conversation_chat_attachment](docs/sdks/agents/README.md#delete_agent_conversation_chat_attachment) - Delete an agent chat attachment
+* [stream_agent_conversation](docs/sdks/agents/README.md#stream_agent_conversation) - Create agent conversation with streaming response
+* [stream_agent_conversation_message](docs/sdks/agents/README.md#stream_agent_conversation_message) - Add message to agent conversation with streaming response
+* [regenerate_agent_conversation_message](docs/sdks/agents/README.md#regenerate_agent_conversation_message) - Regenerate agent conversation message
+* [update_agent_conversation_message_feedback](docs/sdks/agents/README.md#update_agent_conversation_message_feedback) - Submit feedback for an agent message
+* [archive_agent_conversation](docs/sdks/agents/README.md#archive_agent_conversation) - Archive an agent conversation
+* [unarchive_agent_conversation](docs/sdks/agents/README.md#unarchive_agent_conversation) - Unarchive an agent conversation
+* [update_agent_conversation_title](docs/sdks/agents/README.md#update_agent_conversation_title) - Update agent conversation title
+* [delete_agent_conversation_by_id](docs/sdks/agents/README.md#delete_agent_conversation_by_id) - Delete an agent conversation
+* [get_agent_conversation_by_id](docs/sdks/agents/README.md#get_agent_conversation_by_id) - Get agent conversation by ID
+* [list_agent_conversations](docs/sdks/agents/README.md#list_agent_conversations) - List agent conversations
 
 ### [AIModelsProviders](docs/sdks/aimodelsproviders/README.md)
 
@@ -249,6 +266,30 @@ with Pipeshub() as pipeshub:
 * [get_knowledge_hub_root_nodes](docs/sdks/knowledgehub/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
 * [get_knowledge_hub_child_nodes](docs/sdks/knowledgehub/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
 
+### [OAuthApps](docs/sdks/oauthapps/README.md)
+
+* [list_o_auth_apps](docs/sdks/oauthapps/README.md#list_o_auth_apps) - List OAuth apps
+* [create_o_auth_app](docs/sdks/oauthapps/README.md#create_o_auth_app) - Create OAuth app
+* [list_o_auth_scopes](docs/sdks/oauthapps/README.md#list_o_auth_scopes) - List available scopes
+* [get_o_auth_app](docs/sdks/oauthapps/README.md#get_o_auth_app) - Get OAuth app details
+* [update_o_auth_app](docs/sdks/oauthapps/README.md#update_o_auth_app) - Update OAuth app
+* [delete_o_auth_app](docs/sdks/oauthapps/README.md#delete_o_auth_app) - Delete OAuth app
+* [regenerate_o_auth_app_secret](docs/sdks/oauthapps/README.md#regenerate_o_auth_app_secret) - Regenerate client secret
+* [suspend_o_auth_app](docs/sdks/oauthapps/README.md#suspend_o_auth_app) - Suspend OAuth app
+* [activate_o_auth_app](docs/sdks/oauthapps/README.md#activate_o_auth_app) - Activate suspended OAuth app
+* [list_o_auth_app_tokens](docs/sdks/oauthapps/README.md#list_o_auth_app_tokens) - List app tokens
+* [revoke_all_o_auth_app_tokens](docs/sdks/oauthapps/README.md#revoke_all_o_auth_app_tokens) - Revoke all app tokens
+
+### [OAuthProvider](docs/sdks/oauthprovider/README.md)
+
+* [oauth_token](docs/sdks/oauthprovider/README.md#oauth_token) - Exchange authorization code for tokens
+* [oauth_revoke](docs/sdks/oauthprovider/README.md#oauth_revoke) - Revoke an access or refresh token
+* [oauth_introspect](docs/sdks/oauthprovider/README.md#oauth_introspect) - Introspect a token
+
+### [OpenIDConnect](docs/sdks/openidconnect/README.md)
+
+* [oauth_user_info](docs/sdks/openidconnect/README.md#oauth_user_info) - Get authenticated user information
+
 ### [OrganizationAuthConfig](docs/sdks/organizationauthconfig/README.md)
 
 * [get_auth_methods](docs/sdks/organizationauthconfig/README.md#get_auth_methods) - Get organization authentication methods
@@ -273,8 +314,12 @@ with Pipeshub() as pipeshub:
 
 * [init_auth](docs/sdks/useraccount/README.md#init_auth) - Initialize authentication session
 * [authenticate](docs/sdks/useraccount/README.md#authenticate) - Authenticate user with credentials
-* [reset_password_with_token](docs/sdks/useraccount/README.md#reset_password_with_token) - Reset password with email token
+* [refresh_token](docs/sdks/useraccount/README.md#refresh_token) - Refresh access token
 * [reset_password](docs/sdks/useraccount/README.md#reset_password) - Reset password
+
+### [WebSearch](docs/sdks/websearchsdk/README.md)
+
+* [get_web_search_providers](docs/sdks/websearchsdk/README.md#get_web_search_providers) - Get all web search providers
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -306,7 +351,7 @@ with Pipeshub(
     res = pipeshub.conversations.stream_chat(query="What are the key findings from our Q4 financial report?", record_ids=[
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
-    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", model_friendly_name="GPT-4 Turbo", chat_mode="balanced", timezone="America/New_York", current_time=parse_datetime("2026-04-12T16:00:00+05:30"), tools=[
+    ], model_key="gpt-4-turbo", model_name="GPT-4 Turbo", model_friendly_name="GPT-4 Turbo", chat_mode="web_search", timezone="America/New_York", current_time=parse_datetime("2026-04-12T16:00:00+05:30"), tools=[
         "jira.create_issue",
         "confluence.search_content",
     ])
@@ -323,6 +368,35 @@ with Pipeshub(
 [context-manager]: https://book.pythontips.com/en/latest/context_managers.html
 <!-- End Server-sent event streaming [eventstream] -->
 
+<!-- Start File uploads [file-upload] -->
+## File uploads
+
+Certain SDK methods accept file objects as part of a request body or multi-part request. It is possible and typically recommended to upload files as a stream rather than reading the entire contents into memory. This avoids excessive memory consumption and potentially crashing with out-of-memory errors when working with very large files. The following example demonstrates how to attach a file stream to a request.
+
+> [!TIP]
+>
+> For endpoints that handle file uploads bytes arrays can also be used. However, using streams is recommended for large files.
+>
+
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.agents.upload_agent_conversation_chat_attachments(agent_key="<value>", files=[])
+
+    # Handle response
+    print(res)
+
+```
+<!-- End File uploads [file-upload] -->
+
 <!-- Start Retries [retries] -->
 ## Retries
 
@@ -336,9 +410,7 @@ from pipeshub_sdk.utils import BackoffStrategy, RetryConfig
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    },
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials",
         RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
 
     # Handle response
@@ -356,9 +428,7 @@ with Pipeshub(
     retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    })
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -389,9 +459,7 @@ with Pipeshub() as pipeshub:
     res = None
     try:
 
-        res = pipeshub.user_account.init_auth(request={
-            "email": "user@example.com",
-        })
+        res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
         # Handle response
         print(res)
@@ -407,14 +475,14 @@ with Pipeshub() as pipeshub:
 
         # Depending on the method different errors may be thrown
         if isinstance(e, errors.ErrorResponse):
-            print(e.data.error)  # models.Error
+            print(e.data.error)  # models.ErrorResponseError
 ```
 
 ### Error Classes
 **Primary error:**
 * [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py): The base class for HTTP error responses.
 
-<details><summary>Less common errors (28)</summary>
+<details><summary>Less common errors (32)</summary>
 
 <br />
 
@@ -425,29 +493,33 @@ with Pipeshub() as pipeshub:
 
 
 **Inherit from [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). Applicable to 7 of 30 methods.*
-* [`GetKnowledgeHubRootNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesbadrequesterror.py): Invalid request parameters. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubChildNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesbadrequesterror.py): Invalid request parameters or path values. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 30 methods.*
-* [`SearchHistoryBadRequestError`](./src/pipeshub_sdk/errors/searchhistorybadrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 30 methods.*
-* [`GetSearchByIDBadRequestError`](./src/pipeshub_sdk/errors/getsearchbyidbadrequesterror.py): Invalid request — `searchId` failed Zod validation (not a valid ObjectId). Status code `400`. Applicable to 1 of 30 methods.*
-* [`GetAvailableModelsByTypeBadRequestError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypebadrequesterror.py): Invalid `modelType` path parameter.  The `modelType` value was not one of the supported enum categories. This response is produced by the Zod validation middleware **before** the handler runs. The `error.metadata.errors` array contains per-field detail about exactly which constraint failed. Status code `400`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubRootNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubChildNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 30 methods.*
-* [`SearchHistoryUnauthorizedError`](./src/pipeshub_sdk/errors/searchhistoryunauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 30 methods.*
-* [`GetSearchByIDUnauthorizedError`](./src/pipeshub_sdk/errors/getsearchbyidunauthorizederror.py): Missing or invalid bearer token. Status code `401`. Applicable to 1 of 30 methods.*
-* [`GetAvailableModelsByTypeUnauthorizedError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubRootNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubChildNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 30 methods.*
-* [`SearchHistoryForbiddenError`](./src/pipeshub_sdk/errors/searchhistoryforbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 30 methods.*
-* [`GetSearchByIDForbiddenError`](./src/pipeshub_sdk/errors/getsearchbyidforbiddenerror.py): Bearer token lacks the `semantic:read` scope. Status code `403`. Applicable to 1 of 30 methods.*
-* [`GetAvailableModelsByTypeForbiddenError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `config:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubChildNodesNotFoundError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesnotfounderror.py): Parent node not found.  The `parentId` does not correspond to an existing node of the specified `parentType`, or the node has been deleted. Status code `404`. Applicable to 1 of 30 methods.*
-* [`GetSearchByIDNotFoundError`](./src/pipeshub_sdk/errors/getsearchbyidnotfounderror.py): Reserved for parity with sibling routes; this endpoint currently returns `200` with an empty array for an unknown id rather than emitting `404`. Status code `404`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubRootNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 30 methods.*
-* [`GetKnowledgeHubChildNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 30 methods.*
-* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 30 methods.*
-* [`GetSearchByIDInternalServerError`](./src/pipeshub_sdk/errors/getsearchbyidinternalservererror.py): Server error. Possible causes:  - Explicit `InternalServerError`   or any other 500 `BaseError` thrown by the handler. - Non-`BaseError` exception caught by the   global error middleware. - Response serializer fallback. Status code `500`. Applicable to 1 of 30 methods.*
-* [`GetAvailableModelsByTypeInternalServerError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 30 methods.*
+* [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). Applicable to 20 of 65 methods.*
+* [`OAuthClientManagementRateLimitError`](./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 14 of 65 methods.*
+* [`ApplicationJSONErrorResponse`](./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 11 of 65 methods.*
+* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Status code `401`. Applicable to 3 of 65 methods.*
+* [`GetKnowledgeHubRootNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesbadrequesterror.py): Invalid request parameters. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubChildNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesbadrequesterror.py): Invalid request parameters or path values. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 65 methods.*
+* [`SearchHistoryBadRequestError`](./src/pipeshub_sdk/errors/searchhistorybadrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 65 methods.*
+* [`GetSearchByIDBadRequestError`](./src/pipeshub_sdk/errors/getsearchbyidbadrequesterror.py): Invalid request — `searchId` failed Zod validation (not a valid ObjectId). Status code `400`. Applicable to 1 of 65 methods.*
+* [`DeleteAgentConversationChatAttachmentBadRequestError`](./src/pipeshub_sdk/errors/deleteagentconversationchatattachmentbadrequesterror.py): Invalid or blank path params (`agentKey` or `recordId`). Status code `400`. Applicable to 1 of 65 methods.*
+* [`GetAvailableModelsByTypeBadRequestError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypebadrequesterror.py): Invalid `modelType` path parameter.  The `modelType` value was not one of the supported enum categories. This response is produced by the Zod validation middleware **before** the handler runs. The `error.metadata.errors` array contains per-field detail about exactly which constraint failed. Status code `400`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubRootNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubChildNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 65 methods.*
+* [`SearchHistoryUnauthorizedError`](./src/pipeshub_sdk/errors/searchhistoryunauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 65 methods.*
+* [`GetSearchByIDUnauthorizedError`](./src/pipeshub_sdk/errors/getsearchbyidunauthorizederror.py): Missing or invalid bearer token. Status code `401`. Applicable to 1 of 65 methods.*
+* [`GetAvailableModelsByTypeUnauthorizedError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubRootNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubChildNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 65 methods.*
+* [`SearchHistoryForbiddenError`](./src/pipeshub_sdk/errors/searchhistoryforbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 65 methods.*
+* [`GetSearchByIDForbiddenError`](./src/pipeshub_sdk/errors/getsearchbyidforbiddenerror.py): Bearer token lacks the `semantic:read` scope. Status code `403`. Applicable to 1 of 65 methods.*
+* [`GetAvailableModelsByTypeForbiddenError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `config:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubChildNodesNotFoundError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesnotfounderror.py): Parent node not found.  The `parentId` does not correspond to an existing node of the specified `parentType`, or the node has been deleted. Status code `404`. Applicable to 1 of 65 methods.*
+* [`GetSearchByIDNotFoundError`](./src/pipeshub_sdk/errors/getsearchbyidnotfounderror.py): Reserved for parity with sibling routes; this endpoint currently returns `200` with an empty array for an unknown id rather than emitting `404`. Status code `404`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubRootNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 65 methods.*
+* [`GetKnowledgeHubChildNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 65 methods.*
+* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 65 methods.*
+* [`GetSearchByIDInternalServerError`](./src/pipeshub_sdk/errors/getsearchbyidinternalservererror.py): Server error. Possible causes:  - Explicit `InternalServerError`   or any other 500 `BaseError` thrown by the handler. - Non-`BaseError` exception caught by the   global error middleware. - Response serializer fallback. Status code `500`. Applicable to 1 of 65 methods.*
+* [`GetAvailableModelsByTypeInternalServerError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 65 methods.*
 * [`ResponseValidationError`](./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>
@@ -484,9 +556,7 @@ with Pipeshub(
     instance_url="https://app.pipeshub.com",
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    })
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -504,9 +574,7 @@ with Pipeshub(
     server_url="https://https://app.pipeshub.com",
 ) as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    })
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)

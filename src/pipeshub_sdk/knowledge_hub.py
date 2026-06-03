@@ -10,6 +10,8 @@ from typing import Any, Mapping, Optional
 
 
 class KnowledgeHub(BaseSDK):
+    r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
+
     def get_knowledge_hub_root_nodes(
         self,
         *,

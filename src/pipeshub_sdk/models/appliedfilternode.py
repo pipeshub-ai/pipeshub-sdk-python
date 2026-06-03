@@ -16,7 +16,7 @@ class AppliedFilterNodeTypedDict(TypedDict):
     name: NotRequired[str]
     r"""Display name of the filter node"""
     node_type: NotRequired[str]
-    r"""Type of the node (e.g. app, kb)"""
+    r"""Type of the node (e.g. app, recordGroup, folder, record)"""
     connector: NotRequired[str]
     r"""Connector identifier associated with this node"""
 
@@ -31,7 +31,7 @@ class AppliedFilterNode(BaseModel):
     r"""Display name of the filter node"""
 
     node_type: Annotated[Optional[str], pydantic.Field(alias="nodeType")] = None
-    r"""Type of the node (e.g. app, kb)"""
+    r"""Type of the node (e.g. app, recordGroup, folder, record)"""
 
     connector: Optional[str] = None
     r"""Connector identifier associated with this node"""

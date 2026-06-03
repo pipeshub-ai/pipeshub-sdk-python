@@ -50,6 +50,10 @@ class SemanticSearchHitMetadataTypedDict(TypedDict):
     connector_name: NotRequired[Nullable[str]]
     block_text: NotRequired[Nullable[str]]
     block_type: NotRequired[Nullable[str]]
+    r"""Block type for this hit. Common values: `text`, `image`, `table_row`, `table`,
+    `record_summary` (whole-record semantic summary chunk — no block index).
+
+    """
     bounding_box: NotRequired[Nullable[List[SemanticSearchBoundingBoxTypedDict]]]
     page_num: NotRequired[Nullable[List[Nullable[int]]]]
     extension: NotRequired[Nullable[str]]
@@ -75,6 +79,12 @@ class SemanticSearchHitMetadataTypedDict(TypedDict):
     block_id: NotRequired[Nullable[str]]
     is_block: NotRequired[Nullable[bool]]
     is_block_group: NotRequired[Nullable[bool]]
+    is_record_summary: NotRequired[Nullable[bool]]
+    r"""Set to `true` by the indexing pipeline when this vector chunk represents a
+    whole-record semantic summary rather than an individual block. When true,
+    `blockIndex` is absent and `block_type` on the parent hit is `record_summary`.
+
+    """
     kb_id: NotRequired[Nullable[str]]
     r"""Knowledge base id merged from graph record during retrieval (when present)."""
     point_id: NotRequired[Nullable[PointIDTypedDict]]
@@ -128,6 +138,10 @@ class SemanticSearchHitMetadata(BaseModel):
     block_type: Annotated[OptionalNullable[str], pydantic.Field(alias="blockType")] = (
         UNSET
     )
+    r"""Block type for this hit. Common values: `text`, `image`, `table_row`, `table`,
+    `record_summary` (whole-record semantic summary chunk — no block index).
+
+    """
 
     bounding_box: OptionalNullable[List[SemanticSearchBoundingBox]] = UNSET
 
@@ -207,6 +221,15 @@ class SemanticSearchHitMetadata(BaseModel):
         OptionalNullable[bool], pydantic.Field(alias="isBlockGroup")
     ] = UNSET
 
+    is_record_summary: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="isRecordSummary")
+    ] = UNSET
+    r"""Set to `true` by the indexing pipeline when this vector chunk represents a
+    whole-record semantic summary rather than an individual block. When true,
+    `blockIndex` is absent and `block_type` on the parent hit is `record_summary`.
+
+    """
+
     kb_id: Annotated[OptionalNullable[str], pydantic.Field(alias="kbId")] = UNSET
     r"""Knowledge base id merged from graph record during retrieval (when present)."""
 
@@ -254,6 +277,7 @@ class SemanticSearchHitMetadata(BaseModel):
                 "blockId",
                 "isBlock",
                 "isBlockGroup",
+                "isRecordSummary",
                 "kbId",
                 "point_id",
             ]
@@ -297,6 +321,7 @@ class SemanticSearchHitMetadata(BaseModel):
                 "blockId",
                 "isBlock",
                 "isBlockGroup",
+                "isRecordSummary",
                 "kbId",
                 "point_id",
             ]

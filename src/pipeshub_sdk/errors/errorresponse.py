@@ -10,7 +10,7 @@ from typing import Optional
 
 
 class ErrorResponseData(BaseModel):
-    error: models_errorresponse.Error
+    error: models_errorresponse.ErrorResponseError
 
 
 @dataclass(unsafe_hash=True)

@@ -5,9 +5,9 @@ A single filter node selected by the user (used for display/persistence of activ
 
 ## Fields
 
-| Field                                          | Type                                           | Required                                       | Description                                    |
-| ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
-| `id`                                           | *Optional[str]*                                | :heavy_minus_sign:                             | Unique identifier of the filter node           |
-| `name`                                         | *Optional[str]*                                | :heavy_minus_sign:                             | Display name of the filter node                |
-| `node_type`                                    | *Optional[str]*                                | :heavy_minus_sign:                             | Type of the node (e.g. app, kb)                |
-| `connector`                                    | *Optional[str]*                                | :heavy_minus_sign:                             | Connector identifier associated with this node |
+| Field                                                    | Type                                                     | Required                                                 | Description                                              |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `id`                                                     | *Optional[str]*                                          | :heavy_minus_sign:                                       | Unique identifier of the filter node                     |
+| `name`                                                   | *Optional[str]*                                          | :heavy_minus_sign:                                       | Display name of the filter node                          |
+| `node_type`                                              | *Optional[str]*                                          | :heavy_minus_sign:                                       | Type of the node (e.g. app, recordGroup, folder, record) |
+| `connector`                                              | *Optional[str]*                                          | :heavy_minus_sign:                                       | Connector identifier associated with this node           |

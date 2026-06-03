@@ -10,6 +10,8 @@ from typing import Any, Mapping, Optional
 
 
 class AIModelsProviders(BaseSDK):
+    r"""Manage individual AI model providers - add, update, delete, and set defaults."""
+
     def get_available_models_by_type(
         self,
         *,

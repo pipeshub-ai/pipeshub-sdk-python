@@ -32,34 +32,43 @@ r"""Onboarding status"""
 
 
 class OrganizationTypedDict(TypedDict):
+    id: str
+    r"""Unique organization identifier"""
+    slug: str
+    r"""Unique slug for the organization"""
+    registered_name: str
+    r"""Registered name"""
     domain: str
     r"""Organization domain"""
     contact_email: str
     r"""Contact email address"""
     account_type: AccountType
     r"""Type of account"""
-    id: NotRequired[str]
-    r"""Unique organization identifier"""
-    slug: NotRequired[str]
-    r"""Unique slug for the organization"""
-    registered_name: NotRequired[str]
-    r"""Registered name"""
+    on_boarding_status: OnBoardingStatus
+    r"""Onboarding status"""
+    v: int
+    r"""Document version (MongoDB)"""
+    created_at: datetime
+    r"""Creation timestamp (ISO 8601)"""
+    updated_at: datetime
+    r"""Last update timestamp (ISO 8601)"""
     short_name: NotRequired[str]
     r"""Short name or display name"""
     permanent_address: NotRequired[AddressTypedDict]
-    on_boarding_status: NotRequired[OnBoardingStatus]
-    r"""Onboarding status"""
     is_deleted: NotRequired[bool]
     r"""Soft delete flag"""
-    v: NotRequired[int]
-    r"""Document version (MongoDB)"""
-    created_at: NotRequired[datetime]
-    r"""Creation timestamp (ISO 8601)"""
-    updated_at: NotRequired[datetime]
-    r"""Last update timestamp (ISO 8601)"""
 
 
 class Organization(BaseModel):
+    id: Annotated[str, pydantic.Field(alias="_id")]
+    r"""Unique organization identifier"""
+
+    slug: str
+    r"""Unique slug for the organization"""
+
+    registered_name: Annotated[str, pydantic.Field(alias="registeredName")]
+    r"""Registered name"""
+
     domain: str
     r"""Organization domain"""
 
@@ -69,16 +78,19 @@ class Organization(BaseModel):
     account_type: Annotated[AccountType, pydantic.Field(alias="accountType")]
     r"""Type of account"""
 
-    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
-    r"""Unique organization identifier"""
+    on_boarding_status: Annotated[
+        OnBoardingStatus, pydantic.Field(alias="onBoardingStatus")
+    ]
+    r"""Onboarding status"""
 
-    slug: Optional[str] = None
-    r"""Unique slug for the organization"""
+    v: Annotated[int, pydantic.Field(alias="__v")]
+    r"""Document version (MongoDB)"""
 
-    registered_name: Annotated[
-        Optional[str], pydantic.Field(alias="registeredName")
-    ] = None
-    r"""Registered name"""
+    created_at: Annotated[datetime, pydantic.Field(alias="createdAt")]
+    r"""Creation timestamp (ISO 8601)"""
+
+    updated_at: Annotated[datetime, pydantic.Field(alias="updatedAt")]
+    r"""Last update timestamp (ISO 8601)"""
 
     short_name: Annotated[Optional[str], pydantic.Field(alias="shortName")] = None
     r"""Short name or display name"""
@@ -87,39 +99,12 @@ class Organization(BaseModel):
         Optional[Address], pydantic.Field(alias="permanentAddress")
     ] = None
 
-    on_boarding_status: Annotated[
-        Optional[OnBoardingStatus], pydantic.Field(alias="onBoardingStatus")
-    ] = None
-    r"""Onboarding status"""
-
     is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = False
     r"""Soft delete flag"""
 
-    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
-    r"""Document version (MongoDB)"""
-
-    created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
-    r"""Creation timestamp (ISO 8601)"""
-
-    updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
-    r"""Last update timestamp (ISO 8601)"""
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "_id",
-                "slug",
-                "registeredName",
-                "shortName",
-                "permanentAddress",
-                "onBoardingStatus",
-                "isDeleted",
-                "__v",
-                "createdAt",
-                "updatedAt",
-            ]
-        )
+        optional_fields = set(["shortName", "permanentAddress", "isDeleted"])
         serialized = handler(self)
         m = {}
 

@@ -9,6 +9,8 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AddressTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Optional address document id"""
     address_line1: NotRequired[str]
     r"""Address line 1"""
     city: NotRequired[str]
@@ -22,6 +24,9 @@ class AddressTypedDict(TypedDict):
 
 
 class Address(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Optional address document id"""
+
     address_line1: Annotated[Optional[str], pydantic.Field(alias="addressLine1")] = None
     r"""Address line 1"""
 
@@ -39,7 +44,9 @@ class Address(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["addressLine1", "city", "state", "postCode", "country"])
+        optional_fields = set(
+            ["_id", "addressLine1", "city", "state", "postCode", "country"]
+        )
         serialized = handler(self)
         m = {}
 

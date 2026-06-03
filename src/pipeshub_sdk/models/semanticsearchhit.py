@@ -36,6 +36,10 @@ class SemanticSearchHitTypedDict(TypedDict):
     content: NotRequired[Nullable[str]]
     virtual_record_id: NotRequired[Nullable[str]]
     block_type: NotRequired[Nullable[str]]
+    r"""Block type for this hit. Common values: `text`, `image`, `table_row`, `table`,
+    `record_summary` (whole-record semantic summary — `block_index` is `null` for these hits).
+
+    """
     block_index: NotRequired[Nullable[int]]
 
 
@@ -67,6 +71,10 @@ class SemanticSearchHit(BaseModel):
     virtual_record_id: OptionalNullable[str] = UNSET
 
     block_type: OptionalNullable[str] = UNSET
+    r"""Block type for this hit. Common values: `text`, `image`, `table_row`, `table`,
+    `record_summary` (whole-record semantic summary — `block_index` is `null` for these hits).
+
+    """
 
     block_index: OptionalNullable[int] = UNSET
 

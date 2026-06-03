@@ -9,6 +9,6 @@ The `code` field is a machine-readable string identifying the error type (e.g.
 
 ## Fields
 
-| Field                              | Type                               | Required                           | Description                        |
-| ---------------------------------- | ---------------------------------- | ---------------------------------- | ---------------------------------- |
-| `error`                            | [models.Error](../models/error.md) | :heavy_check_mark:                 | N/A                                |
+| Field                                                        | Type                                                         | Required                                                     | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `error`                                                      | [models.ErrorResponseError](../models/errorresponseerror.md) | :heavy_check_mark:                                           | N/A                                                          |

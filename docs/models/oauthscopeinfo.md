@@ -1,0 +1,13 @@
+# OAuthScopeInfo
+
+Information about an OAuth scope
+
+
+## Fields
+
+| Field                                                                          | Type                                                                           | Required                                                                       | Description                                                                    | Example                                                                        |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `name`                                                                         | *str*                                                                          | :heavy_check_mark:                                                             | Scope identifier                                                               | openid                                                                         |
+| `description`                                                                  | *str*                                                                          | :heavy_check_mark:                                                             | Human-readable scope description                                               | OpenID Connect authentication                                                  |
+| `category`                                                                     | *str*                                                                          | :heavy_check_mark:                                                             | Scope category for grouping (matches the key under `scopes` on list responses) | Identity                                                                       |
+| `requires_user_consent`                                                        | *bool*                                                                         | :heavy_check_mark:                                                             | Whether end-user consent is required when this scope is requested              | false                                                                          |

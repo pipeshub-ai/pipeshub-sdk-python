@@ -3,10 +3,9 @@
 from __future__ import annotations
 from .filters import Filters, FiltersTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-import pydantic
 from pydantic import model_serializer
 from typing import Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import NotRequired, TypedDict
 
 
 class SemanticSearchRequestTypedDict(TypedDict):
@@ -41,14 +40,6 @@ class SemanticSearchRequestTypedDict(TypedDict):
     """
     limit: NotRequired[int]
     r"""Maximum number of results to return"""
-    model_key: NotRequired[str]
-    r"""AI model to use for embeddings"""
-    model_name: NotRequired[str]
-    r"""Display name of the model"""
-    model_friendly_name: NotRequired[str]
-    r"""Friendly display name of the model"""
-    chat_mode: NotRequired[str]
-    r"""Processing mode configuration"""
 
 
 class SemanticSearchRequest(BaseModel):
@@ -86,32 +77,9 @@ class SemanticSearchRequest(BaseModel):
     limit: Optional[int] = 10
     r"""Maximum number of results to return"""
 
-    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-    r"""AI model to use for embeddings"""
-
-    model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-    r"""Display name of the model"""
-
-    model_friendly_name: Annotated[
-        Optional[str], pydantic.Field(alias="modelFriendlyName")
-    ] = None
-    r"""Friendly display name of the model"""
-
-    chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
-    r"""Processing mode configuration"""
-
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "filters",
-                "limit",
-                "modelKey",
-                "modelName",
-                "modelFriendlyName",
-                "chatMode",
-            ]
-        )
+        optional_fields = set(["filters", "limit"])
         serialized = handler(self)
         m = {}
 
@@ -124,9 +92,3 @@ class SemanticSearchRequest(BaseModel):
                     m[k] = val
 
         return m
-
-
-try:
-    SemanticSearchRequest.model_rebuild()
-except NameError:
-    pass

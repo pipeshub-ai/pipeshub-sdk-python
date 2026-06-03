@@ -46,6 +46,10 @@ class PersistedSemanticSearchCitationMetadataTypedDict(TypedDict):
         Nullable[List[PersistedSemanticSearchBoundingBoxTypedDict]]
     ]
     block_type: NotRequired[Nullable[str]]
+    r"""Block type for this citation. Common values: `text`, `image`, `table_row`, `table`,
+    `record_summary` (whole-record semantic summary chunk).
+
+    """
     block_text: NotRequired[Nullable[str]]
     departments: NotRequired[Nullable[List[str]]]
     languages: NotRequired[Nullable[List[str]]]
@@ -113,6 +117,10 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
     block_type: Annotated[OptionalNullable[str], pydantic.Field(alias="blockType")] = (
         UNSET
     )
+    r"""Block type for this citation. Common values: `text`, `image`, `table_row`, `table`,
+    `record_summary` (whole-record semantic summary chunk).
+
+    """
 
     block_text: Annotated[OptionalNullable[str], pydantic.Field(alias="blockText")] = (
         UNSET

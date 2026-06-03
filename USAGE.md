@@ -6,9 +6,7 @@ from pipeshub_sdk import Pipeshub
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.init_auth(request={
-        "email": "user@example.com",
-    })
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
 
     # Handle response
     print(res)
@@ -27,9 +25,7 @@ async def main():
 
     async with Pipeshub() as pipeshub:
 
-        res = await pipeshub.user_account.init_auth_async(request={
-            "email": "user@example.com",
-        })
+        res = await pipeshub.o_auth_provider.oauth_token_async(grant_type="client_credentials")
 
         # Handle response
         print(res)

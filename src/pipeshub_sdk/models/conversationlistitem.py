@@ -78,12 +78,12 @@ ConversationListItemSharedWithAccessLevel = Union[
 ]
 
 
-class SharedWithTypedDict(TypedDict):
+class ConversationListItemSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
     access_level: NotRequired[ConversationListItemSharedWithAccessLevel]
 
 
-class SharedWith(BaseModel):
+class ConversationListItemSharedWith(BaseModel):
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
     access_level: Annotated[
@@ -108,7 +108,7 @@ class SharedWith(BaseModel):
         return m
 
 
-class ConversationErrorTypedDict(TypedDict):
+class ConversationListItemConversationErrorTypedDict(TypedDict):
     message: NotRequired[str]
     error_type: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -117,7 +117,7 @@ class ConversationErrorTypedDict(TypedDict):
     metadata: NotRequired[Dict[str, Any]]
 
 
-class ConversationError(BaseModel):
+class ConversationListItemConversationError(BaseModel):
     message: Optional[str] = None
 
     error_type: Annotated[Optional[str], pydantic.Field(alias="errorType")] = None
@@ -175,7 +175,7 @@ class ConversationListItemTypedDict(TypedDict):
     model_info: NotRequired[ModelInfoTypedDict]
     is_shared: NotRequired[bool]
     share_link: NotRequired[str]
-    shared_with: NotRequired[List[SharedWithTypedDict]]
+    shared_with: NotRequired[List[ConversationListItemSharedWithTypedDict]]
     is_archived: NotRequired[bool]
     archived_by: NotRequired[Nullable[str]]
     r"""User ID of the last user who archived this row, or `null` after
@@ -185,7 +185,9 @@ class ConversationListItemTypedDict(TypedDict):
     """
     is_deleted: NotRequired[bool]
     deleted_by: NotRequired[str]
-    conversation_errors: NotRequired[List[ConversationErrorTypedDict]]
+    conversation_errors: NotRequired[
+        List[ConversationListItemConversationErrorTypedDict]
+    ]
     metadata: NotRequired[Dict[str, Any]]
     last_activity_at: NotRequired[int]
     created_at: NotRequired[datetime]
@@ -222,7 +224,8 @@ class ConversationListItem(BaseModel):
     share_link: Annotated[Optional[str], pydantic.Field(alias="shareLink")] = None
 
     shared_with: Annotated[
-        Optional[List[SharedWith]], pydantic.Field(alias="sharedWith")
+        Optional[List[ConversationListItemSharedWith]],
+        pydantic.Field(alias="sharedWith"),
     ] = None
 
     is_archived: Annotated[Optional[bool], pydantic.Field(alias="isArchived")] = None
@@ -241,7 +244,8 @@ class ConversationListItem(BaseModel):
     deleted_by: Annotated[Optional[str], pydantic.Field(alias="deletedBy")] = None
 
     conversation_errors: Annotated[
-        Optional[List[ConversationError]], pydantic.Field(alias="conversationErrors")
+        Optional[List[ConversationListItemConversationError]],
+        pydantic.Field(alias="conversationErrors"),
     ] = None
 
     metadata: Optional[Dict[str, Any]] = None
@@ -316,11 +320,11 @@ try:
 except NameError:
     pass
 try:
-    SharedWith.model_rebuild()
+    ConversationListItemSharedWith.model_rebuild()
 except NameError:
     pass
 try:
-    ConversationError.model_rebuild()
+    ConversationListItemConversationError.model_rebuild()
 except NameError:
     pass
 try:

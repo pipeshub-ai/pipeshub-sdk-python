@@ -1,0 +1,43 @@
+# AgentMessageStreamSSEEvent
+
+Server-Sent Event envelope for `POST /agents/{agentKey}/conversations/{conversationId}/messages/stream`.
+`data` is a JSON-encoded string whose shape depends on `event`.
+
+Three events have stable API-defined payloads:
+
+- `connected` — `{ "message": "SSE connection established" }`. Fired once
+  after the SSE stream opens. No `conversationId` is included because it is already
+  present in the request path.
+- `complete` — `{ "conversation": AgentConversation, "recordsUsed": number,
+  "meta": { "requestId": string, "timestamp": string, "duration": number,
+  "recordsUsed": number } }`. Fired once after the upstream AI `complete` payload
+  is parsed, citations are saved, and the updated conversation is persisted.
+- `error` — `{ "error": string, "details"?: string }`. Fired for runtime failures
+  after the stream has already started, including conversation lookup failures,
+  upstream AI startup failures, save failures, and stream transport errors.
+
+All other events are forwarded from the upstream agent backend. Common event names:
+
+- `status` — progress update for the current agent phase.
+- `answer_chunk` — incremental token batch with running accumulated text.
+- `tool_calls` / `tool_call` / `tool_success` / `tool_error` / `tool_result` /
+  `tool_execution_complete` — tool lifecycle events emitted by the upstream agent.
+- `restreaming` — the upstream agent restarted generation with refreshed context.
+- `metadata` — auxiliary metadata or keep-alive payload from the upstream agent.
+
+Important wire behavior:
+
+- The upstream agent's `complete` event is consumed server-side and replaced with the
+  API-defined `complete` event above.
+- If the upstream `complete` payload cannot be parsed as JSON, the raw upstream
+  `complete` frame is forwarded unchanged instead.
+- Unknown future event names may appear and should be ignored by clients.
+
+
+
+## Fields
+
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `event`                                                                                          | [Optional[models.AgentMessageStreamSSEEventEvent]](../models/agentmessagestreamsseeventevent.md) | :heavy_minus_sign:                                                                               | N/A                                                                                              |
+| `data`                                                                                           | *Optional[str]*                                                                                  | :heavy_minus_sign:                                                                               | JSON-encoded event payload. Shape depends on `event`.                                            |

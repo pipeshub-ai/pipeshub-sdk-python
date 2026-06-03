@@ -1,0 +1,10 @@
+# AgentCreateResponseKnowledge
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `connector_id`                                                                                 | *str*                                                                                          | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `key`                                                                                          | *str*                                                                                          | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `filters`                                                                                      | [models.AgentCreateResponseKnowledgeFilters](../models/agentcreateresponseknowledgefilters.md) | :heavy_check_mark:                                                                             | N/A                                                                                            |

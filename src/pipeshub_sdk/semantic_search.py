@@ -11,16 +11,14 @@ from typing import Any, List, Mapping, Optional, Union
 
 
 class SemanticSearch(BaseSDK):
+    r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
+
     def search(
         self,
         *,
         query: str,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         limit: Optional[int] = 10,
-        model_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -55,10 +53,6 @@ class SemanticSearch(BaseSDK):
             turn (it is not “full org default”).
 
         :param limit: Maximum number of results to return
-        :param model_key: AI model to use for embeddings
-        :param model_name: Display name of the model
-        :param model_friendly_name: Friendly display name of the model
-        :param chat_mode: Processing mode configuration
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -78,10 +72,6 @@ class SemanticSearch(BaseSDK):
             query=query,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             limit=limit,
-            model_key=model_key,
-            model_name=model_name,
-            model_friendly_name=model_friendly_name,
-            chat_mode=chat_mode,
         )
 
         req = self._build_request(
@@ -161,10 +151,6 @@ class SemanticSearch(BaseSDK):
         query: str,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         limit: Optional[int] = 10,
-        model_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -199,10 +185,6 @@ class SemanticSearch(BaseSDK):
             turn (it is not “full org default”).
 
         :param limit: Maximum number of results to return
-        :param model_key: AI model to use for embeddings
-        :param model_name: Display name of the model
-        :param model_friendly_name: Friendly display name of the model
-        :param chat_mode: Processing mode configuration
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -222,10 +204,6 @@ class SemanticSearch(BaseSDK):
             query=query,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             limit=limit,
-            model_key=model_key,
-            model_name=model_name,
-            model_friendly_name=model_friendly_name,
-            chat_mode=chat_mode,
         )
 
         req = self._build_request_async(

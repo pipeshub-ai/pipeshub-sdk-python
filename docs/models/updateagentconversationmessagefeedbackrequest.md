@@ -1,0 +1,11 @@
+# UpdateAgentConversationMessageFeedbackRequest
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `agent_key`                                                                      | *str*                                                                            | :heavy_check_mark:                                                               | Unique agent identifier (gateway Zod requires non-empty string).                 |
+| `conversation_id`                                                                | *str*                                                                            | :heavy_check_mark:                                                               | Unique conversation identifier.                                                  |
+| `message_id`                                                                     | *str*                                                                            | :heavy_check_mark:                                                               | Identifier of the bot-response message being rated.                              |
+| `body`                                                                           | [models.MessageFeedbackSubmitRequest](../models/messagefeedbacksubmitrequest.md) | :heavy_check_mark:                                                               | Feedback payload for the agent message.                                          |
