@@ -27,8 +27,8 @@ generation:
   versioningStrategy: automatic
   persistentEdits: {}
   tests:
-    generateTests: false
-    generateNewTests: true
+    generateTests: true
+    generateNewTests: false
     skipResponseBodyAssertions: false
 python:
   version: 1.2.0
