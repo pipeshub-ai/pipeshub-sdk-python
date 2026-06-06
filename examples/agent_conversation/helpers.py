@@ -2,6 +2,7 @@ import json
 import os
 import time
 from datetime import datetime, timezone
+from typing import Any
 
 from pipeshub_sdk import Pipeshub
 from pipeshub_sdk.models import (
@@ -38,19 +39,27 @@ def first_llm_model_key(sdk: Pipeshub) -> str:
     raise RuntimeError("no LLM model configured; set PIPESHUB_AGENT_MODEL_KEY in .env")
 
 
-def decode_complete(data: str) -> tuple[str, str, str, str | None]:
-    conv = json.loads(data).get("conversation", {})
+def decode_complete(data: str | dict[str, Any]) -> tuple[str, str, str, str | None]:
+    payload = json.loads(data) if isinstance(data, str) else data
+    conv = payload.get("conversation", {})
     conv_id = conv.get("_id", "")
     title = conv.get("title") or ""
+    messages = conv.get("messages", [])
+
+    if not title:
+        for msg in messages:
+            if msg.get("messageType") == "user_query":
+                title = msg.get("content", "")
+                break
+
     answer = ""
     bot_response_message_id = None
-    for msg in reversed(conv.get("messages", [])):
-        if not title and msg.get("messageType") == "user_query":
-            title = msg.get("content", "")
+    for msg in reversed(messages):
         if msg.get("messageType") == "bot_response":
             answer = msg.get("content", "")
             bot_response_message_id = msg.get("_id")
             break
+
     return answer, conv_id, title, bot_response_message_id
 
 
@@ -168,7 +177,7 @@ def stream_regenerate(
             if not ev.event or not ev.data:
                 continue
             if ev.event == "answer_chunk":
-                chunk = json.loads(ev.data)
+                chunk = json.loads(ev.data) if isinstance(ev.data, str) else ev.data
                 accumulated = chunk.get("accumulated") or accumulated
             elif ev.event == "complete":
                 answer, _, _, _ = decode_complete(ev.data)
