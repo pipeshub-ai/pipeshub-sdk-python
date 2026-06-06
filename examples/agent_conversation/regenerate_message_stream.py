@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from client import load_env, new_client
+from client import client, load_env
 from helpers import default_filters, stream_create, stream_regenerate
 
 FIRST_MESSAGE = "Who moved the cheese?"
@@ -15,16 +15,20 @@ def main() -> None:
     load_env(sys.argv[1])
 
     filters = default_filters()
-    with new_client() as sdk:
-        conv_id, _, original, bot_id = stream_create(sdk, FIRST_MESSAGE, filters)
+    with client() as pipeshub_client:
+        conv_id, _, original, bot_response_message_id = stream_create(
+            pipeshub_client, FIRST_MESSAGE, filters
+        )
         print(f"conversation id: {conv_id}")
-        print(f"last bot message id: {bot_id}")
+        print(f"bot response message id: {bot_response_message_id}")
         print(f"\nOriginal bot response ({len(original)} chars):\n{original}")
 
-        if not bot_id:
-            raise RuntimeError("missing bot message id")
+        if not bot_response_message_id:
+            raise RuntimeError("missing bot response message id")
 
-        regenerated = stream_regenerate(sdk, conv_id, bot_id, filters)
+        regenerated = stream_regenerate(
+            pipeshub_client, conv_id, bot_response_message_id, filters
+        )
         print(f"\nRegenerated bot response ({len(regenerated)} chars):\n{regenerated}")
 
 
