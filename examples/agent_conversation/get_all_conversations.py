@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from client import load_env, new_client
+from client import client, load_env
 from helpers import agent_key, format_activity
 
 PAGE_LIMIT = 20
@@ -25,7 +25,7 @@ def main() -> None:
     load_env(sys.argv[1])
 
     key = agent_key()
-    with new_client() as sdk:
+    with client() as pipeshub_client:
         print(f"Active conversations for agent {key} (newest first):")
         page = 1
         owned = []
@@ -33,7 +33,7 @@ def main() -> None:
         owned_total = 0
 
         while True:
-            res = sdk.agents.list_agent_conversations(
+            res = pipeshub_client.agents.list_agent_conversations(
                 agent_key=key,
                 page=page,
                 limit=PAGE_LIMIT,
