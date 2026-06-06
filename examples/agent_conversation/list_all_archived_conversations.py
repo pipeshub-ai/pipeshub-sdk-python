@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from client import load_env, new_client
+from client import client, load_env
 from helpers import (
     agent_key,
     archive_conversation,
@@ -40,20 +40,22 @@ def main() -> None:
     filters = default_filters()
     created: list[tuple[str, str]] = []
 
-    with new_client() as sdk:
+    with client() as pipeshub_client:
         print(f"Using agent {key}\n")
 
         for i, query in enumerate(QUERIES, 1):
             print(f"Creating conversation {i}/{len(QUERIES)}...")
-            conv_id, title, _, _ = stream_create(sdk, query, filters, print_bot=False)
+            conv_id, title, _, _ = stream_create(
+                pipeshub_client, query, filters, print_bot=False
+            )
             if not title:
                 title = query
-            archive_conversation(sdk, conv_id, key=key)
+            archive_conversation(pipeshub_client, conv_id, key=key)
             created.append((conv_id, title))
             print(f"  archived {conv_id} — {title!r}")
 
         print("\nArchived conversations for this agent (newest first):")
-        archived = list_archived(sdk, key=key)
+        archived = list_archived(pipeshub_client, key=key)
         ours = {cid for cid, _ in created}
         matched = [c for c in archived if c.id in ours]
         count = print_archived(matched)
@@ -61,11 +63,11 @@ def main() -> None:
 
         print("\nDeleting archived conversations:")
         for conv_id, title in created:
-            delete_conversation(sdk, conv_id, key=key)
+            delete_conversation(pipeshub_client, conv_id, key=key)
             print(f"  deleted {conv_id} — {title!r}")
 
         print("\nArchived conversations after cleanup:")
-        remaining = [c for c in list_archived(sdk, key=key) if c.id in ours]
+        remaining = [c for c in list_archived(pipeshub_client, key=key) if c.id in ours]
         print_archived(remaining)
 
 
