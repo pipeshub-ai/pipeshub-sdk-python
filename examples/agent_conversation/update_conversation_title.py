@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from client import load_env, new_client
+from client import client, load_env
 from helpers import default_filters, stream_create, update_title
 
 FIRST_MESSAGE = "Who moved the cheese?"
@@ -15,10 +15,12 @@ def main() -> None:
         sys.exit(f"usage: uv run python {Path(__file__).name} <.env>")
     load_env(sys.argv[1])
 
-    with new_client() as sdk:
-        conv_id, old_title, _, _ = stream_create(sdk, FIRST_MESSAGE, default_filters())
+    with client() as pipeshub_client:
+        conv_id, old_title, _, _ = stream_create(
+            pipeshub_client, FIRST_MESSAGE, default_filters()
+        )
         print(f"conversation id: {conv_id}")
-        updated = update_title(sdk, conv_id, NEW_TITLE)
+        updated = update_title(pipeshub_client, conv_id, NEW_TITLE)
         print(f"old title: {old_title!r}")
         print(f"new title: {updated!r}")
 
