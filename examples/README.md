@@ -41,7 +41,7 @@ The `examples` project installs the published `pipeshub-sdk` package from PyPI. 
 
 ### `client.py`
 
-- `load_env(path)` — loads key/value pairs from a `.env` file into `os.environ`
+- `load_env(path)` — alias for `python-dotenv`'s `load_dotenv`; loads a `.env` file into `os.environ`
 - `client()` — performs email/password auth and returns an authenticated `Pipeshub` client
 
 Convention in example scripts:
