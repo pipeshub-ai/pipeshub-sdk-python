@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from client import client, load_env
-from helpers import agent_key, default_filters, stream_create
+from helpers import agent_key, default_filters, stream_bot_reply
 
 FIRST_MESSAGE = "Who moved the cheese?"
 SECOND_MESSAGE = "Can you give me more details on that?"
@@ -22,22 +22,27 @@ def main() -> None:
     with client() as pipeshub_client:
         for i, query in enumerate([FIRST_MESSAGE, SECOND_MESSAGE], 1):
             print(f"Creating conversation {i} (waiting for response...)...")
-            conv_id, title, _, _ = stream_create(
-                pipeshub_client, query, filters, print_bot=False
-            )
-            if not title:
-                title = query
+            with pipeshub_client.agents.stream_agent_conversation(
+                agent_key=key,
+                query=query,
+                filters=filters,
+                chat_mode="auto",
+            ) as stream:
+                conv_id, title, _, _ = stream_bot_reply(stream, print_output=False)
+            created.append((conv_id, title or query))
+
             pipeshub_client.agents.archive_agent_conversation(
-                agent_key=key, conversation_id=conv_id
+                agent_key=key,
+                conversation_id=conv_id,
             )
-            created.append((conv_id, title))
 
         print("\nCreated and archived:")
         for i, (cid, title) in enumerate(created, 1):
-            print(f"  {i}. {cid} — {title!r}")
+            print(f"  {i}. {cid} - {title!r}")
 
         res = pipeshub_client.agents.list_agent_archived_conversations_grouped(
-            agent_page=1, agent_limit=20
+            agent_page=1,
+            agent_limit=20,
         )
         group = next((g for g in res.groups if g.agent_key == key), None)
 

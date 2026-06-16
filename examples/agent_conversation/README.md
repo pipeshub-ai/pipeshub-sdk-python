@@ -17,34 +17,14 @@ Variables used by these examples:
 | `PIPESHUB_BASE_URL` | no | API host (default `http://localhost:3000`) |
 | `PIPESHUB_AGENT_KEY` | no | Target agent for conversation calls |
 | `CONNECTOR_ID` | no | Default retrieval filter (`apps`) in streaming examples |
-| `PIPESHUB_AGENT_MODEL_KEY` | no | Only if calling `create_agent_with_web_search()` |
 
 ## Shared helpers
 
-[`helpers.py`](helpers.py) provides reusable utilities:
-
-| Function | Purpose |
-| --- | --- |
-| `agent_key()` | Resolves agent key from env or default |
-| `connector_id()` | Resolves `CONNECTOR_ID` from env or default |
-| `default_filters()` | Builds default `FiltersTypedDict` for streaming (`apps`) |
-| `first_llm_model_key()` | Resolves `PIPESHUB_AGENT_MODEL_KEY` or picks an available LLM |
-| `decode_complete()` | Parses the stream `complete` event payload |
-| `stream_create()` | Starts a new conversation and streams the first bot reply |
-| `stream_create_async()` | Async version of `stream_create()` |
-| `stream_add_message()` | Appends a user message and streams the bot reply |
-| `stream_regenerate()` | Regenerates a `bot_response` message via SSE |
-| `update_title()` | Updates conversation title |
-| `update_title_async()` | Async version of `update_title()` |
-| `print_conversation()` | Fetches and prints a conversation by ID |
-| `format_activity()` | Formats conversation activity timestamps for display |
-| `archive_conversation()` / `delete_conversation()` | Archive or delete a conversation |
-| `list_archived()` | Paginated list of archived conversations |
-| `create_agent_with_web_search()` | Creates an example web-search-enabled agent |
+[`helpers.py`](helpers.py) provides defaults (`agent_key`, `default_filters`) and `stream_bot_reply()` — pass the SDK stream, print the bot reply, read the `complete` event.
 
 ### `bot_response_message_id`
 
-`stream_create()` and `stream_create_async()` return `(conversation_id, title, answer, bot_response_message_id)`. The fourth value is the `_id` of the latest `bot_response` message in the stream `complete` payload. Pass it to API methods that expect `message_id` (feedback, regeneration). It is a message document ID, not an agent ID.
+The feedback and regeneration examples read the latest `bot_response` message from the stream `complete` payload. The `_id` on that message is the value to pass to API methods that expect `message_id`. It is a message document ID, not an agent ID.
 
 ## Scripts
 
@@ -62,22 +42,28 @@ Variables used by these examples:
 
 ## Run examples
 
-From the repository root (using `examples/.env`):
+From `examples/`:
 
 ```bash
-uv run python examples/agent_conversation/create_conversation_stream_and_add_message.py examples/.env
-uv run python examples/agent_conversation/get_conversation_by_id.py examples/.env
-uv run python examples/agent_conversation/get_all_conversations.py examples/.env
-uv run python examples/agent_conversation/update_conversation_title.py examples/.env
-uv run python examples/agent_conversation/archive_unarchive.py examples/.env
-uv run python examples/agent_conversation/list_all_archived_conversations.py examples/.env
-uv run python examples/agent_conversation/list_archives_grouped.py examples/.env
-uv run python examples/agent_conversation/add_message_feedback.py examples/.env
-uv run python examples/agent_conversation/regenerate_message_stream.py examples/.env
+uv run python agent_conversation/create_conversation_stream_and_add_message.py .env
+uv run python agent_conversation/get_conversation_by_id.py .env
+uv run python agent_conversation/get_all_conversations.py .env
+uv run python agent_conversation/update_conversation_title.py .env
+uv run python agent_conversation/archive_unarchive.py .env
+uv run python agent_conversation/list_all_archived_conversations.py .env
+uv run python agent_conversation/list_archives_grouped.py .env
+uv run python agent_conversation/add_message_feedback.py .env
+uv run python agent_conversation/regenerate_message_stream.py .env
+```
+
+From the repository root, use the `examples` uv project:
+
+```bash
+uv run --project examples python examples/agent_conversation/create_conversation_stream_and_add_message.py examples/.env
 ```
 
 ## Notes
 
-- Streaming examples print bot output live. Some scripts pass `print_bot=False` to reduce console noise.
+- Streaming examples print bot output live. Pass `print_output=False` to `stream_bot_reply()` to wait silently.
 - Scripts that archive or delete conversations create their own test data. `list_all_archived_conversations.py` cleans up conversations it creates.
-- Feedback and regeneration require a `bot_response` message ID. Examples obtain this from `stream_create()` rather than hard-coding IDs.
+- Feedback and regeneration require a `bot_response` message ID. Examples read it from the stream `complete` payload rather than hard-coding IDs.

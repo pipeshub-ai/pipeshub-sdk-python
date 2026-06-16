@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from client import client, load_env
-from helpers import agent_key, default_filters, stream_create
+from helpers import agent_key, default_filters, stream_bot_reply
 
 FIRST_MESSAGE = "Who moved the cheese?"
 
@@ -15,32 +15,37 @@ def main() -> None:
     load_env(sys.argv[1])
 
     key = agent_key()
+    filters = default_filters()
+
     with client() as pipeshub_client:
-        conv_id, title, _, _ = stream_create(
-            pipeshub_client, FIRST_MESSAGE, default_filters(), print_bot=False
-        )
-        if not title:
-            title = FIRST_MESSAGE
+        with pipeshub_client.agents.stream_agent_conversation(
+            agent_key=key,
+            query=FIRST_MESSAGE,
+            filters=filters,
+            chat_mode="auto",
+        ) as stream:
+            conv_id, title, _, _ = stream_bot_reply(stream, print_output=False)
+        title = title or FIRST_MESSAGE
         print(f"Created conversation: {conv_id}")
         print(f"Title: {title!r}")
 
         archived = pipeshub_client.agents.archive_agent_conversation(
-            agent_key=key, conversation_id=conv_id
+            agent_key=key,
+            conversation_id=conv_id,
         )
-        at = archived.archived_at
-        if at:
-            print(f"Archived (by you at {at}): conversation is now in archives")
+        if archived.archived_at:
+            print(f"Archived at {archived.archived_at}: conversation is now in archives")
         else:
-            print("Archived (by you): conversation is now in archives")
+            print(f"Archived: {archived.archived_by} at {archived.archived_at}: conversation is now in archives")
 
         unarchived = pipeshub_client.agents.unarchive_agent_conversation(
-            agent_key=key, conversation_id=conv_id
+            agent_key=key,
+            conversation_id=conv_id,
         )
-        uat = unarchived.unarchived_at
-        if uat:
-            print(f"Unarchived (at {uat}): conversation is back in your active list")
+        if unarchived.unarchived_at:
+            print(f"Unarchived at {unarchived.unarchived_at}: conversation is back in your active list")
         else:
-            print("Unarchived: conversation is back in your active list")
+            print(f"Unarchived: {unarchived.unarchived_by} at {unarchived.unarchived_at}: conversation is back in your active list")
 
 
 if __name__ == "__main__":

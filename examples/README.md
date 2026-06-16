@@ -10,14 +10,14 @@ Runnable scripts that call a live PipesHub instance through `pipeshub-sdk`. Thes
 
 ## Setup
 
-From the repository root:
+From the `examples/` directory:
 
 ```bash
 uv sync
-cp examples/.env.example examples/.env
+cp .env.example .env
 ```
 
-Edit `examples/.env` with your credentials. **Do not commit real secrets.**
+Edit `.env` with your credentials. **Do not commit real secrets.**
 
 | Variable | Required | Default / notes |
 | --- | --- | --- |
@@ -26,15 +26,16 @@ Edit `examples/.env` with your credentials. **Do not commit real secrets.**
 | `PIPESHUB_BASE_URL` | no | `http://localhost:3000` |
 | `PIPESHUB_AGENT_KEY` | no | Falls back to default in `agent_conversation/helpers.py` |
 | `CONNECTOR_ID` | no | Falls back to default in `agent_conversation/helpers.py` |
-| `PIPESHUB_AGENT_MODEL_KEY` | no | Only needed for `create_agent_with_web_search()` in helpers |
 
-Verify authentication:
+Verify authentication from `examples/`:
 
 ```bash
-uv run python examples/client.py examples/.env
+uv run python client.py .env
 ```
 
 Expected output: `login ok`
+
+The `examples` project installs `pipeshub-sdk` from the repository root (editable). PyPI `1.2.0` has a broken SSE parser; use the repo SDK here until a fixed release is published.
 
 ## Shared utilities
 
@@ -63,10 +64,16 @@ Each script under `agent_conversation/` adds `examples/` to `sys.path`, so `clie
 
 ## How to run
 
-From the repository root:
+From `examples/`:
 
 ```bash
-uv run python examples/agent_conversation/<script>.py examples/.env
+uv run python agent_conversation/<script>.py .env
 ```
 
 Replace `<script>.py` with any script listed in [`agent_conversation/README.md`](agent_conversation/README.md).
+
+From the repository root, you can also run examples through the `examples` project:
+
+```bash
+uv run --project examples python examples/agent_conversation/<script>.py examples/.env
+```

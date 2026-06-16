@@ -16,7 +16,7 @@ def print_section(heading: str, convs) -> None:
         return
     for conv in convs:
         title = conv.title or "(untitled)"
-        print(f"  - {title!r} — {conv.id} — {format_activity(conv)}")
+        print(f"  - {title!r} - {conv.id} - {format_activity(conv)}")
 
 
 def main() -> None:
@@ -55,7 +55,10 @@ def main() -> None:
         if not owned and not shared:
             print("\n(no active conversations for this agent)")
             return
-        print(f"\nListed {len(owned)} owned and {len(shared)} shared conversation(s) (owned total reported: {owned_total}).")
+        print(
+            f"\nListed {len(owned)} owned and {len(shared)} shared conversation(s) "
+            f"(owned total reported: {owned_total})."
+        )
 
 
 if __name__ == "__main__":
