@@ -252,7 +252,10 @@ def _parse_event(
 
     if data:
         data = data[:-1]
-        event.data = data
+        try:
+            event.data = json.loads(data)
+        except json.JSONDecodeError:
+            event.data = data
 
     out = None
     if publish:
