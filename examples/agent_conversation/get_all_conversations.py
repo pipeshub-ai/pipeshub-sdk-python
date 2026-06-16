@@ -1,64 +1,54 @@
-import sys
-from pathlib import Path
+import os
+from datetime import datetime, timezone
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from dotenv import load_dotenv
+from pipeshub_sdk import Pipeshub, models
 
-from client import client, load_env
-from helpers import agent_key, format_activity
+AGENT_KEY = "52b7e901-f3e9-4009-bcd7-c0274c58f296"
 
 PAGE_LIMIT = 20
 
 
-def print_section(heading: str, convs) -> None:
-    print(f"\n{heading}:")
-    if not convs:
-        print("  (none)")
-        return
-    for conv in convs:
-        title = conv.title or "(untitled)"
-        print(f"  - {title!r} - {conv.id} - {format_activity(conv)}")
-
-
 def main() -> None:
-    if len(sys.argv) < 2:
-        sys.exit(f"usage: uv run python {Path(__file__).name} <.env>")
-    load_env(sys.argv[1])
+    load_dotenv()
 
-    key = agent_key()
-    with client() as pipeshub_client:
-        print(f"Active conversations for agent {key} (newest first):")
+    with Pipeshub(
+        server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',
+        security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
+    ) as pipeshub_client:
+        print(f"Active conversations for agent {AGENT_KEY} (newest first):")
+        conversations = []
         page = 1
-        owned = []
-        shared = []
-        owned_total = 0
 
         while True:
             res = pipeshub_client.agents.list_agent_conversations(
-                agent_key=key,
+                agent_key=AGENT_KEY,
                 page=page,
                 limit=PAGE_LIMIT,
                 sort_by="lastActivityAt",
                 sort_order="desc",
             )
-            if page == 1:
-                owned_total = res.pagination.total_count
-            owned.extend(res.conversations)
-            shared.extend(res.shared_with_me_conversations)
+            conversations.extend(res.conversations)
             p = res.pagination
             if not p.has_next_page or page >= p.total_pages:
                 break
             page += 1
 
-        print_section("Your conversations", owned)
-        print_section("Shared with you", shared)
-
-        if not owned and not shared:
-            print("\n(no active conversations for this agent)")
+        if not conversations:
+            print("  (none)")
             return
-        print(
-            f"\nListed {len(owned)} owned and {len(shared)} shared conversation(s) "
-            f"(owned total reported: {owned_total})."
-        )
+
+        for conv in conversations:
+            title = conv.title or "(untitled)"
+            if conv.last_activity_at:
+                activity = datetime.fromtimestamp(
+                    conv.last_activity_at / 1000, tz=timezone.utc
+                ).strftime("%Y-%m-%d %H:%M:%S UTC")
+            elif conv.updated_at:
+                activity = conv.updated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
+            else:
+                activity = "-"
+            print(f"  - {title!r} - {conv.id} - {activity}")
 
 
 if __name__ == "__main__":

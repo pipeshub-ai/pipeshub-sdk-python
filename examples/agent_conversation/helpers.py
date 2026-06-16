@@ -1,24 +1,5 @@
 import json
-import os
-from datetime import datetime, timezone
-from typing import Any, Iterable
-
-from pipeshub_sdk.models import FiltersTypedDict
-
-DEFAULT_AGENT_KEY = "52b7e901-f3e9-4009-bcd7-c0274c58f296"
-DEFAULT_CONNECTOR_ID = "270d4bac-234a-4c0d-963f-84f152cd21f0"
-
-
-def agent_key() -> str:
-    return os.getenv("PIPESHUB_AGENT_KEY", DEFAULT_AGENT_KEY)
-
-
-def connector_id() -> str:
-    return os.getenv("CONNECTOR_ID", DEFAULT_CONNECTOR_ID)
-
-
-def default_filters() -> FiltersTypedDict:
-    return {"apps": [connector_id()]}
+from typing import Iterable
 
 
 def iter_sse_events(lines: Iterable[str | bytes]) -> Iterable[dict[str, str]]:
@@ -80,12 +61,3 @@ def stream_bot_reply(
         elif name == "error":
             raise RuntimeError(f"stream error: {data}")
     raise RuntimeError("stream ended without complete event")
-
-
-def format_activity(conv) -> str:
-    if conv.last_activity_at:
-        dt = datetime.fromtimestamp(conv.last_activity_at / 1000, tz=timezone.utc)
-        return dt.strftime("%Y-%m-%d %H:%M:%S UTC")
-    if conv.updated_at:
-        return conv.updated_at.strftime("%Y-%m-%d %H:%M:%S %Z")
-    return "-"

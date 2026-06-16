@@ -202,8 +202,8 @@ wheels = [
 ]
 
 [[package]]
-name = "pipeshub"
-version = "0.0.3"
+name = "pipeshub-sdk"
+version = "1.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpcore" },
@@ -226,11 +226,14 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+dependencies = []
 dev = [
     { name = "mypy", specifier = "==1.15.0" },
     { name = "pylint", specifier = "==3.2.3" },
     { name = "pyright", specifier = "==1.1.398" },
 ]
+devdependencies = []
+peerdependencies = []
 
 [[package]]
 name = "platformdirs"

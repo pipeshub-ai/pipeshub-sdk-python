@@ -1,11 +1,13 @@
-import sys
-from pathlib import Path
-from typing import Any
+import os
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from dotenv import load_dotenv
+from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.models import FiltersTypedDict
 
-from client import client, load_env
-from helpers import agent_key, default_filters, stream_bot_reply
+from helpers import stream_bot_reply
+
+AGENT_KEY = "52b7e901-f3e9-4009-bcd7-c0274c58f296"
+FILTERS: FiltersTypedDict = {"apps": ["270d4bac-234a-4c0d-963f-84f152cd21f0"]}
 
 QUERIES = [
     "What is 2+2?",
@@ -14,45 +16,32 @@ QUERIES = [
 ]
 
 
-def print_archived(convs) -> int:
-    if not convs:
-        print("  (no archived conversations for this agent)")
-        return 0
-    for conv in convs:
-        title = conv.title or "(untitled)"
-        archived = conv.archived_at.strftime("%Y-%m-%d %H:%M:%S %Z") if conv.archived_at else "-"
-        print(f"  - {title!r} - {conv.id} - archived {archived}")
-    return len(convs)
-
-
 def main() -> None:
-    if len(sys.argv) < 2:
-        sys.exit(f"usage: uv run python {Path(__file__).name} <.env>")
-    load_env(sys.argv[1])
+    load_dotenv()
 
-    key = agent_key()
-    filters = default_filters()
-    created: list[tuple[str, str]] = []
-
-    with client() as pipeshub_client:
-        print(f"Using agent {key}\n")
+    with Pipeshub(
+        server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',
+        security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
+    ) as pipeshub_client:
+        print(f"Using agent {AGENT_KEY}\n")
 
         for i, query in enumerate(QUERIES, 1):
             print(f"Creating conversation {i}/{len(QUERIES)}...")
-            with pipeshub_client.agents.stream_agent_conversation(
-                agent_key=key,
-                query=query,
-                filters=filters,
-                chat_mode="auto",
-            ) as stream:
-                conv_id, title, _, _ = stream_bot_reply(stream, print_output=False)
+            conv_id, title, _, _ = stream_bot_reply(
+                pipeshub_client.agents.stream_agent_conversation(
+                    agent_key=AGENT_KEY,
+                    query=query,
+                    filters=FILTERS,
+                    chat_mode="auto",
+                ),
+                print_output=False,
+            )
             title = title or query
 
             pipeshub_client.agents.archive_agent_conversation(
-                agent_key=key,
+                agent_key=AGENT_KEY,
                 conversation_id=conv_id,
             )
-            created.append((conv_id, title))
             print(f"  archived {conv_id} - {title!r}")
 
         print("\nArchived conversations for this agent (newest first):")
@@ -60,7 +49,7 @@ def main() -> None:
         page = 1
         while True:
             res = pipeshub_client.agents.list_agent_conversation_archives(
-                agent_key=key,
+                agent_key=AGENT_KEY,
                 page=page,
                 limit=20,
                 sort_by="lastActivityAt",
@@ -72,36 +61,15 @@ def main() -> None:
                 break
             page += 1
 
-        ours = {cid for cid, _ in created}
-        matched = [c for c in archived if c.id in ours]
-        count = print_archived(matched)
-        print(f"\nFound {count} of {len(created)} conversation(s) we just archived.")
-
-        print("\nDeleting archived conversations:")
-        for conv_id, title in created:
-            pipeshub_client.agents.delete_agent_conversation_by_id(
-                agent_key=key,
-                conversation_id=conv_id,
-            )
-            print(f"  deleted {conv_id} - {title!r}")
-
-        print("\nArchived conversations after cleanup:")
-        remaining: list[Any] = []
-        page = 1
-        while True:
-            res = pipeshub_client.agents.list_agent_conversation_archives(
-                agent_key=key,
-                page=page,
-                limit=20,
-                sort_by="lastActivityAt",
-                sort_order="desc",
-            )
-            remaining.extend(c for c in res.conversations if c.id in ours)
-            p = res.pagination
-            if not p.has_next_page or page >= p.total_pages:
-                break
-            page += 1
-        print_archived(remaining)
+        if not archived:
+            print("  (no archived conversations for this agent)")
+        else:
+            for conv in archived:
+                title = conv.title or "(untitled)"
+                archived_at = (
+                    conv.archived_at.strftime("%Y-%m-%d %H:%M:%S %Z") if conv.archived_at else "-"
+                )
+                print(f"  - {title!r} - {conv.id} - archived {archived_at}")
 
 
 if __name__ == "__main__":

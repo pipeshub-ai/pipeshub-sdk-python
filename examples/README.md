@@ -19,42 +19,12 @@ cp .env.example .env
 
 Edit `.env` with your credentials. **Do not commit real secrets.**
 
-| Variable | Required | Default / notes |
+| Variable | Required | Notes |
 | --- | --- | --- |
-| `PIPESHUB_TEST_USER_EMAIL` | yes | Workspace user email |
-| `PIPESHUB_TEST_USER_PASSWORD` | yes | Password for that user |
-| `PIPESHUB_BASE_URL` | no | `http://localhost:3000` |
-| `PIPESHUB_AGENT_KEY` | no | Falls back to default in `agent_conversation/helpers.py` |
-| `CONNECTOR_ID` | no | Falls back to default in `agent_conversation/helpers.py` |
-
-Verify authentication from `examples/`:
-
-```bash
-uv run python client.py .env
-```
-
-Expected output: `login ok`
+| `PIPESHUB_BEARER_AUTH` | yes | JWT access token (raw token only — no `Bearer` prefix) |
+| `PIPESHUB_BASE_URL` | yes | API root without `/api/v1` (e.g. `http://localhost:3000`) |
 
 The `examples` project installs the published `pipeshub-sdk` package from PyPI. Streaming examples call the SDK stream methods and parse raw SSE lines from `stream.response` in `helpers.py` (workaround for a known SSE parser issue in PyPI `1.2.0`).
-
-## Shared utilities
-
-### `client.py`
-
-- `load_env(path)` — alias for `python-dotenv`'s `load_dotenv`; loads a `.env` file into `os.environ`
-- `client()` — performs email/password auth and returns an authenticated `Pipeshub` client
-
-Convention in example scripts:
-
-```python
-from client import client, load_env
-
-load_env(sys.argv[1])
-with client() as pipeshub_client:
-    pipeshub_client.agents.some_method(...)
-```
-
-Each script under `agent_conversation/` adds `examples/` to `sys.path`, so `client` imports work when run from the repo root or from inside the example directory.
 
 ## Example groups
 
@@ -67,13 +37,17 @@ Each script under `agent_conversation/` adds `examples/` to `sys.path`, so `clie
 From `examples/`:
 
 ```bash
-uv run python agent_conversation/<script>.py .env
+uv run python agent_conversation/<script>.py
 ```
 
 Replace `<script>.py` with any script listed in [`agent_conversation/README.md`](agent_conversation/README.md).
 
-From the repository root, you can also run examples through the `examples` project:
+Scripts call `load_dotenv()`, which discovers `examples/.env` when run from `examples/` or `examples/agent_conversation/`.
+
+From the repository root:
 
 ```bash
-uv run --project examples python examples/agent_conversation/<script>.py examples/.env
+uv run --project examples python examples/agent_conversation/<script>.py
 ```
+
+Each script builds an authenticated `Pipeshub` client inline using `PIPESHUB_BEARER_AUTH` and `PIPESHUB_BASE_URL` from the environment.
