@@ -95,29 +95,16 @@ wheels = [
 [[package]]
 name = "pipeshub-sdk"
 version = "1.2.0"
-source = { editable = "../" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpcore" },
     { name = "httpx" },
     { name = "pydantic" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "httpcore", specifier = ">=1.0.9" },
-    { name = "httpx", specifier = ">=0.28.1" },
-    { name = "pydantic", specifier = ">=2.11.2" },
+sdist = { url = "https://files.pythonhosted.org/packages/06/c3/9f06f2f2f977016b3e80dab1fabc8a46502d734a9c8a860fb7a4f34e22a6/pipeshub_sdk-1.2.0.tar.gz", hash = "sha256:75d8a6b9db5defe54ca1b98b07138d3f8219d8a121e487b2ec34978c72f5a808", size = 235001, upload-time = "2026-06-03T15:40:31.192Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/06/6b/b9c9421c1862b5076cf600c77f0c8cb36936823dc8ee8b206da8c1312d0e/pipeshub_sdk-1.2.0-py3-none-any.whl", hash = "sha256:c4e2cd0a534fc4595b2b31fea9b7dc254a8e0f74673e4577acc41d1910552d51", size = 373688, upload-time = "2026-06-03T15:40:29.876Z" },
 ]
-
-[package.metadata.requires-dev]
-dependencies = []
-dev = [
-    { name = "mypy", specifier = "==1.15.0" },
-    { name = "pylint", specifier = "==3.2.3" },
-    { name = "pyright", specifier = "==1.1.398" },
-]
-devdependencies = []
-peerdependencies = []
 
 [[package]]
 name = "pipeshub-sdk-examples"
@@ -128,7 +115,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pipeshub-sdk", editable = "../" }]
+requires-dist = [{ name = "pipeshub-sdk", specifier = ">=1.2.0" }]
 
 [[package]]
 name = "pydantic"

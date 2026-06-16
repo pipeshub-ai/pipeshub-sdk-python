@@ -35,7 +35,7 @@ uv run python client.py .env
 
 Expected output: `login ok`
 
-The `examples` project installs `pipeshub-sdk` from the repository root (editable). PyPI `1.2.0` has a broken SSE parser; use the repo SDK here until a fixed release is published.
+The `examples` project installs the published `pipeshub-sdk` package from PyPI. Streaming examples call the SDK stream methods and parse raw SSE lines from `stream.response` in `helpers.py` (workaround for a known SSE parser issue in PyPI `1.2.0`).
 
 ## Shared utilities
 

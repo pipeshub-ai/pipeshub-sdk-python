@@ -34,18 +34,18 @@ def main() -> None:
             conversation_id=conv_id,
         )
         if archived.archived_at:
-            print(f"Archived at {archived.archived_at}: conversation is now in archives")
+            print(f"Archived (by you at {archived.archived_at}): conversation is now in archives")
         else:
-            print(f"Archived: {archived.archived_by} at {archived.archived_at}: conversation is now in archives")
+            print("Archived (by you): conversation is now in archives")
 
         unarchived = pipeshub_client.agents.unarchive_agent_conversation(
             agent_key=key,
             conversation_id=conv_id,
         )
         if unarchived.unarchived_at:
-            print(f"Unarchived at {unarchived.unarchived_at}: conversation is back in your active list")
+            print(f"Unarchived (at {unarchived.unarchived_at}): conversation is back in your active list")
         else:
-            print(f"Unarchived: {unarchived.unarchived_by} at {unarchived.unarchived_at}: conversation is back in your active list")
+            print("Unarchived: conversation is back in your active list")
 
 
 if __name__ == "__main__":

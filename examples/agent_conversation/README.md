@@ -20,7 +20,7 @@ Variables used by these examples:
 
 ## Shared helpers
 
-[`helpers.py`](helpers.py) provides defaults (`agent_key`, `default_filters`) and `stream_bot_reply()` — pass the SDK stream, print the bot reply, read the `complete` event.
+[`helpers.py`](helpers.py) provides defaults and `stream_bot_reply()` — pass the SDK stream object, print the bot reply, read the `complete` event from raw SSE lines.
 
 ### `bot_response_message_id`
 
@@ -64,6 +64,6 @@ uv run --project examples python examples/agent_conversation/create_conversation
 
 ## Notes
 
-- Streaming examples print bot output live. Pass `print_output=False` to `stream_bot_reply()` to wait silently.
+- Streaming examples print bot output live. Pass `print_output=False` to stream helpers to wait silently.
 - Scripts that archive or delete conversations create their own test data. `list_all_archived_conversations.py` cleans up conversations it creates.
 - Feedback and regeneration require a `bot_response` message ID. Examples read it from the stream `complete` payload rather than hard-coding IDs.
