@@ -6,9 +6,7 @@ See [`../README.md`](../README.md) for setup and environment configuration.
 
 ## Environment
 
-Copy [`../.env.example`](../.env.example) to `examples/.env` and set `PIPESHUB_BEARER_AUTH` and `PIPESHUB_BASE_URL` before running.
-
-Agent key and retrieval filters are hardcoded in each script (`AGENT_KEY`, `FILTERS`).
+Copy [`../.env.example`](../.env.example) to `examples/.env` and set `PIPESHUB_BEARER_AUTH`, `PIPESHUB_BASE_URL`, `AGENT_KEY`, and `CONNECTOR_APP_KEY` before running.
 
 ## Shared helpers
 

@@ -6,9 +6,6 @@ from pipeshub_sdk.models import FiltersTypedDict
 
 from helpers import stream_bot_reply
 
-AGENT_KEY = "52b7e901-f3e9-4009-bcd7-c0274c58f296"
-FILTERS: FiltersTypedDict = {"apps": ["270d4bac-234a-4c0d-963f-84f152cd21f0"]}
-
 QUERIES = [
     "What is 2+2?",
     "Name three primary colors.",
@@ -18,6 +15,8 @@ QUERIES = [
 
 def main() -> None:
     load_dotenv()
+    AGENT_KEY = os.environ["AGENT_KEY"]
+    FILTERS: FiltersTypedDict = {"apps": [os.environ["CONNECTOR_APP_KEY"]]}
 
     with Pipeshub(
         server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',

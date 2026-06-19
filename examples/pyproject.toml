@@ -1,8 +1,0 @@
-[project]
-name = "pipeshub-sdk-examples"
-version = "0.0.0"
-requires-python = ">=3.10"
-dependencies = [
-    "pipeshub-sdk>=1.2.0",
-    "python-dotenv>=1.2.2",
-]

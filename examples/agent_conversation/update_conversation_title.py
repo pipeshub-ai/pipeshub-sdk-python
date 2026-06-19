@@ -6,15 +6,14 @@ from pipeshub_sdk.models import FiltersTypedDict
 
 from helpers import stream_bot_reply
 
-AGENT_KEY = "52b7e901-f3e9-4009-bcd7-c0274c58f296"
-FILTERS: FiltersTypedDict = {"apps": ["270d4bac-234a-4c0d-963f-84f152cd21f0"]}
-
 FIRST_MESSAGE = "Who moved the cheese?"
 NEW_TITLE = "SDK example: updated title"
 
 
 def main() -> None:
     load_dotenv()
+    AGENT_KEY = os.environ["AGENT_KEY"]
+    FILTERS: FiltersTypedDict = {"apps": [os.environ["CONNECTOR_APP_KEY"]]}
 
     with Pipeshub(
         server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',
