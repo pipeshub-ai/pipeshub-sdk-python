@@ -11,7 +11,14 @@ from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoT
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+    UnrecognizedStr,
+)
 import pydantic
 from pydantic import model_serializer
 from typing import Dict, List, Literal, Optional, Union
@@ -50,6 +57,10 @@ Confidence = Union[
     ],
     UnrecognizedStr,
 ]
+r"""AI confidence in the answer. Present only on `bot_response` messages,
+and only when the model emitted a trailing confidence block.
+
+"""
 
 
 class AgentConversationDetailMessageReferenceDatumTypedDict(TypedDict):
@@ -161,7 +172,11 @@ class AgentConversationDetailMessageTypedDict(TypedDict):
     content: NotRequired[str]
     content_format: NotRequired[AgentConversationDetailMessageContentFormat]
     citations: NotRequired[List[AgentConversationDetailMessageCitationTypedDict]]
-    confidence: NotRequired[Confidence]
+    confidence: NotRequired[Nullable[Confidence]]
+    r"""AI confidence in the answer. Present only on `bot_response` messages,
+    and only when the model emitted a trailing confidence block.
+
+    """
     follow_up_questions: NotRequired[List[FollowUpQuestionTypedDict]]
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     reference_data: NotRequired[
@@ -212,7 +227,11 @@ class AgentConversationDetailMessage(BaseModel):
 
     citations: Optional[List[AgentConversationDetailMessageCitation]] = None
 
-    confidence: Optional[Confidence] = None
+    confidence: OptionalNullable[Confidence] = UNSET
+    r"""AI confidence in the answer. Present only on `bot_response` messages,
+    and only when the model emitted a trailing confidence block.
+
+    """
 
     follow_up_questions: Annotated[
         Optional[List[FollowUpQuestion]], pydantic.Field(alias="followUpQuestions")
@@ -276,15 +295,24 @@ class AgentConversationDetailMessage(BaseModel):
                 "updatedAt",
             ]
         )
+        nullable_fields = set(["confidence"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k)
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
                     m[k] = val
 
         return m

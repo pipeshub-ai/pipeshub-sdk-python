@@ -1,0 +1,14 @@
+# KnowledgeBaseCreateResponse
+
+Response returned when a knowledge base is created
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `id`                                                                                           | *str*                                                                                          | :heavy_check_mark:                                                                             | Knowledge base ID                                                                              |
+| `name`                                                                                         | *str*                                                                                          | :heavy_check_mark:                                                                             | Knowledge base name                                                                            |
+| `created_at_timestamp`                                                                         | *int*                                                                                          | :heavy_check_mark:                                                                             | Creation timestamp in milliseconds                                                             |
+| `updated_at_timestamp`                                                                         | *int*                                                                                          | :heavy_check_mark:                                                                             | Last update timestamp in milliseconds                                                          |
+| `user_role`                                                                                    | [models.KnowledgeBaseCreateResponseUserRole](../models/knowledgebasecreateresponseuserrole.md) | :heavy_check_mark:                                                                             | User's role in this knowledge base                                                             |

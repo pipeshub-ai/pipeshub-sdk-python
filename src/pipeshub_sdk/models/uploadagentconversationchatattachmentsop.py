@@ -15,13 +15,13 @@ from typing import IO, List, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class FileTypedDict(TypedDict):
+class UploadAgentConversationChatAttachmentsFileTypedDict(TypedDict):
     file_name: str
     content: Union[bytes, IO[bytes], io.BufferedReader]
     content_type: NotRequired[str]
 
 
-class File(BaseModel):
+class UploadAgentConversationChatAttachmentsFile(BaseModel):
     file_name: Annotated[
         str, pydantic.Field(alias="fileName"), FieldMetadata(multipart=True)
     ]
@@ -58,7 +58,7 @@ class File(BaseModel):
 class UploadAgentConversationChatAttachmentsRequestBodyTypedDict(TypedDict):
     r"""Multipart form with attachment files and optional `conversationId`."""
 
-    files: List[FileTypedDict]
+    files: List[UploadAgentConversationChatAttachmentsFileTypedDict]
     r"""One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`. Max 5 MiB each.
 
     """
@@ -72,7 +72,8 @@ class UploadAgentConversationChatAttachmentsRequestBody(BaseModel):
     r"""Multipart form with attachment files and optional `conversationId`."""
 
     files: Annotated[
-        List[File], FieldMetadata(multipart=MultipartFormMetadata(file=True))
+        List[UploadAgentConversationChatAttachmentsFile],
+        FieldMetadata(multipart=MultipartFormMetadata(file=True)),
     ]
     r"""One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`. Max 5 MiB each.
 

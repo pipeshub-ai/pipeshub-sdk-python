@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from pipeshub_sdk.agents import Agents
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
     from pipeshub_sdk.conversations import Conversations
-    from pipeshub_sdk.knowledge_hub import KnowledgeHub
+    from pipeshub_sdk.knowledge_base_sdk import KnowledgeBaseSDK
     from pipeshub_sdk.oauth_apps import OAuthApps
     from pipeshub_sdk.oauth_provider import OAuthProvider
     from pipeshub_sdk.openid_connect import OpenIDConnect
@@ -131,8 +131,8 @@ class Pipeshub(BaseSDK):
     r"""Admin configuration of authentication methods including MFA steps and allowed providers"""
     organizations: "Organizations"
     r"""Organization management operations"""
-    knowledge_hub: "KnowledgeHub"
-    r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
+    knowledge_base: "KnowledgeBaseSDK"
+    r"""Knowledge base management operations"""
     conversations: "Conversations"
     r"""AI-powered conversational chat management with citations and follow-up questions"""
     semantic_search: "SemanticSearch"
@@ -153,7 +153,7 @@ class Pipeshub(BaseSDK):
             "OrganizationAuthConfig",
         ),
         "organizations": ("pipeshub_sdk.organizations", "Organizations"),
-        "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
+        "knowledge_base": ("pipeshub_sdk.knowledge_base_sdk", "KnowledgeBaseSDK"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
@@ -171,8 +171,8 @@ class Pipeshub(BaseSDK):
         ] = None,
         instance_url: Optional[str] = None,
         server_idx: Optional[int] = None,
-        url_params: Optional[Dict[str, str]] = None,
         server_url: Optional[str] = None,
+        url_params: Optional[Dict[str, str]] = None,
         client: Optional[HttpClient] = None,
         async_client: Optional[AsyncHttpClient] = None,
         retry_config: OptionalNullable[RetryConfig] = UNSET,

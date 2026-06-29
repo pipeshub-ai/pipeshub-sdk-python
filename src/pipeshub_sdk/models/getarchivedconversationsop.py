@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-GetArchivedConversationsSortByEnum = Literal[
+GetArchivedConversationsQueryParamSortBy = Literal[
     "createdAt",
     "lastActivityAt",
     "title",
@@ -26,7 +26,7 @@ GetArchivedConversationsSortByEnum = Literal[
 r"""Field to sort by"""
 
 
-GetArchivedConversationsSortOrderEnum = Literal[
+GetArchivedConversationsQueryParamSortOrder = Literal[
     "asc",
     "desc",
 ]
@@ -38,9 +38,9 @@ class GetArchivedConversationsRequestTypedDict(TypedDict):
     r"""Page number (1-indexed)"""
     limit: NotRequired[int]
     r"""Items per page"""
-    sort_by: NotRequired[GetArchivedConversationsSortByEnum]
+    sort_by: NotRequired[GetArchivedConversationsQueryParamSortBy]
     r"""Field to sort by"""
-    sort_order: NotRequired[GetArchivedConversationsSortOrderEnum]
+    sort_order: NotRequired[GetArchivedConversationsQueryParamSortOrder]
     r"""Sort direction"""
     search: NotRequired[str]
     r"""Case-insensitive substring match against title and message content (max 1000 chars)"""
@@ -68,14 +68,14 @@ class GetArchivedConversationsRequest(BaseModel):
     r"""Items per page"""
 
     sort_by: Annotated[
-        Optional[GetArchivedConversationsSortByEnum],
+        Optional[GetArchivedConversationsQueryParamSortBy],
         pydantic.Field(alias="sortBy"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "lastActivityAt"
     r"""Field to sort by"""
 
     sort_order: Annotated[
-        Optional[GetArchivedConversationsSortOrderEnum],
+        Optional[GetArchivedConversationsQueryParamSortOrder],
         pydantic.Field(alias="sortOrder"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "desc"

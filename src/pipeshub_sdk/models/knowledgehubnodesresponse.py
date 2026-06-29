@@ -273,7 +273,7 @@ class Size(BaseModel):
         return m
 
 
-class AppliedTypedDict(TypedDict):
+class KnowledgeHubNodesResponseAppliedTypedDict(TypedDict):
     r"""Echo of applied filters; unused slots are JSON `null`."""
 
     q: Nullable[str]
@@ -291,7 +291,7 @@ class AppliedTypedDict(TypedDict):
     r"""Effective sort order after server normalisation."""
 
 
-class Applied(BaseModel):
+class KnowledgeHubNodesResponseApplied(BaseModel):
     r"""Echo of applied filters; unused slots are JSON `null`."""
 
     q: Nullable[str]
@@ -335,7 +335,7 @@ class Applied(BaseModel):
         return m
 
 
-class AvailableTypedDict(TypedDict):
+class KnowledgeHubNodesResponseAvailableTypedDict(TypedDict):
     r"""Populated when `include=availableFilters`; otherwise `null`."""
 
     node_types: List[FilterOptionTypedDict]
@@ -347,7 +347,7 @@ class AvailableTypedDict(TypedDict):
     sort_order: List[FilterOptionTypedDict]
 
 
-class Available(BaseModel):
+class KnowledgeHubNodesResponseAvailable(BaseModel):
     r"""Populated when `include=availableFilters`; otherwise `null`."""
 
     node_types: Annotated[List[FilterOption], pydantic.Field(alias="nodeTypes")]
@@ -368,17 +368,17 @@ class Available(BaseModel):
 
 
 class KnowledgeHubNodesResponseFiltersTypedDict(TypedDict):
-    applied: AppliedTypedDict
+    applied: KnowledgeHubNodesResponseAppliedTypedDict
     r"""Echo of applied filters; unused slots are JSON `null`."""
-    available: Nullable[AvailableTypedDict]
+    available: Nullable[KnowledgeHubNodesResponseAvailableTypedDict]
     r"""Populated when `include=availableFilters`; otherwise `null`."""
 
 
 class KnowledgeHubNodesResponseFilters(BaseModel):
-    applied: Applied
+    applied: KnowledgeHubNodesResponseApplied
     r"""Echo of applied filters; unused slots are JSON `null`."""
 
-    available: Nullable[Available]
+    available: Nullable[KnowledgeHubNodesResponseAvailable]
     r"""Populated when `include=availableFilters`; otherwise `null`."""
 
     @model_serializer(mode="wrap")
@@ -592,11 +592,11 @@ try:
 except NameError:
     pass
 try:
-    Applied.model_rebuild()
+    KnowledgeHubNodesResponseApplied.model_rebuild()
 except NameError:
     pass
 try:
-    Available.model_rebuild()
+    KnowledgeHubNodesResponseAvailable.model_rebuild()
 except NameError:
     pass
 try:

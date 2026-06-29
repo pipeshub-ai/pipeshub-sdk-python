@@ -1,0 +1,9 @@
+# UpdateKnowledgeBaseRequest
+
+
+## Fields
+
+| Field                                                                                | Type                                                                                 | Required                                                                             | Description                                                                          | Example                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `kb_id`                                                                              | *str*                                                                                | :heavy_check_mark:                                                                   | Knowledge base ID (UUID)                                                             | 8a095180-2989-4018-b448-70eb75fba1c7                                                 |
+| `body`                                                                               | [models.UpdateKnowledgeBaseRequestBody](../models/updateknowledgebaserequestbody.md) | :heavy_check_mark:                                                                   | Fields to update. `kbName` is optional; an empty object is valid.                    |                                                                                      |

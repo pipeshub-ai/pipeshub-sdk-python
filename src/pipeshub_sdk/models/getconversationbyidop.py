@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-GetConversationByIDSortByEnum = Literal[
+GetConversationByIDQueryParamSortBy = Literal[
     "createdAt",
     "messageType",
     "content",
@@ -31,7 +31,7 @@ GetConversationByIDSortByEnum = Literal[
 r"""Field to sort messages by"""
 
 
-GetConversationByIDSortOrderEnum = Literal[
+GetConversationByIDQueryParamSortOrder = Literal[
     "asc",
     "desc",
 ]
@@ -55,9 +55,9 @@ class GetConversationByIDRequestTypedDict(TypedDict):
     r"""Page number for message pagination"""
     limit: NotRequired[int]
     r"""Number of messages per page"""
-    sort_by: NotRequired[GetConversationByIDSortByEnum]
+    sort_by: NotRequired[GetConversationByIDQueryParamSortBy]
     r"""Field to sort messages by"""
-    sort_order: NotRequired[GetConversationByIDSortOrderEnum]
+    sort_order: NotRequired[GetConversationByIDQueryParamSortOrder]
     r"""Sort direction"""
     search: NotRequired[str]
     r"""Case-insensitive search across conversation title and message content"""
@@ -92,14 +92,14 @@ class GetConversationByIDRequest(BaseModel):
     r"""Number of messages per page"""
 
     sort_by: Annotated[
-        Optional[GetConversationByIDSortByEnum],
+        Optional[GetConversationByIDQueryParamSortBy],
         pydantic.Field(alias="sortBy"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "createdAt"
     r"""Field to sort messages by"""
 
     sort_order: Annotated[
-        Optional[GetConversationByIDSortOrderEnum],
+        Optional[GetConversationByIDQueryParamSortOrder],
         pydantic.Field(alias="sortOrder"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "desc"
