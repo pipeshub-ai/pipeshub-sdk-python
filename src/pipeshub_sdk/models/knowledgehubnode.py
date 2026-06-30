@@ -20,7 +20,7 @@ NodeType = Union[
 r"""Type of the node (app, recordGroup, folder, or record)."""
 
 
-Origin = Union[
+KnowledgeHubNodeOrigin = Union[
     Literal[
         "COLLECTION",
         "CONNECTOR",
@@ -30,7 +30,7 @@ Origin = Union[
 r"""Origin type."""
 
 
-class PermissionTypedDict(TypedDict):
+class KnowledgeHubNodePermissionTypedDict(TypedDict):
     r"""Per-item permission when `include=permissions` is requested; otherwise `null`."""
 
     role: str
@@ -38,7 +38,7 @@ class PermissionTypedDict(TypedDict):
     can_delete: bool
 
 
-class Permission(BaseModel):
+class KnowledgeHubNodePermission(BaseModel):
     r"""Per-item permission when `include=permissions` is requested; otherwise `null`."""
 
     role: str
@@ -62,7 +62,7 @@ class KnowledgeHubNodeTypedDict(TypedDict):
     r"""Type of the node (app, recordGroup, folder, or record)."""
     parent_id: Nullable[str]
     r"""Parent node ID, or `null` at the root browse level."""
-    origin: Origin
+    origin: KnowledgeHubNodeOrigin
     r"""Origin type."""
     connector: Nullable[str]
     r"""Connector display name / key when applicable; otherwise `null`."""
@@ -88,7 +88,7 @@ class KnowledgeHubNodeTypedDict(TypedDict):
     has_children: bool
     r"""Whether the node has children (sidebar / tree)."""
     preview_renderable: Nullable[bool]
-    permission: Nullable[PermissionTypedDict]
+    permission: Nullable[KnowledgeHubNodePermissionTypedDict]
     r"""Per-item permission when `include=permissions` is requested; otherwise `null`."""
     sharing_status: Nullable[str]
     r"""Sharing status (e.g. `private`, `shared`, `team`, `workspace`) when
@@ -115,7 +115,7 @@ class KnowledgeHubNode(BaseModel):
     parent_id: Annotated[Nullable[str], pydantic.Field(alias="parentId")]
     r"""Parent node ID, or `null` at the root browse level."""
 
-    origin: Origin
+    origin: KnowledgeHubNodeOrigin
     r"""Origin type."""
 
     connector: Nullable[str]
@@ -158,7 +158,7 @@ class KnowledgeHubNode(BaseModel):
         Nullable[bool], pydantic.Field(alias="previewRenderable")
     ]
 
-    permission: Nullable[Permission]
+    permission: Nullable[KnowledgeHubNodePermission]
     r"""Per-item permission when `include=permissions` is requested; otherwise `null`."""
 
     sharing_status: Annotated[Nullable[str], pydantic.Field(alias="sharingStatus")]
@@ -183,7 +183,7 @@ class KnowledgeHubNode(BaseModel):
 
 
 try:
-    Permission.model_rebuild()
+    KnowledgeHubNodePermission.model_rebuild()
 except NameError:
     pass
 try:

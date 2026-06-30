@@ -29,7 +29,7 @@ Defaults to `owned` when omitted.
 """
 
 
-GetAllConversationsSortByEnum = Literal[
+GetAllConversationsQueryParamSortBy = Literal[
     "createdAt",
     "lastActivityAt",
     "title",
@@ -37,7 +37,7 @@ GetAllConversationsSortByEnum = Literal[
 r"""Sort field. Invalid values fall back to `lastActivityAt`."""
 
 
-GetAllConversationsSortOrderEnum = Literal[
+GetAllConversationsQueryParamSortOrder = Literal[
     "asc",
     "desc",
 ]
@@ -55,9 +55,9 @@ class GetAllConversationsRequestTypedDict(TypedDict):
     r"""Page number (1-based). Defaults to 1."""
     limit: NotRequired[int]
     r"""Page size. Defaults to 20; capped by the server (max 100)."""
-    sort_by: NotRequired[GetAllConversationsSortByEnum]
+    sort_by: NotRequired[GetAllConversationsQueryParamSortBy]
     r"""Sort field. Invalid values fall back to `lastActivityAt`."""
-    sort_order: NotRequired[GetAllConversationsSortOrderEnum]
+    sort_order: NotRequired[GetAllConversationsQueryParamSortOrder]
     r"""Sort direction. Defaults to `desc` unless set to `asc`."""
     conversation_id: NotRequired[str]
     r"""When set, restricts results to that conversation ID (if visible under the chosen `source`)."""
@@ -98,14 +98,14 @@ class GetAllConversationsRequest(BaseModel):
     r"""Page size. Defaults to 20; capped by the server (max 100)."""
 
     sort_by: Annotated[
-        Optional[GetAllConversationsSortByEnum],
+        Optional[GetAllConversationsQueryParamSortBy],
         pydantic.Field(alias="sortBy"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Sort field. Invalid values fall back to `lastActivityAt`."""
 
     sort_order: Annotated[
-        Optional[GetAllConversationsSortOrderEnum],
+        Optional[GetAllConversationsQueryParamSortOrder],
         pydantic.Field(alias="sortOrder"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None

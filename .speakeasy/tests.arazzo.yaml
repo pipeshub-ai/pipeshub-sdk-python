@@ -1,0 +1,26 @@
+arazzo: 1.0.1
+info:
+  title: Test Suite
+  summary: Created from source_specs/pipeshub-sdk-openapi.yaml
+  version: 0.0.1
+x-speakeasy-test-server:
+  baseUrl: "x-env: PIPESHUB_API_URL; http://localhost:3000/api/v1"
+x-speakeasy-test-security:
+  value:
+    oauth2:
+      clientId: "x-env: PIPESHUB_CLIENT_ID"
+      clientSecret: "x-env: PIPESHUB_CLIENT_SECRET"
+      tokenURL: "x-env: PIPESHUB_TOKEN_URL; http://localhost:3000/api/v1/oauth2/token"
+sourceDescriptions:
+  - name: source_specs/pipeshub-sdk-openapi.yaml
+    url: https://pipeshub.com
+    type: openapi
+workflows:
+  - workflowId: getCurrentOrganization
+    steps:
+      - stepId: test
+        operationId: getCurrentOrganization
+        successCriteria:
+          - condition: $statusCode == 200
+          - condition: $response.header.Content-Type == application/json
+    x-speakeasy-test-group: Organizations

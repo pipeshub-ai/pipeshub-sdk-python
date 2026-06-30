@@ -445,8 +445,8 @@ class Conversations(BaseSDK):
         source: Optional[models.QueryParamSource] = "owned",
         page: Optional[int] = None,
         limit: Optional[int] = None,
-        sort_by: Optional[models.GetAllConversationsSortByEnum] = None,
-        sort_order: Optional[models.GetAllConversationsSortOrderEnum] = None,
+        sort_by: Optional[models.GetAllConversationsQueryParamSortBy] = None,
+        sort_order: Optional[models.GetAllConversationsQueryParamSortOrder] = None,
         conversation_id: Optional[str] = None,
         search: Optional[str] = None,
         start_date: Optional[datetime] = None,
@@ -583,8 +583,8 @@ class Conversations(BaseSDK):
         source: Optional[models.QueryParamSource] = "owned",
         page: Optional[int] = None,
         limit: Optional[int] = None,
-        sort_by: Optional[models.GetAllConversationsSortByEnum] = None,
-        sort_order: Optional[models.GetAllConversationsSortOrderEnum] = None,
+        sort_by: Optional[models.GetAllConversationsQueryParamSortBy] = None,
+        sort_order: Optional[models.GetAllConversationsQueryParamSortOrder] = None,
         conversation_id: Optional[str] = None,
         search: Optional[str] = None,
         start_date: Optional[datetime] = None,
@@ -720,8 +720,12 @@ class Conversations(BaseSDK):
         *,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        sort_by: Optional[models.GetArchivedConversationsSortByEnum] = "lastActivityAt",
-        sort_order: Optional[models.GetArchivedConversationsSortOrderEnum] = "desc",
+        sort_by: Optional[
+            models.GetArchivedConversationsQueryParamSortBy
+        ] = "lastActivityAt",
+        sort_order: Optional[
+            models.GetArchivedConversationsQueryParamSortOrder
+        ] = "desc",
         search: Optional[str] = None,
         shared: Optional[bool] = None,
         start_date: Optional[datetime] = None,
@@ -852,8 +856,12 @@ class Conversations(BaseSDK):
         *,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        sort_by: Optional[models.GetArchivedConversationsSortByEnum] = "lastActivityAt",
-        sort_order: Optional[models.GetArchivedConversationsSortOrderEnum] = "desc",
+        sort_by: Optional[
+            models.GetArchivedConversationsQueryParamSortBy
+        ] = "lastActivityAt",
+        sort_order: Optional[
+            models.GetArchivedConversationsQueryParamSortOrder
+        ] = "desc",
         search: Optional[str] = None,
         shared: Optional[bool] = None,
         start_date: Optional[datetime] = None,
@@ -1223,8 +1231,8 @@ class Conversations(BaseSDK):
         conversation_id: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        sort_by: Optional[models.GetConversationByIDSortByEnum] = "createdAt",
-        sort_order: Optional[models.GetConversationByIDSortOrderEnum] = "desc",
+        sort_by: Optional[models.GetConversationByIDQueryParamSortBy] = "createdAt",
+        sort_order: Optional[models.GetConversationByIDQueryParamSortOrder] = "desc",
         search: Optional[str] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
@@ -1357,8 +1365,8 @@ class Conversations(BaseSDK):
         conversation_id: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        sort_by: Optional[models.GetConversationByIDSortByEnum] = "createdAt",
-        sort_order: Optional[models.GetConversationByIDSortOrderEnum] = "desc",
+        sort_by: Optional[models.GetConversationByIDQueryParamSortBy] = "createdAt",
+        sort_order: Optional[models.GetConversationByIDQueryParamSortOrder] = "desc",
         search: Optional[str] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
