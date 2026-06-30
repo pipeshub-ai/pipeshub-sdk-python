@@ -1,0 +1,19 @@
+# Files maintained manually — the Speakeasy generator must not overwrite them.
+# SSE streaming event envelopes: `data` is typed `Any` (decoded JSON value),
+# not `str`, so structured stream payloads pass response validation.
+/src/pipeshub_sdk/models/uploadstreamsseevent.py
+/src/pipeshub_sdk/models/assistantstreamsseevent.py
+/src/pipeshub_sdk/models/agentstreamsseevent.py
+/src/pipeshub_sdk/models/sseevent.py
+/src/pipeshub_sdk/models/assistantmessagestreamsseevent.py
+/src/pipeshub_sdk/models/agentmessagestreamsseevent.py
+/src/pipeshub_sdk/models/agentregeneratesseevent.py
+
+# Matching docs: keep the `data` row showing `Any` to stay in sync with the models above.
+/docs/models/uploadstreamsseevent.md
+/docs/models/assistantstreamsseevent.md
+/docs/models/agentstreamsseevent.md
+/docs/models/sseevent.md
+/docs/models/assistantmessagestreamsseevent.md
+/docs/models/agentmessagestreamsseevent.md
+/docs/models/agentregeneratesseevent.md
