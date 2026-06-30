@@ -1,0 +1,17 @@
+# GetKnowledgeBaseByID
+
+Response returned by GET /knowledgeBase/{kbId} (getKnowledgeBase).
+
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `id`                                                                               | *str*                                                                              | :heavy_check_mark:                                                                 | Knowledge base ID                                                                  |
+| `name`                                                                             | *str*                                                                              | :heavy_check_mark:                                                                 | Knowledge base name                                                                |
+| `connector_id`                                                                     | *Nullable[str]*                                                                    | :heavy_check_mark:                                                                 | Associated connector ID (null for manual KBs)                                      |
+| `created_at_timestamp`                                                             | *int*                                                                              | :heavy_check_mark:                                                                 | Creation timestamp in milliseconds                                                 |
+| `updated_at_timestamp`                                                             | *int*                                                                              | :heavy_check_mark:                                                                 | Last update timestamp in milliseconds                                              |
+| `created_by`                                                                       | *str*                                                                              | :heavy_check_mark:                                                                 | User ID of the creator                                                             |
+| `user_role`                                                                        | [models.GetKnowledgeBaseByIDUserRole](../models/getknowledgebasebyiduserrole.md)   | :heavy_check_mark:                                                                 | User's role in this knowledge base                                                 |
+| `folders`                                                                          | List[[models.GetKnowledgeBaseByIDFolder](../models/getknowledgebasebyidfolder.md)] | :heavy_check_mark:                                                                 | Root-level folders in this knowledge base                                          |

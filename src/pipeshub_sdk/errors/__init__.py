@@ -77,6 +77,11 @@ if TYPE_CHECKING:
         SearchHistoryUnauthorizedError,
         SearchHistoryUnauthorizedErrorData,
     )
+    from .streamrecordbufferop import Forbidden, ForbiddenUnion
+    from .streamrecorderrorresponse import (
+        StreamRecordErrorResponse,
+        StreamRecordErrorResponseData,
+    )
 
 __all__ = [
     "ApplicationJSONErrorResponse",
@@ -85,6 +90,8 @@ __all__ = [
     "DeleteAgentConversationChatAttachmentBadRequestErrorData",
     "ErrorResponse",
     "ErrorResponseData",
+    "Forbidden",
+    "ForbiddenUnion",
     "GetAvailableModelsByTypeBadRequestError",
     "GetAvailableModelsByTypeBadRequestErrorData",
     "GetAvailableModelsByTypeForbiddenError",
@@ -137,6 +144,8 @@ __all__ = [
     "SearchHistoryInternalServerErrorData",
     "SearchHistoryUnauthorizedError",
     "SearchHistoryUnauthorizedErrorData",
+    "StreamRecordErrorResponse",
+    "StreamRecordErrorResponseData",
 ]
 
 _dynamic_imports: dict[str, str] = {
@@ -197,6 +206,10 @@ _dynamic_imports: dict[str, str] = {
     "SearchHistoryInternalServerErrorData": ".searchhistoryop",
     "SearchHistoryUnauthorizedError": ".searchhistoryop",
     "SearchHistoryUnauthorizedErrorData": ".searchhistoryop",
+    "Forbidden": ".streamrecordbufferop",
+    "ForbiddenUnion": ".streamrecordbufferop",
+    "StreamRecordErrorResponse": ".streamrecorderrorresponse",
+    "StreamRecordErrorResponseData": ".streamrecorderrorresponse",
 }
 
 

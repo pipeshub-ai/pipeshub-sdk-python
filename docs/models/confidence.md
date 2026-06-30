@@ -1,5 +1,9 @@
 # Confidence
 
+AI confidence in the answer. Present only on `bot_response` messages,
+and only when the model emitted a trailing confidence block.
+
+
 
 ## Values
 

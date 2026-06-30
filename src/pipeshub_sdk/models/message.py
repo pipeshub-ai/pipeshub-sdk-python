@@ -8,7 +8,14 @@ from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoT
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from datetime import datetime
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+    UnrecognizedStr,
+)
 import pydantic
 from pydantic import model_serializer
 from typing import Dict, List, Literal, Optional, Union
@@ -183,8 +190,11 @@ class MessageTypedDict(TypedDict):
     r"""Format of the content for rendering"""
     citations: NotRequired[List[CitationReferenceTypedDict]]
     r"""References to source documents used in the response"""
-    confidence: NotRequired[str]
-    r"""AI's confidence level in the response"""
+    confidence: NotRequired[Nullable[str]]
+    r"""AI confidence in the answer. Present only on `bot_response` messages,
+    and only when the model emitted a trailing confidence block.
+
+    """
     follow_up_questions: NotRequired[List[FollowUpQuestionTypedDict]]
     r"""Suggested follow-up questions"""
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
@@ -246,8 +256,11 @@ class Message(BaseModel):
     citations: Optional[List[CitationReference]] = None
     r"""References to source documents used in the response"""
 
-    confidence: Optional[str] = None
-    r"""AI's confidence level in the response"""
+    confidence: OptionalNullable[str] = UNSET
+    r"""AI confidence in the answer. Present only on `bot_response` messages,
+    and only when the model emitted a trailing confidence block.
+
+    """
 
     follow_up_questions: Annotated[
         Optional[List[FollowUpQuestion]], pydantic.Field(alias="followUpQuestions")
@@ -312,15 +325,24 @@ class Message(BaseModel):
                 "updatedAt",
             ]
         )
+        nullable_fields = set(["confidence"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k)
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
                     m[k] = val
 
         return m

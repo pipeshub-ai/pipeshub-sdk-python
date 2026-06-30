@@ -1,0 +1,10 @@
+# MoveRecordRequest
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `kb_id`                                                                                      | *str*                                                                                        | :heavy_check_mark:                                                                           | Knowledge base UUID                                                                          |
+| `record_id`                                                                                  | *str*                                                                                        | :heavy_check_mark:                                                                           | Record identifier (file or folder)                                                           |
+| `body`                                                                                       | [models.KnowledgeBaseMoveRecordRequestBody](../models/knowledgebasemoverecordrequestbody.md) | :heavy_check_mark:                                                                           | Target location for the record                                                               |
