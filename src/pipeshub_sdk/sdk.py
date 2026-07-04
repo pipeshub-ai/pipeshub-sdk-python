@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
     from pipeshub_sdk.conversations import Conversations
     from pipeshub_sdk.knowledge_base_sdk import KnowledgeBaseSDK
+    from pipeshub_sdk.knowledge_hub import KnowledgeHub
     from pipeshub_sdk.oauth_apps import OAuthApps
     from pipeshub_sdk.oauth_provider import OAuthProvider
     from pipeshub_sdk.openid_connect import OpenIDConnect
@@ -133,6 +134,8 @@ class Pipeshub(BaseSDK):
     r"""Organization management operations"""
     knowledge_base: "KnowledgeBaseSDK"
     r"""Knowledge base management operations"""
+    knowledge_hub: "KnowledgeHub"
+    r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
     conversations: "Conversations"
     r"""AI-powered conversational chat management with citations and follow-up questions"""
     semantic_search: "SemanticSearch"
@@ -154,6 +157,7 @@ class Pipeshub(BaseSDK):
         ),
         "organizations": ("pipeshub_sdk.organizations", "Organizations"),
         "knowledge_base": ("pipeshub_sdk.knowledge_base_sdk", "KnowledgeBaseSDK"),
+        "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
