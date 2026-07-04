@@ -44,7 +44,7 @@ async def main() -> None:
                     "content": content,
                 },
             ],
-            timeout_ms=120_0000,
+            timeout_ms=120_000,
         )
 
         async for line in upload_stream:
