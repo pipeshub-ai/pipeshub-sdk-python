@@ -1,4 +1,4 @@
-# AgentKnowledgeFilters
+# AgentFilters
 
 Knowledge scope filter as stored on the graph edge. The Node `getAgent`
 handler proxies this field unchanged from the AI service (only `agent.id`

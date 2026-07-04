@@ -15,7 +15,7 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-class ToolTypedDict(TypedDict):
+class ToolsetToolTypedDict(TypedDict):
     key: NotRequired[str]
     r"""Tool node key in the backing graph store."""
     name: NotRequired[str]
@@ -32,7 +32,7 @@ class ToolTypedDict(TypedDict):
     """
 
 
-class Tool(BaseModel):
+class ToolsetTool(BaseModel):
     key: Annotated[Optional[str], pydantic.Field(alias="_key")] = None
     r"""Tool node key in the backing graph store."""
 
@@ -72,7 +72,7 @@ class Tool(BaseModel):
         return m
 
 
-class AgentToolsetTypedDict(TypedDict):
+class ToolsetTypedDict(TypedDict):
     r"""Toolset instance linked to an agent, as projected by the graph store on
     `GET /agents/{agentKey}` and `GET /agents`. Multiple instances of the
     same integration type are distinguished by `instanceId` and optional
@@ -97,10 +97,10 @@ class AgentToolsetTypedDict(TypedDict):
     instance exposes all of the toolset's tools.
 
     """
-    tools: NotRequired[List[ToolTypedDict]]
+    tools: NotRequired[List[ToolsetToolTypedDict]]
 
 
-class AgentToolset(BaseModel):
+class Toolset(BaseModel):
     r"""Toolset instance linked to an agent, as projected by the graph store on
     `GET /agents/{agentKey}` and `GET /agents`. Multiple instances of the
     same integration type are distinguished by `instanceId` and optional
@@ -134,7 +134,7 @@ class AgentToolset(BaseModel):
 
     """
 
-    tools: Optional[List[Tool]] = None
+    tools: Optional[List[ToolsetTool]] = None
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -174,10 +174,10 @@ class AgentToolset(BaseModel):
 
 
 try:
-    Tool.model_rebuild()
+    ToolsetTool.model_rebuild()
 except NameError:
     pass
 try:
-    AgentToolset.model_rebuild()
+    Toolset.model_rebuild()
 except NameError:
     pass

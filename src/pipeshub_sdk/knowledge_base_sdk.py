@@ -1292,14 +1292,16 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "503", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetRecordByIDResponseSchema, http_res)
-        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -1399,14 +1401,16 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "503", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetRecordByIDResponseSchema, http_res)
-        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -1524,19 +1528,28 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateRecord",
-                oauth2_scopes=[],
+                oauth2_scopes=["kb:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateRecordResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1648,19 +1661,28 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateRecord",
-                oauth2_scopes=[],
+                oauth2_scopes=["kb:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateRecordResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2271,7 +2293,17 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "409", "4XX", "5XX"],
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "404",
+                "409",
+                "4XX",
+                "500",
+                "503",
+                "5XX",
+            ],
             retry_config=retry_config,
         )
 
@@ -2281,6 +2313,9 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -2396,7 +2431,17 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "409", "4XX", "5XX"],
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "404",
+                "409",
+                "4XX",
+                "500",
+                "503",
+                "5XX",
+            ],
             retry_config=retry_config,
         )
 
@@ -2406,6 +2451,9 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -2504,7 +2552,17 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "409", "4XX", "5XX"],
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "404",
+                "409",
+                "4XX",
+                "500",
+                "503",
+                "5XX",
+            ],
             retry_config=retry_config,
         )
 
@@ -2514,6 +2572,9 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -2612,7 +2673,17 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "409", "4XX", "5XX"],
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "404",
+                "409",
+                "4XX",
+                "500",
+                "503",
+                "5XX",
+            ],
             retry_config=retry_config,
         )
 
@@ -2622,6 +2693,9 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -2718,14 +2792,16 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.FolderDeleteResponseSchema, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -2822,14 +2898,16 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.FolderDeleteResponseSchema, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -2984,6 +3062,7 @@ class KnowledgeBaseSDK(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -2991,8 +3070,14 @@ class KnowledgeBaseSDK(BaseSDK):
                 client_ref=self,
             )
         if utils.match_response(
-            http_res, ["400", "401", "403", "404", "413", "429", "4XX"], "*"
+            http_res, ["400", "401", "403", "404", "413", "429"], "application/json"
         ):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3147,6 +3232,7 @@ class KnowledgeBaseSDK(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -3154,8 +3240,14 @@ class KnowledgeBaseSDK(BaseSDK):
                 client_ref=self,
             )
         if utils.match_response(
-            http_res, ["400", "401", "403", "404", "413", "429", "4XX"], "*"
+            http_res, ["400", "401", "403", "404", "413", "429"], "application/json"
         ):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3998,7 +4090,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
             retry_config=retry_config,
         )
 
@@ -4010,6 +4102,9 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -4114,7 +4209,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
             retry_config=retry_config,
         )
 
@@ -4126,6 +4221,9 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
