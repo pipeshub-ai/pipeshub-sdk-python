@@ -31,7 +31,7 @@ jobs:
       - name: Extract version from .speakeasy/gen.yaml
         id: version
         run: |
-          VERSION=$(python -c "import yaml; data=yaml.safe_load(open('.speakeasy/gen.yaml')); print(data['python']['version'])")
+          VERSION=$(uv run --with pyyaml python -c "import yaml; data=yaml.safe_load(open('.speakeasy/gen.yaml')); print(data['python']['version'])")
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create and push tag
