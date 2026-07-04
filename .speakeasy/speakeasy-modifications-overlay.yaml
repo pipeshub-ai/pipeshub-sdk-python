@@ -2704,3 +2704,39 @@ actions:
       created_at: 1771314940447
       reviewed_at: 1771314942378
       type: method-name
+  - target: $["components"]["schemas"]["Message"]["properties"]["confidence"]["description"]
+    update: |
+      AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+      This field is now optional and nullable (it was previously always present). Treat a missing or `null` value as "no confidence reported" and guard before using it, e.g. `if message.confidence is not None: ...`.
+    x-speakeasy-metadata:
+      type: property-description
+  - target: $["components"]["schemas"]["AgentConversationDetailMessage"]["properties"]["confidence"]["description"]
+    update: |
+      AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+      This field is now optional and nullable (it was previously always present). Treat a missing or `null` value as "no confidence reported" and guard before using it, e.g. `if message.confidence is not None: ...`.
+    x-speakeasy-metadata:
+      type: property-description
+  - target: $["paths"]["/conversations/{conversationId}"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["properties"]["conversation"]["properties"]["messages"]["items"]["properties"]["confidence"]["description"]
+    update: |
+      AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+      This field is now optional and nullable (it was previously always present). Treat a missing or `null` value as "no confidence reported" and guard before using it, e.g. `if message.confidence is not None: ...`.
+    x-speakeasy-metadata:
+      type: property-description
+  - target: $["paths"]["/conversations/{conversationId}/title"]["patch"]["responses"]["200"]["content"]["application/json"]["schema"]["properties"]["conversation"]["properties"]["messages"]["items"]["properties"]["confidence"]["description"]
+    update: |
+      AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+      This field is now optional and nullable (it was previously always present). Treat a missing or `null` value as "no confidence reported" and guard before using it, e.g. `if message.confidence is not None: ...`.
+    x-speakeasy-metadata:
+      type: property-description
+  - target: $["tags"][?@.name == "Knowledge Hub"]
+    update:
+      description: |
+        DEPRECATED — use the Knowledge Base API instead. These browse endpoints are also available under `sdk.knowledge_base` (`get_knowledge_hub_root_nodes` / `get_knowledge_hub_child_nodes`), and this grouping will be removed in a future release.
+
+        Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search.
+    x-speakeasy-metadata:
+      type: tag-description

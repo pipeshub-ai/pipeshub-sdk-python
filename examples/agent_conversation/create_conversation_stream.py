@@ -5,7 +5,6 @@ from pipeshub_sdk import Pipeshub, models
 from pipeshub_sdk.models import FiltersTypedDict
 
 FIRST_MESSAGE = "Who moved the cheese?"
-NEW_TITLE = "SDK example: updated title"
 
 
 def main() -> None:
@@ -17,6 +16,7 @@ def main() -> None:
         server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',
         security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
     ) as pipeshub_client:
+        print(f"agent key: {AGENT_KEY}")
         stream = pipeshub_client.agents.stream_agent_conversation(
             agent_key=AGENT_KEY,
             query=FIRST_MESSAGE,
@@ -24,26 +24,16 @@ def main() -> None:
             chat_mode="auto",
         )
         conv_id = None
-        old_title = ""
         for event in stream:
             if event.event == "error":
                 raise RuntimeError(f"stream error: {event.data}")
             if event.event == "complete" and event.data:
-                conversation = event.data["conversation"]
-                conv_id = conversation["_id"]
-                old_title = conversation.get("title") or ""
+                conv_id = event.data["conversation"]["_id"]
                 break
         if conv_id is None:
             raise RuntimeError("stream ended without a complete event")
 
         print(f"conversation id: {conv_id}")
-        res = pipeshub_client.agents.update_agent_conversation_title(
-            agent_key=AGENT_KEY,
-            conversation_id=conv_id,
-            title=NEW_TITLE,
-        )
-        print(f"old title: {old_title!r}")
-        print(f"new title: {res.conversation.title!r}")
 
 
 if __name__ == "__main__":
