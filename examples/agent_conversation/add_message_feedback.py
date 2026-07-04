@@ -2,9 +2,10 @@ import os
 
 from dotenv import load_dotenv
 from pipeshub_sdk import Pipeshub, models
-from pipeshub_sdk.models import FiltersTypedDict, MessageFeedbackSubmitRequestCategory
-
-from helpers import stream_bot_reply
+from pipeshub_sdk.models import (
+    FiltersTypedDict,
+    MessageFeedbackSubmitRequestCategory,
+)
 
 FIRST_MESSAGE = "Who moved the cheese?"
 POSITIVE_CATEGORIES: list[MessageFeedbackSubmitRequestCategory] = [
@@ -27,19 +28,31 @@ def main() -> None:
         server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',
         security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
     ) as pipeshub_client:
-        print(f"You: {FIRST_MESSAGE}\n\nBot: ", end="", flush=True)
-        conv_id, _, answer, bot_response_message_id = stream_bot_reply(
-            pipeshub_client.agents.stream_agent_conversation(
-                agent_key=AGENT_KEY,
-                query=FIRST_MESSAGE,
-                filters=FILTERS,
-                chat_mode="auto",
-            )
+        stream = pipeshub_client.agents.stream_agent_conversation(
+            agent_key=AGENT_KEY,
+            query=FIRST_MESSAGE,
+            filters=FILTERS,
+            chat_mode="auto",
         )
+        conv_id = None
+        bot_response_message_id = None
+        for event in stream:
+            if event.event == "error":
+                raise RuntimeError(f"stream error: {event.data}")
+            if event.event == "complete" and event.data:
+                conversation = event.data["conversation"]
+                conv_id = conversation["_id"]
+                bot = next(
+                    m for m in reversed(conversation["messages"])
+                    if m.get("messageType") == "bot_response"
+                )
+                bot_response_message_id = bot.get("_id")
+                break
+        if conv_id is None:
+            raise RuntimeError("stream ended without a complete event")
 
         print(f"conversation id: {conv_id}")
         print(f"bot response message id: {bot_response_message_id}")
-        print(f"\nBot response ({len(answer)} chars):\n{answer}")
         assert bot_response_message_id is not None
 
         res = pipeshub_client.agents.update_agent_conversation_message_feedback(

@@ -5,6 +5,7 @@ from pipeshub_sdk import Pipeshub, models
 from pipeshub_sdk.models import FiltersTypedDict
 
 FIRST_MESSAGE = "Who moved the cheese?"
+FOLLOW_UP = "Can you give me more details on that?"
 
 
 def main() -> None:
@@ -23,35 +24,26 @@ def main() -> None:
             chat_mode="auto",
         )
         conv_id = None
-        bot_response_message_id = None
         for event in stream:
             if event.event == "error":
                 raise RuntimeError(f"stream error: {event.data}")
             if event.event == "complete" and event.data:
-                conversation = event.data["conversation"]
-                conv_id = conversation["_id"]
-                bot = next(
-                    m for m in reversed(conversation["messages"])
-                    if m.get("messageType") == "bot_response"
-                )
-                bot_response_message_id = bot.get("_id")
+                conv_id = event.data["conversation"]["_id"]
                 break
         if conv_id is None:
             raise RuntimeError("stream ended without a complete event")
-
         print(f"conversation id: {conv_id}")
-        print(f"bot response message id: {bot_response_message_id}")
-        assert bot_response_message_id is not None
 
-        print(f"Regenerating message {bot_response_message_id} ...")
-        regenerate = pipeshub_client.agents.regenerate_agent_conversation_message(
+        # Send a follow-up message on the same conversation; consume the stream.
+        follow_up = pipeshub_client.agents.stream_agent_conversation_message(
             agent_key=AGENT_KEY,
             conversation_id=conv_id,
-            message_id=bot_response_message_id,
+            query=FOLLOW_UP,
             filters=FILTERS,
+            chat_mode="auto",
         )
         completed = False
-        for event in regenerate:
+        for event in follow_up:
             if event.event == "error":
                 raise RuntimeError(f"stream error: {event.data}")
             if event.event == "complete" and event.data:
@@ -59,8 +51,7 @@ def main() -> None:
                 break
         if not completed:
             raise RuntimeError("stream ended without a complete event")
-
-        print(f"regenerated message {bot_response_message_id}")
+        print(f"follow-up message sent to conversation: {conv_id}")
 
 
 if __name__ == "__main__":

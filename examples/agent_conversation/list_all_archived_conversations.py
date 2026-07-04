@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 from pipeshub_sdk import Pipeshub, models
 from pipeshub_sdk.models import FiltersTypedDict
 
-from helpers import stream_bot_reply
-
 QUERIES = [
     "What is 2+2?",
     "Name three primary colors.",
@@ -26,15 +24,24 @@ def main() -> None:
 
         for i, query in enumerate(QUERIES, 1):
             print(f"Creating conversation {i}/{len(QUERIES)}...")
-            conv_id, title, _, _ = stream_bot_reply(
-                pipeshub_client.agents.stream_agent_conversation(
-                    agent_key=AGENT_KEY,
-                    query=query,
-                    filters=FILTERS,
-                    chat_mode="auto",
-                ),
-                print_output=False,
+            stream = pipeshub_client.agents.stream_agent_conversation(
+                agent_key=AGENT_KEY,
+                query=query,
+                filters=FILTERS,
+                chat_mode="auto",
             )
+            conv_id = None
+            title = ""
+            for event in stream:
+                if event.event == "error":
+                    raise RuntimeError(f"stream error: {event.data}")
+                if event.event == "complete" and event.data:
+                    conversation = event.data["conversation"]
+                    conv_id = conversation["_id"]
+                    title = conversation.get("title") or ""
+                    break
+            if conv_id is None:
+                raise RuntimeError("stream ended without a complete event")
             title = title or query
 
             pipeshub_client.agents.archive_agent_conversation(
