@@ -18,7 +18,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -165,6 +165,33 @@ class MessageReferenceDatum(BaseModel):
         return m
 
 
+class MessageToolTypedDict(TypedDict):
+    tool_name: NotRequired[str]
+    tool_result: NotRequired[Any]
+
+
+class MessageTool(BaseModel):
+    tool_name: Annotated[Optional[str], pydantic.Field(alias="toolName")] = None
+
+    tool_result: Annotated[Optional[Any], pydantic.Field(alias="toolResult")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["toolName", "toolResult"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class MessageTypedDict(TypedDict):
     r"""A single message within a conversation. Messages can be user queries,
     AI responses, system messages, or error notifications.
@@ -218,6 +245,8 @@ class MessageTypedDict(TypedDict):
     `POST /conversations/attachments/upload`).
 
     """
+    tools: NotRequired[List[MessageToolTypedDict]]
+    r"""Tool call results invoked during this message turn."""
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -300,6 +329,9 @@ class Message(BaseModel):
 
     """
 
+    tools: Optional[List[MessageTool]] = None
+    r"""Tool call results invoked during this message turn."""
+
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
     updated_at: Annotated[Optional[datetime], pydantic.Field(alias="updatedAt")] = None
@@ -321,6 +353,7 @@ class Message(BaseModel):
                 "appliedFilters",
                 "referenceData",
                 "attachments",
+                "tools",
                 "createdAt",
                 "updatedAt",
             ]
@@ -354,6 +387,10 @@ except NameError:
     pass
 try:
     MessageReferenceDatum.model_rebuild()
+except NameError:
+    pass
+try:
+    MessageTool.model_rebuild()
 except NameError:
     pass
 try:

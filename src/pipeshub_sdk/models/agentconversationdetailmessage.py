@@ -21,7 +21,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -126,6 +126,33 @@ class AgentConversationDetailMessageReferenceDatum(BaseModel):
         return m
 
 
+class AgentConversationDetailMessageToolTypedDict(TypedDict):
+    tool_name: NotRequired[str]
+    tool_result: NotRequired[Any]
+
+
+class AgentConversationDetailMessageTool(BaseModel):
+    tool_name: Annotated[Optional[str], pydantic.Field(alias="toolName")] = None
+
+    tool_result: Annotated[Optional[Any], pydantic.Field(alias="toolResult")] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["toolName", "toolResult"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class AgentConversationDetailMessageMetadataTypedDict(TypedDict):
     processing_time_ms: NotRequired[float]
     model_version: NotRequired[str]
@@ -191,6 +218,8 @@ class AgentConversationDetailMessageTypedDict(TypedDict):
     `POST /agents/{agentKey}/conversations/attachments/upload`).
 
     """
+    tools: NotRequired[List[AgentConversationDetailMessageToolTypedDict]]
+    r"""Tool call results invoked during this message turn."""
     model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration recorded against a conversation or message."""
     applied_filters: NotRequired[AppliedFiltersTypedDict]
@@ -254,6 +283,9 @@ class AgentConversationDetailMessage(BaseModel):
 
     """
 
+    tools: Optional[List[AgentConversationDetailMessageTool]] = None
+    r"""Tool call results invoked during this message turn."""
+
     model_info: Annotated[
         Optional[ConversationModelInfo], pydantic.Field(alias="modelInfo")
     ] = None
@@ -288,6 +320,7 @@ class AgentConversationDetailMessage(BaseModel):
                 "feedback",
                 "referenceData",
                 "attachments",
+                "tools",
                 "modelInfo",
                 "appliedFilters",
                 "metadata",
@@ -320,6 +353,10 @@ class AgentConversationDetailMessage(BaseModel):
 
 try:
     AgentConversationDetailMessageReferenceDatum.model_rebuild()
+except NameError:
+    pass
+try:
+    AgentConversationDetailMessageTool.model_rebuild()
 except NameError:
     pass
 try:
