@@ -21,9 +21,9 @@ PipesHub OAuth 2.0 Authorization Server implementing RFC 6749, RFC 7636 (PKCE), 
 - Discovery endpoint for automatic configuration
 
 **Machine tokens (`client_credentials`) — gateway and downstream identity:**
-Access tokens may encode **`userId === client_id`**. The **Node.js API gateway** resolves the effective user to the OAuth **app creator**: first using the JWT **`createdBy`** claim when present, otherwise by loading the OAuth app by **`client_id`** from the registry. After verification it sets the authenticated session to that creator and may attach **`x-oauth-user-id`** (resolved user id) on **outbound** HTTP calls to Python microservices so authorization and retrieval match the same principal. **Inbound** `x-oauth-user-id` from external clients is **removed** at the gateway to prevent spoofing.
+Access tokens may encode **`userId === client_id`**. The **Node.js API gateway** resolves the effective user to the OAuth **app creator**: first using the JWT **`createdBy`** claim when present, otherwise by loading the OAuth app by **`client_id`** from the registry. After verification it sets the authenticated session to that creator.
 
-**Python services:** Validate `Authorization: Bearer` as today. When **`x-oauth-user-id`** is present (normally only when the Node gateway added it), use it as the effective **`userId`** for scopes and user-scoped logic; otherwise use the JWT payload’s **`userId`** as-is (which may still equal **`client_id`** if the caller bypassed the gateway).
+**Python services:** Validate `Authorization: Bearer` as today and use the JWT payload’s **`userId`** as-is for scopes and user-scoped logic (which may still equal **`client_id`** for machine tokens).
 
 **Operational note:** Prefer tokens whose JWT already carries the creator as **`userId`**; use **`POST /oauth-clients/{appId}/revoke-all-tokens`** and obtain new tokens from **`POST /oauth2/token`** when rotating integrations.
 
@@ -45,7 +45,7 @@ Exchanges an authorization code, client credentials, or refresh token for access
 - `client_credentials`: Get tokens for machine-to-machine auth
 - `refresh_token`: Get new access token using refresh token
 
-For **`client_credentials`**, access tokens represent the **OAuth app creator** (the user who registered the client). The JWT may encode **`userId === client_id`**; the **Node API gateway** resolves the creator (**`createdBy`** claim or OAuth app lookup) and must not trust client-supplied **`x-oauth-user-id`** (stripped on ingress). Downstream Python services accept **`x-oauth-user-id`** only when set by the gateway — see **OAuth Provider** tag.
+For **`client_credentials`**, access tokens represent the **OAuth app creator** (the user who registered the client). The JWT may encode **`userId === client_id`**; the **Node API gateway** resolves the creator (**`createdBy`** claim or OAuth app lookup) — see **OAuth Provider** tag.
 
 **Client Authentication:**
 Can be provided via:

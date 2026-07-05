@@ -8,6 +8,7 @@ from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, List, Mapping, Optional, Union
+from typing_extensions import deprecated
 
 
 class KnowledgeBaseSDK(BaseSDK):
@@ -4239,6 +4240,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    @deprecated(
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+    )
     def get_knowledge_hub_root_nodes(
         self,
         *,
@@ -4488,6 +4492,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    @deprecated(
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+    )
     async def get_knowledge_hub_root_nodes_async(
         self,
         *,
@@ -4737,6 +4744,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    @deprecated(
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+    )
     def get_knowledge_hub_child_nodes(
         self,
         *,
@@ -5004,6 +5014,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    @deprecated(
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+    )
     async def get_knowledge_hub_child_nodes_async(
         self,
         *,

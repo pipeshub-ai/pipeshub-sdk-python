@@ -1,13 +1,11 @@
 # MessageMessageType
 
 Type of message:
-<ul>
-<li><code>user_query</code> - User's question or input</li>
-<li><code>bot_response</code> - AI-generated response</li>
-<li><code>error</code> - Error message from the system</li>
-<li><code>feedback</code> - User feedback on a response</li>
-<li><code>system</code> - System notification or status</li>
-</ul>
+- `user_query` - User's question or input
+- `bot_response` - AI-generated response
+- `error` - Error message from the system
+- `feedback` - User feedback on a response
+- `system` - System notification or status
 
 
 

@@ -19,7 +19,7 @@ PipesHub is an enterprise-grade platform providing:
 ## Authentication
 Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
 
-**OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the OAuth **app creator**, sets the authenticated user accordingly, and forwards **`x-oauth-user-id`** to Python services on proxied calls. Do not send **`x-oauth-user-id`** yourself—the gateway removes untrusted values on ingress. See the **OAuth Provider** tag for full behavior.
+**OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the OAuth **app creator** and sets the authenticated user accordingly. See the **OAuth Provider** tag for full behavior.
 
 ## Base URLs
 All endpoints use the `/api/v1` prefix unless otherwise noted.
@@ -280,13 +280,13 @@ with Pipeshub() as pipeshub:
 * [reindex_record](docs/sdks/knowledgebasesdk/README.md#reindex_record) - Reindex single record
 * [reindex_record_group](docs/sdks/knowledgebasesdk/README.md#reindex_record_group) - Reindex record group
 * [move_record](docs/sdks/knowledgebasesdk/README.md#move_record) - Move record to another location
-* [get_knowledge_hub_root_nodes](docs/sdks/knowledgebasesdk/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
-* [get_knowledge_hub_child_nodes](docs/sdks/knowledgebasesdk/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
+* [~~get_knowledge_hub_root_nodes~~](docs/sdks/knowledgebasesdk/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes :warning: **Deprecated**
+* [~~get_knowledge_hub_child_nodes~~](docs/sdks/knowledgebasesdk/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes :warning: **Deprecated**
 
-### [KnowledgeHub](docs/sdks/knowledgehub/README.md)
+### [~~KnowledgeHub~~](docs/sdks/knowledgehub/README.md)
 
-* [get_knowledge_hub_root_nodes](docs/sdks/knowledgehub/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes
-* [get_knowledge_hub_child_nodes](docs/sdks/knowledgehub/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes
+* [~~get_knowledge_hub_root_nodes~~](docs/sdks/knowledgehub/README.md#get_knowledge_hub_root_nodes) - Get knowledge hub root nodes :warning: **Deprecated**
+* [~~get_knowledge_hub_child_nodes~~](docs/sdks/knowledgehub/README.md#get_knowledge_hub_child_nodes) - Get knowledge hub child nodes :warning: **Deprecated**
 
 ### [OAuthApps](docs/sdks/oauthapps/README.md)
 

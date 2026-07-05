@@ -249,7 +249,11 @@ GetConversationByIDConfidence = Union[
     ],
     UnrecognizedStr,
 ]
-r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block."""
+r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+This field is now optional and nullable; it was previously always present and non-nullable. Treat a missing or `null` value as \"no confidence reported\" and guard before using it. Change effective in SDK v1.2.0 (v1.1.0 and earlier always populated it).
+
+"""
 
 
 class GetConversationByIDCitationTypedDict(TypedDict):
@@ -421,7 +425,11 @@ class GetConversationByIDMessageTypedDict(TypedDict):
     content: NotRequired[str]
     content_format: NotRequired[GetConversationByIDContentFormat]
     confidence: NotRequired[Nullable[GetConversationByIDConfidence]]
-    r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block."""
+    r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+    This field is now optional and nullable; it was previously always present and non-nullable. Treat a missing or `null` value as \"no confidence reported\" and guard before using it. Change effective in SDK v1.2.0 (v1.1.0 and earlier always populated it).
+
+    """
     citations: NotRequired[List[GetConversationByIDCitationTypedDict]]
     r"""Citations attached to this message. `citationData` is the populated citation document."""
     follow_up_questions: NotRequired[List[FollowUpQuestionTypedDict]]
@@ -457,7 +465,11 @@ class GetConversationByIDMessage(BaseModel):
     ] = None
 
     confidence: OptionalNullable[GetConversationByIDConfidence] = UNSET
-    r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block."""
+    r"""AI confidence in the answer. Present only on `bot_response` messages, and only when the model emitted a trailing confidence block.
+
+    This field is now optional and nullable; it was previously always present and non-nullable. Treat a missing or `null` value as \"no confidence reported\" and guard before using it. Change effective in SDK v1.2.0 (v1.1.0 and earlier always populated it).
+
+    """
 
     citations: Optional[List[GetConversationByIDCitation]] = None
     r"""Citations attached to this message. `citationData` is the populated citation document."""
