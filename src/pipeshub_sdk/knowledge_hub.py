@@ -14,7 +14,7 @@ class KnowledgeHub(BaseSDK):
     r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
 
     @deprecated(
-        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead. This grouping will be removed in a future release."
     )
     def get_knowledge_hub_root_nodes(
         self,
@@ -266,7 +266,7 @@ class KnowledgeHub(BaseSDK):
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     @deprecated(
-        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead. This grouping will be removed in a future release."
     )
     async def get_knowledge_hub_root_nodes_async(
         self,
@@ -518,7 +518,7 @@ class KnowledgeHub(BaseSDK):
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     @deprecated(
-        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead. This grouping will be removed in a future release."
     )
     def get_knowledge_hub_child_nodes(
         self,
@@ -788,7 +788,7 @@ class KnowledgeHub(BaseSDK):
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     @deprecated(
-        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release."
+        "warning: ** DEPRECATED ** - Use the Knowledge Base API instead. This grouping will be removed in a future release."
     )
     async def get_knowledge_hub_child_nodes_async(
         self,
