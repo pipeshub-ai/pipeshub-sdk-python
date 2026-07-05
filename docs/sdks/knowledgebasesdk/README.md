@@ -1103,7 +1103,7 @@ must be present; regular JWT bearer tokens pass through without scope
 enforcement.
 
 
-> :warning: **DEPRECATED**: Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release.
+> :warning: **DEPRECATED**: Use the Knowledge Base API instead. This grouping will be removed in a future release.
 
 ### Example Usage
 
@@ -1201,7 +1201,7 @@ must be present; regular JWT bearer tokens pass through without scope
 enforcement.
 
 
-> :warning: **DEPRECATED**: Use the Knowledge Base API instead (sdk.knowledge_base.get_root_nodes / get_child_nodes). This grouping will be removed in a future release.
+> :warning: **DEPRECATED**: Use the Knowledge Base API instead. This grouping will be removed in a future release.
 
 ### Example Usage
 
