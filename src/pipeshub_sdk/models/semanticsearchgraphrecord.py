@@ -49,6 +49,8 @@ class SemanticSearchGraphRecordTypedDict(TypedDict):
     is_archived: NotRequired[Nullable[bool]]
     is_vlm_ocr_processed: NotRequired[Nullable[bool]]
     deleted_by_user_id: NotRequired[Nullable[str]]
+    processing_started_at: NotRequired[Nullable[float]]
+    parsing_status: NotRequired[Nullable[str]]
     indexing_status: NotRequired[Nullable[str]]
     extraction_status: NotRequired[Nullable[str]]
     is_latest_version: NotRequired[Nullable[bool]]
@@ -57,6 +59,7 @@ class SemanticSearchGraphRecordTypedDict(TypedDict):
     last_index_timestamp: NotRequired[Nullable[float]]
     last_extraction_timestamp: NotRequired[Nullable[float]]
     summary_document_id: NotRequired[Nullable[str]]
+    storage_document_id: NotRequired[Nullable[str]]
     virtual_record_id: NotRequired[Nullable[str]]
     preview_renderable: NotRequired[Nullable[bool]]
     is_shared: NotRequired[Nullable[bool]]
@@ -173,6 +176,14 @@ class SemanticSearchGraphRecord(BaseModel):
         OptionalNullable[str], pydantic.Field(alias="deletedByUserId")
     ] = UNSET
 
+    processing_started_at: Annotated[
+        OptionalNullable[float], pydantic.Field(alias="processingStartedAt")
+    ] = UNSET
+
+    parsing_status: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="parsingStatus")
+    ] = UNSET
+
     indexing_status: Annotated[
         OptionalNullable[str], pydantic.Field(alias="indexingStatus")
     ] = UNSET
@@ -199,6 +210,10 @@ class SemanticSearchGraphRecord(BaseModel):
 
     summary_document_id: Annotated[
         OptionalNullable[str], pydantic.Field(alias="summaryDocumentId")
+    ] = UNSET
+
+    storage_document_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="storageDocumentId")
     ] = UNSET
 
     virtual_record_id: Annotated[
@@ -278,6 +293,8 @@ class SemanticSearchGraphRecord(BaseModel):
                 "isArchived",
                 "isVLMOcrProcessed",
                 "deletedByUserId",
+                "processingStartedAt",
+                "parsingStatus",
                 "indexingStatus",
                 "extractionStatus",
                 "isLatestVersion",
@@ -286,6 +303,7 @@ class SemanticSearchGraphRecord(BaseModel):
                 "lastIndexTimestamp",
                 "lastExtractionTimestamp",
                 "summaryDocumentId",
+                "storageDocumentId",
                 "virtualRecordId",
                 "previewRenderable",
                 "isShared",
@@ -329,6 +347,8 @@ class SemanticSearchGraphRecord(BaseModel):
                 "isArchived",
                 "isVLMOcrProcessed",
                 "deletedByUserId",
+                "processingStartedAt",
+                "parsingStatus",
                 "indexingStatus",
                 "extractionStatus",
                 "isLatestVersion",
@@ -337,6 +357,7 @@ class SemanticSearchGraphRecord(BaseModel):
                 "lastIndexTimestamp",
                 "lastExtractionTimestamp",
                 "summaryDocumentId",
+                "storageDocumentId",
                 "virtualRecordId",
                 "previewRenderable",
                 "isShared",

@@ -24,8 +24,10 @@ class ChatAttachmentUploadRefTypedDict(TypedDict):
     r"""File extension derived by the backend."""
     virtual_record_id: str
     r"""Synthetic record id used by the graph layer."""
+    parse_mode: NotRequired[str]
+    r"""Backend-reported parsing mode used for the attachment (e.g. `pdfplumber`, `docling`, `csv_lightweight`)."""
     ocr_mode: NotRequired[str]
-    r"""Optional backend-reported processing mode for the attachment."""
+    r"""Deprecated alias for `parseMode`, kept for backward compatibility. Use `parseMode` instead."""
 
 
 class ChatAttachmentUploadRef(BaseModel):
@@ -49,12 +51,21 @@ class ChatAttachmentUploadRef(BaseModel):
     virtual_record_id: Annotated[str, pydantic.Field(alias="virtualRecordId")]
     r"""Synthetic record id used by the graph layer."""
 
-    ocr_mode: Annotated[Optional[str], pydantic.Field(alias="ocrMode")] = None
-    r"""Optional backend-reported processing mode for the attachment."""
+    parse_mode: Annotated[Optional[str], pydantic.Field(alias="parseMode")] = None
+    r"""Backend-reported parsing mode used for the attachment (e.g. `pdfplumber`, `docling`, `csv_lightweight`)."""
+
+    ocr_mode: Annotated[
+        Optional[str],
+        pydantic.Field(
+            deprecated="warning: ** DEPRECATED ** - This will be removed in a future release, please migrate away from it as soon as possible.",
+            alias="ocrMode",
+        ),
+    ] = None
+    r"""Deprecated alias for `parseMode`, kept for backward compatibility. Use `parseMode` instead."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["ocrMode"])
+        optional_fields = set(["parseMode", "ocrMode"])
         serialized = handler(self)
         m = {}
 

@@ -6,7 +6,7 @@ from typing import Literal, Union
 from typing_extensions import TypedDict
 
 
-Type = Union[
+AuthMethodType = Union[
     Literal[
         "samlSso",
         "otp",
@@ -33,7 +33,7 @@ r"""Type of authentication method:
 class AuthMethodTypedDict(TypedDict):
     r"""Authentication method configuration"""
 
-    type: Type
+    type: AuthMethodType
     r"""Type of authentication method:
     - `password`: Email/password authentication
     - `otp`: One-time password via email (6-digit, expires in 10 minutes)
@@ -49,7 +49,7 @@ class AuthMethodTypedDict(TypedDict):
 class AuthMethod(BaseModel):
     r"""Authentication method configuration"""
 
-    type: Type
+    type: AuthMethodType
     r"""Type of authentication method:
     - `password`: Email/password authentication
     - `otp`: One-time password via email (6-digit, expires in 10 minutes)

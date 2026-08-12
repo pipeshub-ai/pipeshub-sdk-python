@@ -5,14 +5,29 @@ from .agentcreateresponseknowledge import (
     AgentCreateResponseKnowledge,
     AgentCreateResponseKnowledgeTypedDict,
 )
+from .agentcreateresponsemcpserver import (
+    AgentCreateResponseMcpServer,
+    AgentCreateResponseMcpServerTypedDict,
+)
+from .agentcreateresponseskill import (
+    AgentCreateResponseSkill,
+    AgentCreateResponseSkillTypedDict,
+)
 from .agentcreateresponsetoolset import (
     AgentCreateResponseToolset,
     AgentCreateResponseToolsetTypedDict,
 )
-from pipeshub_sdk.types import BaseModel, Nullable, UNSET_SENTINEL
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+    UnrecognizedStr,
+)
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -48,6 +63,19 @@ class AgentCreateResponseAgentWebSearch(BaseModel):
         return m
 
 
+AgentCreateResponseAgentDefaultReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+
+
 class AgentCreateResponseAgentTypedDict(TypedDict):
     key: str
     name: str
@@ -66,7 +94,13 @@ class AgentCreateResponseAgentTypedDict(TypedDict):
     updated_at_timestamp: int
     is_deleted: bool
     toolsets: List[AgentCreateResponseToolsetTypedDict]
+    mcp_servers: List[AgentCreateResponseMcpServerTypedDict]
     knowledge: List[AgentCreateResponseKnowledgeTypedDict]
+    skills: List[AgentCreateResponseSkillTypedDict]
+    default_reasoning_effort: NotRequired[
+        Nullable[AgentCreateResponseAgentDefaultReasoningEffort]
+    ]
+    r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
 
 class AgentCreateResponseAgent(BaseModel):
@@ -106,19 +140,44 @@ class AgentCreateResponseAgent(BaseModel):
 
     toolsets: List[AgentCreateResponseToolset]
 
+    mcp_servers: Annotated[
+        List[AgentCreateResponseMcpServer], pydantic.Field(alias="mcpServers")
+    ]
+
     knowledge: List[AgentCreateResponseKnowledge]
+
+    skills: List[AgentCreateResponseSkill]
+
+    default_reasoning_effort: Annotated[
+        OptionalNullable[AgentCreateResponseAgentDefaultReasoningEffort],
+        pydantic.Field(alias="defaultReasoningEffort"),
+    ] = UNSET
+    r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
+        optional_fields = set(["defaultReasoningEffort"])
+        nullable_fields = set(
+            ["instructions", "webSearch", "defaultReasoningEffort", "updatedBy"]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k)
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                m[k] = val
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
 
         return m
 

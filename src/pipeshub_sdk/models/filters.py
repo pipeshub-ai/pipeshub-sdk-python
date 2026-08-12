@@ -19,16 +19,13 @@ class FiltersTypedDict(TypedDict):
 
     apps: NotRequired[List[str]]
     r"""Connector instance ids to scope retrieval for this turn. Each element
-    must be a UUID (connector instance id, record-group id, etc.) or the
-    org knowledge-base collection sentinel `knowledgeBase_<orgId>`
-    (pattern `knowledgeBase_[a-zA-Z0-9_-]+`). Gateway validation matches
-    Zod `appOrKbIdSchema`.
+    must be a valid UUID (connector app id, KB app id, record-group id, etc.).
+    Gateway validation matches Zod `appOrKbIdSchema`.
 
     """
     kb: NotRequired[List[str]]
-    r"""Knowledge-base / record-group ids to scope retrieval for this turn.
-    Each element uses the same accepted formats as `apps`: a UUID or
-    `knowledgeBase_<orgId>` (pattern `knowledgeBase_[a-zA-Z0-9_-]+`).
+    r"""Knowledge-base app ids to scope retrieval for this turn.
+    Each element must be a valid UUID.
 
     """
 
@@ -45,17 +42,14 @@ class Filters(BaseModel):
 
     apps: Optional[List[str]] = None
     r"""Connector instance ids to scope retrieval for this turn. Each element
-    must be a UUID (connector instance id, record-group id, etc.) or the
-    org knowledge-base collection sentinel `knowledgeBase_<orgId>`
-    (pattern `knowledgeBase_[a-zA-Z0-9_-]+`). Gateway validation matches
-    Zod `appOrKbIdSchema`.
+    must be a valid UUID (connector app id, KB app id, record-group id, etc.).
+    Gateway validation matches Zod `appOrKbIdSchema`.
 
     """
 
     kb: Optional[List[str]] = None
-    r"""Knowledge-base / record-group ids to scope retrieval for this turn.
-    Each element uses the same accepted formats as `apps`: a UUID or
-    `knowledgeBase_<orgId>` (pattern `knowledgeBase_[a-zA-Z0-9_-]+`).
+    r"""Knowledge-base app ids to scope retrieval for this turn.
+    Each element must be a valid UUID.
 
     """
 

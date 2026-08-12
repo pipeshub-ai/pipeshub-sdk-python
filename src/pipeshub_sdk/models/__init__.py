@@ -13,18 +13,29 @@ if TYPE_CHECKING:
         ActivateOAuthAppResponse,
         ActivateOAuthAppResponseTypedDict,
     )
-    from .addmessagerequest import (
-        AddMessageRequest,
-        AddMessageRequestChatMode,
-        AddMessageRequestTypedDict,
-    )
     from .addmessagestreamop import (
         AddMessageStreamRequest,
         AddMessageStreamRequestTypedDict,
     )
     from .address import Address, AddressTypedDict
+    from .adminlistpersonalaccesstokensop import (
+        AdminListPersonalAccessTokensRequest,
+        AdminListPersonalAccessTokensRequestTypedDict,
+    )
+    from .adminpatlistitem import AdminPatListItem, AdminPatListItemTypedDict
+    from .adminpatlistresponse import (
+        AdminPatListResponse,
+        AdminPatListResponsePagination,
+        AdminPatListResponsePaginationTypedDict,
+        AdminPatListResponseTypedDict,
+    )
+    from .adminrevokepersonalaccesstokenop import (
+        AdminRevokePersonalAccessTokenRequest,
+        AdminRevokePersonalAccessTokenRequestTypedDict,
+    )
     from .agent import (
         Agent,
+        AgentDefaultReasoningEffort,
         AgentTypedDict,
         AgentWebSearch,
         AgentWebSearchTypedDict,
@@ -36,6 +47,7 @@ if TYPE_CHECKING:
     from .agentaddmessagestreamrequest import (
         AgentAddMessageStreamRequest,
         AgentAddMessageStreamRequestChatMode,
+        AgentAddMessageStreamRequestProtocol,
         AgentAddMessageStreamRequestTypedDict,
     )
     from .agentarchivedconversationgroup import (
@@ -54,6 +66,7 @@ if TYPE_CHECKING:
         AgentArchivedGroupsResponse,
         AgentArchivedGroupsResponseTypedDict,
     )
+    from .agentcapabilities import AgentCapabilities, AgentCapabilitiesTypedDict
     from .agentconversationarchivemeta import (
         AgentConversationArchiveMeta,
         AgentConversationArchiveMetaTypedDict,
@@ -89,8 +102,6 @@ if TYPE_CHECKING:
         AgentConversationDetailMessageMetadataTypedDict,
         AgentConversationDetailMessageReferenceDatum,
         AgentConversationDetailMessageReferenceDatumTypedDict,
-        AgentConversationDetailMessageTool,
-        AgentConversationDetailMessageToolTypedDict,
         AgentConversationDetailMessageTypedDict,
         Confidence,
     )
@@ -153,7 +164,11 @@ if TYPE_CHECKING:
         AgentCreateModelEntryUnion,
         AgentCreateModelEntryUnionTypedDict,
     )
-    from .agentcreaterequest import AgentCreateRequest, AgentCreateRequestTypedDict
+    from .agentcreaterequest import (
+        AgentCreateRequest,
+        AgentCreateRequestDefaultReasoningEffort,
+        AgentCreateRequestTypedDict,
+    )
     from .agentcreateresponse import (
         AgentCreateResponse,
         AgentCreateResponseStatus,
@@ -161,6 +176,7 @@ if TYPE_CHECKING:
     )
     from .agentcreateresponseagent import (
         AgentCreateResponseAgent,
+        AgentCreateResponseAgentDefaultReasoningEffort,
         AgentCreateResponseAgentTypedDict,
         AgentCreateResponseAgentWebSearch,
         AgentCreateResponseAgentWebSearchTypedDict,
@@ -170,6 +186,18 @@ if TYPE_CHECKING:
         AgentCreateResponseKnowledgeFilters,
         AgentCreateResponseKnowledgeFiltersTypedDict,
         AgentCreateResponseKnowledgeTypedDict,
+    )
+    from .agentcreateresponsemcpserver import (
+        AgentCreateResponseMcpServer,
+        AgentCreateResponseMcpServerTypedDict,
+    )
+    from .agentcreateresponsemcpservertool import (
+        AgentCreateResponseMcpServerTool,
+        AgentCreateResponseMcpServerToolTypedDict,
+    )
+    from .agentcreateresponseskill import (
+        AgentCreateResponseSkill,
+        AgentCreateResponseSkillTypedDict,
     )
     from .agentcreateresponsetool import (
         AgentCreateResponseTool,
@@ -203,6 +231,7 @@ if TYPE_CHECKING:
     )
     from .agentlistitem import (
         AgentListItem,
+        AgentListItemDefaultReasoningEffort,
         AgentListItemTypedDict,
         AgentListItemWebSearch,
         AgentListItemWebSearchTypedDict,
@@ -214,14 +243,26 @@ if TYPE_CHECKING:
         AgentMessageStreamSSEEventEvent,
         AgentMessageStreamSSEEventTypedDict,
     )
+    from .agentregeneraterequest import (
+        AgentRegenerateRequest,
+        AgentRegenerateRequestChatMode,
+        AgentRegenerateRequestProtocol,
+        AgentRegenerateRequestTypedDict,
+    )
     from .agentregeneratesseevent import (
         AgentRegenerateSSEEvent,
         AgentRegenerateSSEEventEvent,
         AgentRegenerateSSEEventTypedDict,
     )
+    from .agentskill import AgentSkill, AgentSkillTypedDict
+    from .agentskillassignment import (
+        AgentSkillAssignment,
+        AgentSkillAssignmentTypedDict,
+    )
     from .agentstreamcreateconversationrequest import (
         AgentStreamCreateConversationRequest,
         AgentStreamCreateConversationRequestChatMode,
+        AgentStreamCreateConversationRequestProtocol,
         AgentStreamCreateConversationRequestTypedDict,
     )
     from .agentstreamsseevent import (
@@ -229,7 +270,11 @@ if TYPE_CHECKING:
         AgentStreamSSEEventEvent,
         AgentStreamSSEEventTypedDict,
     )
-    from .agentupdaterequest import AgentUpdateRequest, AgentUpdateRequestTypedDict
+    from .agentupdaterequest import (
+        AgentUpdateRequest,
+        AgentUpdateRequestDefaultReasoningEffort,
+        AgentUpdateRequestTypedDict,
+    )
     from .agentupdateresponse import (
         AgentUpdateResponse,
         AgentUpdateResponseStatus,
@@ -263,16 +308,6 @@ if TYPE_CHECKING:
         ArchiveSearchResponseTypedDict,
         ArchiveSearchStatus,
     )
-    from .assistantmessagestreamsseevent import (
-        AssistantMessageStreamSSEEvent,
-        AssistantMessageStreamSSEEventEvent,
-        AssistantMessageStreamSSEEventTypedDict,
-    )
-    from .assistantstreamsseevent import (
-        AssistantStreamSSEEvent,
-        AssistantStreamSSEEventEvent,
-        AssistantStreamSSEEventTypedDict,
-    )
     from .authconfig import AuthConfig, AuthConfigTypedDict
     from .authenticatedpasswordresetresponse import (
         AuthenticatedPasswordResetResponse,
@@ -302,7 +337,7 @@ if TYPE_CHECKING:
         AuthenticateResponse,
         AuthenticateResponseTypedDict,
     )
-    from .authmethod import AuthMethod, AuthMethodTypedDict, Type
+    from .authmethod import AuthMethod, AuthMethodType, AuthMethodTypedDict
     from .authproviderazureadpublicconfig import (
         AuthProviderAzureAdPublicConfig,
         AuthProviderAzureAdPublicConfigTypedDict,
@@ -346,18 +381,35 @@ if TYPE_CHECKING:
         ModelInfo,
         ModelInfoTypedDict,
     )
+    from .conversationmessagestreamrequest import (
+        ConversationMessageStreamRequest,
+        ConversationMessageStreamRequestChatMode,
+        ConversationMessageStreamRequestProtocol,
+        ConversationMessageStreamRequestTypedDict,
+    )
+    from .conversationmessagestreamsseevent import (
+        ConversationMessageStreamSSEEvent,
+        ConversationMessageStreamSSEEventEvent,
+        ConversationMessageStreamSSEEventTypedDict,
+    )
     from .conversationmodelinfo import (
         ConversationModelInfo,
         ConversationModelInfoTypedDict,
     )
+    from .conversationstreamrequest import (
+        ConversationStreamRequest,
+        ConversationStreamRequestChatMode,
+        ConversationStreamRequestProtocol,
+        ConversationStreamRequestTypedDict,
+    )
+    from .conversationstreamsseevent import (
+        ConversationStreamSSEEvent,
+        ConversationStreamSSEEventEvent,
+        ConversationStreamSSEEventTypedDict,
+    )
     from .conversationtitleupdaterequest import (
         ConversationTitleUpdateRequest,
         ConversationTitleUpdateRequestTypedDict,
-    )
-    from .createconversationrequest import (
-        CreateConversationRequest,
-        CreateConversationRequestChatMode,
-        CreateConversationRequestTypedDict,
     )
     from .createfolderop import (
         CreateFolderRequest,
@@ -378,6 +430,15 @@ if TYPE_CHECKING:
         CreateOAuthAppResponse,
         CreateOAuthAppResponseTypedDict,
     )
+    from .createpatrequest import (
+        CreatePatRequest,
+        CreatePatRequestTypedDict,
+        ExpiryDays,
+        ExpiryDaysEnum,
+        ExpiryDaysNever,
+        ExpiryDaysTypedDict,
+    )
+    from .createpatresponse import CreatePatResponse, CreatePatResponseTypedDict
     from .deleteagentconversationbyidop import (
         DeleteAgentConversationByIDRequest,
         DeleteAgentConversationByIDRequestTypedDict,
@@ -804,6 +865,14 @@ if TYPE_CHECKING:
         Topic,
         TopicTypedDict,
     )
+    from .getrecordcontentop import (
+        GetRecordContentRequest,
+        GetRecordContentRequestTypedDict,
+    )
+    from .getrecordcontentresponseschema import (
+        GetRecordContentResponseSchema,
+        GetRecordContentResponseSchemaTypedDict,
+    )
     from .getsearchbyidop import (
         GetSearchByIDCodeValidationError,
         GetSearchByIDErrorHTTPForbidden,
@@ -849,6 +918,18 @@ if TYPE_CHECKING:
     from .knowledgebasemoverecordresponse import (
         KnowledgeBaseMoveRecordResponse,
         KnowledgeBaseMoveRecordResponseTypedDict,
+    )
+    from .knowledgegraphlookupmatchschema import (
+        KnowledgeGraphLookupMatchSchema,
+        KnowledgeGraphLookupMatchSchemaTypedDict,
+    )
+    from .knowledgegraphnoderefschema import (
+        KnowledgeGraphNodeRefSchema,
+        KnowledgeGraphNodeRefSchemaTypedDict,
+    )
+    from .knowledgegraphnoderowschema import (
+        KnowledgeGraphNodeRowSchema,
+        KnowledgeGraphNodeRowSchemaTypedDict,
     )
     from .knowledgehubnode import (
         KnowledgeHubNode,
@@ -923,6 +1004,21 @@ if TYPE_CHECKING:
         ListOAuthAppTokensRequest,
         ListOAuthAppTokensRequestTypedDict,
     )
+    from .listpatresponse import ListPatResponse, ListPatResponseTypedDict
+    from .lookuprecordbyidentifierop import (
+        LookupRecordByIdentifierRequest,
+        LookupRecordByIdentifierRequestTypedDict,
+    )
+    from .lookuprecordresponseschema import (
+        LookupRecordResponseSchema,
+        LookupRecordResponseSchemaTypedDict,
+    )
+    from .mcpserver import (
+        McpServer,
+        McpServerTool,
+        McpServerToolTypedDict,
+        McpServerTypedDict,
+    )
     from .message import (
         Message,
         MessageContentFormat,
@@ -931,8 +1027,6 @@ if TYPE_CHECKING:
         MessageMetadataTypedDict,
         MessageReferenceDatum,
         MessageReferenceDatumTypedDict,
-        MessageTool,
-        MessageToolTypedDict,
         MessageTypedDict,
     )
     from .messagefeedback import (
@@ -975,8 +1069,31 @@ if TYPE_CHECKING:
         Meta,
         MetaTypedDict,
     )
+    from .messagepart import (
+        MessagePart,
+        MessagePartStatus,
+        MessagePartType,
+        MessagePartTypedDict,
+    )
+    from .messagereasoningturn import (
+        MessageReasoningTurn,
+        MessageReasoningTurnTypedDict,
+    )
+    from .messagetoolcall import MessageToolCall, MessageToolCallTypedDict
     from .modeltype import ModelType
     from .moverecordop import MoveRecordRequest, MoveRecordRequestTypedDict
+    from .navigateknowledgegraphop import (
+        NavigateKnowledgeGraphRequest,
+        NavigateKnowledgeGraphRequestTypedDict,
+    )
+    from .navigateknowledgegraphresponseschema import (
+        NavigateKnowledgeGraphResponseSchema,
+        NavigateKnowledgeGraphResponseSchemaCurrent,
+        NavigateKnowledgeGraphResponseSchemaCurrentTypedDict,
+        NavigateKnowledgeGraphResponseSchemaPagination,
+        NavigateKnowledgeGraphResponseSchemaPaginationTypedDict,
+        NavigateKnowledgeGraphResponseSchemaTypedDict,
+    )
     from .oauthapplistresponse import (
         OAuthAppListResponse,
         OAuthAppListResponsePagination,
@@ -1053,6 +1170,12 @@ if TYPE_CHECKING:
     )
     from .otpcredentials import OtpCredentials, OtpCredentialsTypedDict
     from .passwordcredentials import PasswordCredentials, PasswordCredentialsTypedDict
+    from .patlistitem import PatListItem, PatListItemTypedDict
+    from .patscopeslistresponse import (
+        PatScopesListResponse,
+        PatScopesListResponseTypedDict,
+    )
+    from .patwithsecret import PatWithSecret, PatWithSecretTypedDict
     from .persistedsemanticsearch import (
         PersistedSemanticSearch,
         PersistedSemanticSearchTypedDict,
@@ -1076,6 +1199,7 @@ if TYPE_CHECKING:
     )
     from .record import (
         IndexingStatus,
+        ParsingStatus,
         Record,
         RecordFileRecord,
         RecordFileRecordTypedDict,
@@ -1107,7 +1231,11 @@ if TYPE_CHECKING:
         RegenerateOAuthAppSecretResponse,
         RegenerateOAuthAppSecretResponseTypedDict,
     )
-    from .regeneraterequest import RegenerateRequest, RegenerateRequestTypedDict
+    from .regeneraterequest import (
+        RegenerateRequest,
+        RegenerateRequestProtocol,
+        RegenerateRequestTypedDict,
+    )
     from .reindexrecordgroupop import (
         ReindexRecordGroupRequest,
         ReindexRecordGroupRequestTypedDict,
@@ -1136,6 +1264,12 @@ if TYPE_CHECKING:
         RevokeAllOAuthAppTokensRequestTypedDict,
         RevokeAllOAuthAppTokensResponse,
         RevokeAllOAuthAppTokensResponseTypedDict,
+    )
+    from .revokepatrequest import RevokePatRequest, RevokePatRequestTypedDict
+    from .revokepatresponse import RevokePatResponse, RevokePatResponseTypedDict
+    from .revokepersonalaccesstokenop import (
+        RevokePersonalAccessTokenRequest,
+        RevokePersonalAccessTokenRequestTypedDict,
     )
     from .schemeoauth2 import SchemeOauth2, SchemeOauth2TypedDict
     from .searcharchivedconversationsop import (
@@ -1203,9 +1337,9 @@ if TYPE_CHECKING:
         SemanticSearchHistoryAppliedDateRangeTypedDict,
     )
     from .semanticsearchhistorydaterange import (
-        Current,
-        CurrentTypedDict,
         SemanticSearchHistoryDateRange,
+        SemanticSearchHistoryDateRangeCurrent,
+        SemanticSearchHistoryDateRangeCurrentTypedDict,
         SemanticSearchHistoryDateRangeTypedDict,
     )
     from .semanticsearchhistoryfilters import (
@@ -1464,16 +1598,24 @@ __all__ = [
     "ActivateOAuthAppRequestTypedDict",
     "ActivateOAuthAppResponse",
     "ActivateOAuthAppResponseTypedDict",
-    "AddMessageRequest",
-    "AddMessageRequestChatMode",
-    "AddMessageRequestTypedDict",
     "AddMessageStreamRequest",
     "AddMessageStreamRequestTypedDict",
     "Address",
     "AddressTypedDict",
+    "AdminListPersonalAccessTokensRequest",
+    "AdminListPersonalAccessTokensRequestTypedDict",
+    "AdminPatListItem",
+    "AdminPatListItemTypedDict",
+    "AdminPatListResponse",
+    "AdminPatListResponsePagination",
+    "AdminPatListResponsePaginationTypedDict",
+    "AdminPatListResponseTypedDict",
+    "AdminRevokePersonalAccessTokenRequest",
+    "AdminRevokePersonalAccessTokenRequestTypedDict",
     "Agent",
     "AgentAddMessageStreamRequest",
     "AgentAddMessageStreamRequestChatMode",
+    "AgentAddMessageStreamRequestProtocol",
     "AgentAddMessageStreamRequestTypedDict",
     "AgentArchivedConversationGroup",
     "AgentArchivedConversationGroupTypedDict",
@@ -1483,6 +1625,8 @@ __all__ = [
     "AgentArchivedConversationSummaryTypedDict",
     "AgentArchivedGroupsResponse",
     "AgentArchivedGroupsResponseTypedDict",
+    "AgentCapabilities",
+    "AgentCapabilitiesTypedDict",
     "AgentConversationArchiveMeta",
     "AgentConversationArchiveMetaTypedDict",
     "AgentConversationArchiveResponse",
@@ -1504,8 +1648,6 @@ __all__ = [
     "AgentConversationDetailMessageMetadataTypedDict",
     "AgentConversationDetailMessageReferenceDatum",
     "AgentConversationDetailMessageReferenceDatumTypedDict",
-    "AgentConversationDetailMessageTool",
-    "AgentConversationDetailMessageToolTypedDict",
     "AgentConversationDetailMessageTypedDict",
     "AgentConversationDetailMeta",
     "AgentConversationDetailMetaTypedDict",
@@ -1545,9 +1687,11 @@ __all__ = [
     "AgentCreateModelEntryUnion",
     "AgentCreateModelEntryUnionTypedDict",
     "AgentCreateRequest",
+    "AgentCreateRequestDefaultReasoningEffort",
     "AgentCreateRequestTypedDict",
     "AgentCreateResponse",
     "AgentCreateResponseAgent",
+    "AgentCreateResponseAgentDefaultReasoningEffort",
     "AgentCreateResponseAgentTypedDict",
     "AgentCreateResponseAgentWebSearch",
     "AgentCreateResponseAgentWebSearchTypedDict",
@@ -1555,6 +1699,12 @@ __all__ = [
     "AgentCreateResponseKnowledgeFilters",
     "AgentCreateResponseKnowledgeFiltersTypedDict",
     "AgentCreateResponseKnowledgeTypedDict",
+    "AgentCreateResponseMcpServer",
+    "AgentCreateResponseMcpServerTool",
+    "AgentCreateResponseMcpServerToolTypedDict",
+    "AgentCreateResponseMcpServerTypedDict",
+    "AgentCreateResponseSkill",
+    "AgentCreateResponseSkillTypedDict",
     "AgentCreateResponseStatus",
     "AgentCreateResponseTool",
     "AgentCreateResponseToolTypedDict",
@@ -1572,6 +1722,7 @@ __all__ = [
     "AgentCreateWebSearchTypedDict",
     "AgentCreateWebSearchUnion",
     "AgentCreateWebSearchUnionTypedDict",
+    "AgentDefaultReasoningEffort",
     "AgentDeleteResponse",
     "AgentDeleteResponseStatus",
     "AgentDeleteResponseTypedDict",
@@ -1580,6 +1731,7 @@ __all__ = [
     "AgentKnowledgeFiltersParsed",
     "AgentKnowledgeFiltersParsedTypedDict",
     "AgentListItem",
+    "AgentListItemDefaultReasoningEffort",
     "AgentListItemTypedDict",
     "AgentListItemWebSearch",
     "AgentListItemWebSearchTypedDict",
@@ -1590,17 +1742,27 @@ __all__ = [
     "AgentMessageStreamSSEEvent",
     "AgentMessageStreamSSEEventEvent",
     "AgentMessageStreamSSEEventTypedDict",
+    "AgentRegenerateRequest",
+    "AgentRegenerateRequestChatMode",
+    "AgentRegenerateRequestProtocol",
+    "AgentRegenerateRequestTypedDict",
     "AgentRegenerateSSEEvent",
     "AgentRegenerateSSEEventEvent",
     "AgentRegenerateSSEEventTypedDict",
+    "AgentSkill",
+    "AgentSkillAssignment",
+    "AgentSkillAssignmentTypedDict",
+    "AgentSkillTypedDict",
     "AgentStreamCreateConversationRequest",
     "AgentStreamCreateConversationRequestChatMode",
+    "AgentStreamCreateConversationRequestProtocol",
     "AgentStreamCreateConversationRequestTypedDict",
     "AgentStreamSSEEvent",
     "AgentStreamSSEEventEvent",
     "AgentStreamSSEEventTypedDict",
     "AgentTypedDict",
     "AgentUpdateRequest",
+    "AgentUpdateRequestDefaultReasoningEffort",
     "AgentUpdateRequestTypedDict",
     "AgentUpdateResponse",
     "AgentUpdateResponseStatus",
@@ -1632,15 +1794,10 @@ __all__ = [
     "ArchiveSearchResponse",
     "ArchiveSearchResponseTypedDict",
     "ArchiveSearchStatus",
-    "AssistantMessageStreamSSEEvent",
-    "AssistantMessageStreamSSEEventEvent",
-    "AssistantMessageStreamSSEEventTypedDict",
-    "AssistantStreamSSEEvent",
-    "AssistantStreamSSEEventEvent",
-    "AssistantStreamSSEEventTypedDict",
     "AuthConfig",
     "AuthConfigTypedDict",
     "AuthMethod",
+    "AuthMethodType",
     "AuthMethodTypedDict",
     "AuthProviderAzureAdPublicConfig",
     "AuthProviderAzureAdPublicConfigTypedDict",
@@ -1694,17 +1851,28 @@ __all__ = [
     "ConversationListItemSharedWithTypedDict",
     "ConversationListItemStatus",
     "ConversationListItemTypedDict",
+    "ConversationMessageStreamRequest",
+    "ConversationMessageStreamRequestChatMode",
+    "ConversationMessageStreamRequestProtocol",
+    "ConversationMessageStreamRequestTypedDict",
+    "ConversationMessageStreamSSEEvent",
+    "ConversationMessageStreamSSEEventEvent",
+    "ConversationMessageStreamSSEEventTypedDict",
     "ConversationModelInfo",
     "ConversationModelInfoTypedDict",
     "ConversationPagination",
     "ConversationPaginationTypedDict",
+    "ConversationStreamRequest",
+    "ConversationStreamRequestChatMode",
+    "ConversationStreamRequestProtocol",
+    "ConversationStreamRequestTypedDict",
+    "ConversationStreamSSEEvent",
+    "ConversationStreamSSEEventEvent",
+    "ConversationStreamSSEEventTypedDict",
     "ConversationTitleUpdateRequest",
     "ConversationTitleUpdateRequestTypedDict",
     "Counts",
     "CountsTypedDict",
-    "CreateConversationRequest",
-    "CreateConversationRequestChatMode",
-    "CreateConversationRequestTypedDict",
     "CreateFolderRequest",
     "CreateFolderRequestBody",
     "CreateFolderRequestBodyTypedDict",
@@ -1716,14 +1884,16 @@ __all__ = [
     "CreateOAuthAppRequestTypedDict",
     "CreateOAuthAppResponse",
     "CreateOAuthAppResponseTypedDict",
+    "CreatePatRequest",
+    "CreatePatRequestTypedDict",
+    "CreatePatResponse",
+    "CreatePatResponseTypedDict",
     "CreatedAt",
     "CreatedAtTypedDict",
     "Credentials",
     "CredentialsTypedDict",
-    "Current",
     "CurrentNode",
     "CurrentNodeTypedDict",
-    "CurrentTypedDict",
     "DateFilters",
     "DateFiltersTypedDict",
     "DeleteAgentConversationByIDRequest",
@@ -1770,6 +1940,10 @@ __all__ = [
     "ErrorEnum",
     "ErrorResponseError",
     "ErrorResponseErrorTypedDict",
+    "ExpiryDays",
+    "ExpiryDaysEnum",
+    "ExpiryDaysNever",
+    "ExpiryDaysTypedDict",
     "Filter",
     "FilterOption",
     "FilterOptionTypedDict",
@@ -2086,6 +2260,10 @@ __all__ = [
     "GetRecordByIDResponseSchemaRecord",
     "GetRecordByIDResponseSchemaRecordTypedDict",
     "GetRecordByIDResponseSchemaTypedDict",
+    "GetRecordContentRequest",
+    "GetRecordContentRequestTypedDict",
+    "GetRecordContentResponseSchema",
+    "GetRecordContentResponseSchemaTypedDict",
     "GetSearchByIDCodeValidationError",
     "GetSearchByIDErrorHTTPForbidden",
     "GetSearchByIDErrorHTTPForbiddenTypedDict",
@@ -2123,6 +2301,12 @@ __all__ = [
     "KnowledgeBaseMoveRecordRequestBodyTypedDict",
     "KnowledgeBaseMoveRecordResponse",
     "KnowledgeBaseMoveRecordResponseTypedDict",
+    "KnowledgeGraphLookupMatchSchema",
+    "KnowledgeGraphLookupMatchSchemaTypedDict",
+    "KnowledgeGraphNodeRefSchema",
+    "KnowledgeGraphNodeRefSchemaTypedDict",
+    "KnowledgeGraphNodeRowSchema",
+    "KnowledgeGraphNodeRowSchemaTypedDict",
     "KnowledgeHubNode",
     "KnowledgeHubNodeOrigin",
     "KnowledgeHubNodePermission",
@@ -2161,7 +2345,17 @@ __all__ = [
     "ListOAuthAppsRequest",
     "ListOAuthAppsRequestTypedDict",
     "ListOAuthAppsStatus",
+    "ListPatResponse",
+    "ListPatResponseTypedDict",
     "Location",
+    "LookupRecordByIdentifierRequest",
+    "LookupRecordByIdentifierRequestTypedDict",
+    "LookupRecordResponseSchema",
+    "LookupRecordResponseSchemaTypedDict",
+    "McpServer",
+    "McpServerTool",
+    "McpServerToolTypedDict",
+    "McpServerTypedDict",
     "Message",
     "MessageContentFormat",
     "MessageEnum",
@@ -2189,12 +2383,18 @@ __all__ = [
     "MessageMessageType",
     "MessageMetadata",
     "MessageMetadataTypedDict",
+    "MessagePart",
+    "MessagePartStatus",
+    "MessagePartType",
+    "MessagePartTypedDict",
     "MessageRange",
     "MessageRangeTypedDict",
+    "MessageReasoningTurn",
+    "MessageReasoningTurnTypedDict",
     "MessageReferenceDatum",
     "MessageReferenceDatumTypedDict",
-    "MessageTool",
-    "MessageToolTypedDict",
+    "MessageToolCall",
+    "MessageToolCallTypedDict",
     "MessageTypedDict",
     "Meta",
     "MetaTypedDict",
@@ -2213,6 +2413,14 @@ __all__ = [
     "ModelType",
     "MoveRecordRequest",
     "MoveRecordRequestTypedDict",
+    "NavigateKnowledgeGraphRequest",
+    "NavigateKnowledgeGraphRequestTypedDict",
+    "NavigateKnowledgeGraphResponseSchema",
+    "NavigateKnowledgeGraphResponseSchemaCurrent",
+    "NavigateKnowledgeGraphResponseSchemaCurrentTypedDict",
+    "NavigateKnowledgeGraphResponseSchemaPagination",
+    "NavigateKnowledgeGraphResponseSchemaPaginationTypedDict",
+    "NavigateKnowledgeGraphResponseSchemaTypedDict",
     "NodeType",
     "OAuthAppListResponse",
     "OAuthAppListResponsePagination",
@@ -2262,8 +2470,15 @@ __all__ = [
     "ParentNode",
     "ParentNodeTypedDict",
     "ParentType",
+    "ParsingStatus",
     "PasswordCredentials",
     "PasswordCredentialsTypedDict",
+    "PatListItem",
+    "PatListItemTypedDict",
+    "PatScopesListResponse",
+    "PatScopesListResponseTypedDict",
+    "PatWithSecret",
+    "PatWithSecretTypedDict",
     "Permissions",
     "PermissionsTypedDict",
     "PersistedSemanticSearch",
@@ -2311,6 +2526,7 @@ __all__ = [
     "RegenerateOAuthAppSecretResponse",
     "RegenerateOAuthAppSecretResponseTypedDict",
     "RegenerateRequest",
+    "RegenerateRequestProtocol",
     "RegenerateRequestTypedDict",
     "ReindexRecordGroupRequest",
     "ReindexRecordGroupRequestBody",
@@ -2331,6 +2547,12 @@ __all__ = [
     "RevokeAllOAuthAppTokensRequestTypedDict",
     "RevokeAllOAuthAppTokensResponse",
     "RevokeAllOAuthAppTokensResponseTypedDict",
+    "RevokePatRequest",
+    "RevokePatRequestTypedDict",
+    "RevokePatResponse",
+    "RevokePatResponseTypedDict",
+    "RevokePersonalAccessTokenRequest",
+    "RevokePersonalAccessTokenRequestTypedDict",
     "SSEEvent",
     "SSEEventEvent",
     "SSEEventTypedDict",
@@ -2386,6 +2608,8 @@ __all__ = [
     "SemanticSearchHistoryAppliedDateRange",
     "SemanticSearchHistoryAppliedDateRangeTypedDict",
     "SemanticSearchHistoryDateRange",
+    "SemanticSearchHistoryDateRangeCurrent",
+    "SemanticSearchHistoryDateRangeCurrentTypedDict",
     "SemanticSearchHistoryDateRangeTypedDict",
     "SemanticSearchHistoryFilterToggle",
     "SemanticSearchHistoryFilterToggleTypedDict",
@@ -2464,7 +2688,6 @@ __all__ = [
     "ToolsetTypedDict",
     "Topic",
     "TopicTypedDict",
-    "Type",
     "UnarchiveAgentConversationRequest",
     "UnarchiveAgentConversationRequestTypedDict",
     "UnarchiveConversationMeta",
@@ -2582,14 +2805,22 @@ _dynamic_imports: dict[str, str] = {
     "ActivateOAuthAppRequestTypedDict": ".activateoauthappop",
     "ActivateOAuthAppResponse": ".activateoauthappresponse",
     "ActivateOAuthAppResponseTypedDict": ".activateoauthappresponse",
-    "AddMessageRequest": ".addmessagerequest",
-    "AddMessageRequestChatMode": ".addmessagerequest",
-    "AddMessageRequestTypedDict": ".addmessagerequest",
     "AddMessageStreamRequest": ".addmessagestreamop",
     "AddMessageStreamRequestTypedDict": ".addmessagestreamop",
     "Address": ".address",
     "AddressTypedDict": ".address",
+    "AdminListPersonalAccessTokensRequest": ".adminlistpersonalaccesstokensop",
+    "AdminListPersonalAccessTokensRequestTypedDict": ".adminlistpersonalaccesstokensop",
+    "AdminPatListItem": ".adminpatlistitem",
+    "AdminPatListItemTypedDict": ".adminpatlistitem",
+    "AdminPatListResponse": ".adminpatlistresponse",
+    "AdminPatListResponsePagination": ".adminpatlistresponse",
+    "AdminPatListResponsePaginationTypedDict": ".adminpatlistresponse",
+    "AdminPatListResponseTypedDict": ".adminpatlistresponse",
+    "AdminRevokePersonalAccessTokenRequest": ".adminrevokepersonalaccesstokenop",
+    "AdminRevokePersonalAccessTokenRequestTypedDict": ".adminrevokepersonalaccesstokenop",
     "Agent": ".agent",
+    "AgentDefaultReasoningEffort": ".agent",
     "AgentTypedDict": ".agent",
     "AgentWebSearch": ".agent",
     "AgentWebSearchTypedDict": ".agent",
@@ -2599,6 +2830,7 @@ _dynamic_imports: dict[str, str] = {
     "Model2TypedDict": ".agent",
     "AgentAddMessageStreamRequest": ".agentaddmessagestreamrequest",
     "AgentAddMessageStreamRequestChatMode": ".agentaddmessagestreamrequest",
+    "AgentAddMessageStreamRequestProtocol": ".agentaddmessagestreamrequest",
     "AgentAddMessageStreamRequestTypedDict": ".agentaddmessagestreamrequest",
     "AgentArchivedConversationGroup": ".agentarchivedconversationgroup",
     "AgentArchivedConversationGroupTypedDict": ".agentarchivedconversationgroup",
@@ -2608,6 +2840,8 @@ _dynamic_imports: dict[str, str] = {
     "AgentArchivedConversationSummaryTypedDict": ".agentarchivedconversationsummary",
     "AgentArchivedGroupsResponse": ".agentarchivedgroupsresponse",
     "AgentArchivedGroupsResponseTypedDict": ".agentarchivedgroupsresponse",
+    "AgentCapabilities": ".agentcapabilities",
+    "AgentCapabilitiesTypedDict": ".agentcapabilities",
     "AgentConversationArchiveMeta": ".agentconversationarchivemeta",
     "AgentConversationArchiveMetaTypedDict": ".agentconversationarchivemeta",
     "AgentConversationArchiveResponse": ".agentconversationarchiveresponse",
@@ -2632,8 +2866,6 @@ _dynamic_imports: dict[str, str] = {
     "AgentConversationDetailMessageMetadataTypedDict": ".agentconversationdetailmessage",
     "AgentConversationDetailMessageReferenceDatum": ".agentconversationdetailmessage",
     "AgentConversationDetailMessageReferenceDatumTypedDict": ".agentconversationdetailmessage",
-    "AgentConversationDetailMessageTool": ".agentconversationdetailmessage",
-    "AgentConversationDetailMessageToolTypedDict": ".agentconversationdetailmessage",
     "AgentConversationDetailMessageTypedDict": ".agentconversationdetailmessage",
     "Confidence": ".agentconversationdetailmessage",
     "AgentConversationDetailMessageCitation": ".agentconversationdetailmessagecitation",
@@ -2674,11 +2906,13 @@ _dynamic_imports: dict[str, str] = {
     "AgentCreateModelEntryUnion": ".agentcreatemodelentry_union",
     "AgentCreateModelEntryUnionTypedDict": ".agentcreatemodelentry_union",
     "AgentCreateRequest": ".agentcreaterequest",
+    "AgentCreateRequestDefaultReasoningEffort": ".agentcreaterequest",
     "AgentCreateRequestTypedDict": ".agentcreaterequest",
     "AgentCreateResponse": ".agentcreateresponse",
     "AgentCreateResponseStatus": ".agentcreateresponse",
     "AgentCreateResponseTypedDict": ".agentcreateresponse",
     "AgentCreateResponseAgent": ".agentcreateresponseagent",
+    "AgentCreateResponseAgentDefaultReasoningEffort": ".agentcreateresponseagent",
     "AgentCreateResponseAgentTypedDict": ".agentcreateresponseagent",
     "AgentCreateResponseAgentWebSearch": ".agentcreateresponseagent",
     "AgentCreateResponseAgentWebSearchTypedDict": ".agentcreateresponseagent",
@@ -2686,6 +2920,12 @@ _dynamic_imports: dict[str, str] = {
     "AgentCreateResponseKnowledgeFilters": ".agentcreateresponseknowledge",
     "AgentCreateResponseKnowledgeFiltersTypedDict": ".agentcreateresponseknowledge",
     "AgentCreateResponseKnowledgeTypedDict": ".agentcreateresponseknowledge",
+    "AgentCreateResponseMcpServer": ".agentcreateresponsemcpserver",
+    "AgentCreateResponseMcpServerTypedDict": ".agentcreateresponsemcpserver",
+    "AgentCreateResponseMcpServerTool": ".agentcreateresponsemcpservertool",
+    "AgentCreateResponseMcpServerToolTypedDict": ".agentcreateresponsemcpservertool",
+    "AgentCreateResponseSkill": ".agentcreateresponseskill",
+    "AgentCreateResponseSkillTypedDict": ".agentcreateresponseskill",
     "AgentCreateResponseTool": ".agentcreateresponsetool",
     "AgentCreateResponseToolTypedDict": ".agentcreateresponsetool",
     "AgentCreateResponseToolset": ".agentcreateresponsetoolset",
@@ -2711,6 +2951,7 @@ _dynamic_imports: dict[str, str] = {
     "AgentKnowledgeFiltersParsed": ".agentknowledgefiltersparsed",
     "AgentKnowledgeFiltersParsedTypedDict": ".agentknowledgefiltersparsed",
     "AgentListItem": ".agentlistitem",
+    "AgentListItemDefaultReasoningEffort": ".agentlistitem",
     "AgentListItemTypedDict": ".agentlistitem",
     "AgentListItemWebSearch": ".agentlistitem",
     "AgentListItemWebSearchTypedDict": ".agentlistitem",
@@ -2721,16 +2962,26 @@ _dynamic_imports: dict[str, str] = {
     "AgentMessageStreamSSEEvent": ".agentmessagestreamsseevent",
     "AgentMessageStreamSSEEventEvent": ".agentmessagestreamsseevent",
     "AgentMessageStreamSSEEventTypedDict": ".agentmessagestreamsseevent",
+    "AgentRegenerateRequest": ".agentregeneraterequest",
+    "AgentRegenerateRequestChatMode": ".agentregeneraterequest",
+    "AgentRegenerateRequestProtocol": ".agentregeneraterequest",
+    "AgentRegenerateRequestTypedDict": ".agentregeneraterequest",
     "AgentRegenerateSSEEvent": ".agentregeneratesseevent",
     "AgentRegenerateSSEEventEvent": ".agentregeneratesseevent",
     "AgentRegenerateSSEEventTypedDict": ".agentregeneratesseevent",
+    "AgentSkill": ".agentskill",
+    "AgentSkillTypedDict": ".agentskill",
+    "AgentSkillAssignment": ".agentskillassignment",
+    "AgentSkillAssignmentTypedDict": ".agentskillassignment",
     "AgentStreamCreateConversationRequest": ".agentstreamcreateconversationrequest",
     "AgentStreamCreateConversationRequestChatMode": ".agentstreamcreateconversationrequest",
+    "AgentStreamCreateConversationRequestProtocol": ".agentstreamcreateconversationrequest",
     "AgentStreamCreateConversationRequestTypedDict": ".agentstreamcreateconversationrequest",
     "AgentStreamSSEEvent": ".agentstreamsseevent",
     "AgentStreamSSEEventEvent": ".agentstreamsseevent",
     "AgentStreamSSEEventTypedDict": ".agentstreamsseevent",
     "AgentUpdateRequest": ".agentupdaterequest",
+    "AgentUpdateRequestDefaultReasoningEffort": ".agentupdaterequest",
     "AgentUpdateRequestTypedDict": ".agentupdaterequest",
     "AgentUpdateResponse": ".agentupdateresponse",
     "AgentUpdateResponseStatus": ".agentupdateresponse",
@@ -2757,12 +3008,6 @@ _dynamic_imports: dict[str, str] = {
     "ArchiveSearchResponse": ".archivesearchop",
     "ArchiveSearchResponseTypedDict": ".archivesearchop",
     "ArchiveSearchStatus": ".archivesearchop",
-    "AssistantMessageStreamSSEEvent": ".assistantmessagestreamsseevent",
-    "AssistantMessageStreamSSEEventEvent": ".assistantmessagestreamsseevent",
-    "AssistantMessageStreamSSEEventTypedDict": ".assistantmessagestreamsseevent",
-    "AssistantStreamSSEEvent": ".assistantstreamsseevent",
-    "AssistantStreamSSEEventEvent": ".assistantstreamsseevent",
-    "AssistantStreamSSEEventTypedDict": ".assistantstreamsseevent",
     "AuthConfig": ".authconfig",
     "AuthConfigTypedDict": ".authconfig",
     "AuthenticatedPasswordResetResponse": ".authenticatedpasswordresetresponse",
@@ -2782,8 +3027,8 @@ _dynamic_imports: dict[str, str] = {
     "AuthenticateResponse": ".authenticateresponse",
     "AuthenticateResponseTypedDict": ".authenticateresponse",
     "AuthMethod": ".authmethod",
+    "AuthMethodType": ".authmethod",
     "AuthMethodTypedDict": ".authmethod",
-    "Type": ".authmethod",
     "AuthProviderAzureAdPublicConfig": ".authproviderazureadpublicconfig",
     "AuthProviderAzureAdPublicConfigTypedDict": ".authproviderazureadpublicconfig",
     "AuthProviderGooglePublicConfig": ".authprovidergooglepublicconfig",
@@ -2818,13 +3063,24 @@ _dynamic_imports: dict[str, str] = {
     "ConversationListItemTypedDict": ".conversationlistitem",
     "ModelInfo": ".conversationlistitem",
     "ModelInfoTypedDict": ".conversationlistitem",
+    "ConversationMessageStreamRequest": ".conversationmessagestreamrequest",
+    "ConversationMessageStreamRequestChatMode": ".conversationmessagestreamrequest",
+    "ConversationMessageStreamRequestProtocol": ".conversationmessagestreamrequest",
+    "ConversationMessageStreamRequestTypedDict": ".conversationmessagestreamrequest",
+    "ConversationMessageStreamSSEEvent": ".conversationmessagestreamsseevent",
+    "ConversationMessageStreamSSEEventEvent": ".conversationmessagestreamsseevent",
+    "ConversationMessageStreamSSEEventTypedDict": ".conversationmessagestreamsseevent",
     "ConversationModelInfo": ".conversationmodelinfo",
     "ConversationModelInfoTypedDict": ".conversationmodelinfo",
+    "ConversationStreamRequest": ".conversationstreamrequest",
+    "ConversationStreamRequestChatMode": ".conversationstreamrequest",
+    "ConversationStreamRequestProtocol": ".conversationstreamrequest",
+    "ConversationStreamRequestTypedDict": ".conversationstreamrequest",
+    "ConversationStreamSSEEvent": ".conversationstreamsseevent",
+    "ConversationStreamSSEEventEvent": ".conversationstreamsseevent",
+    "ConversationStreamSSEEventTypedDict": ".conversationstreamsseevent",
     "ConversationTitleUpdateRequest": ".conversationtitleupdaterequest",
     "ConversationTitleUpdateRequestTypedDict": ".conversationtitleupdaterequest",
-    "CreateConversationRequest": ".createconversationrequest",
-    "CreateConversationRequestChatMode": ".createconversationrequest",
-    "CreateConversationRequestTypedDict": ".createconversationrequest",
     "CreateFolderRequest": ".createfolderop",
     "CreateFolderRequestBody": ".createfolderop",
     "CreateFolderRequestBodyTypedDict": ".createfolderop",
@@ -2836,6 +3092,14 @@ _dynamic_imports: dict[str, str] = {
     "CreateOAuthAppRequestTypedDict": ".createoauthapprequest",
     "CreateOAuthAppResponse": ".createoauthappresponse",
     "CreateOAuthAppResponseTypedDict": ".createoauthappresponse",
+    "CreatePatRequest": ".createpatrequest",
+    "CreatePatRequestTypedDict": ".createpatrequest",
+    "ExpiryDays": ".createpatrequest",
+    "ExpiryDaysEnum": ".createpatrequest",
+    "ExpiryDaysNever": ".createpatrequest",
+    "ExpiryDaysTypedDict": ".createpatrequest",
+    "CreatePatResponse": ".createpatresponse",
+    "CreatePatResponseTypedDict": ".createpatresponse",
     "DeleteAgentConversationByIDRequest": ".deleteagentconversationbyidop",
     "DeleteAgentConversationByIDRequestTypedDict": ".deleteagentconversationbyidop",
     "DeleteAgentConversationChatAttachmentRequest": ".deleteagentconversationchatattachmentop",
@@ -3227,6 +3491,10 @@ _dynamic_imports: dict[str, str] = {
     "TicketRecordTypedDict": ".getrecordbyidresponseschema",
     "Topic": ".getrecordbyidresponseschema",
     "TopicTypedDict": ".getrecordbyidresponseschema",
+    "GetRecordContentRequest": ".getrecordcontentop",
+    "GetRecordContentRequestTypedDict": ".getrecordcontentop",
+    "GetRecordContentResponseSchema": ".getrecordcontentresponseschema",
+    "GetRecordContentResponseSchemaTypedDict": ".getrecordcontentresponseschema",
     "GetSearchByIDCodeValidationError": ".getsearchbyidop",
     "GetSearchByIDErrorHTTPForbidden": ".getsearchbyidop",
     "GetSearchByIDErrorHTTPForbiddenTypedDict": ".getsearchbyidop",
@@ -3263,6 +3531,12 @@ _dynamic_imports: dict[str, str] = {
     "KnowledgeBaseMoveRecordRequestBodyTypedDict": ".knowledgebasemoverecordrequestbody",
     "KnowledgeBaseMoveRecordResponse": ".knowledgebasemoverecordresponse",
     "KnowledgeBaseMoveRecordResponseTypedDict": ".knowledgebasemoverecordresponse",
+    "KnowledgeGraphLookupMatchSchema": ".knowledgegraphlookupmatchschema",
+    "KnowledgeGraphLookupMatchSchemaTypedDict": ".knowledgegraphlookupmatchschema",
+    "KnowledgeGraphNodeRefSchema": ".knowledgegraphnoderefschema",
+    "KnowledgeGraphNodeRefSchemaTypedDict": ".knowledgegraphnoderefschema",
+    "KnowledgeGraphNodeRowSchema": ".knowledgegraphnoderowschema",
+    "KnowledgeGraphNodeRowSchemaTypedDict": ".knowledgegraphnoderowschema",
     "KnowledgeHubNode": ".knowledgehubnode",
     "KnowledgeHubNodeOrigin": ".knowledgehubnode",
     "KnowledgeHubNodePermission": ".knowledgehubnode",
@@ -3318,6 +3592,16 @@ _dynamic_imports: dict[str, str] = {
     "ListOAuthAppsStatus": ".listoauthappsop",
     "ListOAuthAppTokensRequest": ".listoauthapptokensop",
     "ListOAuthAppTokensRequestTypedDict": ".listoauthapptokensop",
+    "ListPatResponse": ".listpatresponse",
+    "ListPatResponseTypedDict": ".listpatresponse",
+    "LookupRecordByIdentifierRequest": ".lookuprecordbyidentifierop",
+    "LookupRecordByIdentifierRequestTypedDict": ".lookuprecordbyidentifierop",
+    "LookupRecordResponseSchema": ".lookuprecordresponseschema",
+    "LookupRecordResponseSchemaTypedDict": ".lookuprecordresponseschema",
+    "McpServer": ".mcpserver",
+    "McpServerTool": ".mcpserver",
+    "McpServerToolTypedDict": ".mcpserver",
+    "McpServerTypedDict": ".mcpserver",
     "Message": ".message",
     "MessageContentFormat": ".message",
     "MessageMessageType": ".message",
@@ -3325,8 +3609,6 @@ _dynamic_imports: dict[str, str] = {
     "MessageMetadataTypedDict": ".message",
     "MessageReferenceDatum": ".message",
     "MessageReferenceDatumTypedDict": ".message",
-    "MessageTool": ".message",
-    "MessageToolTypedDict": ".message",
     "MessageTypedDict": ".message",
     "CitationFeedback": ".messagefeedback",
     "CitationFeedbackTypedDict": ".messagefeedback",
@@ -3358,9 +3640,25 @@ _dynamic_imports: dict[str, str] = {
     "MessageFeedbackUpdateResponseTypedDict": ".messagefeedbackupdateresponse",
     "Meta": ".messagefeedbackupdateresponse",
     "MetaTypedDict": ".messagefeedbackupdateresponse",
+    "MessagePart": ".messagepart",
+    "MessagePartStatus": ".messagepart",
+    "MessagePartType": ".messagepart",
+    "MessagePartTypedDict": ".messagepart",
+    "MessageReasoningTurn": ".messagereasoningturn",
+    "MessageReasoningTurnTypedDict": ".messagereasoningturn",
+    "MessageToolCall": ".messagetoolcall",
+    "MessageToolCallTypedDict": ".messagetoolcall",
     "ModelType": ".modeltype",
     "MoveRecordRequest": ".moverecordop",
     "MoveRecordRequestTypedDict": ".moverecordop",
+    "NavigateKnowledgeGraphRequest": ".navigateknowledgegraphop",
+    "NavigateKnowledgeGraphRequestTypedDict": ".navigateknowledgegraphop",
+    "NavigateKnowledgeGraphResponseSchema": ".navigateknowledgegraphresponseschema",
+    "NavigateKnowledgeGraphResponseSchemaCurrent": ".navigateknowledgegraphresponseschema",
+    "NavigateKnowledgeGraphResponseSchemaCurrentTypedDict": ".navigateknowledgegraphresponseschema",
+    "NavigateKnowledgeGraphResponseSchemaPagination": ".navigateknowledgegraphresponseschema",
+    "NavigateKnowledgeGraphResponseSchemaPaginationTypedDict": ".navigateknowledgegraphresponseschema",
+    "NavigateKnowledgeGraphResponseSchemaTypedDict": ".navigateknowledgegraphresponseschema",
     "OAuthAppListResponse": ".oauthapplistresponse",
     "OAuthAppListResponsePagination": ".oauthapplistresponse",
     "OAuthAppListResponsePaginationTypedDict": ".oauthapplistresponse",
@@ -3412,6 +3710,12 @@ _dynamic_imports: dict[str, str] = {
     "OtpCredentialsTypedDict": ".otpcredentials",
     "PasswordCredentials": ".passwordcredentials",
     "PasswordCredentialsTypedDict": ".passwordcredentials",
+    "PatListItem": ".patlistitem",
+    "PatListItemTypedDict": ".patlistitem",
+    "PatScopesListResponse": ".patscopeslistresponse",
+    "PatScopesListResponseTypedDict": ".patscopeslistresponse",
+    "PatWithSecret": ".patwithsecret",
+    "PatWithSecretTypedDict": ".patwithsecret",
     "PersistedSemanticSearch": ".persistedsemanticsearch",
     "PersistedSemanticSearchTypedDict": ".persistedsemanticsearch",
     "PersistedSemanticSearchBoundingBox": ".persistedsemanticsearchboundingbox",
@@ -3424,6 +3728,7 @@ _dynamic_imports: dict[str, str] = {
     "PersistedSemanticSearchSharedWithEntryAccessLevel": ".persistedsemanticsearchsharedwithentry",
     "PersistedSemanticSearchSharedWithEntryTypedDict": ".persistedsemanticsearchsharedwithentry",
     "IndexingStatus": ".record",
+    "ParsingStatus": ".record",
     "Record": ".record",
     "RecordFileRecord": ".record",
     "RecordFileRecordTypedDict": ".record",
@@ -3447,6 +3752,7 @@ _dynamic_imports: dict[str, str] = {
     "RegenerateOAuthAppSecretResponse": ".regenerateoauthappsecretresponse",
     "RegenerateOAuthAppSecretResponseTypedDict": ".regenerateoauthappsecretresponse",
     "RegenerateRequest": ".regeneraterequest",
+    "RegenerateRequestProtocol": ".regeneraterequest",
     "RegenerateRequestTypedDict": ".regeneraterequest",
     "ReindexRecordGroupRequest": ".reindexrecordgroupop",
     "ReindexRecordGroupRequestTypedDict": ".reindexrecordgroupop",
@@ -3468,6 +3774,12 @@ _dynamic_imports: dict[str, str] = {
     "RevokeAllOAuthAppTokensRequestTypedDict": ".revokealloauthapptokensop",
     "RevokeAllOAuthAppTokensResponse": ".revokealloauthapptokensop",
     "RevokeAllOAuthAppTokensResponseTypedDict": ".revokealloauthapptokensop",
+    "RevokePatRequest": ".revokepatrequest",
+    "RevokePatRequestTypedDict": ".revokepatrequest",
+    "RevokePatResponse": ".revokepatresponse",
+    "RevokePatResponseTypedDict": ".revokepatresponse",
+    "RevokePersonalAccessTokenRequest": ".revokepersonalaccesstokenop",
+    "RevokePersonalAccessTokenRequestTypedDict": ".revokepersonalaccesstokenop",
     "SchemeOauth2": ".schemeoauth2",
     "SchemeOauth2TypedDict": ".schemeoauth2",
     "SearchArchivedConversationsAccessLevel": ".searcharchivedconversationsop",
@@ -3519,9 +3831,9 @@ _dynamic_imports: dict[str, str] = {
     "SemanticSearchGraphRecordTypedDict": ".semanticsearchgraphrecord",
     "SemanticSearchHistoryAppliedDateRange": ".semanticsearchhistoryapplieddaterange",
     "SemanticSearchHistoryAppliedDateRangeTypedDict": ".semanticsearchhistoryapplieddaterange",
-    "Current": ".semanticsearchhistorydaterange",
-    "CurrentTypedDict": ".semanticsearchhistorydaterange",
     "SemanticSearchHistoryDateRange": ".semanticsearchhistorydaterange",
+    "SemanticSearchHistoryDateRangeCurrent": ".semanticsearchhistorydaterange",
+    "SemanticSearchHistoryDateRangeCurrentTypedDict": ".semanticsearchhistorydaterange",
     "SemanticSearchHistoryDateRangeTypedDict": ".semanticsearchhistorydaterange",
     "SemanticSearchHistoryFilters": ".semanticsearchhistoryfilters",
     "SemanticSearchHistoryFiltersTypedDict": ".semanticsearchhistoryfilters",

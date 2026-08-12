@@ -6,6 +6,7 @@ Type of message:
 - `error` - Error message from the system
 - `feedback` - User feedback on a response
 - `system` - System notification or status
+- `tool_call` - Tool invocation turn; details are on `tools`
 
 
 
@@ -18,3 +19,4 @@ Type of message:
 | `ERROR`        | error          |
 | `FEEDBACK`     | feedback       |
 | `SYSTEM`       | system         |
+| `TOOL_CALL`    | tool_call      |

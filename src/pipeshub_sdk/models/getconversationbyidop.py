@@ -7,6 +7,9 @@ from .citation import Citation, CitationTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
+from .messagepart import MessagePart, MessagePartTypedDict
+from .messagereasoningturn import MessageReasoningTurn, MessageReasoningTurnTypedDict
+from .messagetoolcall import MessageToolCall, MessageToolCallTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -224,6 +227,7 @@ GetConversationByIDMessageMessageType = Union[
         "error",
         "feedback",
         "system",
+        "tool_call",
     ],
     UnrecognizedStr,
 ]
@@ -444,6 +448,12 @@ class GetConversationByIDMessageTypedDict(TypedDict):
     `POST /conversations/attachments/upload`).
 
     """
+    tools: NotRequired[List[MessageToolCallTypedDict]]
+    r"""Tool call results invoked during this message turn."""
+    reasoning: NotRequired[List[MessageReasoningTurnTypedDict]]
+    r"""Persisted chain-of-thought for this turn."""
+    parts: NotRequired[List[MessagePartTypedDict]]
+    r"""Ordered agent-activity transcript for this turn."""
     metadata: NotRequired[GetConversationByIDMetadataTypedDict]
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
@@ -502,6 +512,15 @@ class GetConversationByIDMessage(BaseModel):
 
     """
 
+    tools: Optional[List[MessageToolCall]] = None
+    r"""Tool call results invoked during this message turn."""
+
+    reasoning: Optional[List[MessageReasoningTurn]] = None
+    r"""Persisted chain-of-thought for this turn."""
+
+    parts: Optional[List[MessagePart]] = None
+    r"""Ordered agent-activity transcript for this turn."""
+
     metadata: Optional[GetConversationByIDMetadata] = None
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
@@ -524,6 +543,9 @@ class GetConversationByIDMessage(BaseModel):
                 "modelInfo",
                 "appliedFilters",
                 "attachments",
+                "tools",
+                "reasoning",
+                "parts",
                 "metadata",
                 "createdAt",
                 "updatedAt",

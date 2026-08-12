@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .knowledge import Knowledge, KnowledgeTypedDict
+from .mcpserver import McpServer, McpServerTypedDict
 from .toolset import Toolset, ToolsetTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
@@ -9,10 +10,11 @@ from pipeshub_sdk.types import (
     OptionalNullable,
     UNSET,
     UNSET_SENTINEL,
+    UnrecognizedStr,
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -66,6 +68,19 @@ class AgentListItemWebSearch(BaseModel):
         return m
 
 
+AgentListItemDefaultReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+
+
 class AgentListItemTypedDict(TypedDict):
     r"""Agent projection returned by `GET /agents`.
 
@@ -110,6 +125,12 @@ class AgentListItemTypedDict(TypedDict):
     for each agent on the returned page.
 
     """
+    mcp_servers: List[McpServerTypedDict]
+    r"""MCP server instances linked to the agent. Same projection as
+    `GET /agents/{agentKey}`; the backend builds it from the graph
+    edges for each agent on the returned page.
+
+    """
     knowledge: List[KnowledgeTypedDict]
     r"""Knowledge connectors and indexed scopes linked to the agent. Same
     projection as `GET /agents/{agentKey}`; the backend builds it from
@@ -149,6 +170,8 @@ class AgentListItemTypedDict(TypedDict):
     on this response path.
 
     """
+    default_reasoning_effort: NotRequired[Nullable[AgentListItemDefaultReasoningEffort]]
+    r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
 
 class AgentListItem(BaseModel):
@@ -205,6 +228,13 @@ class AgentListItem(BaseModel):
     r"""Toolset instances linked to the agent. Same projection as
     `GET /agents/{agentKey}`; the backend builds it from the graph edges
     for each agent on the returned page.
+
+    """
+
+    mcp_servers: Annotated[List[McpServer], pydantic.Field(alias="mcpServers")]
+    r"""MCP server instances linked to the agent. Same projection as
+    `GET /agents/{agentKey}`; the backend builds it from the graph
+    edges for each agent on the returned page.
 
     """
 
@@ -269,6 +299,12 @@ class AgentListItem(BaseModel):
 
     """
 
+    default_reasoning_effort: Annotated[
+        OptionalNullable[AgentListItemDefaultReasoningEffort],
+        pydantic.Field(alias="defaultReasoningEffort"),
+    ] = UNSET
+    r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -280,6 +316,7 @@ class AgentListItem(BaseModel):
                 "systemPrompt",
                 "updatedBy",
                 "webSearch",
+                "defaultReasoningEffort",
             ]
         )
         nullable_fields = set(
@@ -290,6 +327,7 @@ class AgentListItem(BaseModel):
                 "systemPrompt",
                 "updatedBy",
                 "webSearch",
+                "defaultReasoningEffort",
             ]
         )
         serialized = handler(self)

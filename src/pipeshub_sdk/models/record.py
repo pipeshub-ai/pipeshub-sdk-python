@@ -31,6 +31,32 @@ r"""Source of the record:
 """
 
 
+ParsingStatus = Union[
+    Literal[
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "FAILED",
+        "COMPLETED",
+        "FILE_TYPE_NOT_SUPPORTED",
+        "AUTO_INDEX_OFF",
+        "EMPTY",
+        "QUEUED",
+    ],
+    UnrecognizedStr,
+]
+r"""Parse-phase status (ahead of indexing/extraction):
+- NOT_STARTED: Awaiting parsing
+- QUEUED: In parsing queue
+- IN_PROGRESS: Currently being parsed
+- COMPLETED: Successfully parsed
+- FAILED: Parsing failed
+- FILE_TYPE_NOT_SUPPORTED: Unsupported file format
+- AUTO_INDEX_OFF: Auto-indexing disabled for this record
+- EMPTY: File has no extractable content
+
+"""
+
+
 IndexingStatus = Union[
     Literal[
         "NOT_STARTED",
@@ -221,6 +247,20 @@ class RecordTypedDict(TypedDict):
     r"""Source creation timestamp (from connector)"""
     source_last_modified_timestamp: NotRequired[int]
     r"""Source last modified timestamp (from connector)"""
+    processing_started_at: NotRequired[Nullable[int]]
+    r"""Epoch ms when parse/index processing began for the current attempt; null when idle"""
+    parsing_status: NotRequired[ParsingStatus]
+    r"""Parse-phase status (ahead of indexing/extraction):
+    - NOT_STARTED: Awaiting parsing
+    - QUEUED: In parsing queue
+    - IN_PROGRESS: Currently being parsed
+    - COMPLETED: Successfully parsed
+    - FAILED: Parsing failed
+    - FILE_TYPE_NOT_SUPPORTED: Unsupported file format
+    - AUTO_INDEX_OFF: Auto-indexing disabled for this record
+    - EMPTY: File has no extractable content
+
+    """
     indexing_status: NotRequired[IndexingStatus]
     r"""Current indexing/processing status:
     - NOT_STARTED: Awaiting indexing
@@ -375,6 +415,26 @@ class Record(BaseModel):
     ] = None
     r"""Source last modified timestamp (from connector)"""
 
+    processing_started_at: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="processingStartedAt")
+    ] = UNSET
+    r"""Epoch ms when parse/index processing began for the current attempt; null when idle"""
+
+    parsing_status: Annotated[
+        Optional[ParsingStatus], pydantic.Field(alias="parsingStatus")
+    ] = None
+    r"""Parse-phase status (ahead of indexing/extraction):
+    - NOT_STARTED: Awaiting parsing
+    - QUEUED: In parsing queue
+    - IN_PROGRESS: Currently being parsed
+    - COMPLETED: Successfully parsed
+    - FAILED: Parsing failed
+    - FILE_TYPE_NOT_SUPPORTED: Unsupported file format
+    - AUTO_INDEX_OFF: Auto-indexing disabled for this record
+    - EMPTY: File has no extractable content
+
+    """
+
     indexing_status: Annotated[
         Optional[IndexingStatus], pydantic.Field(alias="indexingStatus")
     ] = None
@@ -448,6 +508,8 @@ class Record(BaseModel):
                 "updatedAtTimestamp",
                 "sourceCreatedAtTimestamp",
                 "sourceLastModifiedTimestamp",
+                "processingStartedAt",
+                "parsingStatus",
                 "indexingStatus",
                 "isDeleted",
                 "isArchived",
@@ -462,7 +524,15 @@ class Record(BaseModel):
                 "ticketRecord",
             ]
         )
-        nullable_fields = set(["folderId", "fileRecord", "mailRecord", "ticketRecord"])
+        nullable_fields = set(
+            [
+                "folderId",
+                "processingStartedAt",
+                "fileRecord",
+                "mailRecord",
+                "ticketRecord",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

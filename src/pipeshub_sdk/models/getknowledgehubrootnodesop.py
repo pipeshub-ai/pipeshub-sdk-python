@@ -122,6 +122,15 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
     when both are present.
 
     """
+    flattened: NotRequired[bool]
+    r"""Force flattened/recursive search (`true`) or direct top-level
+    listing (`false`). When omitted, it's computed from whether any
+    of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+    `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+    if any are, results are flattened automatically; otherwise only
+    top-level nodes are returned.
+
+    """
     include: NotRequired[str]
     r"""Comma-separated list of additional response sections to include.
     Invalid values are silently ignored. Maximum 100 items.
@@ -286,6 +295,19 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
 
     """
 
+    flattened: Annotated[
+        Optional[bool],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Force flattened/recursive search (`true`) or direct top-level
+    listing (`false`). When omitted, it's computed from whether any
+    of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+    `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+    if any are, results are flattened automatically; otherwise only
+    top-level nodes are returned.
+
+    """
+
     include: Annotated[
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
@@ -315,6 +337,7 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
                 "createdAt",
                 "updatedAt",
                 "size",
+                "flattened",
                 "include",
             ]
         )

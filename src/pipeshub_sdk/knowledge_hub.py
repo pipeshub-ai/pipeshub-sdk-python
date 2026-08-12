@@ -33,6 +33,7 @@ class KnowledgeHub(BaseSDK):
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         size: Optional[str] = None,
+        flattened: Optional[bool] = None,
         include: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -145,6 +146,13 @@ class KnowledgeHub(BaseSDK):
             1099511627776 (1 TB). `gte` must be less than or equal to `lte`
             when both are present.
 
+        :param flattened: Force flattened/recursive search (`true`) or direct top-level
+            listing (`false`). When omitted, it's computed from whether any
+            of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+            `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+            if any are, results are flattened automatically; otherwise only
+            top-level nodes are returned.
+
         :param include: Comma-separated list of additional response sections to include.
             Invalid values are silently ignored. Maximum 100 items.
 
@@ -180,6 +188,7 @@ class KnowledgeHub(BaseSDK):
             created_at=created_at,
             updated_at=updated_at,
             size=size,
+            flattened=flattened,
             include=include,
         )
 
@@ -285,6 +294,7 @@ class KnowledgeHub(BaseSDK):
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         size: Optional[str] = None,
+        flattened: Optional[bool] = None,
         include: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -397,6 +407,13 @@ class KnowledgeHub(BaseSDK):
             1099511627776 (1 TB). `gte` must be less than or equal to `lte`
             when both are present.
 
+        :param flattened: Force flattened/recursive search (`true`) or direct top-level
+            listing (`false`). When omitted, it's computed from whether any
+            of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+            `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+            if any are, results are flattened automatically; otherwise only
+            top-level nodes are returned.
+
         :param include: Comma-separated list of additional response sections to include.
             Invalid values are silently ignored. Maximum 100 items.
 
@@ -432,6 +449,7 @@ class KnowledgeHub(BaseSDK):
             created_at=created_at,
             updated_at=updated_at,
             size=size,
+            flattened=flattened,
             include=include,
         )
 
@@ -539,6 +557,7 @@ class KnowledgeHub(BaseSDK):
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         size: Optional[str] = None,
+        flattened: Optional[bool] = None,
         include: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -562,8 +581,7 @@ class KnowledgeHub(BaseSDK):
         **Parent identification**
 
         - `parentType` must be one of: `app`, `recordGroup`, `folder`, `record`
-        - `parentId` is either a standard UUID or the Collection app sentinel
-        `knowledgeBase_<orgId>` (e.g. `knowledgeBase_org123`)
+        - `parentId` must be a standard UUID
 
         **Filtering and searching**
 
@@ -590,12 +608,10 @@ class KnowledgeHub(BaseSDK):
             Must be one of: `app`, `recordGroup`, `folder`, `record`.
             Any other value returns a 400 error.
 
-        :param parent_id: Identifier of the parent node. Accepts two formats:
-            - A standard UUID (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`)
-            - The Collection app sentinel `knowledgeBase_<orgId>`
-            (e.g. `knowledgeBase_org123`)
+        :param parent_id: Identifier of the parent node. Must be a valid UUID
+            (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-            Any value that does not match either format returns a 400 error.
+            Any value that does not match this format returns a 400 error.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -658,6 +674,13 @@ class KnowledgeHub(BaseSDK):
             1099511627776 (1 TB). `gte` must be less than or equal to `lte`
             when both are present.
 
+        :param flattened: Force flattened/recursive search (`true`) or direct top-level
+            listing (`false`). When omitted, it's computed from whether any
+            of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+            `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+            if any are, results are flattened automatically; otherwise only
+            top-level nodes are returned.
+
         :param include: Comma-separated list of additional response sections to include.
             Invalid values are silently ignored. Maximum 100 items.
 
@@ -695,6 +718,7 @@ class KnowledgeHub(BaseSDK):
             created_at=created_at,
             updated_at=updated_at,
             size=size,
+            flattened=flattened,
             include=include,
         )
 
@@ -809,6 +833,7 @@ class KnowledgeHub(BaseSDK):
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         size: Optional[str] = None,
+        flattened: Optional[bool] = None,
         include: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -832,8 +857,7 @@ class KnowledgeHub(BaseSDK):
         **Parent identification**
 
         - `parentType` must be one of: `app`, `recordGroup`, `folder`, `record`
-        - `parentId` is either a standard UUID or the Collection app sentinel
-        `knowledgeBase_<orgId>` (e.g. `knowledgeBase_org123`)
+        - `parentId` must be a standard UUID
 
         **Filtering and searching**
 
@@ -860,12 +884,10 @@ class KnowledgeHub(BaseSDK):
             Must be one of: `app`, `recordGroup`, `folder`, `record`.
             Any other value returns a 400 error.
 
-        :param parent_id: Identifier of the parent node. Accepts two formats:
-            - A standard UUID (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`)
-            - The Collection app sentinel `knowledgeBase_<orgId>`
-            (e.g. `knowledgeBase_org123`)
+        :param parent_id: Identifier of the parent node. Must be a valid UUID
+            (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-            Any value that does not match either format returns a 400 error.
+            Any value that does not match this format returns a 400 error.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -928,6 +950,13 @@ class KnowledgeHub(BaseSDK):
             1099511627776 (1 TB). `gte` must be less than or equal to `lte`
             when both are present.
 
+        :param flattened: Force flattened/recursive search (`true`) or direct top-level
+            listing (`false`). When omitted, it's computed from whether any
+            of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+            `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+            if any are, results are flattened automatically; otherwise only
+            top-level nodes are returned.
+
         :param include: Comma-separated list of additional response sections to include.
             Invalid values are silently ignored. Maximum 100 items.
 
@@ -965,6 +994,7 @@ class KnowledgeHub(BaseSDK):
             created_at=created_at,
             updated_at=updated_at,
             size=size,
+            flattened=flattened,
             include=include,
         )
 

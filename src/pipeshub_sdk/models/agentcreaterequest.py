@@ -11,6 +11,7 @@ from .agentcreatewebsearch_union import (
     AgentCreateWebSearchUnion,
     AgentCreateWebSearchUnionTypedDict,
 )
+from .agentskillassignment import AgentSkillAssignment, AgentSkillAssignmentTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -20,8 +21,18 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+AgentCreateRequestDefaultReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""Agent-level reasoning effort used when a chat request omits its own."""
 
 
 class AgentCreateRequestTypedDict(TypedDict):
@@ -50,12 +61,18 @@ class AgentCreateRequestTypedDict(TypedDict):
     r"""Toolsets attached to the agent (instance-aware)"""
     knowledge: NotRequired[List[AgentCreateKnowledgeTypedDict]]
     r"""Knowledge sources connected to the agent"""
+    skills: NotRequired[List[AgentSkillAssignmentTypedDict]]
+    r"""Existing skills to assign to the agent"""
     web_search: NotRequired[Nullable[AgentCreateWebSearchUnionTypedDict]]
     r"""Accepted web-search attachment for `POST /agents/create`.
     The gateway accepts either a provider string or an object with at least
     a `provider` field.
 
     """
+    default_reasoning_effort: NotRequired[
+        Nullable[AgentCreateRequestDefaultReasoningEffort]
+    ]
+    r"""Agent-level reasoning effort used when a chat request omits its own."""
 
 
 class AgentCreateRequest(BaseModel):
@@ -99,6 +116,9 @@ class AgentCreateRequest(BaseModel):
     knowledge: Optional[List[AgentCreateKnowledge]] = None
     r"""Knowledge sources connected to the agent"""
 
+    skills: Optional[List[AgentSkillAssignment]] = None
+    r"""Existing skills to assign to the agent"""
+
     web_search: Annotated[
         OptionalNullable[AgentCreateWebSearchUnion], pydantic.Field(alias="webSearch")
     ] = UNSET
@@ -107,6 +127,12 @@ class AgentCreateRequest(BaseModel):
     a `provider` field.
 
     """
+
+    default_reasoning_effort: Annotated[
+        OptionalNullable[AgentCreateRequestDefaultReasoningEffort],
+        pydantic.Field(alias="defaultReasoningEffort"),
+    ] = UNSET
+    r"""Agent-level reasoning effort used when a chat request omits its own."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -121,10 +147,12 @@ class AgentCreateRequest(BaseModel):
                 "isServiceAccount",
                 "toolsets",
                 "knowledge",
+                "skills",
                 "webSearch",
+                "defaultReasoningEffort",
             ]
         )
-        nullable_fields = set(["webSearch"])
+        nullable_fields = set(["webSearch", "defaultReasoningEffort"])
         serialized = handler(self)
         m = {}
 

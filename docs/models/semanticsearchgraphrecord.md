@@ -38,6 +38,8 @@ usually include `_key`, `_id`, `_rev`, `orgId`, `recordName`, `externalRecordId`
 | `is_archived`                    | *OptionalNullable[bool]*         | :heavy_minus_sign:               | N/A                              |
 | `is_vlm_ocr_processed`           | *OptionalNullable[bool]*         | :heavy_minus_sign:               | N/A                              |
 | `deleted_by_user_id`             | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
+| `processing_started_at`          | *OptionalNullable[float]*        | :heavy_minus_sign:               | N/A                              |
+| `parsing_status`                 | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `indexing_status`                | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `extraction_status`              | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `is_latest_version`              | *OptionalNullable[bool]*         | :heavy_minus_sign:               | N/A                              |
@@ -46,6 +48,7 @@ usually include `_key`, `_id`, `_rev`, `orgId`, `recordName`, `externalRecordId`
 | `last_index_timestamp`           | *OptionalNullable[float]*        | :heavy_minus_sign:               | N/A                              |
 | `last_extraction_timestamp`      | *OptionalNullable[float]*        | :heavy_minus_sign:               | N/A                              |
 | `summary_document_id`            | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
+| `storage_document_id`            | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `virtual_record_id`              | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `preview_renderable`             | *OptionalNullable[bool]*         | :heavy_minus_sign:               | N/A                              |
 | `is_shared`                      | *OptionalNullable[bool]*         | :heavy_minus_sign:               | N/A                              |

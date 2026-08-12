@@ -10,3 +10,4 @@
 | `ERROR`        | error          |
 | `FEEDBACK`     | feedback       |
 | `SYSTEM`       | system         |
+| `TOOL_CALL`    | tool_call      |

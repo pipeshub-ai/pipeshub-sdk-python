@@ -7,6 +7,9 @@ from .citationreference import CitationReference, CitationReferenceTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
+from .messagepart import MessagePart, MessagePartTypedDict
+from .messagereasoningturn import MessageReasoningTurn, MessageReasoningTurnTypedDict
+from .messagetoolcall import MessageToolCall, MessageToolCallTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -18,7 +21,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -29,6 +32,7 @@ MessageMessageType = Union[
         "error",
         "feedback",
         "system",
+        "tool_call",
     ],
     UnrecognizedStr,
 ]
@@ -38,6 +42,7 @@ r"""Type of message:
 - `error` - Error message from the system
 - `feedback` - User feedback on a response
 - `system` - System notification or status
+- `tool_call` - Tool invocation turn; details are on `tools`
 
 """
 
@@ -163,33 +168,6 @@ class MessageReferenceDatum(BaseModel):
         return m
 
 
-class MessageToolTypedDict(TypedDict):
-    tool_name: NotRequired[str]
-    tool_result: NotRequired[Any]
-
-
-class MessageTool(BaseModel):
-    tool_name: Annotated[Optional[str], pydantic.Field(alias="toolName")] = None
-
-    tool_result: Annotated[Optional[Any], pydantic.Field(alias="toolResult")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["toolName", "toolResult"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
 class MessageTypedDict(TypedDict):
     r"""A single message within a conversation. Messages can be user queries,
     AI responses, system messages, or error notifications.
@@ -205,6 +183,7 @@ class MessageTypedDict(TypedDict):
     - `error` - Error message from the system
     - `feedback` - User feedback on a response
     - `system` - System notification or status
+    - `tool_call` - Tool invocation turn; details are on `tools`
 
     """
     content: NotRequired[str]
@@ -243,8 +222,12 @@ class MessageTypedDict(TypedDict):
     `POST /conversations/attachments/upload`).
 
     """
-    tools: NotRequired[List[MessageToolTypedDict]]
+    tools: NotRequired[List[MessageToolCallTypedDict]]
     r"""Tool call results invoked during this message turn."""
+    reasoning: NotRequired[List[MessageReasoningTurnTypedDict]]
+    r"""Persisted chain-of-thought for this turn."""
+    parts: NotRequired[List[MessagePartTypedDict]]
+    r"""Ordered agent-activity transcript for this turn."""
     created_at: NotRequired[datetime]
     updated_at: NotRequired[datetime]
 
@@ -267,6 +250,7 @@ class Message(BaseModel):
     - `error` - Error message from the system
     - `feedback` - User feedback on a response
     - `system` - System notification or status
+    - `tool_call` - Tool invocation turn; details are on `tools`
 
     """
 
@@ -327,8 +311,14 @@ class Message(BaseModel):
 
     """
 
-    tools: Optional[List[MessageTool]] = None
+    tools: Optional[List[MessageToolCall]] = None
     r"""Tool call results invoked during this message turn."""
+
+    reasoning: Optional[List[MessageReasoningTurn]] = None
+    r"""Persisted chain-of-thought for this turn."""
+
+    parts: Optional[List[MessagePart]] = None
+    r"""Ordered agent-activity transcript for this turn."""
 
     created_at: Annotated[Optional[datetime], pydantic.Field(alias="createdAt")] = None
 
@@ -352,6 +342,8 @@ class Message(BaseModel):
                 "referenceData",
                 "attachments",
                 "tools",
+                "reasoning",
+                "parts",
                 "createdAt",
                 "updatedAt",
             ]
@@ -385,10 +377,6 @@ except NameError:
     pass
 try:
     MessageReferenceDatum.model_rebuild()
-except NameError:
-    pass
-try:
-    MessageTool.model_rebuild()
 except NameError:
     pass
 try:

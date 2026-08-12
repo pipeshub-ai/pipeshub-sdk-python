@@ -59,7 +59,7 @@ class UploadAgentConversationChatAttachmentsRequestBodyTypedDict(TypedDict):
     r"""Multipart form with attachment files and optional `conversationId`."""
 
     files: List[UploadAgentConversationChatAttachmentsFileTypedDict]
-    r"""One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`. Max 5 MiB each.
+    r"""One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`, `text/plain`, `text/markdown`, `text/mdx`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `text/csv`, `text/tab-separated-values`. Max 5 MiB each.
 
     """
     conversation_id: NotRequired[str]
@@ -75,7 +75,7 @@ class UploadAgentConversationChatAttachmentsRequestBody(BaseModel):
         List[UploadAgentConversationChatAttachmentsFile],
         FieldMetadata(multipart=MultipartFormMetadata(file=True)),
     ]
-    r"""One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`. Max 5 MiB each.
+    r"""One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`, `text/plain`, `text/markdown`, `text/mdx`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `text/csv`, `text/tab-separated-values`. Max 5 MiB each.
 
     """
 

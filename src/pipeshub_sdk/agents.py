@@ -280,11 +280,20 @@ class Agents(BaseSDK):
                 List[models_.AgentCreateKnowledgeTypedDict],
             ]
         ] = None,
+        skills: Optional[
+            Union[
+                List[models_.AgentSkillAssignment],
+                List[models_.AgentSkillAssignmentTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
                 models_.AgentCreateWebSearchUnionTypedDict,
             ]
+        ] = UNSET,
+        default_reasoning_effort: OptionalNullable[
+            models_.AgentCreateRequestDefaultReasoningEffort
         ] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -326,10 +335,12 @@ class Agents(BaseSDK):
         :param is_service_account: Create the agent as a service-account agent
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
+        :param skills: Existing skills to assign to the agent
         :param web_search: Accepted web-search attachment for `POST /agents/create`.
             The gateway accepts either a provider string or an object with at least
             a `provider` field.
 
+        :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -363,9 +374,13 @@ class Agents(BaseSDK):
             knowledge=utils.get_pydantic_model(
                 knowledge, Optional[List[models_.AgentCreateKnowledge]]
             ),
+            skills=utils.get_pydantic_model(
+                skills, Optional[List[models_.AgentSkillAssignment]]
+            ),
             web_search=utils.get_pydantic_model(
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
             ),
+            default_reasoning_effort=default_reasoning_effort,
         )
 
         req = self._build_request(
@@ -453,11 +468,20 @@ class Agents(BaseSDK):
                 List[models_.AgentCreateKnowledgeTypedDict],
             ]
         ] = None,
+        skills: Optional[
+            Union[
+                List[models_.AgentSkillAssignment],
+                List[models_.AgentSkillAssignmentTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
                 models_.AgentCreateWebSearchUnionTypedDict,
             ]
+        ] = UNSET,
+        default_reasoning_effort: OptionalNullable[
+            models_.AgentCreateRequestDefaultReasoningEffort
         ] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -499,10 +523,12 @@ class Agents(BaseSDK):
         :param is_service_account: Create the agent as a service-account agent
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
+        :param skills: Existing skills to assign to the agent
         :param web_search: Accepted web-search attachment for `POST /agents/create`.
             The gateway accepts either a provider string or an object with at least
             a `provider` field.
 
+        :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -536,9 +562,13 @@ class Agents(BaseSDK):
             knowledge=utils.get_pydantic_model(
                 knowledge, Optional[List[models_.AgentCreateKnowledge]]
             ),
+            skills=utils.get_pydantic_model(
+                skills, Optional[List[models_.AgentSkillAssignment]]
+            ),
             web_search=utils.get_pydantic_model(
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
             ),
+            default_reasoning_effort=default_reasoning_effort,
         )
 
         req = self._build_request_async(
@@ -835,11 +865,20 @@ class Agents(BaseSDK):
                 List[models_.AgentCreateKnowledgeTypedDict],
             ]
         ] = None,
+        skills: Optional[
+            Union[
+                List[models_.AgentSkillAssignment],
+                List[models_.AgentSkillAssignmentTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
                 models_.AgentCreateWebSearchUnionTypedDict,
             ]
+        ] = UNSET,
+        default_reasoning_effort: OptionalNullable[
+            models_.AgentUpdateRequestDefaultReasoningEffort
         ] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -890,10 +929,14 @@ class Agents(BaseSDK):
         :param is_service_account: Mark agent as a service account
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
+        :param skills: Complete replacement set of skills assigned to the agent. Send
+            an empty array to clear all skill assignments.
+
         :param web_search: Accepted web-search attachment for `POST /agents/create`.
             The gateway accepts either a provider string or an object with at least
             a `provider` field.
 
+        :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -929,9 +972,13 @@ class Agents(BaseSDK):
                 knowledge=utils.get_pydantic_model(
                     knowledge, Optional[List[models_.AgentCreateKnowledge]]
                 ),
+                skills=utils.get_pydantic_model(
+                    skills, Optional[List[models_.AgentSkillAssignment]]
+                ),
                 web_search=utils.get_pydantic_model(
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
+                default_reasoning_effort=default_reasoning_effort,
             ),
         )
 
@@ -1032,11 +1079,20 @@ class Agents(BaseSDK):
                 List[models_.AgentCreateKnowledgeTypedDict],
             ]
         ] = None,
+        skills: Optional[
+            Union[
+                List[models_.AgentSkillAssignment],
+                List[models_.AgentSkillAssignmentTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
                 models_.AgentCreateWebSearchUnionTypedDict,
             ]
+        ] = UNSET,
+        default_reasoning_effort: OptionalNullable[
+            models_.AgentUpdateRequestDefaultReasoningEffort
         ] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1087,10 +1143,14 @@ class Agents(BaseSDK):
         :param is_service_account: Mark agent as a service account
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
+        :param skills: Complete replacement set of skills assigned to the agent. Send
+            an empty array to clear all skill assignments.
+
         :param web_search: Accepted web-search attachment for `POST /agents/create`.
             The gateway accepts either a provider string or an object with at least
             a `provider` field.
 
+        :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1126,9 +1186,13 @@ class Agents(BaseSDK):
                 knowledge=utils.get_pydantic_model(
                     knowledge, Optional[List[models_.AgentCreateKnowledge]]
                 ),
+                skills=utils.get_pydantic_model(
+                    skills, Optional[List[models_.AgentSkillAssignment]]
+                ),
                 web_search=utils.get_pydantic_model(
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
+                default_reasoning_effort=default_reasoning_effort,
             ),
         )
 
@@ -1865,7 +1929,7 @@ class Agents(BaseSDK):
 
 
         :param agent_key:
-        :param files: One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`. Max 5 MiB each.
+        :param files: One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`, `text/plain`, `text/markdown`, `text/mdx`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `text/csv`, `text/tab-separated-values`. Max 5 MiB each.
 
         :param conversation_id: Optional existing agent conversation id. Empty string is treated as unset; any non-empty value must be a 24-character ObjectId.
 
@@ -1980,7 +2044,7 @@ class Agents(BaseSDK):
 
 
         :param agent_key:
-        :param files: One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`. Max 5 MiB each.
+        :param files: One or more files; field name must be `files`. Accepted MIME types: `application/pdf`, `image/jpeg`, `image/jpg`, `image/png`, `text/plain`, `text/markdown`, `text/mdx`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `text/csv`, `text/tab-separated-values`. Max 5 MiB each.
 
         :param conversation_id: Optional existing agent conversation id. Empty string is treated as unset; any non-empty value must be a 24-character ObjectId.
 
@@ -2298,6 +2362,7 @@ class Agents(BaseSDK):
         *,
         agent_key: str,
         query: str,
+        chat_mode: models_.AgentStreamCreateConversationRequestChatMode,
         record_ids: Optional[List[str]] = None,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
         applied_filters: Optional[
@@ -2309,15 +2374,16 @@ class Agents(BaseSDK):
                 List[models_.ChatAttachmentRefTypedDict],
             ]
         ] = None,
-        chat_mode: Optional[
-            models_.AgentStreamCreateConversationRequestChatMode
-        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentStreamCreateConversationRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2330,30 +2396,29 @@ class Agents(BaseSDK):
         and forwarded to the upstream agent backend; subsequent tokens, tool
         calls, and lifecycle events are emitted on the open SSE connection.
 
+        AG-UI is the sole wire protocol. The request must include
+        `chatMode: quick`; see `AgentStreamSSEEvent` for the event vocabulary.
+
 
         :param agent_key: Stable key identifying the agent that owns this conversation.
         :param query: User prompt for the first turn. Saved as the initial `user_query`
             message and sent to the agent backend.
 
+        :param chat_mode: Required execution mode. Scoped agent conversations currently
+            support only `quick`.
+
         :param record_ids: Optional record ids to include as context for this turn. Each id
             must be a 24-character MongoDB ObjectId.
 
         :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
-            be a UUID or a `knowledgeBase_<orgId>` collection id. Omit for
-            agent defaults; send `{ \"apps\": [], \"kb\": [] }` to force no
-            knowledge sources for this turn.
+            be a valid UUID. Omit for agent defaults; send `{ \"apps\": [], \"kb\": [] }`
+            to force no knowledge sources for this turn.
 
         :param applied_filters: UI filter state persisted on the saved user message. Not used for
             retrieval and not forwarded to the upstream agent backend.
 
         :param attachments: Uploaded attachments to ground this turn. Each entry references a
             record id returned from the agent attachment upload endpoint.
-
-        :param chat_mode: Chat mode hint forwarded to the agent backend.
-            - `auto` lets the agent pick its default strategy.
-            - `quick` favors low-latency answers over depth.
-            - `verification` runs additional grounding/verification passes.
-            - `deep` performs deeper retrieval and reasoning.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
             default model.
@@ -2369,6 +2434,17 @@ class Agents(BaseSDK):
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
             tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentStreamSSEEvent`). Kept in
+            the schema for backward compatibility with callers that already
+            send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2404,6 +2480,10 @@ class Agents(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
             ),
         )
 
@@ -2482,6 +2562,7 @@ class Agents(BaseSDK):
         *,
         agent_key: str,
         query: str,
+        chat_mode: models_.AgentStreamCreateConversationRequestChatMode,
         record_ids: Optional[List[str]] = None,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
         applied_filters: Optional[
@@ -2493,15 +2574,16 @@ class Agents(BaseSDK):
                 List[models_.ChatAttachmentRefTypedDict],
             ]
         ] = None,
-        chat_mode: Optional[
-            models_.AgentStreamCreateConversationRequestChatMode
-        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentStreamCreateConversationRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2514,30 +2596,29 @@ class Agents(BaseSDK):
         and forwarded to the upstream agent backend; subsequent tokens, tool
         calls, and lifecycle events are emitted on the open SSE connection.
 
+        AG-UI is the sole wire protocol. The request must include
+        `chatMode: quick`; see `AgentStreamSSEEvent` for the event vocabulary.
+
 
         :param agent_key: Stable key identifying the agent that owns this conversation.
         :param query: User prompt for the first turn. Saved as the initial `user_query`
             message and sent to the agent backend.
 
+        :param chat_mode: Required execution mode. Scoped agent conversations currently
+            support only `quick`.
+
         :param record_ids: Optional record ids to include as context for this turn. Each id
             must be a 24-character MongoDB ObjectId.
 
         :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
-            be a UUID or a `knowledgeBase_<orgId>` collection id. Omit for
-            agent defaults; send `{ \"apps\": [], \"kb\": [] }` to force no
-            knowledge sources for this turn.
+            be a valid UUID. Omit for agent defaults; send `{ \"apps\": [], \"kb\": [] }`
+            to force no knowledge sources for this turn.
 
         :param applied_filters: UI filter state persisted on the saved user message. Not used for
             retrieval and not forwarded to the upstream agent backend.
 
         :param attachments: Uploaded attachments to ground this turn. Each entry references a
             record id returned from the agent attachment upload endpoint.
-
-        :param chat_mode: Chat mode hint forwarded to the agent backend.
-            - `auto` lets the agent pick its default strategy.
-            - `quick` favors low-latency answers over depth.
-            - `verification` runs additional grounding/verification passes.
-            - `deep` performs deeper retrieval and reasoning.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
             default model.
@@ -2553,6 +2634,17 @@ class Agents(BaseSDK):
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
             tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentStreamSSEEvent`). Kept in
+            the schema for backward compatibility with callers that already
+            send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2588,6 +2680,10 @@ class Agents(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
             ),
         )
 
@@ -2667,6 +2763,7 @@ class Agents(BaseSDK):
         agent_key: str,
         conversation_id: str,
         query: str,
+        chat_mode: models_.AgentAddMessageStreamRequestChatMode,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models_.AppliedFilters, models_.AppliedFiltersTypedDict]
@@ -2677,13 +2774,16 @@ class Agents(BaseSDK):
                 List[models_.ChatAttachmentRefTypedDict],
             ]
         ] = None,
-        chat_mode: Optional[models_.AgentAddMessageStreamRequestChatMode] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentAddMessageStreamRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2694,6 +2794,10 @@ class Agents(BaseSDK):
         Append a user message to an existing agent conversation and stream the
         assistant reply over SSE.
 
+        AG-UI is the sole wire protocol. The request must include
+        `chatMode: quick`; see `AgentMessageStreamSSEEvent` for the event
+        vocabulary.
+
 
         :param agent_key:
         :param conversation_id:
@@ -2701,23 +2805,18 @@ class Agents(BaseSDK):
             Saved as a new `user_query` message before the upstream AI stream
             starts.
 
+        :param chat_mode: Required execution mode. Scoped agent conversations currently
+            support only `quick`.
+
         :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
-            be a UUID or a `knowledgeBase_<orgId>` collection id. Omit to let
-            the agent use its stored defaults; send `{ \"apps\": [], \"kb\": [] }`
-            to force no knowledge sources for this turn.
+            be a valid UUID. Omit to let the agent use its stored defaults;
+            send `{ \"apps\": [], \"kb\": [] }` to force no knowledge sources for this turn.
 
         :param applied_filters: UI filter state persisted on the saved user message. Not used for
             retrieval and not forwarded to the upstream agent backend.
 
         :param attachments: Uploaded attachments to ground this turn. Each entry references a
             record id returned from the agent attachment upload endpoint.
-
-        :param chat_mode: Chat mode hint forwarded to the agent backend. Defaults to `auto`
-            in the upstream AI payload when omitted.
-            - `auto` lets the agent pick its default strategy.
-            - `quick` favors low-latency answers over depth.
-            - `verification` runs additional grounding/verification passes.
-            - `deep` performs deeper retrieval and reasoning.
 
         :param model_key: AI model configuration id override for this turn. Omit to use the
             agent's default model.
@@ -2733,6 +2832,17 @@ class Agents(BaseSDK):
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
             tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2768,6 +2878,10 @@ class Agents(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
             ),
         )
 
@@ -2845,6 +2959,7 @@ class Agents(BaseSDK):
         agent_key: str,
         conversation_id: str,
         query: str,
+        chat_mode: models_.AgentAddMessageStreamRequestChatMode,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models_.AppliedFilters, models_.AppliedFiltersTypedDict]
@@ -2855,13 +2970,16 @@ class Agents(BaseSDK):
                 List[models_.ChatAttachmentRefTypedDict],
             ]
         ] = None,
-        chat_mode: Optional[models_.AgentAddMessageStreamRequestChatMode] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentAddMessageStreamRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2872,6 +2990,10 @@ class Agents(BaseSDK):
         Append a user message to an existing agent conversation and stream the
         assistant reply over SSE.
 
+        AG-UI is the sole wire protocol. The request must include
+        `chatMode: quick`; see `AgentMessageStreamSSEEvent` for the event
+        vocabulary.
+
 
         :param agent_key:
         :param conversation_id:
@@ -2879,23 +3001,18 @@ class Agents(BaseSDK):
             Saved as a new `user_query` message before the upstream AI stream
             starts.
 
+        :param chat_mode: Required execution mode. Scoped agent conversations currently
+            support only `quick`.
+
         :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
-            be a UUID or a `knowledgeBase_<orgId>` collection id. Omit to let
-            the agent use its stored defaults; send `{ \"apps\": [], \"kb\": [] }`
-            to force no knowledge sources for this turn.
+            be a valid UUID. Omit to let the agent use its stored defaults;
+            send `{ \"apps\": [], \"kb\": [] }` to force no knowledge sources for this turn.
 
         :param applied_filters: UI filter state persisted on the saved user message. Not used for
             retrieval and not forwarded to the upstream agent backend.
 
         :param attachments: Uploaded attachments to ground this turn. Each entry references a
             record id returned from the agent attachment upload endpoint.
-
-        :param chat_mode: Chat mode hint forwarded to the agent backend. Defaults to `auto`
-            in the upstream AI payload when omitted.
-            - `auto` lets the agent pick its default strategy.
-            - `quick` favors low-latency answers over depth.
-            - `verification` runs additional grounding/verification passes.
-            - `deep` performs deeper retrieval and reasoning.
 
         :param model_key: AI model configuration id override for this turn. Omit to use the
             agent's default model.
@@ -2911,6 +3028,17 @@ class Agents(BaseSDK):
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
             tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2946,6 +3074,10 @@ class Agents(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
             ),
         )
 
@@ -3023,14 +3155,18 @@ class Agents(BaseSDK):
         agent_key: str,
         conversation_id: str,
         message_id: str,
+        chat_mode: models_.AgentRegenerateRequestChatMode,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentRegenerateRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3048,8 +3184,8 @@ class Agents(BaseSDK):
 
         **Request body:**
 
-        All request-body fields are optional. When omitted, the server reuses
-        the original model/context. The body supports:
+        `chatMode: quick` is required. Other fields are optional and reuse
+        the original model/context when omitted. The body supports:
         - `filters`
         - `chatMode`
         - `modelKey`
@@ -3058,23 +3194,28 @@ class Agents(BaseSDK):
         - `timezone`
         - `currentTime`
         - `tools`
+        - `protocol`
+        - `agentCapabilities`
 
         **Streaming behavior:**
 
-        The response is delivered as `text/event-stream`. Stable events are
-        `connected`, `complete`, and `error`. Additional agent/tool lifecycle
-        events may be forwarded by the backend and should be treated as
-        informational updates.
+        The response is delivered as an AG-UI `text/event-stream`. Stable
+        outcomes are `RUN_FINISHED` and `RUN_ERROR`; see
+        `AgentRegenerateSSEEvent`.
+
+        Additional agent/tool lifecycle events may be forwarded by the
+        backend and should be treated as informational updates.
 
         Validation failures on params/body are returned as normal HTTP `400`
         responses before the stream starts. Valid-shape requests that fail
-        conversation lookup or regenerate rules are reported as SSE `error`
-        events after stream initialization.
+        conversation lookup or regenerate rules are reported as
+        `RUN_ERROR` events after stream initialization.
 
 
         :param agent_key: Stable key identifying the agent that owns this conversation.
         :param conversation_id: ID of the agent conversation containing the target message.
         :param message_id: ID of the bot-response message to regenerate.
+        :param chat_mode:
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
             for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
             For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
@@ -3088,9 +3229,6 @@ class Agents(BaseSDK):
 
         :param model_name: Provider model name (e.g. the underlying LLM identifier).
         :param model_friendly_name: Friendly display name of the selected model.
-        :param chat_mode: Chat mode used for regeneration (for example `internal_search`,
-            `web_search`, or an agent mode such as `agent:auto`).
-
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
 
@@ -3100,6 +3238,16 @@ class Agents(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
             regenerating. Applicable only in agent chat modes.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary. Kept in the schema for backward
+            compatibility with callers that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3120,7 +3268,7 @@ class Agents(BaseSDK):
             agent_key=agent_key,
             conversation_id=conversation_id,
             message_id=message_id,
-            body=models_.RegenerateRequest(
+            body=models_.AgentRegenerateRequest(
                 filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
                 model_key=model_key,
                 model_name=model_name,
@@ -3129,6 +3277,10 @@ class Agents(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
             ),
         )
 
@@ -3138,7 +3290,7 @@ class Agents(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=False,
+            request_body_required=True,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -3146,11 +3298,7 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body if request is not None else None,
-                False,
-                True,
-                "json",
-                Optional[models_.RegenerateRequest],
+                request.body, False, False, "json", models_.AgentRegenerateRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -3208,14 +3356,18 @@ class Agents(BaseSDK):
         agent_key: str,
         conversation_id: str,
         message_id: str,
+        chat_mode: models_.AgentRegenerateRequestChatMode,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentRegenerateRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3233,8 +3385,8 @@ class Agents(BaseSDK):
 
         **Request body:**
 
-        All request-body fields are optional. When omitted, the server reuses
-        the original model/context. The body supports:
+        `chatMode: quick` is required. Other fields are optional and reuse
+        the original model/context when omitted. The body supports:
         - `filters`
         - `chatMode`
         - `modelKey`
@@ -3243,23 +3395,28 @@ class Agents(BaseSDK):
         - `timezone`
         - `currentTime`
         - `tools`
+        - `protocol`
+        - `agentCapabilities`
 
         **Streaming behavior:**
 
-        The response is delivered as `text/event-stream`. Stable events are
-        `connected`, `complete`, and `error`. Additional agent/tool lifecycle
-        events may be forwarded by the backend and should be treated as
-        informational updates.
+        The response is delivered as an AG-UI `text/event-stream`. Stable
+        outcomes are `RUN_FINISHED` and `RUN_ERROR`; see
+        `AgentRegenerateSSEEvent`.
+
+        Additional agent/tool lifecycle events may be forwarded by the
+        backend and should be treated as informational updates.
 
         Validation failures on params/body are returned as normal HTTP `400`
         responses before the stream starts. Valid-shape requests that fail
-        conversation lookup or regenerate rules are reported as SSE `error`
-        events after stream initialization.
+        conversation lookup or regenerate rules are reported as
+        `RUN_ERROR` events after stream initialization.
 
 
         :param agent_key: Stable key identifying the agent that owns this conversation.
         :param conversation_id: ID of the agent conversation containing the target message.
         :param message_id: ID of the bot-response message to regenerate.
+        :param chat_mode:
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
             for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
             For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
@@ -3273,9 +3430,6 @@ class Agents(BaseSDK):
 
         :param model_name: Provider model name (e.g. the underlying LLM identifier).
         :param model_friendly_name: Friendly display name of the selected model.
-        :param chat_mode: Chat mode used for regeneration (for example `internal_search`,
-            `web_search`, or an agent mode such as `agent:auto`).
-
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
 
@@ -3285,6 +3439,16 @@ class Agents(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
             regenerating. Applicable only in agent chat modes.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary. Kept in the schema for backward
+            compatibility with callers that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3305,7 +3469,7 @@ class Agents(BaseSDK):
             agent_key=agent_key,
             conversation_id=conversation_id,
             message_id=message_id,
-            body=models_.RegenerateRequest(
+            body=models_.AgentRegenerateRequest(
                 filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
                 model_key=model_key,
                 model_name=model_name,
@@ -3314,6 +3478,10 @@ class Agents(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
             ),
         )
 
@@ -3323,7 +3491,7 @@ class Agents(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=False,
+            request_body_required=True,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -3331,11 +3499,7 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body if request is not None else None,
-                False,
-                True,
-                "json",
-                Optional[models_.RegenerateRequest],
+                request.body, False, False, "json", models_.AgentRegenerateRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
