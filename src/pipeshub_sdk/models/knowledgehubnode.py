@@ -76,6 +76,8 @@ class KnowledgeHubNodeTypedDict(TypedDict):
     r"""Failure or status reason when set; otherwise `null`."""
     is_internal: bool
     r"""True for internal/system nodes that do not originate from a source."""
+    is_placeholder: bool
+    r"""True for placeholder/stub nodes standing in for an out-of-scope ancestor (rendered read-only, no content actions; excluded from search and indexing)."""
     created_at: int
     r"""Creation timestamp (epoch ms)."""
     updated_at: int
@@ -135,6 +137,9 @@ class KnowledgeHubNode(BaseModel):
 
     is_internal: Annotated[bool, pydantic.Field(alias="isInternal")]
     r"""True for internal/system nodes that do not originate from a source."""
+
+    is_placeholder: Annotated[bool, pydantic.Field(alias="isPlaceholder")]
+    r"""True for placeholder/stub nodes standing in for an out-of-scope ancestor (rendered read-only, no content actions; excluded from search and indexing)."""
 
     created_at: Annotated[int, pydantic.Field(alias="createdAt")]
     r"""Creation timestamp (epoch ms)."""

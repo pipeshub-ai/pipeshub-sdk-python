@@ -3,18 +3,26 @@
 
 ## Values
 
-| Name                      | Value                     |
-| ------------------------- | ------------------------- |
-| `CONNECTED`               | connected                 |
-| `STATUS`                  | status                    |
-| `TOOL_CALLS`              | tool_calls                |
-| `TOOL_CALL`               | tool_call                 |
-| `TOOL_SUCCESS`            | tool_success              |
-| `TOOL_ERROR`              | tool_error                |
-| `TOOL_RESULT`             | tool_result               |
-| `TOOL_EXECUTION_COMPLETE` | tool_execution_complete   |
-| `ANSWER_CHUNK`            | answer_chunk              |
-| `RESTREAMING`             | restreaming               |
-| `METADATA`                | metadata                  |
-| `COMPLETE`                | complete                  |
-| `ERROR`                   | error                     |
+| Name                        | Value                       |
+| --------------------------- | --------------------------- |
+| `RUN_STARTED`               | RUN_STARTED                 |
+| `RUN_FINISHED`              | RUN_FINISHED                |
+| `RUN_ERROR`                 | RUN_ERROR                   |
+| `STEP_STARTED`              | STEP_STARTED                |
+| `STEP_FINISHED`             | STEP_FINISHED               |
+| `TEXT_MESSAGE_START`        | TEXT_MESSAGE_START          |
+| `TEXT_MESSAGE_CONTENT`      | TEXT_MESSAGE_CONTENT        |
+| `TEXT_MESSAGE_END`          | TEXT_MESSAGE_END            |
+| `REASONING_START`           | REASONING_START             |
+| `REASONING_MESSAGE_START`   | REASONING_MESSAGE_START     |
+| `REASONING_MESSAGE_CONTENT` | REASONING_MESSAGE_CONTENT   |
+| `REASONING_MESSAGE_END`     | REASONING_MESSAGE_END       |
+| `REASONING_END`             | REASONING_END               |
+| `TOOL_CALL_START`           | TOOL_CALL_START             |
+| `TOOL_CALL_ARGS`            | TOOL_CALL_ARGS              |
+| `TOOL_CALL_END`             | TOOL_CALL_END               |
+| `TOOL_CALL_RESULT`          | TOOL_CALL_RESULT            |
+| `STATE_DELTA`               | STATE_DELTA                 |
+| `STATE_SNAPSHOT`            | STATE_SNAPSHOT              |
+| `CUSTOM`                    | CUSTOM                      |
+| `HEARTBEAT`                 | HEARTBEAT                   |

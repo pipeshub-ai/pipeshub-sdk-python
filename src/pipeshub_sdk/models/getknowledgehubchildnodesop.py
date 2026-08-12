@@ -55,12 +55,10 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
 
     """
     parent_id: str
-    r"""Identifier of the parent node. Accepts two formats:
-    - A standard UUID (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`)
-    - The Collection app sentinel `knowledgeBase_<orgId>`
-    (e.g. `knowledgeBase_org123`)
+    r"""Identifier of the parent node. Must be a valid UUID
+    (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-    Any value that does not match either format returns a 400 error.
+    Any value that does not match this format returns a 400 error.
 
     """
     only_containers: NotRequired[bool]
@@ -152,6 +150,15 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
     when both are present.
 
     """
+    flattened: NotRequired[bool]
+    r"""Force flattened/recursive search (`true`) or direct top-level
+    listing (`false`). When omitted, it's computed from whether any
+    of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+    `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+    if any are, results are flattened automatically; otherwise only
+    top-level nodes are returned.
+
+    """
     include: NotRequired[str]
     r"""Comma-separated list of additional response sections to include.
     Invalid values are silently ignored. Maximum 100 items.
@@ -179,12 +186,10 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         pydantic.Field(alias="parentId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Identifier of the parent node. Accepts two formats:
-    - A standard UUID (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`)
-    - The Collection app sentinel `knowledgeBase_<orgId>`
-    (e.g. `knowledgeBase_org123`)
+    r"""Identifier of the parent node. Must be a valid UUID
+    (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-    Any value that does not match either format returns a 400 error.
+    Any value that does not match this format returns a 400 error.
 
     """
 
@@ -342,6 +347,19 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
 
     """
 
+    flattened: Annotated[
+        Optional[bool],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Force flattened/recursive search (`true`) or direct top-level
+    listing (`false`). When omitted, it's computed from whether any
+    of `q`, `nodeTypes`, `recordTypes`, `origins`, `connectorIds`,
+    `indexingStatus`, `createdAt`, `updatedAt`, or `size` are present —
+    if any are, results are flattened automatically; otherwise only
+    top-level nodes are returned.
+
+    """
+
     include: Annotated[
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
@@ -371,6 +389,7 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
                 "createdAt",
                 "updatedAt",
                 "size",
+                "flattened",
                 "include",
             ]
         )

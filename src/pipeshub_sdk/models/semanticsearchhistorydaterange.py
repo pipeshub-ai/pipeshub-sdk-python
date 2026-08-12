@@ -7,12 +7,12 @@ from pydantic import model_serializer
 from typing_extensions import Annotated, TypedDict
 
 
-class CurrentTypedDict(TypedDict):
+class SemanticSearchHistoryDateRangeCurrentTypedDict(TypedDict):
     start: Nullable[str]
     end: Nullable[str]
 
 
-class Current(BaseModel):
+class SemanticSearchHistoryDateRangeCurrent(BaseModel):
     start: Nullable[str]
 
     end: Nullable[str]
@@ -36,7 +36,7 @@ class SemanticSearchHistoryDateRangeTypedDict(TypedDict):
     type: str
     description: str
     format_: str
-    current: CurrentTypedDict
+    current: SemanticSearchHistoryDateRangeCurrentTypedDict
     applied: bool
 
 
@@ -47,7 +47,7 @@ class SemanticSearchHistoryDateRange(BaseModel):
 
     format_: Annotated[str, pydantic.Field(alias="format")]
 
-    current: Current
+    current: SemanticSearchHistoryDateRangeCurrent
 
     applied: bool
 

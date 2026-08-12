@@ -10,6 +10,9 @@ from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
+from .messagepart import MessagePart, MessagePartTypedDict
+from .messagereasoningturn import MessageReasoningTurn, MessageReasoningTurnTypedDict
+from .messagetoolcall import MessageToolCall, MessageToolCallTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -21,7 +24,7 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -32,6 +35,7 @@ AgentConversationDetailMessageMessageType = Union[
         "error",
         "feedback",
         "system",
+        "tool_call",
     ],
     UnrecognizedStr,
 ]
@@ -128,33 +132,6 @@ class AgentConversationDetailMessageReferenceDatum(BaseModel):
         return m
 
 
-class AgentConversationDetailMessageToolTypedDict(TypedDict):
-    tool_name: NotRequired[str]
-    tool_result: NotRequired[Any]
-
-
-class AgentConversationDetailMessageTool(BaseModel):
-    tool_name: Annotated[Optional[str], pydantic.Field(alias="toolName")] = None
-
-    tool_result: Annotated[Optional[Any], pydantic.Field(alias="toolResult")] = None
-
-    @model_serializer(mode="wrap")
-    def serialize_model(self, handler):
-        optional_fields = set(["toolName", "toolResult"])
-        serialized = handler(self)
-        m = {}
-
-        for n, f in type(self).model_fields.items():
-            k = f.alias or n
-            val = serialized.get(k)
-
-            if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
-                    m[k] = val
-
-        return m
-
-
 class AgentConversationDetailMessageMetadataTypedDict(TypedDict):
     processing_time_ms: NotRequired[float]
     model_version: NotRequired[str]
@@ -222,8 +199,12 @@ class AgentConversationDetailMessageTypedDict(TypedDict):
     `POST /agents/{agentKey}/conversations/attachments/upload`).
 
     """
-    tools: NotRequired[List[AgentConversationDetailMessageToolTypedDict]]
+    tools: NotRequired[List[MessageToolCallTypedDict]]
     r"""Tool call results invoked during this message turn."""
+    reasoning: NotRequired[List[MessageReasoningTurnTypedDict]]
+    r"""Persisted chain-of-thought for this turn."""
+    parts: NotRequired[List[MessagePartTypedDict]]
+    r"""Ordered agent-activity transcript for this turn."""
     model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration recorded against a conversation or message."""
     applied_filters: NotRequired[AppliedFiltersTypedDict]
@@ -289,8 +270,14 @@ class AgentConversationDetailMessage(BaseModel):
 
     """
 
-    tools: Optional[List[AgentConversationDetailMessageTool]] = None
+    tools: Optional[List[MessageToolCall]] = None
     r"""Tool call results invoked during this message turn."""
+
+    reasoning: Optional[List[MessageReasoningTurn]] = None
+    r"""Persisted chain-of-thought for this turn."""
+
+    parts: Optional[List[MessagePart]] = None
+    r"""Ordered agent-activity transcript for this turn."""
 
     model_info: Annotated[
         Optional[ConversationModelInfo], pydantic.Field(alias="modelInfo")
@@ -327,6 +314,8 @@ class AgentConversationDetailMessage(BaseModel):
                 "referenceData",
                 "attachments",
                 "tools",
+                "reasoning",
+                "parts",
                 "modelInfo",
                 "appliedFilters",
                 "metadata",
@@ -359,10 +348,6 @@ class AgentConversationDetailMessage(BaseModel):
 
 try:
     AgentConversationDetailMessageReferenceDatum.model_rebuild()
-except NameError:
-    pass
-try:
-    AgentConversationDetailMessageTool.model_rebuild()
 except NameError:
     pass
 try:

@@ -22,10 +22,17 @@ class GetRecordByIDResponseSchemaFileRecordTypedDict(TypedDict):
     org_id: str
     name: str
     extension: str
-    mime_type: str
-    size_in_bytes: int
     is_file: bool
-    web_url: str
+    etag: NotRequired[Nullable[str]]
+    ctag: NotRequired[Nullable[str]]
+    md5_checksum: NotRequired[Nullable[str]]
+    quick_xor_hash: NotRequired[Nullable[str]]
+    crc32_hash: NotRequired[Nullable[str]]
+    sha1_hash: NotRequired[Nullable[str]]
+    sha256_hash: NotRequired[Nullable[str]]
+    mime_type: NotRequired[Nullable[str]]
+    size_in_bytes: NotRequired[Nullable[int]]
+    web_url: NotRequired[Nullable[str]]
     path: NotRequired[Nullable[str]]
     local_fs_relative_path: NotRequired[Nullable[str]]
 
@@ -39,13 +46,41 @@ class GetRecordByIDResponseSchemaFileRecord(BaseModel):
 
     extension: str
 
-    mime_type: Annotated[str, pydantic.Field(alias="mimeType")]
-
-    size_in_bytes: Annotated[int, pydantic.Field(alias="sizeInBytes")]
-
     is_file: Annotated[bool, pydantic.Field(alias="isFile")]
 
-    web_url: Annotated[str, pydantic.Field(alias="webUrl")]
+    etag: OptionalNullable[str] = UNSET
+
+    ctag: OptionalNullable[str] = UNSET
+
+    md5_checksum: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="md5Checksum")
+    ] = UNSET
+
+    quick_xor_hash: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="quickXorHash")
+    ] = UNSET
+
+    crc32_hash: Annotated[OptionalNullable[str], pydantic.Field(alias="crc32Hash")] = (
+        UNSET
+    )
+
+    sha1_hash: Annotated[OptionalNullable[str], pydantic.Field(alias="sha1Hash")] = (
+        UNSET
+    )
+
+    sha256_hash: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="sha256Hash")
+    ] = UNSET
+
+    mime_type: Annotated[OptionalNullable[str], pydantic.Field(alias="mimeType")] = (
+        UNSET
+    )
+
+    size_in_bytes: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="sizeInBytes")
+    ] = UNSET
+
+    web_url: Annotated[OptionalNullable[str], pydantic.Field(alias="webUrl")] = UNSET
 
     path: OptionalNullable[str] = UNSET
 
@@ -55,8 +90,38 @@ class GetRecordByIDResponseSchemaFileRecord(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["path", "localFsRelativePath"])
-        nullable_fields = set(["path", "localFsRelativePath"])
+        optional_fields = set(
+            [
+                "etag",
+                "ctag",
+                "md5Checksum",
+                "quickXorHash",
+                "crc32Hash",
+                "sha1Hash",
+                "sha256Hash",
+                "mimeType",
+                "sizeInBytes",
+                "webUrl",
+                "path",
+                "localFsRelativePath",
+            ]
+        )
+        nullable_fields = set(
+            [
+                "etag",
+                "ctag",
+                "md5Checksum",
+                "quickXorHash",
+                "crc32Hash",
+                "sha1Hash",
+                "sha256Hash",
+                "mimeType",
+                "sizeInBytes",
+                "webUrl",
+                "path",
+                "localFsRelativePath",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
@@ -146,30 +211,47 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     """
     origin: str
     version: int
-    is_latest_version: bool
     created_at_timestamp: int
     updated_at_timestamp: int
     source_created_at_timestamp: int
     source_last_modified_timestamp: int
-    last_sync_timestamp: int
     indexing_status: str
     extraction_status: str
     is_deleted: bool
     is_archived: bool
-    is_dirty: bool
-    is_vlm_ocr_processed: bool
-    mime_type: str
-    size_in_bytes: int
-    web_url: str
+    is_vlm_ocr_processed: Nullable[bool]
+    mime_type: Nullable[str]
+    size_in_bytes: Nullable[int]
+    web_url: Nullable[str]
     file_record: Nullable[GetRecordByIDResponseSchemaFileRecordTypedDict]
     mail_record: Nullable[GetRecordByIDResponseSchemaMailRecordTypedDict]
     ticket_record: Nullable[TicketRecordTypedDict]
     external_root_group_id: NotRequired[Nullable[str]]
     external_group_id: NotRequired[Nullable[str]]
+    external_parent_id: NotRequired[Nullable[str]]
+    external_revision_id: NotRequired[Nullable[str]]
+    record_group_id: NotRequired[Nullable[str]]
+    is_latest_version: NotRequired[Nullable[bool]]
+    last_sync_timestamp: NotRequired[Nullable[int]]
     last_index_timestamp: NotRequired[int]
     last_extraction_timestamp: NotRequired[int]
-    md5_checksum: NotRequired[str]
-    virtual_record_id: NotRequired[str]
+    processing_started_at: NotRequired[Nullable[int]]
+    parsing_status: NotRequired[Nullable[str]]
+    reason: NotRequired[Nullable[str]]
+    deleted_by_user_id: NotRequired[Nullable[str]]
+    is_dirty: NotRequired[Nullable[bool]]
+    md5_checksum: NotRequired[Nullable[str]]
+    virtual_record_id: NotRequired[Nullable[str]]
+    summary_document_id: NotRequired[Nullable[str]]
+    storage_document_id: NotRequired[Nullable[str]]
+    preview_renderable: NotRequired[Nullable[bool]]
+    is_shared: NotRequired[Nullable[bool]]
+    is_dependent_node: NotRequired[Nullable[bool]]
+    parent_node_id: NotRequired[Nullable[str]]
+    hide_weburl: NotRequired[Nullable[bool]]
+    is_internal: NotRequired[Nullable[bool]]
+    is_placeholder: NotRequired[Nullable[bool]]
+    r"""True for placeholder/stub records standing in for an out-of-scope ancestor (rendered read-only, no content actions; excluded from search and indexing)."""
 
 
 class GetRecordByIDResponseSchemaRecord(BaseModel):
@@ -232,8 +314,6 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     version: int
 
-    is_latest_version: Annotated[bool, pydantic.Field(alias="isLatestVersion")]
-
     created_at_timestamp: Annotated[int, pydantic.Field(alias="createdAtTimestamp")]
 
     updated_at_timestamp: Annotated[int, pydantic.Field(alias="updatedAtTimestamp")]
@@ -246,8 +326,6 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
         int, pydantic.Field(alias="sourceLastModifiedTimestamp")
     ]
 
-    last_sync_timestamp: Annotated[int, pydantic.Field(alias="lastSyncTimestamp")]
-
     indexing_status: Annotated[str, pydantic.Field(alias="indexingStatus")]
 
     extraction_status: Annotated[str, pydantic.Field(alias="extractionStatus")]
@@ -256,15 +334,15 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     is_archived: Annotated[bool, pydantic.Field(alias="isArchived")]
 
-    is_dirty: Annotated[bool, pydantic.Field(alias="isDirty")]
+    is_vlm_ocr_processed: Annotated[
+        Nullable[bool], pydantic.Field(alias="isVLMOcrProcessed")
+    ]
 
-    is_vlm_ocr_processed: Annotated[bool, pydantic.Field(alias="isVLMOcrProcessed")]
+    mime_type: Annotated[Nullable[str], pydantic.Field(alias="mimeType")]
 
-    mime_type: Annotated[str, pydantic.Field(alias="mimeType")]
+    size_in_bytes: Annotated[Nullable[int], pydantic.Field(alias="sizeInBytes")]
 
-    size_in_bytes: Annotated[int, pydantic.Field(alias="sizeInBytes")]
-
-    web_url: Annotated[str, pydantic.Field(alias="webUrl")]
+    web_url: Annotated[Nullable[str], pydantic.Field(alias="webUrl")]
 
     file_record: Annotated[
         Nullable[GetRecordByIDResponseSchemaFileRecord],
@@ -288,6 +366,26 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
         OptionalNullable[str], pydantic.Field(alias="externalGroupId")
     ] = UNSET
 
+    external_parent_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="externalParentId")
+    ] = UNSET
+
+    external_revision_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="externalRevisionId")
+    ] = UNSET
+
+    record_group_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="recordGroupId")
+    ] = UNSET
+
+    is_latest_version: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="isLatestVersion")
+    ] = UNSET
+
+    last_sync_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="lastSyncTimestamp")
+    ] = UNSET
+
     last_index_timestamp: Annotated[
         Optional[int], pydantic.Field(alias="lastIndexTimestamp")
     ] = None
@@ -296,11 +394,66 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
         Optional[int], pydantic.Field(alias="lastExtractionTimestamp")
     ] = None
 
-    md5_checksum: Annotated[Optional[str], pydantic.Field(alias="md5Checksum")] = None
+    processing_started_at: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="processingStartedAt")
+    ] = UNSET
+
+    parsing_status: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="parsingStatus")
+    ] = UNSET
+
+    reason: OptionalNullable[str] = UNSET
+
+    deleted_by_user_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="deletedByUserId")
+    ] = UNSET
+
+    is_dirty: Annotated[OptionalNullable[bool], pydantic.Field(alias="isDirty")] = UNSET
+
+    md5_checksum: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="md5Checksum")
+    ] = UNSET
 
     virtual_record_id: Annotated[
-        Optional[str], pydantic.Field(alias="virtualRecordId")
-    ] = None
+        OptionalNullable[str], pydantic.Field(alias="virtualRecordId")
+    ] = UNSET
+
+    summary_document_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="summaryDocumentId")
+    ] = UNSET
+
+    storage_document_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="storageDocumentId")
+    ] = UNSET
+
+    preview_renderable: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="previewRenderable")
+    ] = UNSET
+
+    is_shared: Annotated[OptionalNullable[bool], pydantic.Field(alias="isShared")] = (
+        UNSET
+    )
+
+    is_dependent_node: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="isDependentNode")
+    ] = UNSET
+
+    parent_node_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="parentNodeId")
+    ] = UNSET
+
+    hide_weburl: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="hideWeburl")
+    ] = UNSET
+
+    is_internal: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="isInternal")
+    ] = UNSET
+
+    is_placeholder: Annotated[
+        OptionalNullable[bool], pydantic.Field(alias="isPlaceholder")
+    ] = UNSET
+    r"""True for placeholder/stub records standing in for an out-of-scope ancestor (rendered read-only, no content actions; excluded from search and indexing)."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -308,16 +461,60 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
             [
                 "externalRootGroupId",
                 "externalGroupId",
+                "externalParentId",
+                "externalRevisionId",
+                "recordGroupId",
+                "isLatestVersion",
+                "lastSyncTimestamp",
                 "lastIndexTimestamp",
                 "lastExtractionTimestamp",
+                "processingStartedAt",
+                "parsingStatus",
+                "reason",
+                "deletedByUserId",
+                "isDirty",
                 "md5Checksum",
                 "virtualRecordId",
+                "summaryDocumentId",
+                "storageDocumentId",
+                "previewRenderable",
+                "isShared",
+                "isDependentNode",
+                "parentNodeId",
+                "hideWeburl",
+                "isInternal",
+                "isPlaceholder",
             ]
         )
         nullable_fields = set(
             [
                 "externalRootGroupId",
                 "externalGroupId",
+                "externalParentId",
+                "externalRevisionId",
+                "recordGroupId",
+                "isLatestVersion",
+                "lastSyncTimestamp",
+                "processingStartedAt",
+                "parsingStatus",
+                "reason",
+                "deletedByUserId",
+                "isDirty",
+                "isVLMOcrProcessed",
+                "mimeType",
+                "sizeInBytes",
+                "md5Checksum",
+                "virtualRecordId",
+                "summaryDocumentId",
+                "storageDocumentId",
+                "webUrl",
+                "previewRenderable",
+                "isShared",
+                "isDependentNode",
+                "parentNodeId",
+                "hideWeburl",
+                "isInternal",
+                "isPlaceholder",
                 "fileRecord",
                 "mailRecord",
                 "ticketRecord",

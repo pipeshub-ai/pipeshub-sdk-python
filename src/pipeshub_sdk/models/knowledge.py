@@ -17,7 +17,7 @@ class FiltersParsedTypedDict(TypedDict):
     """
 
     record_groups: NotRequired[List[str]]
-    r"""Record-group ids (e.g. knowledge-base roots) in scope."""
+    r"""Deprecated/legacy: record-group ids for connector record-group scoping (e.g. Confluence spaces, Jira projects). No longer set for KB (Collection) entries — a KB is identified by its own `connectorId`, not by an id in this list."""
     records: NotRequired[List[str]]
     r"""Individual record ids in scope."""
 
@@ -32,7 +32,7 @@ class FiltersParsed(BaseModel):
     record_groups: Annotated[
         Optional[List[str]], pydantic.Field(alias="recordGroups")
     ] = None
-    r"""Record-group ids (e.g. knowledge-base roots) in scope."""
+    r"""Deprecated/legacy: record-group ids for connector record-group scoping (e.g. Confluence spaces, Jira projects). No longer set for KB (Collection) entries — a KB is identified by its own `connectorId`, not by an id in this list."""
 
     records: Optional[List[str]] = None
     r"""Individual record ids in scope."""

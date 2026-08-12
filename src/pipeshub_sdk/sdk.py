@@ -17,6 +17,7 @@ import weakref
 if TYPE_CHECKING:
     from pipeshub_sdk.agents import Agents
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
+    from pipeshub_sdk.connector import Connector
     from pipeshub_sdk.conversations import Conversations
     from pipeshub_sdk.knowledge_base_sdk import KnowledgeBaseSDK
     from pipeshub_sdk.knowledge_hub import KnowledgeHub
@@ -25,6 +26,7 @@ if TYPE_CHECKING:
     from pipeshub_sdk.openid_connect import OpenIDConnect
     from pipeshub_sdk.organization_auth_config import OrganizationAuthConfig
     from pipeshub_sdk.organizations import Organizations
+    from pipeshub_sdk.personal_access_tokens import PersonalAccessTokens
     from pipeshub_sdk.semantic_search import SemanticSearch
     from pipeshub_sdk.user_account import UserAccount
     from pipeshub_sdk.web_search_sdk import WebSearchSDK
@@ -126,6 +128,39 @@ class Pipeshub(BaseSDK):
     - Revoke all tokens for emergency access removal
 
     """
+    personal_access_tokens: "PersonalAccessTokens"
+    r"""Self-service, long-lived, scoped, revocable credentials that act as their
+    creator — unlike an OAuth app's `client_credentials` flow, which acts as
+    the app.
+
+    **Who can create one**
+    - **Any authenticated org member** — unlike OAuth apps, this is
+    deliberately not admin-gated.
+
+    **How it's issued**
+    - Minted through the same OAuth access-token machinery as `/oauth2/token`,
+    against one lazily-created, per-org synthetic OAuth app
+    (`clientId: pat-system:<orgId>`) that every PAT in that org shares.
+    That app is hidden from `/oauth-clients/*` — it never appears in your
+    own OAuth app list and can't be managed through those routes.
+    - The raw token is prefixed `phpat_` ahead of the underlying JWT (see the
+    `bearerAuth` security scheme) so it's recognizable to secret scanners.
+    It's shown exactly once, at creation.
+
+    **Expiry and scopes**
+    - `expiryDays`: `30` (default), `90`, `365`, or `never`.
+    - Scopes default to the org's full configured `MCP_SCOPES` set if none
+    are requested; `GET /personal-access-tokens/scopes` lists what's
+    available.
+
+    **Admin visibility**
+    - Regular members only ever see and revoke their own tokens.
+    - Org admins can list and revoke *any* member's token via
+    `/personal-access-tokens/admin*` — for incident response (a departed
+    employee, a compromised laptop) — without needing the OAuth app CRUD
+    access described above.
+
+    """
     user_account: "UserAccount"
     r"""User authentication including multi-step MFA, password reset, OTP login, and token management"""
     organization_auth_config: "OrganizationAuthConfig"
@@ -142,6 +177,8 @@ class Pipeshub(BaseSDK):
     r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
     agents: "Agents"
     r"""Custom AI agents with specialized capabilities and tool integrations"""
+    connector: "Connector"
+    r"""Connector-related operations"""
     ai_models_providers: "AIModelsProviders"
     r"""Manage individual AI model providers - add, update, delete, and set defaults."""
     web_search: "WebSearchSDK"
@@ -150,6 +187,10 @@ class Pipeshub(BaseSDK):
         "o_auth_provider": ("pipeshub_sdk.oauth_provider", "OAuthProvider"),
         "open_id_connect": ("pipeshub_sdk.openid_connect", "OpenIDConnect"),
         "o_auth_apps": ("pipeshub_sdk.oauth_apps", "OAuthApps"),
+        "personal_access_tokens": (
+            "pipeshub_sdk.personal_access_tokens",
+            "PersonalAccessTokens",
+        ),
         "user_account": ("pipeshub_sdk.user_account", "UserAccount"),
         "organization_auth_config": (
             "pipeshub_sdk.organization_auth_config",
@@ -161,6 +202,7 @@ class Pipeshub(BaseSDK):
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
+        "connector": ("pipeshub_sdk.connector", "Connector"),
         "ai_models_providers": (
             "pipeshub_sdk.ai_models_providers",
             "AIModelsProviders",

@@ -17,6 +17,7 @@ class Conversations(BaseSDK):
         self,
         *,
         query: str,
+        chat_mode: models.ConversationStreamRequestChatMode,
         record_ids: Optional[List[str]] = None,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
@@ -30,15 +31,18 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[models.CreateConversationRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models.ConversationStreamRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> eventstreaming.EventStream[models.AssistantStreamSSEEvent]:
+    ) -> eventstreaming.EventStream[models.ConversationStreamSSEEvent]:
         r"""Create conversation with streaming response
 
         Start a new conversation and stream the AI response over Server-Sent
@@ -50,40 +54,28 @@ class Conversations(BaseSDK):
 
         1. The server validates `query`, persists an in-progress
         conversation, then opens the SSE stream with HTTP `200`.
-        2. A `connected` event is emitted immediately with the new
-        `conversationId` so the client can link the stream (sidebar,
-        parallel tabs, deep links) without an extra request.
+        2. A `CUSTOM` event named `conversation_created` is emitted
+        immediately with the new `conversationId` so the client can link
+        the stream (sidebar, parallel tabs, deep links) without an extra
+        request.
         3. AI-backend events stream through (token chunks, tool calls,
         status, etc.).
-        4. On success a single `complete` event is emitted carrying the
-        full persisted conversation.
-        5. On failure an `error` event is emitted and the conversation is
-        marked FAILED before the stream closes.
+        4. On success a single root `RUN_FINISHED` event is emitted carrying
+        the full persisted conversation in `result`.
+        5. On failure a root `RUN_ERROR` event is emitted and the
+        conversation is marked FAILED before the stream closes.
 
         **Event vocabulary**
 
-        Three events have stable, server-defined `data` shapes:
+        AG-UI is the sole wire protocol. See `ConversationStreamSSEEvent`
+        for the full event enum and payload guidance.
 
-        - `connected` — `{ \"message\": string, \"conversationId\": string,
-        \"title\": string }`
-        - `complete` — `{ \"conversation\": Conversation,
-        \"meta\": { \"requestId\": string, \"timestamp\": string,
-        \"duration\": number } }`
-        - `error` — `{ \"error\": string, \"details\"?: string }`
-
-        The forwarded events are `status`, `answer_chunk`, `tool_calls`,
-        `restreaming`, `metadata`, and `tool_execution_complete`. Their
-        payloads come from the Python query service and may evolve. Note
-        that raw `tool_call` / `tool_success` / `tool_error` / `tool_result`
-        events emitted by the LLM tool runtime are rewrapped as `status` by
-        the upstream wrapper before they reach this route, so clients on
-        `/conversations/stream` never see those names directly. Clients
-        should ignore unknown event names rather than treating them as
-        errors.
+        Clients should ignore unknown event names rather than treating them
+        as errors.
 
         **Agent mode**
 
-        When `chatMode` selects an agent mode (for example `agent:auto`),
+        When `chatMode` is `agent`,
         the optional `tools` list restricts which tools the agent may
         invoke for this turn. Outside agent modes the `tools` field is
         ignored.
@@ -91,6 +83,11 @@ class Conversations(BaseSDK):
 
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
+
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+            `agent` uses the universal agent loop, while `internal_search`
+            and `web_search` use their corresponding assistant search paths.
 
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
@@ -114,8 +111,6 @@ class Conversations(BaseSDK):
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
-        :param chat_mode: Chat mode affecting response behavior.
-
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
 
@@ -124,7 +119,18 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names such as
             \"jira.create_issue\") that the AI agent is permitted to invoke for this
             request. When omitted the agent may use any configured tool. Applicable
-            only when chatMode is an agent mode (e.g. \"agent:auto\").
+            only when `chatMode` is `agent`.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (`RUN_STARTED`, `TEXT_MESSAGE_CONTENT`,
+            etc.). Kept in the schema for backward compatibility with callers
+            that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -141,7 +147,7 @@ class Conversations(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.CreateConversationRequest(
+        request = models.ConversationStreamRequest(
             query=query,
             record_ids=record_ids,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
@@ -158,6 +164,10 @@ class Conversations(BaseSDK):
             timezone=timezone,
             current_time=current_time,
             tools=tools,
+            protocol=protocol,
+            agent_capabilities=utils.get_pydantic_model(
+                agent_capabilities, Optional[models.AgentCapabilities]
+            ),
         )
 
         req = self._build_request(
@@ -174,7 +184,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateConversationRequest
+                request, False, False, "json", models.ConversationStreamRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -207,7 +217,9 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
-                lambda raw: utils.unmarshal_json(raw, models.AssistantStreamSSEEvent),
+                lambda raw: utils.unmarshal_json(
+                    raw, models.ConversationStreamSSEEvent
+                ),
                 client_ref=self,
             )
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
@@ -230,6 +242,7 @@ class Conversations(BaseSDK):
         self,
         *,
         query: str,
+        chat_mode: models.ConversationStreamRequestChatMode,
         record_ids: Optional[List[str]] = None,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
@@ -243,15 +256,18 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[models.CreateConversationRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models.ConversationStreamRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> eventstreaming.EventStreamAsync[models.AssistantStreamSSEEvent]:
+    ) -> eventstreaming.EventStreamAsync[models.ConversationStreamSSEEvent]:
         r"""Create conversation with streaming response
 
         Start a new conversation and stream the AI response over Server-Sent
@@ -263,40 +279,28 @@ class Conversations(BaseSDK):
 
         1. The server validates `query`, persists an in-progress
         conversation, then opens the SSE stream with HTTP `200`.
-        2. A `connected` event is emitted immediately with the new
-        `conversationId` so the client can link the stream (sidebar,
-        parallel tabs, deep links) without an extra request.
+        2. A `CUSTOM` event named `conversation_created` is emitted
+        immediately with the new `conversationId` so the client can link
+        the stream (sidebar, parallel tabs, deep links) without an extra
+        request.
         3. AI-backend events stream through (token chunks, tool calls,
         status, etc.).
-        4. On success a single `complete` event is emitted carrying the
-        full persisted conversation.
-        5. On failure an `error` event is emitted and the conversation is
-        marked FAILED before the stream closes.
+        4. On success a single root `RUN_FINISHED` event is emitted carrying
+        the full persisted conversation in `result`.
+        5. On failure a root `RUN_ERROR` event is emitted and the
+        conversation is marked FAILED before the stream closes.
 
         **Event vocabulary**
 
-        Three events have stable, server-defined `data` shapes:
+        AG-UI is the sole wire protocol. See `ConversationStreamSSEEvent`
+        for the full event enum and payload guidance.
 
-        - `connected` — `{ \"message\": string, \"conversationId\": string,
-        \"title\": string }`
-        - `complete` — `{ \"conversation\": Conversation,
-        \"meta\": { \"requestId\": string, \"timestamp\": string,
-        \"duration\": number } }`
-        - `error` — `{ \"error\": string, \"details\"?: string }`
-
-        The forwarded events are `status`, `answer_chunk`, `tool_calls`,
-        `restreaming`, `metadata`, and `tool_execution_complete`. Their
-        payloads come from the Python query service and may evolve. Note
-        that raw `tool_call` / `tool_success` / `tool_error` / `tool_result`
-        events emitted by the LLM tool runtime are rewrapped as `status` by
-        the upstream wrapper before they reach this route, so clients on
-        `/conversations/stream` never see those names directly. Clients
-        should ignore unknown event names rather than treating them as
-        errors.
+        Clients should ignore unknown event names rather than treating them
+        as errors.
 
         **Agent mode**
 
-        When `chatMode` selects an agent mode (for example `agent:auto`),
+        When `chatMode` is `agent`,
         the optional `tools` list restricts which tools the agent may
         invoke for this turn. Outside agent modes the `tools` field is
         ignored.
@@ -304,6 +308,11 @@ class Conversations(BaseSDK):
 
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
+
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+            `agent` uses the universal agent loop, while `internal_search`
+            and `web_search` use their corresponding assistant search paths.
 
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
@@ -327,8 +336,6 @@ class Conversations(BaseSDK):
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
-        :param chat_mode: Chat mode affecting response behavior.
-
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
 
@@ -337,7 +344,18 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names such as
             \"jira.create_issue\") that the AI agent is permitted to invoke for this
             request. When omitted the agent may use any configured tool. Applicable
-            only when chatMode is an agent mode (e.g. \"agent:auto\").
+            only when `chatMode` is `agent`.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (`RUN_STARTED`, `TEXT_MESSAGE_CONTENT`,
+            etc.). Kept in the schema for backward compatibility with callers
+            that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -354,7 +372,7 @@ class Conversations(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.CreateConversationRequest(
+        request = models.ConversationStreamRequest(
             query=query,
             record_ids=record_ids,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
@@ -371,6 +389,10 @@ class Conversations(BaseSDK):
             timezone=timezone,
             current_time=current_time,
             tools=tools,
+            protocol=protocol,
+            agent_capabilities=utils.get_pydantic_model(
+                agent_capabilities, Optional[models.AgentCapabilities]
+            ),
         )
 
         req = self._build_request_async(
@@ -387,7 +409,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request, False, False, "json", models.CreateConversationRequest
+                request, False, False, "json", models.ConversationStreamRequest
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -420,7 +442,9 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
-                lambda raw: utils.unmarshal_json(raw, models.AssistantStreamSSEEvent),
+                lambda raw: utils.unmarshal_json(
+                    raw, models.ConversationStreamSSEEvent
+                ),
                 client_ref=self,
             )
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
@@ -1704,6 +1728,7 @@ class Conversations(BaseSDK):
         *,
         conversation_id: str,
         query: str,
+        chat_mode: models.ConversationMessageStreamRequestChatMode,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
@@ -1716,15 +1741,18 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[models.AddMessageRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models.ConversationMessageStreamRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> eventstreaming.EventStream[models.AssistantMessageStreamSSEEvent]:
+    ) -> eventstreaming.EventStream[models.ConversationMessageStreamSSEEvent]:
         r"""Add message to a conversation with streaming response
 
         Add a follow-up message to an existing conversation and stream the
@@ -1734,16 +1762,19 @@ class Conversations(BaseSDK):
         but the response is delivered as an SSE stream so clients can render
         the answer incrementally.
 
-        The wire vocabulary is described by `AssistantMessageStreamSSEEvent`.
-        It is the same event set as `/conversations/stream`; only the
-        `connected` and `complete` payloads differ because the conversation
-        already exists when this route is called.
+        AG-UI is the sole wire protocol. The vocabulary is described by
+        `ConversationMessageStreamSSEEvent`; it is the same event set as
+        `/conversations/stream`, while the terminal result reflects an
+        existing conversation.
 
 
         :param conversation_id: Identifier of the conversation to append the message to. The
             conversation must belong to the caller and must not be deleted.
 
         :param query: The follow-up question or message content
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
             for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
             For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
@@ -1761,7 +1792,6 @@ class Conversations(BaseSDK):
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
-        :param chat_mode: Chat mode for this message
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
 
@@ -1770,6 +1800,17 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers the agent may invoke for this
             follow-up message. Semantics are identical to the create-conversation
             tools field.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `ConversationMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1788,7 +1829,7 @@ class Conversations(BaseSDK):
 
         request = models.AddMessageStreamRequest(
             conversation_id=conversation_id,
-            body=models.AddMessageRequest(
+            body=models.ConversationMessageStreamRequest(
                 query=query,
                 filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
                 applied_filters=utils.get_pydantic_model(
@@ -1804,6 +1845,10 @@ class Conversations(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models.AgentCapabilities]
+                ),
             ),
         )
 
@@ -1821,7 +1866,11 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.AddMessageRequest
+                request.body,
+                False,
+                False,
+                "json",
+                models.ConversationMessageStreamRequest,
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -1855,7 +1904,7 @@ class Conversations(BaseSDK):
             return eventstreaming.EventStream(
                 http_res,
                 lambda raw: utils.unmarshal_json(
-                    raw, models.AssistantMessageStreamSSEEvent
+                    raw, models.ConversationMessageStreamSSEEvent
                 ),
                 client_ref=self,
             )
@@ -1880,6 +1929,7 @@ class Conversations(BaseSDK):
         *,
         conversation_id: str,
         query: str,
+        chat_mode: models.ConversationMessageStreamRequestChatMode,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
@@ -1892,15 +1942,18 @@ class Conversations(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
-        chat_mode: Optional[models.AddMessageRequestChatMode] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models.ConversationMessageStreamRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> eventstreaming.EventStreamAsync[models.AssistantMessageStreamSSEEvent]:
+    ) -> eventstreaming.EventStreamAsync[models.ConversationMessageStreamSSEEvent]:
         r"""Add message to a conversation with streaming response
 
         Add a follow-up message to an existing conversation and stream the
@@ -1910,16 +1963,19 @@ class Conversations(BaseSDK):
         but the response is delivered as an SSE stream so clients can render
         the answer incrementally.
 
-        The wire vocabulary is described by `AssistantMessageStreamSSEEvent`.
-        It is the same event set as `/conversations/stream`; only the
-        `connected` and `complete` payloads differ because the conversation
-        already exists when this route is called.
+        AG-UI is the sole wire protocol. The vocabulary is described by
+        `ConversationMessageStreamSSEEvent`; it is the same event set as
+        `/conversations/stream`, while the terminal result reflects an
+        existing conversation.
 
 
         :param conversation_id: Identifier of the conversation to append the message to. The
             conversation must belong to the caller and must not be deleted.
 
         :param query: The follow-up question or message content
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
             for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
             For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
@@ -1937,7 +1993,6 @@ class Conversations(BaseSDK):
         :param model_key: Override the model for this specific message
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
-        :param chat_mode: Chat mode for this message
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
 
@@ -1946,6 +2001,17 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers the agent may invoke for this
             follow-up message. Semantics are identical to the create-conversation
             tools field.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `ConversationMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1964,7 +2030,7 @@ class Conversations(BaseSDK):
 
         request = models.AddMessageStreamRequest(
             conversation_id=conversation_id,
-            body=models.AddMessageRequest(
+            body=models.ConversationMessageStreamRequest(
                 query=query,
                 filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
                 applied_filters=utils.get_pydantic_model(
@@ -1980,6 +2046,10 @@ class Conversations(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models.AgentCapabilities]
+                ),
             ),
         )
 
@@ -1997,7 +2067,11 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.AddMessageRequest
+                request.body,
+                False,
+                False,
+                "json",
+                models.ConversationMessageStreamRequest,
             ),
             allow_empty_value=None,
             timeout_ms=timeout_ms,
@@ -2031,7 +2105,7 @@ class Conversations(BaseSDK):
             return eventstreaming.EventStreamAsync(
                 http_res,
                 lambda raw: utils.unmarshal_json(
-                    raw, models.AssistantMessageStreamSSEEvent
+                    raw, models.ConversationMessageStreamSSEEvent
                 ),
                 client_ref=self,
             )
@@ -2698,6 +2772,10 @@ class Conversations(BaseSDK):
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models.RegenerateRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2731,18 +2809,10 @@ class Conversations(BaseSDK):
 
         **Streaming:**
 
-        The response is delivered as an SSE (`text/event-stream`) stream. The
-        exact event vocabulary depends on `chatMode`:
-
-        - For non-agent modes (e.g. `internal_search`, `web_search`) the
-        request is dispatched to the assistant chat backend.
-        - For agent modes (e.g. `agent:auto`) the request is dispatched to
-        the agent backend with a placeholder agent built from the caller's
-        workspace, which can additionally emit `tool_result` and
-        `tool_execution_complete` events.
-
-        See `SSEEvent` for the full union of event names this endpoint can
-        emit across both backends.
+        The response is delivered as an AG-UI `text/event-stream` stream.
+        Routing still depends on `chatMode`: `internal_search` and
+        `web_search` use the assistant backend, while `agent` uses the
+        universal agent loop. See `SSEEvent` for the event vocabulary.
 
 
         :param conversation_id:
@@ -2761,7 +2831,7 @@ class Conversations(BaseSDK):
         :param model_name: Provider model name (e.g. the underlying LLM identifier).
         :param model_friendly_name: Friendly display name of the selected model.
         :param chat_mode: Chat mode used for regeneration (for example `internal_search`,
-            `web_search`, or an agent mode such as `agent:auto`).
+            `web_search`, or the universal `agent` mode).
 
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
@@ -2772,6 +2842,16 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
             regenerating. Applicable only in agent chat modes.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary. Kept in the schema for backward
+            compatibility with callers that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2800,6 +2880,10 @@ class Conversations(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models.AgentCapabilities]
+                ),
             ),
         )
 
@@ -2886,6 +2970,10 @@ class Conversations(BaseSDK):
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[List[str]] = None,
+        protocol: Optional[models.RegenerateRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2919,18 +3007,10 @@ class Conversations(BaseSDK):
 
         **Streaming:**
 
-        The response is delivered as an SSE (`text/event-stream`) stream. The
-        exact event vocabulary depends on `chatMode`:
-
-        - For non-agent modes (e.g. `internal_search`, `web_search`) the
-        request is dispatched to the assistant chat backend.
-        - For agent modes (e.g. `agent:auto`) the request is dispatched to
-        the agent backend with a placeholder agent built from the caller's
-        workspace, which can additionally emit `tool_result` and
-        `tool_execution_complete` events.
-
-        See `SSEEvent` for the full union of event names this endpoint can
-        emit across both backends.
+        The response is delivered as an AG-UI `text/event-stream` stream.
+        Routing still depends on `chatMode`: `internal_search` and
+        `web_search` use the assistant backend, while `agent` uses the
+        universal agent loop. See `SSEEvent` for the event vocabulary.
 
 
         :param conversation_id:
@@ -2949,7 +3029,7 @@ class Conversations(BaseSDK):
         :param model_name: Provider model name (e.g. the underlying LLM identifier).
         :param model_friendly_name: Friendly display name of the selected model.
         :param chat_mode: Chat mode used for regeneration (for example `internal_search`,
-            `web_search`, or an agent mode such as `agent:auto`).
+            `web_search`, or the universal `agent` mode).
 
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
@@ -2960,6 +3040,16 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
             regenerating. Applicable only in agent chat modes.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary. Kept in the schema for backward
+            compatibility with callers that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2988,6 +3078,10 @@ class Conversations(BaseSDK):
                 timezone=timezone,
                 current_time=current_time,
                 tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models.AgentCapabilities]
+                ),
             ),
         )
 
