@@ -8,6 +8,8 @@
 /src/pipeshub_sdk/models/assistantmessagestreamsseevent.py
 /src/pipeshub_sdk/models/agentmessagestreamsseevent.py
 /src/pipeshub_sdk/models/agentregeneratesseevent.py
+/src/pipeshub_sdk/models/conversationstreamsseevent.py
+/src/pipeshub_sdk/models/conversationmessagestreamsseevent.py
 
 # Matching docs: keep the `data` row showing `Any` to stay in sync with the models above.
 /docs/models/uploadstreamsseevent.md
@@ -17,3 +19,5 @@
 /docs/models/assistantmessagestreamsseevent.md
 /docs/models/agentmessagestreamsseevent.md
 /docs/models/agentregeneratesseevent.md
+/docs/models/conversationstreamsseevent.md
+/docs/models/conversationmessagestreamsseevent.md
