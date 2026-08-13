@@ -67,9 +67,8 @@ class AgentCreateRequestTypedDict(TypedDict):
     skills: NotRequired[List[AgentSkillAssignmentTypedDict]]
     r"""Existing skills to assign to the agent"""
     web_search: NotRequired[Nullable[AgentCreateWebSearchUnionTypedDict]]
-    r"""Accepted web-search attachment for `POST /agents/create`.
-    The gateway accepts either a provider string or an object with at least
-    a `provider` field.
+    r"""Web-search attachment for an agent. Accepts either a provider string
+    or an object with at least a `provider` field.
 
     """
     default_reasoning_effort: NotRequired[
@@ -128,9 +127,8 @@ class AgentCreateRequest(BaseModel):
     web_search: Annotated[
         OptionalNullable[AgentCreateWebSearchUnion], pydantic.Field(alias="webSearch")
     ] = UNSET
-    r"""Accepted web-search attachment for `POST /agents/create`.
-    The gateway accepts either a provider string or an object with at least
-    a `provider` field.
+    r"""Web-search attachment for an agent. Accepts either a provider string
+    or an object with at least a `provider` field.
 
     """
 
