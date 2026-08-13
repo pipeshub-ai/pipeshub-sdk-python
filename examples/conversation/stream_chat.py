@@ -19,15 +19,19 @@ async def main() -> None:
     async with SDK(
         server_url=server_url,
         security=models.Security(bearer_auth=token),
+        timeout_ms=300_000,
     ) as client:
         conv_id = None
-        chat_stream = await client.conversations.stream_chat_async(query="Who moved the cheese?")
+        chat_stream = await client.conversations.stream_chat_async(
+            query="Who moved the cheese?",
+            chat_mode="agent",
+        )
         async for event in chat_stream:
             data: Any = event.data
-            if event.event == "answer_chunk" and data:
-                print(data.get("chunk") or data.get("delta") or "", end="", flush=True)
-            elif event.event == "complete" and data:
-                conv_id = data["conversation"]["_id"]
+            if event.event == "TEXT_MESSAGE_CONTENT" and data:
+                print(data["delta"], end="", flush=True)
+            elif event.event == "RUN_FINISHED" and data:
+                conv_id = data["result"]["conversation"]["_id"]
         print(f"\nconversation id: {conv_id}")
 
 
