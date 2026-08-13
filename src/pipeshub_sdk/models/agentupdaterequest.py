@@ -39,9 +39,11 @@ class AgentUpdateRequestTypedDict(TypedDict):
     r"""Partial update payload for `PUT /agents/{agentKey}`.
 
     Every field is optional — only the fields present in the request body
-    are updated. When `models` is included, the gateway Zod middleware
-    (mirroring the Python backend) requires at least one model entry and
-    at least one object entry with `isReasoning: true`.
+    are updated. `models` may be omitted, set to an empty array to clear
+    the agent's models (reverting it to the organization's default LLM at
+    chat time), or set to a non-empty array. When a non-empty array is
+    provided, the gateway Zod middleware (mirroring the Python backend)
+    requires at least one object entry with `isReasoning: true`.
 
     """
 
@@ -56,9 +58,11 @@ class AgentUpdateRequestTypedDict(TypedDict):
     instructions: NotRequired[str]
     r"""Additional agent execution instructions"""
     models: NotRequired[List[AgentCreateModelEntryUnionTypedDict]]
-    r"""Agent model configuration entries. When present, the Zod middleware
-    requires at least one object entry with `isReasoning: true`.
-    String-only arrays are schema-valid but rejected at runtime with HTTP 400.
+    r"""Agent model configuration entries. Optional. An empty array clears the
+    agent's models so it falls back to the organization's default LLM.
+    When a non-empty array is present, the Zod middleware requires at
+    least one object entry with `isReasoning: true`. String-only arrays
+    are schema-valid but rejected at runtime with HTTP 400 unless empty.
 
     """
     tags: NotRequired[List[str]]
@@ -91,9 +95,11 @@ class AgentUpdateRequest(BaseModel):
     r"""Partial update payload for `PUT /agents/{agentKey}`.
 
     Every field is optional — only the fields present in the request body
-    are updated. When `models` is included, the gateway Zod middleware
-    (mirroring the Python backend) requires at least one model entry and
-    at least one object entry with `isReasoning: true`.
+    are updated. `models` may be omitted, set to an empty array to clear
+    the agent's models (reverting it to the organization's default LLM at
+    chat time), or set to a non-empty array. When a non-empty array is
+    provided, the gateway Zod middleware (mirroring the Python backend)
+    requires at least one object entry with `isReasoning: true`.
 
     """
 
@@ -113,9 +119,11 @@ class AgentUpdateRequest(BaseModel):
     r"""Additional agent execution instructions"""
 
     models: Optional[List[AgentCreateModelEntryUnion]] = None
-    r"""Agent model configuration entries. When present, the Zod middleware
-    requires at least one object entry with `isReasoning: true`.
-    String-only arrays are schema-valid but rejected at runtime with HTTP 400.
+    r"""Agent model configuration entries. Optional. An empty array clears the
+    agent's models so it falls back to the organization's default LLM.
+    When a non-empty array is present, the Zod middleware requires at
+    least one object entry with `isReasoning: true`. String-only arrays
+    are schema-valid but rejected at runtime with HTTP 400 unless empty.
 
     """
 

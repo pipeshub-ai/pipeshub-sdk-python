@@ -38,12 +38,6 @@ r"""Agent-level reasoning effort used when a chat request omits its own."""
 class AgentCreateRequestTypedDict(TypedDict):
     name: str
     r"""Agent display name"""
-    models: List[AgentCreateModelEntryUnionTypedDict]
-    r"""Agent model configuration entries. The gateway requires at least one
-    object entry with `isReasoning: true`. String-only arrays are schema-valid
-    but rejected at runtime with HTTP 400.
-
-    """
     description: NotRequired[str]
     r"""What the agent does"""
     start_message: NotRequired[str]
@@ -52,6 +46,15 @@ class AgentCreateRequestTypedDict(TypedDict):
     r"""System instructions for the agent"""
     instructions: NotRequired[str]
     r"""Additional agent execution instructions"""
+    models: NotRequired[List[AgentCreateModelEntryUnionTypedDict]]
+    r"""Agent model configuration entries. Optional — an agent created without
+    any models (an empty array or an omitted field) uses the organization's
+    default LLM at chat time. When at least one model entry IS provided, the
+    gateway requires at least one object entry with `isReasoning: true`.
+    String-only arrays are schema-valid but rejected at runtime with HTTP 400
+    unless the array is empty.
+
+    """
     tags: NotRequired[List[str]]
     share_with_org: NotRequired[bool]
     r"""Share agent with the organization"""
@@ -79,13 +82,6 @@ class AgentCreateRequest(BaseModel):
     name: str
     r"""Agent display name"""
 
-    models: List[AgentCreateModelEntryUnion]
-    r"""Agent model configuration entries. The gateway requires at least one
-    object entry with `isReasoning: true`. String-only arrays are schema-valid
-    but rejected at runtime with HTTP 400.
-
-    """
-
     description: Optional[str] = None
     r"""What the agent does"""
 
@@ -97,6 +93,16 @@ class AgentCreateRequest(BaseModel):
 
     instructions: Optional[str] = None
     r"""Additional agent execution instructions"""
+
+    models: Optional[List[AgentCreateModelEntryUnion]] = None
+    r"""Agent model configuration entries. Optional — an agent created without
+    any models (an empty array or an omitted field) uses the organization's
+    default LLM at chat time. When at least one model entry IS provided, the
+    gateway requires at least one object entry with `isReasoning: true`.
+    String-only arrays are schema-valid but rejected at runtime with HTTP 400
+    unless the array is empty.
+
+    """
 
     tags: Optional[List[str]] = None
 
@@ -142,6 +148,7 @@ class AgentCreateRequest(BaseModel):
                 "startMessage",
                 "systemPrompt",
                 "instructions",
+                "models",
                 "tags",
                 "shareWithOrg",
                 "isServiceAccount",

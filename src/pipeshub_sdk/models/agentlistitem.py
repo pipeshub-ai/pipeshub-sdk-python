@@ -161,6 +161,13 @@ class AgentListItemTypedDict(TypedDict):
     r"""System prompt stored on the agent."""
     updated_by: NotRequired[Nullable[str]]
     r"""User id of the last updater, if present."""
+    uses_org_default: NotRequired[bool]
+    r"""True when this agent has no models configured and will use the
+    organization's default LLM (marked `isDefault: true` in the AI
+    models configuration) at chat time. Derived from `models` being
+    empty — not persisted separately.
+
+    """
     web_search: NotRequired[Nullable[AgentListItemWebSearchTypedDict]]
     r"""Web-search provider attachment for this agent, or `null` when none is attached.
 
@@ -287,6 +294,16 @@ class AgentListItem(BaseModel):
     )
     r"""User id of the last updater, if present."""
 
+    uses_org_default: Annotated[
+        Optional[bool], pydantic.Field(alias="usesOrgDefault")
+    ] = None
+    r"""True when this agent has no models configured and will use the
+    organization's default LLM (marked `isDefault: true` in the AI
+    models configuration) at chat time. Derived from `models` being
+    empty — not persisted separately.
+
+    """
+
     web_search: Annotated[
         OptionalNullable[AgentListItemWebSearch], pydantic.Field(alias="webSearch")
     ] = UNSET
@@ -315,6 +332,7 @@ class AgentListItem(BaseModel):
                 "startMessage",
                 "systemPrompt",
                 "updatedBy",
+                "usesOrgDefault",
                 "webSearch",
                 "defaultReasoningEffort",
             ]
