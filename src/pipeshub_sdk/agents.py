@@ -257,14 +257,16 @@ class Agents(BaseSDK):
         self,
         *,
         name: str,
-        models: Union[
-            List[models_.AgentCreateModelEntryUnion],
-            List[models_.AgentCreateModelEntryUnionTypedDict],
-        ],
         description: Optional[str] = None,
         start_message: Optional[str] = None,
         system_prompt: Optional[str] = None,
         instructions: Optional[str] = None,
+        models: Optional[
+            Union[
+                List[models_.AgentCreateModelEntryUnion],
+                List[models_.AgentCreateModelEntryUnionTypedDict],
+            ]
+        ] = None,
         tags: Optional[List[str]] = None,
         share_with_org: Optional[bool] = False,
         is_service_account: Optional[bool] = False,
@@ -322,14 +324,17 @@ class Agents(BaseSDK):
 
 
         :param name: Agent display name
-        :param models: Agent model configuration entries. The gateway requires at least one
-            object entry with `isReasoning: true`. String-only arrays are schema-valid
-            but rejected at runtime with HTTP 400.
-
         :param description: What the agent does
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
+        :param models: Agent model configuration entries. Optional — an agent created without
+            any models (an empty array or an omitted field) uses the organization's
+            default LLM at chat time. When at least one model entry IS provided, the
+            gateway requires at least one object entry with `isReasoning: true`.
+            String-only arrays are schema-valid but rejected at runtime with HTTP 400
+            unless the array is empty.
+
         :param tags:
         :param share_with_org: Share agent with the organization
         :param is_service_account: Create the agent as a service-account agent
@@ -363,7 +368,7 @@ class Agents(BaseSDK):
             system_prompt=system_prompt,
             instructions=instructions,
             models=utils.get_pydantic_model(
-                models, List[models_.AgentCreateModelEntryUnion]
+                models, Optional[List[models_.AgentCreateModelEntryUnion]]
             ),
             tags=tags,
             share_with_org=share_with_org,
@@ -445,14 +450,16 @@ class Agents(BaseSDK):
         self,
         *,
         name: str,
-        models: Union[
-            List[models_.AgentCreateModelEntryUnion],
-            List[models_.AgentCreateModelEntryUnionTypedDict],
-        ],
         description: Optional[str] = None,
         start_message: Optional[str] = None,
         system_prompt: Optional[str] = None,
         instructions: Optional[str] = None,
+        models: Optional[
+            Union[
+                List[models_.AgentCreateModelEntryUnion],
+                List[models_.AgentCreateModelEntryUnionTypedDict],
+            ]
+        ] = None,
         tags: Optional[List[str]] = None,
         share_with_org: Optional[bool] = False,
         is_service_account: Optional[bool] = False,
@@ -510,14 +517,17 @@ class Agents(BaseSDK):
 
 
         :param name: Agent display name
-        :param models: Agent model configuration entries. The gateway requires at least one
-            object entry with `isReasoning: true`. String-only arrays are schema-valid
-            but rejected at runtime with HTTP 400.
-
         :param description: What the agent does
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
+        :param models: Agent model configuration entries. Optional — an agent created without
+            any models (an empty array or an omitted field) uses the organization's
+            default LLM at chat time. When at least one model entry IS provided, the
+            gateway requires at least one object entry with `isReasoning: true`.
+            String-only arrays are schema-valid but rejected at runtime with HTTP 400
+            unless the array is empty.
+
         :param tags:
         :param share_with_org: Share agent with the organization
         :param is_service_account: Create the agent as a service-account agent
@@ -551,7 +561,7 @@ class Agents(BaseSDK):
             system_prompt=system_prompt,
             instructions=instructions,
             models=utils.get_pydantic_model(
-                models, List[models_.AgentCreateModelEntryUnion]
+                models, Optional[List[models_.AgentCreateModelEntryUnion]]
             ),
             tags=tags,
             share_with_org=share_with_org,
@@ -898,9 +908,12 @@ class Agents(BaseSDK):
 
         **Update semantics**
 
-        Only fields present in the request body are updated. When `models` is
-        included, the gateway Zod middleware requires at least one model entry
-        and at least one object entry with `isReasoning: true`.
+        Only fields present in the request body are updated. `models` may be
+        omitted (the agent's existing models are kept), set to an empty array
+        (clears the agent's models so it falls back to the organization's
+        default LLM at chat time), or set to a non-empty array. When a
+        non-empty array is provided, the gateway Zod middleware requires at
+        least one object entry with `isReasoning: true`.
 
         **Permissions**
 
@@ -920,9 +933,11 @@ class Agents(BaseSDK):
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
-        :param models: Agent model configuration entries. When present, the Zod middleware
-            requires at least one object entry with `isReasoning: true`.
-            String-only arrays are schema-valid but rejected at runtime with HTTP 400.
+        :param models: Agent model configuration entries. Optional. An empty array clears the
+            agent's models so it falls back to the organization's default LLM.
+            When a non-empty array is present, the Zod middleware requires at
+            least one object entry with `isReasoning: true`. String-only arrays
+            are schema-valid but rejected at runtime with HTTP 400 unless empty.
 
         :param tags:
         :param share_with_org: Share agent with the organization
@@ -1112,9 +1127,12 @@ class Agents(BaseSDK):
 
         **Update semantics**
 
-        Only fields present in the request body are updated. When `models` is
-        included, the gateway Zod middleware requires at least one model entry
-        and at least one object entry with `isReasoning: true`.
+        Only fields present in the request body are updated. `models` may be
+        omitted (the agent's existing models are kept), set to an empty array
+        (clears the agent's models so it falls back to the organization's
+        default LLM at chat time), or set to a non-empty array. When a
+        non-empty array is provided, the gateway Zod middleware requires at
+        least one object entry with `isReasoning: true`.
 
         **Permissions**
 
@@ -1134,9 +1152,11 @@ class Agents(BaseSDK):
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
-        :param models: Agent model configuration entries. When present, the Zod middleware
-            requires at least one object entry with `isReasoning: true`.
-            String-only arrays are schema-valid but rejected at runtime with HTTP 400.
+        :param models: Agent model configuration entries. Optional. An empty array clears the
+            agent's models so it falls back to the organization's default LLM.
+            When a non-empty array is present, the Zod middleware requires at
+            least one object entry with `isReasoning: true`. String-only arrays
+            are schema-valid but rejected at runtime with HTTP 400 unless empty.
 
         :param tags:
         :param share_with_org: Share agent with the organization

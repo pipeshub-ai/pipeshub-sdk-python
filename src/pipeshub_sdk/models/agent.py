@@ -213,6 +213,13 @@ class AgentTypedDict(TypedDict):
     r"""Initial greeting shown when a conversation with this agent starts"""
     instructions: NotRequired[Nullable[str]]
     r"""Additional agent execution instructions"""
+    uses_org_default: NotRequired[bool]
+    r"""True when this agent has no models configured and will use the
+    organization's default LLM (marked `isDefault: true` in the AI
+    models configuration) at chat time. Derived from `models` being
+    empty — not persisted separately.
+
+    """
     web_search: NotRequired[Nullable[AgentWebSearchTypedDict]]
     r"""Web search provider attached to this agent. Null when none is configured."""
     default_reasoning_effort: NotRequired[Nullable[AgentDefaultReasoningEffort]]
@@ -317,6 +324,16 @@ class Agent(BaseModel):
     instructions: OptionalNullable[str] = UNSET
     r"""Additional agent execution instructions"""
 
+    uses_org_default: Annotated[
+        Optional[bool], pydantic.Field(alias="usesOrgDefault")
+    ] = None
+    r"""True when this agent has no models configured and will use the
+    organization's default LLM (marked `isDefault: true` in the AI
+    models configuration) at chat time. Derived from `models` being
+    empty — not persisted separately.
+
+    """
+
     web_search: Annotated[
         OptionalNullable[AgentWebSearch], pydantic.Field(alias="webSearch")
     ] = UNSET
@@ -342,6 +359,7 @@ class Agent(BaseModel):
                 "systemPrompt",
                 "startMessage",
                 "instructions",
+                "usesOrgDefault",
                 "webSearch",
                 "defaultReasoningEffort",
                 "updatedBy",
