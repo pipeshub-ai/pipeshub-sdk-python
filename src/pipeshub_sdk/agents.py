@@ -341,9 +341,8 @@ class Agents(BaseSDK):
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
-        :param web_search: Accepted web-search attachment for `POST /agents/create`.
-            The gateway accepts either a provider string or an object with at least
-            a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts either a provider string
+            or an object with at least a `provider` field.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
@@ -534,9 +533,8 @@ class Agents(BaseSDK):
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
-        :param web_search: Accepted web-search attachment for `POST /agents/create`.
-            The gateway accepts either a provider string or an object with at least
-            a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts either a provider string
+            or an object with at least a `provider` field.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
@@ -947,9 +945,8 @@ class Agents(BaseSDK):
         :param skills: Complete replacement set of skills assigned to the agent. Send
             an empty array to clear all skill assignments.
 
-        :param web_search: Accepted web-search attachment for `POST /agents/create`.
-            The gateway accepts either a provider string or an object with at least
-            a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts either a provider string
+            or an object with at least a `provider` field.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
@@ -1166,9 +1163,8 @@ class Agents(BaseSDK):
         :param skills: Complete replacement set of skills assigned to the agent. Send
             an empty array to clear all skill assignments.
 
-        :param web_search: Accepted web-search attachment for `POST /agents/create`.
-            The gateway accepts either a provider string or an object with at least
-            a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts either a provider string
+            or an object with at least a `provider` field.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param retries: Override the default retry configuration for this method
