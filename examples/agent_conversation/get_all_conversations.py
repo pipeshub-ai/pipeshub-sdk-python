@@ -14,6 +14,7 @@ def main() -> None:
     with Pipeshub(
         server_url=f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1',
         security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
+        timeout_ms=300_000,
     ) as pipeshub_client:
         print(f"Active conversations for agent {AGENT_KEY} (newest first):")
         conversations = []
