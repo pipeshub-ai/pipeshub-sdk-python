@@ -5,6 +5,7 @@ from .semanticsearchboundingbox import (
     SemanticSearchBoundingBox,
     SemanticSearchBoundingBoxTypedDict,
 )
+from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -65,6 +66,7 @@ class SemanticSearchHitMetadataTypedDict(TypedDict):
     web_url: NotRequired[Nullable[str]]
     preview_renderable: NotRequired[Nullable[bool]]
     hide_weburl: NotRequired[Nullable[bool]]
+    updated_at: NotRequired[Nullable[datetime]]
     categories: NotRequired[Nullable[List[str]]]
     departments: NotRequired[Nullable[List[str]]]
     topics: NotRequired[Nullable[List[str]]]
@@ -181,6 +183,10 @@ class SemanticSearchHitMetadata(BaseModel):
         OptionalNullable[bool], pydantic.Field(alias="hideWeburl")
     ] = UNSET
 
+    updated_at: Annotated[
+        OptionalNullable[datetime], pydantic.Field(alias="updatedAt")
+    ] = UNSET
+
     categories: OptionalNullable[List[str]] = UNSET
 
     departments: OptionalNullable[List[str]] = UNSET
@@ -263,6 +269,7 @@ class SemanticSearchHitMetadata(BaseModel):
                 "webUrl",
                 "previewRenderable",
                 "hideWeburl",
+                "updatedAt",
                 "categories",
                 "departments",
                 "topics",
@@ -307,6 +314,7 @@ class SemanticSearchHitMetadata(BaseModel):
                 "webUrl",
                 "previewRenderable",
                 "hideWeburl",
+                "updatedAt",
                 "categories",
                 "departments",
                 "topics",

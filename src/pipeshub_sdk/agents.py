@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 from datetime import datetime
 from pipeshub_sdk import errors, models as models_, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import OptionalNullable, UNSET
+from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, List, Mapping, Optional, Union
@@ -297,6 +297,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentCreateRequestDefaultReasoningEffort
         ] = UNSET,
+        send_user_context: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -341,10 +342,14 @@ class Agents(BaseSDK):
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
-        :param web_search: Web-search attachment for an agent. Accepts either a provider string
-            or an object with at least a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
+            with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param send_user_context: When true (default), include the current user's name, email, and
+            organization in this agent's system prompt. When false, omit that
+            profile data.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -385,6 +390,7 @@ class Agents(BaseSDK):
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
             ),
             default_reasoning_effort=default_reasoning_effort,
+            send_user_context=send_user_context,
         )
 
         req = self._build_request(
@@ -489,6 +495,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentCreateRequestDefaultReasoningEffort
         ] = UNSET,
+        send_user_context: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -533,10 +540,14 @@ class Agents(BaseSDK):
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
-        :param web_search: Web-search attachment for an agent. Accepts either a provider string
-            or an object with at least a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
+            with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param send_user_context: When true (default), include the current user's name, email, and
+            organization in this agent's system prompt. When false, omit that
+            profile data.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -577,6 +588,7 @@ class Agents(BaseSDK):
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
             ),
             default_reasoning_effort=default_reasoning_effort,
+            send_user_context=send_user_context,
         )
 
         req = self._build_request_async(
@@ -888,6 +900,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentUpdateRequestDefaultReasoningEffort
         ] = UNSET,
+        send_user_context: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -945,10 +958,14 @@ class Agents(BaseSDK):
         :param skills: Complete replacement set of skills assigned to the agent. Send
             an empty array to clear all skill assignments.
 
-        :param web_search: Web-search attachment for an agent. Accepts either a provider string
-            or an object with at least a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
+            with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param send_user_context: When true (default), include the current user's name, email, and
+            organization in this agent's system prompt. When false, omit that
+            profile data.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -991,6 +1008,7 @@ class Agents(BaseSDK):
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
                 default_reasoning_effort=default_reasoning_effort,
+                send_user_context=send_user_context,
             ),
         )
 
@@ -1106,6 +1124,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentUpdateRequestDefaultReasoningEffort
         ] = UNSET,
+        send_user_context: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1163,10 +1182,14 @@ class Agents(BaseSDK):
         :param skills: Complete replacement set of skills assigned to the agent. Send
             an empty array to clear all skill assignments.
 
-        :param web_search: Web-search attachment for an agent. Accepts either a provider string
-            or an object with at least a `provider` field.
+        :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
+            with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param send_user_context: When true (default), include the current user's name, email, and
+            organization in this agent's system prompt. When false, omit that
+            profile data.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1209,6 +1232,7 @@ class Agents(BaseSDK):
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
                 default_reasoning_effort=default_reasoning_effort,
+                send_user_context=send_user_context,
             ),
         )
 
@@ -2390,6 +2414,10 @@ class Agents(BaseSDK):
                 List[models_.ChatAttachmentRefTypedDict],
             ]
         ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models_.AgentStreamCreateConversationRequestProjectVisibility
+        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
@@ -2400,6 +2428,7 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2420,8 +2449,9 @@ class Agents(BaseSDK):
         :param query: User prompt for the first turn. Saved as the initial `user_query`
             message and sent to the agent backend.
 
-        :param chat_mode: Required execution mode. Scoped agent conversations currently
-            support only `quick`.
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
 
         :param record_ids: Optional record ids to include as context for this turn. Each id
             must be a 24-character MongoDB ObjectId.
@@ -2435,6 +2465,14 @@ class Agents(BaseSDK):
 
         :param attachments: Uploaded attachments to ground this turn. Each entry references a
             record id returned from the agent attachment upload endpoint.
+
+        :param project_id: Link the new agent conversation to a project the caller has at
+            least viewer access to. Same fallback/merge semantics as
+            `POST /conversations/create`. Ignored on follow-up turns — the
+            session row is the source of truth once the conversation exists.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
             default model.
@@ -2461,6 +2499,10 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2489,6 +2531,8 @@ class Agents(BaseSDK):
                 attachments=utils.get_pydantic_model(
                     attachments, Optional[List[models_.ChatAttachmentRef]]
                 ),
+                project_id=project_id,
+                project_visibility=project_visibility,
                 chat_mode=chat_mode,
                 model_key=model_key,
                 model_name=model_name,
@@ -2500,6 +2544,7 @@ class Agents(BaseSDK):
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -2590,6 +2635,10 @@ class Agents(BaseSDK):
                 List[models_.ChatAttachmentRefTypedDict],
             ]
         ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models_.AgentStreamCreateConversationRequestProjectVisibility
+        ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
@@ -2600,6 +2649,7 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2620,8 +2670,9 @@ class Agents(BaseSDK):
         :param query: User prompt for the first turn. Saved as the initial `user_query`
             message and sent to the agent backend.
 
-        :param chat_mode: Required execution mode. Scoped agent conversations currently
-            support only `quick`.
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
 
         :param record_ids: Optional record ids to include as context for this turn. Each id
             must be a 24-character MongoDB ObjectId.
@@ -2635,6 +2686,14 @@ class Agents(BaseSDK):
 
         :param attachments: Uploaded attachments to ground this turn. Each entry references a
             record id returned from the agent attachment upload endpoint.
+
+        :param project_id: Link the new agent conversation to a project the caller has at
+            least viewer access to. Same fallback/merge semantics as
+            `POST /conversations/create`. Ignored on follow-up turns — the
+            session row is the source of truth once the conversation exists.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
             default model.
@@ -2661,6 +2720,10 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2689,6 +2752,8 @@ class Agents(BaseSDK):
                 attachments=utils.get_pydantic_model(
                     attachments, Optional[List[models_.ChatAttachmentRef]]
                 ),
+                project_id=project_id,
+                project_visibility=project_visibility,
                 chat_mode=chat_mode,
                 model_key=model_key,
                 model_name=model_name,
@@ -2700,6 +2765,7 @@ class Agents(BaseSDK):
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -2800,6 +2866,7 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2821,8 +2888,9 @@ class Agents(BaseSDK):
             Saved as a new `user_query` message before the upstream AI stream
             starts.
 
-        :param chat_mode: Required execution mode. Scoped agent conversations currently
-            support only `quick`.
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
 
         :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
             be a valid UUID. Omit to let the agent use its stored defaults;
@@ -2859,6 +2927,10 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2898,6 +2970,7 @@ class Agents(BaseSDK):
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -2996,6 +3069,7 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3017,8 +3091,9 @@ class Agents(BaseSDK):
             Saved as a new `user_query` message before the upstream AI stream
             starts.
 
-        :param chat_mode: Required execution mode. Scoped agent conversations currently
-            support only `quick`.
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
 
         :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
             be a valid UUID. Omit to let the agent use its stored defaults;
@@ -3055,6 +3130,10 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3094,6 +3173,7 @@ class Agents(BaseSDK):
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -3183,6 +3263,7 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3265,6 +3346,10 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this regeneration run. Send it
+            here to enable `POST .../cancel {runId}` while it is still
+            generating.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3297,6 +3382,7 @@ class Agents(BaseSDK):
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -3384,6 +3470,7 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3466,6 +3553,10 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this regeneration run. Send it
+            here to enable `POST .../cancel {runId}` while it is still
+            generating.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3498,6 +3589,7 @@ class Agents(BaseSDK):
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -3566,6 +3658,244 @@ class Agents(BaseSDK):
         raise errors.PipeshubDefaultError(
             "Unexpected response received", http_res, http_res_text
         )
+
+    def cancel_agent_conversation_stream(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        run_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.CancelAgentConversationStreamResponse:
+        r"""Cancel an in-flight agent chat stream
+
+        Cooperatively stop a `POST /agents/{agentKey}/conversations/stream`
+        or `.../messages/stream` run that is still generating, using the
+        `runId` sent when that stream started.
+
+        Same synchronous JSON ack contract as the assistant
+        `POST /conversations/{conversationId}/cancel` — both forward to the
+        same backend cancellation endpoint, since the run registry is keyed
+        by `runId` alone. `{ cancelled: false }` covers a `runId` that
+        already finished or was never registered.
+
+        `runId` must belong to a run started on THIS `conversationId` — a
+        `runId` that exists but was registered under a different
+        conversation (even one owned by the same caller) is rejected with
+        `403`, same as a `runId` owned by a different user/org.
+
+
+        :param agent_key: Stable key identifying the agent that owns this conversation.
+        :param conversation_id: ID of the agent conversation to cancel a run for.
+        :param run_id: The `runId` sent when the stream was started.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.CancelAgentConversationStreamRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.CancelAgentConversationStreamRequestBody(
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/cancel",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.CancelAgentConversationStreamRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="cancelAgentConversationStream",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.CancelAgentConversationStreamResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def cancel_agent_conversation_stream_async(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        run_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.CancelAgentConversationStreamResponse:
+        r"""Cancel an in-flight agent chat stream
+
+        Cooperatively stop a `POST /agents/{agentKey}/conversations/stream`
+        or `.../messages/stream` run that is still generating, using the
+        `runId` sent when that stream started.
+
+        Same synchronous JSON ack contract as the assistant
+        `POST /conversations/{conversationId}/cancel` — both forward to the
+        same backend cancellation endpoint, since the run registry is keyed
+        by `runId` alone. `{ cancelled: false }` covers a `runId` that
+        already finished or was never registered.
+
+        `runId` must belong to a run started on THIS `conversationId` — a
+        `runId` that exists but was registered under a different
+        conversation (even one owned by the same caller) is rejected with
+        `403`, same as a `runId` owned by a different user/org.
+
+
+        :param agent_key: Stable key identifying the agent that owns this conversation.
+        :param conversation_id: ID of the agent conversation to cancel a run for.
+        :param run_id: The `runId` sent when the stream was started.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.CancelAgentConversationStreamRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.CancelAgentConversationStreamRequestBody(
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/cancel",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.CancelAgentConversationStreamRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="cancelAgentConversationStream",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.CancelAgentConversationStreamResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     def update_agent_conversation_message_feedback(
         self,
@@ -3802,6 +4132,490 @@ class Agents(BaseSDK):
                 "API error occurred", http_res, http_res_text
             )
         if utils.match_response(http_res, ["500", "5XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def add_agent_conversation_message(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        query: str,
+        filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models_.AppliedFilters, models_.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                List[models_.ChatAttachmentRef],
+                List[models_.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        chat_mode: Optional[models_.AgentAddMessageRequestChatMode] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentAddMessageRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.AddAgentConversationMessageResponse:
+        r"""Add message to agent conversation (non-streaming)
+
+        Ask a follow-up in an existing agent conversation and wait for the
+        complete answer. The JSON counterpart of
+        `POST /agents/{agentKey}/conversations/{conversationId}/messages/stream`.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+
+        :param agent_key:
+        :param conversation_id:
+        :param query: User follow-up prompt to append to the existing agent conversation.
+            Saved as a new `user_query` message before the upstream AI stream
+            starts.
+
+        :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
+            be a valid UUID. Omit to let the agent use its stored defaults;
+            send `{ \"apps\": [], \"kb\": [] }` to force no knowledge sources for this turn.
+
+        :param applied_filters: UI filter state persisted on the saved user message. Not used for
+            retrieval and not forwarded to the upstream agent backend.
+
+        :param attachments: Uploaded attachments to ground this turn. Each entry references a
+            record id returned from the agent attachment upload endpoint.
+
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
+
+        :param model_key: AI model configuration id override for this turn. Omit to use the
+            agent's default model.
+
+        :param model_name: Provider model name (the underlying LLM identifier).
+        :param model_friendly_name: Friendly UI label for the selected model.
+        :param timezone: Client IANA timezone, such as `America/New_York`. Helps the agent
+            resolve relative date references in the prompt.
+
+        :param current_time: Client time in ISO 8601 / RFC 3339 format (UTC `Z` or numeric
+            offset). Sent alongside `timezone` for time-aware answers.
+
+        :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
+            to let the agent use its default toolset; send `[]` to disable
+            tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.AddAgentConversationMessageRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.AgentAddMessageRequest(
+                query=query,
+                filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
+                applied_filters=utils.get_pydantic_model(
+                    applied_filters, Optional[models_.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models_.ChatAttachmentRef]]
+                ),
+                chat_mode=chat_mode,
+                model_key=model_key,
+                model_name=model_name,
+                model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/messages",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models_.AgentAddMessageRequest
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="addAgentConversationMessage",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "404",
+                "413",
+                "422",
+                "424",
+                "429",
+                "4XX",
+                "500",
+                "5XX",
+            ],
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return models_.AddAgentConversationMessageResponse(
+                result=unmarshal_json_response(models_.AddMessageResponse, http_res),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, ["400", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def add_agent_conversation_message_async(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        query: str,
+        filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models_.AppliedFilters, models_.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                List[models_.ChatAttachmentRef],
+                List[models_.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        chat_mode: Optional[models_.AgentAddMessageRequestChatMode] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentAddMessageRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.AddAgentConversationMessageResponse:
+        r"""Add message to agent conversation (non-streaming)
+
+        Ask a follow-up in an existing agent conversation and wait for the
+        complete answer. The JSON counterpart of
+        `POST /agents/{agentKey}/conversations/{conversationId}/messages/stream`.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+
+        :param agent_key:
+        :param conversation_id:
+        :param query: User follow-up prompt to append to the existing agent conversation.
+            Saved as a new `user_query` message before the upstream AI stream
+            starts.
+
+        :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
+            be a valid UUID. Omit to let the agent use its stored defaults;
+            send `{ \"apps\": [], \"kb\": [] }` to force no knowledge sources for this turn.
+
+        :param applied_filters: UI filter state persisted on the saved user message. Not used for
+            retrieval and not forwarded to the upstream agent backend.
+
+        :param attachments: Uploaded attachments to ground this turn. Each entry references a
+            record id returned from the agent attachment upload endpoint.
+
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
+
+        :param model_key: AI model configuration id override for this turn. Omit to use the
+            agent's default model.
+
+        :param model_name: Provider model name (the underlying LLM identifier).
+        :param model_friendly_name: Friendly UI label for the selected model.
+        :param timezone: Client IANA timezone, such as `America/New_York`. Helps the agent
+            resolve relative date references in the prompt.
+
+        :param current_time: Client time in ISO 8601 / RFC 3339 format (UTC `Z` or numeric
+            offset). Sent alongside `timezone` for time-aware answers.
+
+        :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
+            to let the agent use its default toolset; send `[]` to disable
+            tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.AddAgentConversationMessageRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.AgentAddMessageRequest(
+                query=query,
+                filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
+                applied_filters=utils.get_pydantic_model(
+                    applied_filters, Optional[models_.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models_.ChatAttachmentRef]]
+                ),
+                chat_mode=chat_mode,
+                model_key=model_key,
+                model_name=model_name,
+                model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/messages",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models_.AgentAddMessageRequest
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="addAgentConversationMessage",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "404",
+                "413",
+                "422",
+                "424",
+                "429",
+                "4XX",
+                "500",
+                "5XX",
+            ],
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return models_.AddAgentConversationMessageResponse(
+                result=unmarshal_json_response(models_.AddMessageResponse, http_res),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, ["400", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4433,6 +5247,444 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    def set_agent_conversation_project(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        project_id: Nullable[str],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.SetAgentConversationProjectResponse:
+        r"""Link or unlink an agent conversation to a project
+
+        Agent-conversation equivalent of
+        `PUT /conversations/{conversationId}/project`. Set
+        (`projectId: <id>`) or clear (`projectId: null`) the project this
+        agent conversation belongs to. Initiator-only; linking requires at
+        least viewer access to the target project.
+
+
+        :param agent_key:
+        :param conversation_id:
+        :param project_id: Target project id, or `null` to unlink.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.SetAgentConversationProjectRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.SetAgentConversationProjectRequestBody(
+                project_id=project_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/agents/{agentKey}/conversations/{conversationId}/project",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.SetAgentConversationProjectRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setAgentConversationProject",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.SetAgentConversationProjectResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def set_agent_conversation_project_async(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        project_id: Nullable[str],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.SetAgentConversationProjectResponse:
+        r"""Link or unlink an agent conversation to a project
+
+        Agent-conversation equivalent of
+        `PUT /conversations/{conversationId}/project`. Set
+        (`projectId: <id>`) or clear (`projectId: null`) the project this
+        agent conversation belongs to. Initiator-only; linking requires at
+        least viewer access to the target project.
+
+
+        :param agent_key:
+        :param conversation_id:
+        :param project_id: Target project id, or `null` to unlink.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.SetAgentConversationProjectRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.SetAgentConversationProjectRequestBody(
+                project_id=project_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/agents/{agentKey}/conversations/{conversationId}/project",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.SetAgentConversationProjectRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setAgentConversationProject",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.SetAgentConversationProjectResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def set_agent_conversation_project_visibility(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        visibility: models_.SetAgentConversationProjectVisibilityVisibility,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.SetAgentConversationProjectVisibilityResponse:
+        r"""Override an agent conversation's project visibility
+
+        Agent-conversation equivalent of
+        `PATCH /conversations/{conversationId}/project-visibility`.
+        Initiator-only; requires the conversation to already be linked to a
+        project.
+
+
+        :param agent_key:
+        :param conversation_id:
+        :param visibility:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.SetAgentConversationProjectVisibilityRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.SetAgentConversationProjectVisibilityRequestBody(
+                visibility=visibility,
+            ),
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/agents/{agentKey}/conversations/{conversationId}/project-visibility",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.SetAgentConversationProjectVisibilityRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setAgentConversationProjectVisibility",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.SetAgentConversationProjectVisibilityResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def set_agent_conversation_project_visibility_async(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        visibility: models_.SetAgentConversationProjectVisibilityVisibility,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.SetAgentConversationProjectVisibilityResponse:
+        r"""Override an agent conversation's project visibility
+
+        Agent-conversation equivalent of
+        `PATCH /conversations/{conversationId}/project-visibility`.
+        Initiator-only; requires the conversation to already be linked to a
+        project.
+
+
+        :param agent_key:
+        :param conversation_id:
+        :param visibility:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.SetAgentConversationProjectVisibilityRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            body=models_.SetAgentConversationProjectVisibilityRequestBody(
+                visibility=visibility,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/agents/{agentKey}/conversations/{conversationId}/project-visibility",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.SetAgentConversationProjectVisibilityRequestBody,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setAgentConversationProjectVisibility",
+                oauth2_scopes=["agent:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models_.SetAgentConversationProjectVisibilityResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
     def delete_agent_conversation_by_id(
         self,
         *,
@@ -4915,7 +6167,8 @@ class Agents(BaseSDK):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         status: Optional[str] = None,
-        is_archived: Optional[models_.IsArchived] = None,
+        is_archived: Optional[models_.ListAgentConversationsIsArchived] = None,
+        project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4961,6 +6214,10 @@ class Agents(BaseSDK):
             branch before the route-level non-archived guard is enforced.
             Accepted values are `true` and `false`.
 
+        :param project_id: Restrict results to a single project. Pass a project's `id`, or
+            the literal string `unassigned` to list agent conversations with
+            no `projectId`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4987,6 +6244,7 @@ class Agents(BaseSDK):
             end_date=end_date,
             status=status,
             is_archived=is_archived,
+            project_id=project_id,
         )
 
         req = self._build_request(
@@ -5062,7 +6320,8 @@ class Agents(BaseSDK):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         status: Optional[str] = None,
-        is_archived: Optional[models_.IsArchived] = None,
+        is_archived: Optional[models_.ListAgentConversationsIsArchived] = None,
+        project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -5108,6 +6367,10 @@ class Agents(BaseSDK):
             branch before the route-level non-archived guard is enforced.
             Accepted values are `true` and `false`.
 
+        :param project_id: Restrict results to a single project. Pass a project's `id`, or
+            the literal string `unassigned` to list agent conversations with
+            no `projectId`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -5134,6 +6397,7 @@ class Agents(BaseSDK):
             end_date=end_date,
             status=status,
             is_archived=is_archived,
+            project_id=project_id,
         )
 
         req = self._build_request_async(
@@ -5185,6 +6449,528 @@ class Agents(BaseSDK):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def create_agent_conversation(
+        self,
+        *,
+        agent_key: str,
+        query: str,
+        record_ids: Optional[List[str]] = None,
+        filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models_.AppliedFilters, models_.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                List[models_.ChatAttachmentRef],
+                List[models_.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models_.AgentCreateConversationRequestProjectVisibility
+        ] = None,
+        chat_mode: Optional[models_.AgentCreateConversationRequestChatMode] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentCreateConversationRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.CreateAgentConversationResponseResponse:
+        r"""Create agent conversation (non-streaming)
+
+        Start a conversation with an agent and wait for the complete answer.
+        The JSON counterpart of `POST /agents/{agentKey}/conversations/stream`.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+
+        :param agent_key:
+        :param query: User prompt for the first turn. Saved as the initial `user_query`
+            message and sent to the agent backend.
+
+        :param record_ids: Optional record ids to include as context for this turn. Each id
+            must be a 24-character MongoDB ObjectId.
+
+        :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
+            be a valid UUID. Omit for agent defaults; send `{ \"apps\": [], \"kb\": [] }`
+            to force no knowledge sources for this turn.
+
+        :param applied_filters: UI filter state persisted on the saved user message. Not used for
+            retrieval and not forwarded to the upstream agent backend.
+
+        :param attachments: Uploaded attachments to ground this turn. Each entry references a
+            record id returned from the agent attachment upload endpoint.
+
+        :param project_id: Link the new agent conversation to a project the caller has at
+            least viewer access to. Same fallback/merge semantics as
+            `POST /conversations/create`. Ignored on follow-up turns — the
+            session row is the source of truth once the conversation exists.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation.
+
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
+
+        :param model_key: AI model configuration id for this turn. Omit to use the agent's
+            default model.
+
+        :param model_name: Provider model name (the underlying LLM identifier).
+        :param model_friendly_name: Friendly UI label for the selected model.
+        :param timezone: Client IANA timezone, such as `America/New_York`. Helps the agent
+            resolve relative date references in the prompt.
+
+        :param current_time: Client time in ISO 8601 / RFC 3339 format (UTC `Z` or numeric
+            offset). Sent alongside `timezone` for time-aware answers.
+
+        :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
+            to let the agent use its default toolset; send `[]` to disable
+            tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentStreamSSEEvent`). Kept in
+            the schema for backward compatibility with callers that already
+            send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.CreateAgentConversationRequest(
+            agent_key=agent_key,
+            body=models_.AgentCreateConversationRequest(
+                query=query,
+                record_ids=record_ids,
+                filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
+                applied_filters=utils.get_pydantic_model(
+                    applied_filters, Optional[models_.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models_.ChatAttachmentRef]]
+                ),
+                project_id=project_id,
+                project_visibility=project_visibility,
+                chat_mode=chat_mode,
+                model_key=model_key,
+                model_name=model_name,
+                model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/conversations",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.AgentCreateConversationRequest,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createAgentConversation",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "413",
+                "422",
+                "424",
+                "429",
+                "4XX",
+                "500",
+                "5XX",
+            ],
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "201", "application/json"):
+            return models_.CreateAgentConversationResponseResponse(
+                result=unmarshal_json_response(
+                    models_.CreateAgentConversationResponse, http_res
+                ),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def create_agent_conversation_async(
+        self,
+        *,
+        agent_key: str,
+        query: str,
+        record_ids: Optional[List[str]] = None,
+        filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models_.AppliedFilters, models_.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                List[models_.ChatAttachmentRef],
+                List[models_.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models_.AgentCreateConversationRequestProjectVisibility
+        ] = None,
+        chat_mode: Optional[models_.AgentCreateConversationRequestChatMode] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[List[str]] = None,
+        protocol: Optional[models_.AgentCreateConversationRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.CreateAgentConversationResponseResponse:
+        r"""Create agent conversation (non-streaming)
+
+        Start a conversation with an agent and wait for the complete answer.
+        The JSON counterpart of `POST /agents/{agentKey}/conversations/stream`.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+
+        :param agent_key:
+        :param query: User prompt for the first turn. Saved as the initial `user_query`
+            message and sent to the agent backend.
+
+        :param record_ids: Optional record ids to include as context for this turn. Each id
+            must be a 24-character MongoDB ObjectId.
+
+        :param filters: Optional retrieval scope (`apps` / `kb`) for this turn. Each id must
+            be a valid UUID. Omit for agent defaults; send `{ \"apps\": [], \"kb\": [] }`
+            to force no knowledge sources for this turn.
+
+        :param applied_filters: UI filter state persisted on the saved user message. Not used for
+            retrieval and not forwarded to the upstream agent backend.
+
+        :param attachments: Uploaded attachments to ground this turn. Each entry references a
+            record id returned from the agent attachment upload endpoint.
+
+        :param project_id: Link the new agent conversation to a project the caller has at
+            least viewer access to. Same fallback/merge semantics as
+            `POST /conversations/create`. Ignored on follow-up turns — the
+            session row is the source of truth once the conversation exists.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation.
+
+        :param chat_mode: Execution mode. Scoped agent conversations support only `quick`.
+            Required on the `/stream` route; optional on the non-streaming
+            route.
+
+        :param model_key: AI model configuration id for this turn. Omit to use the agent's
+            default model.
+
+        :param model_name: Provider model name (the underlying LLM identifier).
+        :param model_friendly_name: Friendly UI label for the selected model.
+        :param timezone: Client IANA timezone, such as `America/New_York`. Helps the agent
+            resolve relative date references in the prompt.
+
+        :param current_time: Client time in ISO 8601 / RFC 3339 format (UTC `Z` or numeric
+            offset). Sent alongside `timezone` for time-aware answers.
+
+        :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
+            to let the agent use its default toolset; send `[]` to disable
+            tools for this turn.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `AgentStreamSSEEvent`). Kept in
+            the schema for backward compatibility with callers that already
+            send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+            {runId}` while the stream is still generating.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.CreateAgentConversationRequest(
+            agent_key=agent_key,
+            body=models_.AgentCreateConversationRequest(
+                query=query,
+                record_ids=record_ids,
+                filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
+                applied_filters=utils.get_pydantic_model(
+                    applied_filters, Optional[models_.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models_.ChatAttachmentRef]]
+                ),
+                project_id=project_id,
+                project_visibility=project_visibility,
+                chat_mode=chat_mode,
+                model_key=model_key,
+                model_name=model_name,
+                model_friendly_name=model_friendly_name,
+                timezone=timezone,
+                current_time=current_time,
+                tools=tools,
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/conversations",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models_.AgentCreateConversationRequest,
+            ),
+            allow_empty_value=None,
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createAgentConversation",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+            ),
+            request=req,
+            error_status_codes=[
+                "400",
+                "401",
+                "403",
+                "413",
+                "422",
+                "424",
+                "429",
+                "4XX",
+                "500",
+                "5XX",
+            ],
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "201", "application/json"):
+            return models_.CreateAgentConversationResponseResponse(
+                result=unmarshal_json_response(
+                    models_.CreateAgentConversationResponse, http_res
+                ),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

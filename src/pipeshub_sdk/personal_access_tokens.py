@@ -18,6 +18,13 @@ class PersonalAccessTokens(BaseSDK):
     - **Any authenticated org member** — unlike OAuth apps, this is
     deliberately not admin-gated.
 
+    **Session only**
+    - Every `/personal-access-tokens/*` route requires the user's interactive
+    session JWT. OAuth access tokens and personal access tokens (`phpat_...`)
+    are rejected with `403`. `scopes` is capped at the instance's `MCP_SCOPES`,
+    not at the caller's own token, so a narrowly scoped token could otherwise
+    mint itself a full-scope, non-expiring PAT.
+
     **How it's issued**
     - Minted through the same OAuth access-token machinery as `/oauth2/token`,
     against one lazily-created, per-org synthetic OAuth app
@@ -269,6 +276,11 @@ class PersonalAccessTokens(BaseSDK):
         env var, not the full role-aware OAuth-app scope catalog — a
         non-admin can request any scope in that set.
 
+        **Session only.** The bearer token must be the user's interactive
+        session JWT. OAuth access tokens and personal access tokens
+        (`phpat_...`) are rejected with `403`, so a token that is already
+        issued cannot mint another with wider scopes or a longer life.
+
         The response's `accessToken` is shown **once**; only its SHA-256
         hash is stored. It's prefixed `phpat_` (see the `bearerAuth`
         security scheme).
@@ -345,14 +357,14 @@ class PersonalAccessTokens(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "429", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "429", "4XX", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.CreatePatResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -402,6 +414,11 @@ class PersonalAccessTokens(BaseSDK):
         `scopes` is validated against the org's configured `MCP_SCOPES`
         env var, not the full role-aware OAuth-app scope catalog — a
         non-admin can request any scope in that set.
+
+        **Session only.** The bearer token must be the user's interactive
+        session JWT. OAuth access tokens and personal access tokens
+        (`phpat_...`) are rejected with `403`, so a token that is already
+        issued cannot mint another with wider scopes or a longer life.
 
         The response's `accessToken` is shown **once**; only its SHA-256
         hash is stored. It's prefixed `phpat_` (see the `bearerAuth`
@@ -479,14 +496,14 @@ class PersonalAccessTokens(BaseSDK):
                 ),
             ),
             request=req,
-            error_status_codes=["400", "401", "429", "4XX", "5XX"],
+            error_status_codes=["400", "401", "403", "429", "4XX", "5XX"],
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.CreatePatResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )

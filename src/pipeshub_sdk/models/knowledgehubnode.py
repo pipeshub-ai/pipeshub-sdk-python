@@ -66,6 +66,8 @@ class KnowledgeHubNodeTypedDict(TypedDict):
     r"""Origin type."""
     connector: Nullable[str]
     r"""Connector display name / key when applicable; otherwise `null`."""
+    connector_id: Nullable[str]
+    r"""Connector instance id for records and groups that come from a connector; otherwise `null` (Collections, and app nodes)."""
     record_type: Nullable[str]
     r"""Record type when `nodeType` is `record`; otherwise `null`."""
     record_group_type: Nullable[str]
@@ -122,6 +124,9 @@ class KnowledgeHubNode(BaseModel):
 
     connector: Nullable[str]
     r"""Connector display name / key when applicable; otherwise `null`."""
+
+    connector_id: Annotated[Nullable[str], pydantic.Field(alias="connectorId")]
+    r"""Connector instance id for records and groups that come from a connector; otherwise `null` (Collections, and app nodes)."""
 
     record_type: Annotated[Nullable[str], pydantic.Field(alias="recordType")]
     r"""Record type when `nodeType` is `record`; otherwise `null`."""

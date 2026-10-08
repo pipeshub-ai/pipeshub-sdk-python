@@ -94,6 +94,12 @@ class RegenerateRequestTypedDict(TypedDict):
     `true`. Omitting the whole object applies every default.
 
     """
+    run_id: NotRequired[str]
+    r"""Client-generated identifier for this regeneration run. Send it
+    here to enable `POST .../cancel {runId}` while it is still
+    generating.
+
+    """
 
 
 class RegenerateRequest(BaseModel):
@@ -186,6 +192,13 @@ class RegenerateRequest(BaseModel):
 
     """
 
+    run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
+    r"""Client-generated identifier for this regeneration run. Send it
+    here to enable `POST .../cancel {runId}` while it is still
+    generating.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -200,6 +213,7 @@ class RegenerateRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "runId",
             ]
         )
         serialized = handler(self)

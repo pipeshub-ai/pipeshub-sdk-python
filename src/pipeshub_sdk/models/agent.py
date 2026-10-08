@@ -224,6 +224,12 @@ class AgentTypedDict(TypedDict):
     r"""Web search provider attached to this agent. Null when none is configured."""
     default_reasoning_effort: NotRequired[Nullable[AgentDefaultReasoningEffort]]
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+    send_user_context: NotRequired[bool]
+    r"""When true (default), the agent's system prompt includes the current
+    user's name, email, and organization. When false, the agent relies
+    on tools, actions, and knowledge sources without that profile data.
+
+    """
     updated_by: NotRequired[Nullable[str]]
     r"""User id of the last updater, if present."""
 
@@ -345,6 +351,15 @@ class Agent(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
+    send_user_context: Annotated[
+        Optional[bool], pydantic.Field(alias="sendUserContext")
+    ] = None
+    r"""When true (default), the agent's system prompt includes the current
+    user's name, email, and organization. When false, the agent relies
+    on tools, actions, and knowledge sources without that profile data.
+
+    """
+
     updated_by: Annotated[OptionalNullable[str], pydantic.Field(alias="updatedBy")] = (
         UNSET
     )
@@ -362,6 +377,7 @@ class Agent(BaseModel):
                 "usesOrgDefault",
                 "webSearch",
                 "defaultReasoningEffort",
+                "sendUserContext",
                 "updatedBy",
             ]
         )

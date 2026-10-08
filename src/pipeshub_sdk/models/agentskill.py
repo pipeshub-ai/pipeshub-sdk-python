@@ -27,7 +27,7 @@ class AgentSkillTypedDict(TypedDict):
     subcategory: NotRequired[Nullable[str]]
     version: NotRequired[Nullable[str]]
     status: NotRequired[Nullable[str]]
-    r"""Lifecycle state of the skill — `active` or `deprecated`."""
+    r"""Lifecycle state of the skill — `active`, `deprecated`, or `disabled`. `candidate` is a learning-loop record state, not an assignable skill, and is not returned here."""
 
 
 class AgentSkill(BaseModel):
@@ -50,7 +50,7 @@ class AgentSkill(BaseModel):
     version: OptionalNullable[str] = UNSET
 
     status: OptionalNullable[str] = UNSET
-    r"""Lifecycle state of the skill — `active` or `deprecated`."""
+    r"""Lifecycle state of the skill — `active`, `deprecated`, or `disabled`. `candidate` is a learning-loop record state, not an assignable skill, and is not returned here."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

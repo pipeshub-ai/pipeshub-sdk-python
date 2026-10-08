@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
 from typing import Any, Dict, Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ErrorResponseErrorTypedDict(TypedDict):
@@ -15,6 +16,11 @@ class ErrorResponseErrorTypedDict(TypedDict):
     """
     message: str
     r"""Human-readable description of the error"""
+    request_id: NotRequired[str]
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
     metadata: NotRequired[Dict[str, Any]]
     r"""Additional context (only present in development environments)"""
 
@@ -29,12 +35,18 @@ class ErrorResponseError(BaseModel):
     message: str
     r"""Human-readable description of the error"""
 
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
+
     metadata: Optional[Dict[str, Any]] = None
     r"""Additional context (only present in development environments)"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["metadata"])
+        optional_fields = set(["requestId", "metadata"])
         serialized = handler(self)
         m = {}
 
@@ -47,3 +59,9 @@ class ErrorResponseError(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    ErrorResponseError.model_rebuild()
+except NameError:
+    pass

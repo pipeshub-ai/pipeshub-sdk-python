@@ -179,6 +179,8 @@ class AgentListItemTypedDict(TypedDict):
     """
     default_reasoning_effort: NotRequired[Nullable[AgentListItemDefaultReasoningEffort]]
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+    send_user_context: NotRequired[bool]
+    r"""When false, this agent omits user name/email/org from its system prompt."""
 
 
 class AgentListItem(BaseModel):
@@ -322,6 +324,11 @@ class AgentListItem(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
+    send_user_context: Annotated[
+        Optional[bool], pydantic.Field(alias="sendUserContext")
+    ] = None
+    r"""When false, this agent omits user name/email/org from its system prompt."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -335,6 +342,7 @@ class AgentListItem(BaseModel):
                 "usesOrgDefault",
                 "webSearch",
                 "defaultReasoningEffort",
+                "sendUserContext",
             ]
         )
         nullable_fields = set(

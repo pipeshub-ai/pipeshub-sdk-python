@@ -9,3 +9,4 @@
 | `INPROGRESS` | Inprogress   |
 | `COMPLETE`   | Complete     |
 | `FAILED`     | Failed       |
+| `STOPPED`    | Stopped      |

@@ -10,6 +10,13 @@ the app.
 - **Any authenticated org member** — unlike OAuth apps, this is
   deliberately not admin-gated.
 
+**Session only**
+- Every `/personal-access-tokens/*` route requires the user's interactive
+  session JWT. OAuth access tokens and personal access tokens (`phpat_...`)
+  are rejected with `403`. `scopes` is capped at the instance's `MCP_SCOPES`,
+  not at the caller's own token, so a narrowly scoped token could otherwise
+  mint itself a full-scope, non-expiring PAT.
+
 **How it's issued**
 - Minted through the same OAuth access-token machinery as `/oauth2/token`,
   against one lazily-created, per-org synthetic OAuth app
@@ -108,6 +115,11 @@ that org — the same signing, hashing, and revocation machinery as
 env var, not the full role-aware OAuth-app scope catalog — a
 non-admin can request any scope in that set.
 
+**Session only.** The bearer token must be the user's interactive
+session JWT. OAuth access tokens and personal access tokens
+(`phpat_...`) are rejected with `403`, so a token that is already
+issued cannot mint another with wider scopes or a longer life.
+
 The response's `accessToken` is shown **once**; only its SHA-256
 hash is stored. It's prefixed `phpat_` (see the `bearerAuth`
 security scheme).
@@ -154,7 +166,7 @@ with Pipeshub(
 
 | Error Type                                 | Status Code                                | Content Type                               |
 | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ |
-| errors.ApplicationJSONErrorResponse        | 400, 401                                   | application/json                           |
+| errors.ApplicationJSONErrorResponse        | 400, 401, 403                              | application/json                           |
 | errors.OAuthClientManagementRateLimitError | 429                                        | application/json                           |
 | errors.PipeshubDefaultError                | 4XX, 5XX                                   | \*/\*                                      |
 

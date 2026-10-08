@@ -23,6 +23,7 @@ SharePoint Online is `SHAREPOINT ONLINE`), not the enum member name.
 | `OUTLOOK_CALENDAR`                | OUTLOOK CALENDAR                  |
 | `MICROSOFT_TEAMS`                 | MICROSOFT TEAMS                   |
 | `NOTION`                          | NOTION                            |
+| `NOTION_PERSONAL`                 | NOTION PERSONAL                   |
 | `SLACK`                           | SLACK                             |
 | `SLACK_WORKSPACE`                 | SLACK WORKSPACE                   |
 | `KB`                              | KB                                |
@@ -39,7 +40,9 @@ SharePoint Online is `SHAREPOINT ONLINE`), not the enum member name.
 | `DROPBOX_PERSONAL`                | DROPBOX PERSONAL                  |
 | `WEB`                             | WEB                               |
 | `BOOKSTACK`                       | BOOKSTACK                         |
+| `DRUPAL_WIKI`                     | DRUPAL WIKI                       |
 | `GITHUB`                          | GITHUB                            |
+| `GITHUB_TEAMS`                    | GITHUB TEAMS                      |
 | `SERVICENOW`                      | SERVICENOW                        |
 | `SALESFORCE`                      | SALESFORCE                        |
 | `S3`                              | S3                                |

@@ -13,9 +13,20 @@ from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+AgentStreamCreateConversationRequestProjectVisibility = Literal[
+    "private",
+    "project",
+]
+r"""Only meaningful together with `projectId`. Overrides the
+project's default sharing behavior for this one conversation.
+
+"""
+
+
 AgentStreamCreateConversationRequestChatMode = Literal["quick",]
-r"""Required execution mode. Scoped agent conversations currently
-support only `quick`.
+r"""Execution mode. Scoped agent conversations support only `quick`.
+Required on the `/stream` route; optional on the non-streaming
+route.
 
 """
 
@@ -43,8 +54,9 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
 
     """
     chat_mode: AgentStreamCreateConversationRequestChatMode
-    r"""Required execution mode. Scoped agent conversations currently
-    support only `quick`.
+    r"""Execution mode. Scoped agent conversations support only `quick`.
+    Required on the `/stream` route; optional on the non-streaming
+    route.
 
     """
     record_ids: NotRequired[List[str]]
@@ -66,6 +78,20 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
     r"""Uploaded attachments to ground this turn. Each entry references a
     record id returned from the agent attachment upload endpoint.
+
+    """
+    project_id: NotRequired[str]
+    r"""Link the new agent conversation to a project the caller has at
+    least viewer access to. Same fallback/merge semantics as
+    `POST /conversations/create`. Ignored on follow-up turns — the
+    session row is the source of truth once the conversation exists.
+
+    """
+    project_visibility: NotRequired[
+        AgentStreamCreateConversationRequestProjectVisibility
+    ]
+    r"""Only meaningful together with `projectId`. Overrides the
+    project's default sharing behavior for this one conversation.
 
     """
     model_key: NotRequired[str]
@@ -108,6 +134,12 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     `true`. Omitting the whole object applies every default.
 
     """
+    run_id: NotRequired[str]
+    r"""Client-generated identifier for this run. Send it here to enable
+    `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+    {runId}` while the stream is still generating.
+
+    """
 
 
 class AgentStreamCreateConversationRequest(BaseModel):
@@ -126,8 +158,9 @@ class AgentStreamCreateConversationRequest(BaseModel):
     chat_mode: Annotated[
         AgentStreamCreateConversationRequestChatMode, pydantic.Field(alias="chatMode")
     ]
-    r"""Required execution mode. Scoped agent conversations currently
-    support only `quick`.
+    r"""Execution mode. Scoped agent conversations support only `quick`.
+    Required on the `/stream` route; optional on the non-streaming
+    route.
 
     """
 
@@ -155,6 +188,23 @@ class AgentStreamCreateConversationRequest(BaseModel):
     attachments: Optional[List[ChatAttachmentRef]] = None
     r"""Uploaded attachments to ground this turn. Each entry references a
     record id returned from the agent attachment upload endpoint.
+
+    """
+
+    project_id: Annotated[Optional[str], pydantic.Field(alias="projectId")] = None
+    r"""Link the new agent conversation to a project the caller has at
+    least viewer access to. Same fallback/merge semantics as
+    `POST /conversations/create`. Ignored on follow-up turns — the
+    session row is the source of truth once the conversation exists.
+
+    """
+
+    project_visibility: Annotated[
+        Optional[AgentStreamCreateConversationRequestProjectVisibility],
+        pydantic.Field(alias="projectVisibility"),
+    ] = None
+    r"""Only meaningful together with `projectId`. Overrides the
+    project's default sharing behavior for this one conversation.
 
     """
 
@@ -212,6 +262,13 @@ class AgentStreamCreateConversationRequest(BaseModel):
 
     """
 
+    run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
+    r"""Client-generated identifier for this run. Send it here to enable
+    `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+    {runId}` while the stream is still generating.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -220,6 +277,8 @@ class AgentStreamCreateConversationRequest(BaseModel):
                 "filters",
                 "appliedFilters",
                 "attachments",
+                "projectId",
+                "projectVisibility",
                 "modelKey",
                 "modelName",
                 "modelFriendlyName",
@@ -228,6 +287,7 @@ class AgentStreamCreateConversationRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "runId",
             ]
         )
         serialized = handler(self)

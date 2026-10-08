@@ -67,6 +67,7 @@ AgentConversationDetailStatus = Union[
         "Inprogress",
         "Complete",
         "Failed",
+        "Stopped",
     ],
     UnrecognizedStr,
 ]

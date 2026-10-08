@@ -1,0 +1,13 @@
+# MessageMessageType2
+
+
+## Values
+
+| Name           | Value          |
+| -------------- | -------------- |
+| `USER_QUERY`   | user_query     |
+| `BOT_RESPONSE` | bot_response   |
+| `ERROR`        | error          |
+| `FEEDBACK`     | feedback       |
+| `SYSTEM`       | system         |
+| `TOOL_CALL`    | tool_call      |

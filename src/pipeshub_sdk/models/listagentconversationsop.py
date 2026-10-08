@@ -9,7 +9,7 @@ from typing import Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-IsArchived = Literal[
+ListAgentConversationsIsArchived = Literal[
     "true",
     "false",
 ]
@@ -66,10 +66,16 @@ class ListAgentConversationsRequestTypedDict(TypedDict):
     parameter.
 
     """
-    is_archived: NotRequired[IsArchived]
+    is_archived: NotRequired[ListAgentConversationsIsArchived]
     r"""Optional archived flag applied to the `sharedWithMeConversations`
     branch before the route-level non-archived guard is enforced.
     Accepted values are `true` and `false`.
+
+    """
+    project_id: NotRequired[str]
+    r"""Restrict results to a single project. Pass a project's `id`, or
+    the literal string `unassigned` to list agent conversations with
+    no `projectId`.
 
     """
 
@@ -162,13 +168,24 @@ class ListAgentConversationsRequest(BaseModel):
     """
 
     is_archived: Annotated[
-        Optional[IsArchived],
+        Optional[ListAgentConversationsIsArchived],
         pydantic.Field(alias="isArchived"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Optional archived flag applied to the `sharedWithMeConversations`
     branch before the route-level non-archived guard is enforced.
     Accepted values are `true` and `false`.
+
+    """
+
+    project_id: Annotated[
+        Optional[str],
+        pydantic.Field(alias="projectId"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Restrict results to a single project. Pass a project's `id`, or
+    the literal string `unassigned` to list agent conversations with
+    no `projectId`.
 
     """
 
@@ -185,6 +202,7 @@ class ListAgentConversationsRequest(BaseModel):
                 "endDate",
                 "status",
                 "isArchived",
+                "projectId",
             ]
         )
         serialized = handler(self)

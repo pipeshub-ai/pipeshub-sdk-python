@@ -39,6 +39,7 @@ usually include `_key`, `_id`, `_rev`, `orgId`, `recordName`, `externalRecordId`
 | `is_vlm_ocr_processed`           | *OptionalNullable[bool]*         | :heavy_minus_sign:               | N/A                              |
 | `deleted_by_user_id`             | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `processing_started_at`          | *OptionalNullable[float]*        | :heavy_minus_sign:               | N/A                              |
+| `queued_at_timestamp`            | *OptionalNullable[float]*        | :heavy_minus_sign:               | N/A                              |
 | `parsing_status`                 | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `indexing_status`                | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |
 | `extraction_status`              | *OptionalNullable[str]*          | :heavy_minus_sign:               | N/A                              |

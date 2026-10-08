@@ -46,8 +46,8 @@ class AgentCreateWebSearch(BaseModel):
 AgentCreateWebSearchUnionTypedDict = TypeAliasType(
     "AgentCreateWebSearchUnionTypedDict", Union[AgentCreateWebSearchTypedDict, str]
 )
-r"""Web-search attachment for an agent. Accepts either a provider string
-or an object with at least a `provider` field.
+r"""Web-search attachment for an agent. Accepts a provider string, an object
+with at least a `provider` field, or `null`.
 
 """
 
@@ -55,8 +55,8 @@ or an object with at least a `provider` field.
 AgentCreateWebSearchUnion = TypeAliasType(
     "AgentCreateWebSearchUnion", Union[AgentCreateWebSearch, str]
 )
-r"""Web-search attachment for an agent. Accepts either a provider string
-or an object with at least a `provider` field.
+r"""Web-search attachment for an agent. Accepts a provider string, an object
+with at least a `provider` field, or `null`.
 
 """
 

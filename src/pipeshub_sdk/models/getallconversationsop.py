@@ -72,6 +72,14 @@ class GetAllConversationsRequestTypedDict(TypedDict):
     `true`/`false`, or `1`/`0`.
 
     """
+    project_id: NotRequired[str]
+    r"""Restrict results to a single project. Pass a project's `id` to
+    list conversations linked to that project (visible to the
+    caller — owner, member, or org-visible project with
+    `projectVisibility: project`), or the literal string
+    `unassigned` to list conversations with no `projectId`.
+
+    """
 
 
 class GetAllConversationsRequest(BaseModel):
@@ -147,6 +155,19 @@ class GetAllConversationsRequest(BaseModel):
 
     """
 
+    project_id: Annotated[
+        Optional[str],
+        pydantic.Field(alias="projectId"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Restrict results to a single project. Pass a project's `id` to
+    list conversations linked to that project (visible to the
+    caller — owner, member, or org-visible project with
+    `projectVisibility: project`), or the literal string
+    `unassigned` to list conversations with no `projectId`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -161,6 +182,7 @@ class GetAllConversationsRequest(BaseModel):
                 "startDate",
                 "endDate",
                 "shared",
+                "projectId",
             ]
         )
         serialized = handler(self)

@@ -23,6 +23,7 @@ AgentConversationListItemStatus = Union[
         "Inprogress",
         "Complete",
         "Failed",
+        "Stopped",
     ],
     UnrecognizedStr,
 ]
@@ -124,6 +125,19 @@ explicit share grant is attached to the serialized row.
 """
 
 
+AgentConversationListItemProjectVisibility = Union[
+    Literal[
+        "private",
+        "project",
+    ],
+    UnrecognizedStr,
+]
+r"""Only meaningful when `projectId` is set. `project` exposes the
+conversation to every member of the linked project.
+
+"""
+
+
 class AgentConversationListItemTypedDict(TypedDict):
     r"""Conversation summary returned by `GET /agents/{agentKey}/conversations`.
     The handler excludes `messages` and `__v` from both result sets. Rows
@@ -171,6 +185,15 @@ class AgentConversationListItemTypedDict(TypedDict):
     access_level: NotRequired[AgentConversationListItemAccessLevel]
     r"""Computed per request from `sharedWith`; defaults to `read` when no
     explicit share grant is attached to the serialized row.
+
+    """
+    project_id: NotRequired[Nullable[str]]
+    r"""The project this agent conversation is linked to, if any."""
+    project_visibility: NotRequired[
+        Nullable[AgentConversationListItemProjectVisibility]
+    ]
+    r"""Only meaningful when `projectId` is set. `project` exposes the
+    conversation to every member of the linked project.
 
     """
 
@@ -268,6 +291,20 @@ class AgentConversationListItem(BaseModel):
 
     """
 
+    project_id: Annotated[OptionalNullable[str], pydantic.Field(alias="projectId")] = (
+        UNSET
+    )
+    r"""The project this agent conversation is linked to, if any."""
+
+    project_visibility: Annotated[
+        OptionalNullable[AgentConversationListItemProjectVisibility],
+        pydantic.Field(alias="projectVisibility"),
+    ] = UNSET
+    r"""Only meaningful when `projectId` is set. `project` exposes the
+    conversation to every member of the linked project.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -296,9 +333,13 @@ class AgentConversationListItem(BaseModel):
                 "updatedAt",
                 "isOwner",
                 "accessLevel",
+                "projectId",
+                "projectVisibility",
             ]
         )
-        nullable_fields = set(["archivedBy", "deletedBy"])
+        nullable_fields = set(
+            ["archivedBy", "deletedBy", "projectId", "projectVisibility"]
+        )
         serialized = handler(self)
         m = {}
 

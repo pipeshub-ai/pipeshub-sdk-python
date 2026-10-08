@@ -5,6 +5,7 @@ Current status of the conversation:
 - `Inprogress` — AI is processing
 - `Complete` — response ready
 - `Failed` — error occurred
+- `Stopped` — cancelled, or the client disconnected mid-answer
 
 
 
@@ -16,3 +17,4 @@ Current status of the conversation:
 | `INPROGRESS` | Inprogress   |
 | `COMPLETE`   | Complete     |
 | `FAILED`     | Failed       |
+| `STOPPED`    | Stopped      |

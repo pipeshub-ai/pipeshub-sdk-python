@@ -5,6 +5,7 @@ from .appliedfilternode import AppliedFilterNode, AppliedFilterNodeTypedDict
 from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .citation import Citation, CitationTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
+from .conversationsharedby import ConversationSharedBy, ConversationSharedByTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from .messagepart import MessagePart, MessagePartTypedDict
@@ -215,12 +216,13 @@ GetConversationByIDStatus = Union[
         "Inprogress",
         "Complete",
         "Failed",
+        "Stopped",
     ],
     UnrecognizedStr,
 ]
 
 
-GetConversationByIDMessageMessageType = Union[
+MessageMessageType2 = Union[
     Literal[
         "user_query",
         "bot_response",
@@ -425,7 +427,7 @@ class GetConversationByIDMetadata(BaseModel):
 
 class GetConversationByIDMessageTypedDict(TypedDict):
     id: NotRequired[str]
-    message_type: NotRequired[GetConversationByIDMessageMessageType]
+    message_type: NotRequired[MessageMessageType2]
     content: NotRequired[str]
     content_format: NotRequired[GetConversationByIDContentFormat]
     confidence: NotRequired[Nullable[GetConversationByIDConfidence]]
@@ -463,8 +465,7 @@ class GetConversationByIDMessage(BaseModel):
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
 
     message_type: Annotated[
-        Optional[GetConversationByIDMessageMessageType],
-        pydantic.Field(alias="messageType"),
+        Optional[MessageMessageType2], pydantic.Field(alias="messageType")
     ] = None
 
     content: Optional[str] = None
@@ -735,6 +736,11 @@ class GetConversationByIDConversationTypedDict(TypedDict):
 
     """
     access: NotRequired[AccessTypedDict]
+    shared_by: NotRequired[ConversationSharedByTypedDict]
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
 
 
 class GetConversationByIDConversation(BaseModel):
@@ -778,6 +784,14 @@ class GetConversationByIDConversation(BaseModel):
 
     access: Optional[Access] = None
 
+    shared_by: Annotated[
+        Optional[ConversationSharedBy], pydantic.Field(alias="sharedBy")
+    ] = None
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -794,6 +808,7 @@ class GetConversationByIDConversation(BaseModel):
                 "modelInfo",
                 "pagination",
                 "access",
+                "sharedBy",
             ]
         )
         serialized = handler(self)

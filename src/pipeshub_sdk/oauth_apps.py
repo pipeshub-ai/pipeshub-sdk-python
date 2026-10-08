@@ -18,6 +18,9 @@ class OAuthApps(BaseSDK):
     **Who can see which apps**
     - **Everyone (including org admins)** sees and manages only OAuth apps **they created** (`createdBy`). Other members' apps are hidden (not listed; individual operations return not found).
 
+    **Session only**
+    - Every `/oauth-clients/*` route requires the user's interactive session JWT. OAuth access tokens and personal access tokens (`phpat_...`) are rejected with `403`, so a token issued to a client can never register, reconfigure, or revoke clients on its own.
+
     **Who authorizes vs. client credentials**
     - **Authorization code:** Any authenticated user in the workspace may complete consent for a valid `client_id`; issued tokens represent **that user**.
     - **Client credentials:** Access tokens represent the **OAuth app creator** (who registered the client), not the caller.

@@ -1,0 +1,11 @@
+# SetAgentConversationProjectVisibilityResponse
+
+Agent conversation's project visibility updated
+
+
+## Fields
+
+| Field                                                                                                                                | Type                                                                                                                                 | Required                                                                                                                             | Description                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `conversation_id`                                                                                                                    | *str*                                                                                                                                | :heavy_check_mark:                                                                                                                   | N/A                                                                                                                                  |
+| `project_visibility`                                                                                                                 | [models.SetAgentConversationProjectVisibilityProjectVisibility](../models/setagentconversationprojectvisibilityprojectvisibility.md) | :heavy_check_mark:                                                                                                                   | N/A                                                                                                                                  |

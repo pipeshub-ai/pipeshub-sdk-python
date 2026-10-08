@@ -5,12 +5,36 @@ from .storedagentconversation import (
     StoredAgentConversation,
     StoredAgentConversationTypedDict,
 )
-from pipeshub_sdk.types import BaseModel
-from typing import Literal
-from typing_extensions import TypedDict
+from pipeshub_sdk.types import BaseModel, Nullable, UNSET_SENTINEL
+from pydantic import model_serializer
+from typing import Literal, Union
+from typing_extensions import TypeAliasType, TypedDict
 
 
 MessageEnum = Literal["Conversation deleted successfully",]
+
+
+class AgentConversationDeleteResponseConversationTypedDict(TypedDict):
+    pass
+
+
+class AgentConversationDeleteResponseConversation(BaseModel):
+    pass
+
+
+Conversation1TypedDict = TypeAliasType(
+    "Conversation1TypedDict",
+    Union[
+        AgentConversationDeleteResponseConversationTypedDict,
+        StoredAgentConversationTypedDict,
+    ],
+)
+
+
+Conversation1 = TypeAliasType(
+    "Conversation1",
+    Union[AgentConversationDeleteResponseConversation, StoredAgentConversation],
+)
 
 
 class AgentConversationDeleteResponseTypedDict(TypedDict):
@@ -22,10 +46,7 @@ class AgentConversationDeleteResponseTypedDict(TypedDict):
     """
 
     message: MessageEnum
-    conversation: StoredAgentConversationTypedDict
-    r"""Stored agent conversation document returned by non-list endpoints.
-
-    """
+    conversation: Nullable[Conversation1TypedDict]
 
 
 class AgentConversationDeleteResponse(BaseModel):
@@ -38,7 +59,18 @@ class AgentConversationDeleteResponse(BaseModel):
 
     message: MessageEnum
 
-    conversation: StoredAgentConversation
-    r"""Stored agent conversation document returned by non-list endpoints.
+    conversation: Nullable[Conversation1]
 
-    """
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                m[k] = val
+
+        return m

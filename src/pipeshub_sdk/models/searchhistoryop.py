@@ -179,6 +179,11 @@ class SearchHistoryInternalServerErrorErrorTypedDict(TypedDict):
     """
     message: str
     r"""Human-readable description of the failure."""
+    request_id: NotRequired[str]
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
 
 
 class SearchHistoryInternalServerErrorError(BaseModel):
@@ -196,6 +201,28 @@ class SearchHistoryInternalServerErrorError(BaseModel):
     message: str
     r"""Human-readable description of the failure."""
 
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["requestId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
 
 class SearchHistoryForbiddenErrorTypedDict(TypedDict):
     r"""Error payload."""
@@ -208,6 +235,11 @@ class SearchHistoryForbiddenErrorTypedDict(TypedDict):
     """
     message: str
     r"""Human-readable description of the failure."""
+    request_id: NotRequired[str]
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
 
 
 class SearchHistoryForbiddenError(BaseModel):
@@ -223,6 +255,28 @@ class SearchHistoryForbiddenError(BaseModel):
     message: str
     r"""Human-readable description of the failure."""
 
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["requestId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
 
 class SearchHistoryUnauthorizedErrorTypedDict(TypedDict):
     r"""Error payload."""
@@ -236,6 +290,11 @@ class SearchHistoryUnauthorizedErrorTypedDict(TypedDict):
     """
     message: str
     r"""Human-readable description of the failure."""
+    request_id: NotRequired[str]
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
 
 
 class SearchHistoryUnauthorizedError(BaseModel):
@@ -252,6 +311,28 @@ class SearchHistoryUnauthorizedError(BaseModel):
     message: str
     r"""Human-readable description of the failure."""
 
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["requestId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
 
 class SearchHistoryBadRequestErrorTypedDict(TypedDict):
     r"""Error payload."""
@@ -266,6 +347,11 @@ class SearchHistoryBadRequestErrorTypedDict(TypedDict):
     """
     message: str
     r"""Human-readable description of the failure."""
+    request_id: NotRequired[str]
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
 
 
 class SearchHistoryBadRequestError(BaseModel):
@@ -282,3 +368,43 @@ class SearchHistoryBadRequestError(BaseModel):
 
     message: str
     r"""Human-readable description of the failure."""
+
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["requestId"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k)
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+try:
+    SearchHistoryInternalServerErrorError.model_rebuild()
+except NameError:
+    pass
+try:
+    SearchHistoryForbiddenError.model_rebuild()
+except NameError:
+    pass
+try:
+    SearchHistoryUnauthorizedError.model_rebuild()
+except NameError:
+    pass
+try:
+    SearchHistoryBadRequestError.model_rebuild()
+except NameError:
+    pass

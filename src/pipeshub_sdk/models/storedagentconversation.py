@@ -24,6 +24,7 @@ StoredAgentConversationStatus = Union[
         "Inprogress",
         "Complete",
         "Failed",
+        "Stopped",
     ],
     UnrecognizedStr,
 ]

@@ -11,7 +11,7 @@ import pydantic
 from typing_extensions import Annotated, TypedDict
 
 
-class MetaTypedDict(TypedDict):
+class MessageFeedbackUpdateResponseMetaTypedDict(TypedDict):
     request_id: str
     r"""Server-side request identifier. Read from the `X-Request-ID`
     header when supplied, otherwise auto-generated, so this field
@@ -23,7 +23,7 @@ class MetaTypedDict(TypedDict):
     r"""Server-side processing time in milliseconds."""
 
 
-class Meta(BaseModel):
+class MessageFeedbackUpdateResponseMeta(BaseModel):
     request_id: Annotated[str, pydantic.Field(alias="requestId")]
     r"""Server-side request identifier. Read from the `X-Request-ID`
     header when supplied, otherwise auto-generated, so this field
@@ -50,7 +50,7 @@ class MessageFeedbackUpdateResponseTypedDict(TypedDict):
     `timestamp`, and `metrics`.
 
     """
-    meta: MetaTypedDict
+    meta: MessageFeedbackUpdateResponseMetaTypedDict
 
 
 class MessageFeedbackUpdateResponse(BaseModel):
@@ -69,11 +69,11 @@ class MessageFeedbackUpdateResponse(BaseModel):
 
     """
 
-    meta: Meta
+    meta: MessageFeedbackUpdateResponseMeta
 
 
 try:
-    Meta.model_rebuild()
+    MessageFeedbackUpdateResponseMeta.model_rebuild()
 except NameError:
     pass
 try:

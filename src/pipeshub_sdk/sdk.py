@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from pipeshub_sdk.organization_auth_config import OrganizationAuthConfig
     from pipeshub_sdk.organizations import Organizations
     from pipeshub_sdk.personal_access_tokens import PersonalAccessTokens
+    from pipeshub_sdk.projects import Projects
     from pipeshub_sdk.semantic_search import SemanticSearch
     from pipeshub_sdk.user_account import UserAccount
     from pipeshub_sdk.web_search_sdk import WebSearchSDK
@@ -109,6 +110,9 @@ class Pipeshub(BaseSDK):
     **Who can see which apps**
     - **Everyone (including org admins)** sees and manages only OAuth apps **they created** (`createdBy`). Other members' apps are hidden (not listed; individual operations return not found).
 
+    **Session only**
+    - Every `/oauth-clients/*` route requires the user's interactive session JWT. OAuth access tokens and personal access tokens (`phpat_...`) are rejected with `403`, so a token issued to a client can never register, reconfigure, or revoke clients on its own.
+
     **Who authorizes vs. client credentials**
     - **Authorization code:** Any authenticated user in the workspace may complete consent for a valid `client_id`; issued tokens represent **that user**.
     - **Client credentials:** Access tokens represent the **OAuth app creator** (who registered the client), not the caller.
@@ -136,6 +140,13 @@ class Pipeshub(BaseSDK):
     **Who can create one**
     - **Any authenticated org member** — unlike OAuth apps, this is
     deliberately not admin-gated.
+
+    **Session only**
+    - Every `/personal-access-tokens/*` route requires the user's interactive
+    session JWT. OAuth access tokens and personal access tokens (`phpat_...`)
+    are rejected with `403`. `scopes` is capped at the instance's `MCP_SCOPES`,
+    not at the caller's own token, so a narrowly scoped token could otherwise
+    mint itself a full-scope, non-expiring PAT.
 
     **How it's issued**
     - Minted through the same OAuth access-token machinery as `/oauth2/token`,
@@ -173,6 +184,17 @@ class Pipeshub(BaseSDK):
     r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
     conversations: "Conversations"
     r"""AI-powered conversational chat management with citations and follow-up questions"""
+    projects: "Projects"
+    r"""Workspaces that group related assistant and agent conversations under a
+    shared name, custom instructions, a knowledge scope, and reference
+    files. Projects can be shared with teammates; project membership only
+    grants read access to conversations explicitly marked
+    `projectVisibility: project` — a member never gets access to another
+    member's private chats. See `Conversations` for the two fields
+    (`projectId`, `projectVisibility`) that link a conversation to a
+    project.
+
+    """
     semantic_search: "SemanticSearch"
     r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
     agents: "Agents"
@@ -200,6 +222,7 @@ class Pipeshub(BaseSDK):
         "knowledge_base": ("pipeshub_sdk.knowledge_base_sdk", "KnowledgeBaseSDK"),
         "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
+        "projects": ("pipeshub_sdk.projects", "Projects"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
         "connector": ("pipeshub_sdk.connector", "Connector"),
