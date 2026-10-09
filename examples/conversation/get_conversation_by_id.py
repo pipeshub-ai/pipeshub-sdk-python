@@ -19,15 +19,17 @@ async def main() -> None:
     async with SDK(
         server_url=server_url,
         security=models.Security(bearer_auth=token),
+        timeout_ms=300_000,
     ) as client:
         conv_id = None
         new_conversation_stream = await client.conversations.stream_chat_async(
             query="Who moved the cheese?",
+            chat_mode="agent",
         )
         async for event in new_conversation_stream:
             data: Any = event.data
-            if event.event == "complete" and data:
-                conv_id = data["conversation"]["_id"]
+            if event.event == "RUN_FINISHED" and data:
+                conv_id = data["result"]["conversation"]["_id"]
         assert conv_id is not None
 
         conversation = await client.conversations.get_conversation_by_id_async(

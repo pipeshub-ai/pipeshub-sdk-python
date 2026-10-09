@@ -18,6 +18,7 @@ async def main() -> None:
     async with SDK(
         server_url=server_url,
         security=models.Security(bearer_auth=token),
+        timeout_ms=300_000,
     ) as client:
         conversations = await client.conversations.get_all_conversations_async()
         print(conversations)
