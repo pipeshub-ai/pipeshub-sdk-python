@@ -5,10 +5,15 @@
 Defaults to `owned` when omitted.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import QueryParamSource
+value: QueryParamSource = "owned"
+```
+
 
 ## Values
 
-| Name     | Value    |
-| -------- | -------- |
-| `OWNED`  | owned    |
-| `SHARED` | shared   |
+- `"owned"`
+- `"shared"`

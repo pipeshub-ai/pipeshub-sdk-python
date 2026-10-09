@@ -14,8 +14,9 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 AgentAddMessageStreamRequestChatMode = Literal["quick",]
-r"""Required execution mode. Scoped agent conversations currently
-support only `quick`.
+r"""Execution mode. Scoped agent conversations support only `quick`.
+Required on the `/stream` route; optional on the non-streaming
+route.
 
 """
 
@@ -44,8 +45,9 @@ class AgentAddMessageStreamRequestTypedDict(TypedDict):
 
     """
     chat_mode: AgentAddMessageStreamRequestChatMode
-    r"""Required execution mode. Scoped agent conversations currently
-    support only `quick`.
+    r"""Execution mode. Scoped agent conversations support only `quick`.
+    Required on the `/stream` route; optional on the non-streaming
+    route.
 
     """
     filters: NotRequired[FiltersTypedDict]
@@ -104,6 +106,12 @@ class AgentAddMessageStreamRequestTypedDict(TypedDict):
     `true`. Omitting the whole object applies every default.
 
     """
+    run_id: NotRequired[str]
+    r"""Client-generated identifier for this run. Send it here to enable
+    `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+    {runId}` while the stream is still generating.
+
+    """
 
 
 class AgentAddMessageStreamRequest(BaseModel):
@@ -123,8 +131,9 @@ class AgentAddMessageStreamRequest(BaseModel):
     chat_mode: Annotated[
         AgentAddMessageStreamRequestChatMode, pydantic.Field(alias="chatMode")
     ]
-    r"""Required execution mode. Scoped agent conversations currently
-    support only `quick`.
+    r"""Execution mode. Scoped agent conversations support only `quick`.
+    Required on the `/stream` route; optional on the non-streaming
+    route.
 
     """
 
@@ -203,6 +212,13 @@ class AgentAddMessageStreamRequest(BaseModel):
 
     """
 
+    run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
+    r"""Client-generated identifier for this run. Send it here to enable
+    `POST /agents/{agentKey}/conversations/{conversationId}/cancel
+    {runId}` while the stream is still generating.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -218,6 +234,7 @@ class AgentAddMessageStreamRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "runId",
             ]
         )
         serialized = handler(self)
@@ -225,7 +242,7 @@ class AgentAddMessageStreamRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

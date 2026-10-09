@@ -14,7 +14,7 @@ class ConversationModelInfoTypedDict(TypedDict):
     model_key: NotRequired[str]
     r"""Stable identifier of the configured model record"""
     model_name: NotRequired[str]
-    r"""Provider-facing model name (e.g. `gpt-4o-mini`)"""
+    r"""Provider-facing model name (e.g. `gpt-5.6-luna`)"""
     model_provider: NotRequired[str]
     r"""Provider key (e.g. `openai`, `anthropic`)"""
     model_friendly_name: NotRequired[str]
@@ -30,7 +30,7 @@ class ConversationModelInfo(BaseModel):
     r"""Stable identifier of the configured model record"""
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
-    r"""Provider-facing model name (e.g. `gpt-4o-mini`)"""
+    r"""Provider-facing model name (e.g. `gpt-5.6-luna`)"""
 
     model_provider: Annotated[Optional[str], pydantic.Field(alias="modelProvider")] = (
         None
@@ -55,7 +55,7 @@ class ConversationModelInfo(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

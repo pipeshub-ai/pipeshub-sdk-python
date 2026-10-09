@@ -35,38 +35,47 @@ may use any of the connector-specific types below.
 - OTHERS: Miscellaneous content types
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import RecordTypeEnum
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: RecordTypeEnum = "FILE"
+```
+
 
 ## Values
 
-| Name                          | Value                         |
-| ----------------------------- | ----------------------------- |
-| `FILE`                        | FILE                          |
-| `DRIVE`                       | DRIVE                         |
-| `WEBPAGE`                     | WEBPAGE                       |
-| `DATABASE`                    | DATABASE                      |
-| `DATASOURCE`                  | DATASOURCE                    |
-| `MESSAGE`                     | MESSAGE                       |
-| `MAIL`                        | MAIL                          |
-| `GROUP_MAIL`                  | GROUP_MAIL                    |
-| `TICKET`                      | TICKET                        |
-| `COMMENT`                     | COMMENT                       |
-| `INLINE_COMMENT`              | INLINE_COMMENT                |
-| `CONFLUENCE_PAGE`             | CONFLUENCE_PAGE               |
-| `CONFLUENCE_BLOGPOST`         | CONFLUENCE_BLOGPOST           |
-| `SHAREPOINT_PAGE`             | SHAREPOINT_PAGE               |
-| `SHAREPOINT_LIST`             | SHAREPOINT_LIST               |
-| `SHAREPOINT_LIST_ITEM`        | SHAREPOINT_LIST_ITEM          |
-| `SHAREPOINT_DOCUMENT_LIBRARY` | SHAREPOINT_DOCUMENT_LIBRARY   |
-| `LINK`                        | LINK                          |
-| `PROJECT`                     | PROJECT                       |
-| `PULL_REQUEST`                | PULL_REQUEST                  |
-| `MEETING`                     | MEETING                       |
-| `PRODUCT`                     | PRODUCT                       |
-| `DEAL`                        | DEAL                          |
-| `CASE`                        | CASE                          |
-| `TASK`                        | TASK                          |
-| `ARTIFACT`                    | ARTIFACT                      |
-| `CODE_FILE`                   | CODE_FILE                     |
-| `SQL_TABLE`                   | SQL_TABLE                     |
-| `SQL_VIEW`                    | SQL_VIEW                      |
-| `OTHERS`                      | OTHERS                        |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"FILE"`
+- `"DRIVE"`
+- `"WEBPAGE"`
+- `"DATABASE"`
+- `"DATASOURCE"`
+- `"MESSAGE"`
+- `"MAIL"`
+- `"GROUP_MAIL"`
+- `"TICKET"`
+- `"COMMENT"`
+- `"INLINE_COMMENT"`
+- `"CONFLUENCE_PAGE"`
+- `"CONFLUENCE_BLOGPOST"`
+- `"SHAREPOINT_PAGE"`
+- `"SHAREPOINT_LIST"`
+- `"SHAREPOINT_LIST_ITEM"`
+- `"SHAREPOINT_DOCUMENT_LIBRARY"`
+- `"LINK"`
+- `"PROJECT"`
+- `"PULL_REQUEST"`
+- `"MEETING"`
+- `"PRODUCT"`
+- `"DEAL"`
+- `"CASE"`
+- `"TASK"`
+- `"ARTIFACT"`
+- `"CODE_FILE"`
+- `"SQL_TABLE"`
+- `"SQL_VIEW"`
+- `"OTHERS"`

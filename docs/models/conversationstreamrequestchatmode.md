@@ -6,11 +6,16 @@ request schema.
 and `web_search` use their corresponding assistant search paths.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ConversationStreamRequestChatMode
+value: ConversationStreamRequestChatMode = "agent"
+```
+
 
 ## Values
 
-| Name              | Value             |
-| ----------------- | ----------------- |
-| `AGENT`           | agent             |
-| `INTERNAL_SEARCH` | internal_search   |
-| `WEB_SEARCH`      | web_search        |
+- `"agent"`
+- `"internal_search"`
+- `"web_search"`

@@ -52,6 +52,8 @@ class OpenIDConnect(BaseSDK):
         Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -80,6 +82,7 @@ class OpenIDConnect(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -96,13 +99,15 @@ class OpenIDConnect(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="oauthUserInfo",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OpenID Connect"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -145,6 +150,8 @@ class OpenIDConnect(BaseSDK):
         Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -173,6 +180,7 @@ class OpenIDConnect(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -189,13 +197,15 @@ class OpenIDConnect(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="oauthUserInfo",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OpenID Connect"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

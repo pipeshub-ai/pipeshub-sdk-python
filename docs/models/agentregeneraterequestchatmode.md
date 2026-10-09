@@ -1,8 +1,13 @@
 # AgentRegenerateRequestChatMode
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AgentRegenerateRequestChatMode
+value: AgentRegenerateRequestChatMode = "quick"
+```
+
 
 ## Values
 
-| Name    | Value   |
-| ------- | ------- |
-| `QUICK` | quick   |
+- `"quick"`

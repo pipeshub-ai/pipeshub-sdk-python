@@ -1,19 +1,28 @@
 # Filter
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import Filter
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: Filter = "page"
+```
+
 
 ## Values
 
-| Name           | Value          |
-| -------------- | -------------- |
-| `PAGE`         | page           |
-| `LIMIT`        | limit          |
-| `SEARCH`       | search         |
-| `SHARED`       | shared         |
-| `TAGS`         | tags           |
-| `MIN_MESSAGES` | minMessages    |
-| `SORT_BY`      | sortBy         |
-| `SORT_ORDER`   | sortOrder      |
-| `START_DATE`   | startDate      |
-| `END_DATE`     | endDate        |
-| `MESSAGE_TYPE` | messageType    |
-| `DATE_RANGE`   | dateRange      |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"page"`
+- `"limit"`
+- `"search"`
+- `"shared"`
+- `"tags"`
+- `"minMessages"`
+- `"sortBy"`
+- `"sortOrder"`
+- `"startDate"`
+- `"endDate"`
+- `"messageType"`
+- `"dateRange"`

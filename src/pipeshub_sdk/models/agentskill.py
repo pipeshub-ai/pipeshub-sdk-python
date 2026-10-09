@@ -27,7 +27,7 @@ class AgentSkillTypedDict(TypedDict):
     subcategory: NotRequired[Nullable[str]]
     version: NotRequired[Nullable[str]]
     status: NotRequired[Nullable[str]]
-    r"""Lifecycle state of the skill — `active` or `deprecated`."""
+    r"""Lifecycle state of the skill — `active`, `deprecated`, or `disabled`. `candidate` is a learning-loop record state, not an assignable skill, and is not returned here."""
 
 
 class AgentSkill(BaseModel):
@@ -50,7 +50,7 @@ class AgentSkill(BaseModel):
     version: OptionalNullable[str] = UNSET
 
     status: OptionalNullable[str] = UNSET
-    r"""Lifecycle state of the skill — `active` or `deprecated`."""
+    r"""Lifecycle state of the skill — `active`, `deprecated`, or `disabled`. `candidate` is a learning-loop record state, not an assignable skill, and is not returned here."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -65,7 +65,7 @@ class AgentSkill(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

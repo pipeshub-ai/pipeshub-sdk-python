@@ -10,9 +10,11 @@ from pipeshub_sdk.types import (
     UNSET,
     UNSET_SENTINEL,
 )
+from pipeshub_sdk.utils import validate_const
 import pydantic
 from pydantic import model_serializer
-from typing import List
+from pydantic.functional_validators import AfterValidator
+from typing import List, Literal
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -49,7 +51,7 @@ class CurrentNode(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -97,7 +99,7 @@ class ParentNode(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -168,7 +170,7 @@ class CreatedAt(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -212,7 +214,7 @@ class UpdatedAt(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -256,7 +258,7 @@ class Size(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -327,7 +329,7 @@ class KnowledgeHubNodesResponseApplied(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 m[k] = val
@@ -388,7 +390,7 @@ class KnowledgeHubNodesResponseFilters(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 m[k] = val
@@ -423,7 +425,7 @@ class Breadcrumb(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -503,8 +505,6 @@ class KnowledgeHubNodesResponseTypedDict(TypedDict):
 
     """
 
-    success: bool
-    r"""Always `true` on HTTP 200. Failures use 4xx/5xx error envelopes, not this body shape."""
     error: Nullable[str]
     r"""Always `null` on HTTP 200."""
     id: Nullable[str]
@@ -523,6 +523,8 @@ class KnowledgeHubNodesResponseTypedDict(TypedDict):
     r"""Present when `include=counts`; otherwise `null`."""
     permissions: Nullable[PermissionsTypedDict]
     r"""Present when `include=permissions`; otherwise `null`."""
+    success: Literal[True]
+    r"""Always `true` on HTTP 200. Failures use 4xx/5xx error envelopes, not this body shape."""
 
 
 class KnowledgeHubNodesResponse(BaseModel):
@@ -532,9 +534,6 @@ class KnowledgeHubNodesResponse(BaseModel):
     omitted properties).
 
     """
-
-    success: bool
-    r"""Always `true` on HTTP 200. Failures use 4xx/5xx error envelopes, not this body shape."""
 
     error: Nullable[str]
     r"""Always `null` on HTTP 200."""
@@ -564,6 +563,12 @@ class KnowledgeHubNodesResponse(BaseModel):
     permissions: Nullable[Permissions]
     r"""Present when `include=permissions`; otherwise `null`."""
 
+    success: Annotated[
+        Annotated[Literal[True], AfterValidator(validate_const(True))],
+        pydantic.Field(alias="success"),
+    ] = True
+    r"""Always `true` on HTTP 200. Failures use 4xx/5xx error envelopes, not this body shape."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         serialized = handler(self)
@@ -571,7 +576,7 @@ class KnowledgeHubNodesResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 m[k] = val

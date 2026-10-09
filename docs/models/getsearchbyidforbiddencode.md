@@ -5,9 +5,14 @@ is emitted when the bearer token is valid but
 lacks the required scope.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetSearchByIDForbiddenCode
+value: GetSearchByIDForbiddenCode = "HTTP_FORBIDDEN"
+```
+
 
 ## Values
 
-| Name             | Value            |
-| ---------------- | ---------------- |
-| `HTTP_FORBIDDEN` | HTTP_FORBIDDEN   |
+- `"HTTP_FORBIDDEN"`

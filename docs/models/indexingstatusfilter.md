@@ -5,16 +5,21 @@ reindex (record or record-group). Omit `statusFilters` to reindex all
 descendants regardless of status.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import IndexingStatusFilter
+value: IndexingStatusFilter = "NOT_STARTED"
+```
+
 
 ## Values
 
-| Name                      | Value                     |
-| ------------------------- | ------------------------- |
-| `NOT_STARTED`             | NOT_STARTED               |
-| `QUEUED`                  | QUEUED                    |
-| `IN_PROGRESS`             | IN_PROGRESS               |
-| `COMPLETED`               | COMPLETED                 |
-| `FAILED`                  | FAILED                    |
-| `FILE_TYPE_NOT_SUPPORTED` | FILE_TYPE_NOT_SUPPORTED   |
-| `AUTO_INDEX_OFF`          | AUTO_INDEX_OFF            |
-| `EMPTY`                   | EMPTY                     |
+- `"NOT_STARTED"`
+- `"QUEUED"`
+- `"IN_PROGRESS"`
+- `"COMPLETED"`
+- `"FAILED"`
+- `"FILE_TYPE_NOT_SUPPORTED"`
+- `"AUTO_INDEX_OFF"`
+- `"EMPTY"`

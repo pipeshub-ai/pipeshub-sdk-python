@@ -1,0 +1,10 @@
+# RemoveProjectMemberRequest
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `project_id`                                                                                       | *str*                                                                                              | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `member_user_id`                                                                                   | *str*                                                                                              | :heavy_check_mark:                                                                                 | N/A                                                                                                |
+| `principal_type`                                                                                   | [Optional[models.RemoveProjectMemberPrincipalType]](../models/removeprojectmemberprincipaltype.md) | :heavy_minus_sign:                                                                                 | Whether `memberUserId` identifies a user or a team.<br/>Defaults to `user` when omitted.<br/>      |

@@ -8,18 +8,21 @@ from pipeshub_sdk.types import (
     UNSET,
     UNSET_SENTINEL,
 )
+from pipeshub_sdk.utils import validate_const
 import pydantic
 from pydantic import model_serializer
+from pydantic.functional_validators import AfterValidator
+from typing import Literal
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ReIndexRecordResponseSchemaTypedDict(TypedDict):
     r"""Response returned by POST /knowledgeBase/reindex/record/{recordId}."""
 
-    success: bool
     message: str
     event_published: bool
     depth: int
+    success: Literal[True]
     record_id: NotRequired[Nullable[str]]
     record_name: NotRequired[Nullable[str]]
     connector: NotRequired[Nullable[str]]
@@ -29,13 +32,16 @@ class ReIndexRecordResponseSchemaTypedDict(TypedDict):
 class ReIndexRecordResponseSchema(BaseModel):
     r"""Response returned by POST /knowledgeBase/reindex/record/{recordId}."""
 
-    success: bool
-
     message: str
 
     event_published: Annotated[bool, pydantic.Field(alias="eventPublished")]
 
     depth: int
+
+    success: Annotated[
+        Annotated[Literal[True], AfterValidator(validate_const(True))],
+        pydantic.Field(alias="success"),
+    ] = True
 
     record_id: Annotated[OptionalNullable[str], pydantic.Field(alias="recordId")] = (
         UNSET
@@ -60,7 +66,7 @@ class ReIndexRecordResponseSchema(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

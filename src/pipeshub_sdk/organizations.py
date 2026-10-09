@@ -42,6 +42,8 @@ class Organizations(BaseSDK):
         - Settings and configuration screens
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -70,6 +72,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -90,9 +93,11 @@ class Organizations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organizations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -148,6 +153,8 @@ class Organizations(BaseSDK):
         - Settings and configuration screens
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -176,6 +183,7 @@ class Organizations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -196,9 +204,11 @@ class Organizations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organizations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

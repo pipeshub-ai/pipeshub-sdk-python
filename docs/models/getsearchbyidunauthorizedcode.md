@@ -5,9 +5,14 @@ is emitted when the bearer token is missing,
 invalid, or expired.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetSearchByIDUnauthorizedCode
+value: GetSearchByIDUnauthorizedCode = "HTTP_UNAUTHORIZED"
+```
+
 
 ## Values
 
-| Name                | Value               |
-| ------------------- | ------------------- |
-| `HTTP_UNAUTHORIZED` | HTTP_UNAUTHORIZED   |
+- `"HTTP_UNAUTHORIZED"`

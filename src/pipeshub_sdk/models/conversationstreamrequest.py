@@ -13,6 +13,19 @@ from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+ConversationStreamRequestProjectVisibility = Literal[
+    "private",
+    "project",
+]
+r"""Only meaningful together with `projectId`. Overrides the
+project's default sharing behavior for this one conversation:
+`private` keeps it visible to the owner only; `project` exposes
+it to every project member. Defaults from the project's
+`chatSharing` setting when omitted.
+
+"""
+
+
 ConversationStreamRequestChatMode = Literal[
     "agent",
     "internal_search",
@@ -79,6 +92,23 @@ class ConversationStreamRequestTypedDict(TypedDict):
     `POST /conversations/attachments/upload`).
 
     """
+    project_id: NotRequired[str]
+    r"""Link the new conversation to a project the caller has at least
+    viewer access to. When the project's instructions, knowledge
+    scope, or files are set and this request didn't supply its own
+    `filters`/`attachments`, they are merged in as a fallback (the
+    request always wins). Ignored on follow-up turns — only
+    meaningful when creating a conversation.
+
+    """
+    project_visibility: NotRequired[ConversationStreamRequestProjectVisibility]
+    r"""Only meaningful together with `projectId`. Overrides the
+    project's default sharing behavior for this one conversation:
+    `private` keeps it visible to the owner only; `project` exposes
+    it to every project member. Defaults from the project's
+    `chatSharing` setting when omitted.
+
+    """
     model_key: NotRequired[str]
     r"""Identifier for the AI model configuration to use.
     Available models depend on organization settings.
@@ -117,6 +147,13 @@ class ConversationStreamRequestTypedDict(TypedDict):
     selects an agent mode; ignored otherwise. Each field falls back to its
     own `default` below when omitted — a missing flag is not uniformly
     `true`. Omitting the whole object applies every default.
+
+    """
+    run_id: NotRequired[str]
+    r"""Client-generated identifier for this run. Send it here to enable
+    `POST /conversations/{conversationId}/cancel {runId}` while the
+    stream is still generating. Optional — a caller that never sends
+    one just can't cooperatively cancel the run.
 
     """
 
@@ -174,6 +211,28 @@ class ConversationStreamRequest(BaseModel):
 
     """
 
+    project_id: Annotated[Optional[str], pydantic.Field(alias="projectId")] = None
+    r"""Link the new conversation to a project the caller has at least
+    viewer access to. When the project's instructions, knowledge
+    scope, or files are set and this request didn't supply its own
+    `filters`/`attachments`, they are merged in as a fallback (the
+    request always wins). Ignored on follow-up turns — only
+    meaningful when creating a conversation.
+
+    """
+
+    project_visibility: Annotated[
+        Optional[ConversationStreamRequestProjectVisibility],
+        pydantic.Field(alias="projectVisibility"),
+    ] = None
+    r"""Only meaningful together with `projectId`. Overrides the
+    project's default sharing behavior for this one conversation:
+    `private` keeps it visible to the owner only; `project` exposes
+    it to every project member. Defaults from the project's
+    `chatSharing` setting when omitted.
+
+    """
+
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""Identifier for the AI model configuration to use.
     Available models depend on organization settings.
@@ -228,6 +287,14 @@ class ConversationStreamRequest(BaseModel):
 
     """
 
+    run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
+    r"""Client-generated identifier for this run. Send it here to enable
+    `POST /conversations/{conversationId}/cancel {runId}` while the
+    stream is still generating. Optional — a caller that never sends
+    one just can't cooperatively cancel the run.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -236,6 +303,8 @@ class ConversationStreamRequest(BaseModel):
                 "filters",
                 "appliedFilters",
                 "attachments",
+                "projectId",
+                "projectVisibility",
                 "modelKey",
                 "modelName",
                 "modelFriendlyName",
@@ -244,6 +313,7 @@ class ConversationStreamRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "runId",
             ]
         )
         serialized = handler(self)
@@ -251,7 +321,7 @@ class ConversationStreamRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

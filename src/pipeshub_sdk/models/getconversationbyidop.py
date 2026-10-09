@@ -5,6 +5,7 @@ from .appliedfilternode import AppliedFilterNode, AppliedFilterNodeTypedDict
 from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .citation import Citation, CitationTypedDict
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
+from .conversationsharedby import ConversationSharedBy, ConversationSharedByTypedDict
 from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
 from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from .messagepart import MessagePart, MessagePartTypedDict
@@ -161,7 +162,7 @@ class GetConversationByIDRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -200,7 +201,7 @@ class GetConversationByIDSharedWith(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -215,12 +216,13 @@ GetConversationByIDStatus = Union[
         "Inprogress",
         "Complete",
         "Failed",
+        "Stopped",
     ],
     UnrecognizedStr,
 ]
 
 
-GetConversationByIDMessageMessageType = Union[
+MessageMessageType2 = Union[
     Literal[
         "user_query",
         "bot_response",
@@ -290,7 +292,7 @@ class GetConversationByIDCitation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -353,7 +355,7 @@ class GetConversationByIDReferenceDatum(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -380,7 +382,7 @@ class GetConversationByIDAppliedFilters(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -414,7 +416,7 @@ class GetConversationByIDMetadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -425,7 +427,7 @@ class GetConversationByIDMetadata(BaseModel):
 
 class GetConversationByIDMessageTypedDict(TypedDict):
     id: NotRequired[str]
-    message_type: NotRequired[GetConversationByIDMessageMessageType]
+    message_type: NotRequired[MessageMessageType2]
     content: NotRequired[str]
     content_format: NotRequired[GetConversationByIDContentFormat]
     confidence: NotRequired[Nullable[GetConversationByIDConfidence]]
@@ -463,8 +465,7 @@ class GetConversationByIDMessage(BaseModel):
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
 
     message_type: Annotated[
-        Optional[GetConversationByIDMessageMessageType],
-        pydantic.Field(alias="messageType"),
+        Optional[MessageMessageType2], pydantic.Field(alias="messageType")
     ] = None
 
     content: Optional[str] = None
@@ -557,7 +558,7 @@ class GetConversationByIDMessage(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -592,7 +593,7 @@ class GetConversationByIDMessageRange(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -664,7 +665,7 @@ class ConversationPagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -702,7 +703,7 @@ class Access(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -735,6 +736,11 @@ class GetConversationByIDConversationTypedDict(TypedDict):
 
     """
     access: NotRequired[AccessTypedDict]
+    shared_by: NotRequired[ConversationSharedByTypedDict]
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
 
 
 class GetConversationByIDConversation(BaseModel):
@@ -778,6 +784,14 @@ class GetConversationByIDConversation(BaseModel):
 
     access: Optional[Access] = None
 
+    shared_by: Annotated[
+        Optional[ConversationSharedBy], pydantic.Field(alias="sharedBy")
+    ] = None
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -794,6 +808,7 @@ class GetConversationByIDConversation(BaseModel):
                 "modelInfo",
                 "pagination",
                 "access",
+                "sharedBy",
             ]
         )
         serialized = handler(self)
@@ -801,7 +816,7 @@ class GetConversationByIDConversation(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -832,7 +847,7 @@ class GetConversationByIDApplied(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -866,7 +881,7 @@ class GetConversationByIDShared(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -912,7 +927,7 @@ class GetConversationByIDTags(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -958,7 +973,7 @@ class GetConversationByIDMinMessages(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -1000,7 +1015,7 @@ class GetConversationByIDSearch(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -1052,7 +1067,7 @@ class GetConversationByIDPage(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1096,7 +1111,7 @@ class GetConversationByIDLimit(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1123,7 +1138,7 @@ class GetConversationByIDAvailablePagination(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1161,7 +1176,7 @@ class GetConversationByIDSortingSortBy(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1199,7 +1214,7 @@ class GetConversationByIDSortingSortOrder(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1234,7 +1249,7 @@ class GetConversationByIDSorting(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1262,7 +1277,7 @@ class GetConversationByIDCurrent(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -1306,7 +1321,7 @@ class GetConversationByIDDateRange(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1332,7 +1347,7 @@ class GetConversationByIDDateFilters(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1366,7 +1381,7 @@ class GetConversationByIDMessageFiltersMessageType(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -1401,7 +1416,7 @@ class GetConversationByIDMessageFilters(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1434,7 +1449,7 @@ class GetConversationByIDSortingMessagesSortBy(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1467,7 +1482,7 @@ class GetConversationByIDSortingMessagesSortOrder(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1504,7 +1519,7 @@ class GetConversationByIDSortingMessages(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1582,7 +1597,7 @@ class GetConversationByIDAvailable(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1613,7 +1628,7 @@ class GetConversationByIDFilters(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1657,7 +1672,7 @@ class GetConversationByIDMeta(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -1693,7 +1708,7 @@ class GetConversationByIDResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

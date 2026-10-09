@@ -2,13 +2,18 @@
 
 Filter messages by type
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetConversationByIDQueryParamMessageType
+value: GetConversationByIDQueryParamMessageType = "user_query"
+```
+
 
 ## Values
 
-| Name           | Value          |
-| -------------- | -------------- |
-| `USER_QUERY`   | user_query     |
-| `BOT_RESPONSE` | bot_response   |
-| `ERROR`        | error          |
-| `FEEDBACK`     | feedback       |
-| `SYSTEM`       | system         |
+- `"user_query"`
+- `"bot_response"`
+- `"error"`
+- `"feedback"`
+- `"system"`

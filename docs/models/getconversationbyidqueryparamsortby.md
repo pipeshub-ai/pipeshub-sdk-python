@@ -2,11 +2,16 @@
 
 Field to sort messages by
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetConversationByIDQueryParamSortBy
+value: GetConversationByIDQueryParamSortBy = "createdAt"
+```
+
 
 ## Values
 
-| Name           | Value          |
-| -------------- | -------------- |
-| `CREATED_AT`   | createdAt      |
-| `MESSAGE_TYPE` | messageType    |
-| `CONTENT`      | content        |
+- `"createdAt"`
+- `"messageType"`
+- `"content"`

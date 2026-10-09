@@ -2,11 +2,16 @@
 
 Filter by status
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListOAuthAppsStatus
+value: ListOAuthAppsStatus = "active"
+```
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `ACTIVE`    | active      |
-| `SUSPENDED` | suspended   |
-| `REVOKED`   | revoked     |
+- `"active"`
+- `"suspended"`
+- `"revoked"`

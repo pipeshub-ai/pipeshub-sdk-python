@@ -6,7 +6,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, List, Mapping, Optional
+from typing import Any, Iterable, List, Mapping, Optional
 
 
 class OAuthApps(BaseSDK):
@@ -17,6 +17,9 @@ class OAuthApps(BaseSDK):
 
     **Who can see which apps**
     - **Everyone (including org admins)** sees and manages only OAuth apps **they created** (`createdBy`). Other members' apps are hidden (not listed; individual operations return not found).
+
+    **Session only**
+    - Every `/oauth-clients/*` route requires the user's interactive session JWT. OAuth access tokens and personal access tokens (`phpat_...`) are rejected with `403`, so a token issued to a client can never register, reconfigure, or revoke clients on its own.
 
     **Who authorizes vs. client credentials**
     - **Authorization code:** Any authenticated user in the workspace may complete consent for a valid `client_id`; issued tokens represent **that user**.
@@ -58,6 +61,8 @@ class OAuthApps(BaseSDK):
 
         Use the `status` query parameter to filter by lifecycle state (`active`, `suspended`, `revoked`) and `search` for a case-insensitive substring match against `name` or `description`.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param page: Page number (matches `listAppsQuerySchema`: defaults to `1` when omitted or empty).
 
@@ -101,6 +106,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -117,13 +123,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthApps",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -174,6 +182,8 @@ class OAuthApps(BaseSDK):
         Use the `status` query parameter to filter by lifecycle state (`active`, `suspended`, `revoked`) and `search` for a case-insensitive substring match against `name` or `description`.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param page: Page number (matches `listAppsQuerySchema`: defaults to `1` when omitted or empty).
 
         :param limit: Items per page (defaults to `20` when omitted or empty; max 100).
@@ -216,6 +226,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -232,13 +243,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthApps",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -272,11 +285,11 @@ class OAuthApps(BaseSDK):
         self,
         *,
         name: str,
-        allowed_scopes: List[str],
+        allowed_scopes: Iterable[str],
         description: Optional[str] = None,
-        redirect_uris: Optional[List[str]] = None,
+        redirect_uris: Optional[Iterable[str]] = None,
         allowed_grant_types: Optional[
-            List[models.CreateOAuthAppRequestAllowedGrantType]
+            Iterable[models.CreateOAuthAppRequestAllowedGrantType]
         ] = None,
         homepage_url: Optional[str] = None,
         privacy_policy_url: Optional[str] = None,
@@ -299,6 +312,8 @@ class OAuthApps(BaseSDK):
 
         All `/oauth-clients/*` routes share a per-user rate limiter (default 1000 req/min, configurable via the `MAX_OAUTH_CLIENT_REQUESTS_PER_MINUTE` env var).
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param name: App name (displayed to users during authorization)
         :param allowed_scopes: Scopes the app can request (non-empty)
@@ -335,9 +350,12 @@ class OAuthApps(BaseSDK):
         request = models.CreateOAuthAppRequest(
             name=name,
             description=description,
-            redirect_uris=redirect_uris,
-            allowed_grant_types=allowed_grant_types,
-            allowed_scopes=allowed_scopes,
+            redirect_uris=utils.unmarshal(redirect_uris, Optional[List[str]]),
+            allowed_grant_types=utils.unmarshal(
+                allowed_grant_types,
+                Optional[List[models.CreateOAuthAppRequestAllowedGrantType]],
+            ),
+            allowed_scopes=utils.unmarshal(allowed_scopes, List[str]),
             homepage_url=homepage_url,
             privacy_policy_url=privacy_policy_url,
             terms_of_service_url=terms_of_service_url,
@@ -363,6 +381,7 @@ class OAuthApps(BaseSDK):
                 request, False, False, "json", models.CreateOAuthAppRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -379,13 +398,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -419,11 +440,11 @@ class OAuthApps(BaseSDK):
         self,
         *,
         name: str,
-        allowed_scopes: List[str],
+        allowed_scopes: Iterable[str],
         description: Optional[str] = None,
-        redirect_uris: Optional[List[str]] = None,
+        redirect_uris: Optional[Iterable[str]] = None,
         allowed_grant_types: Optional[
-            List[models.CreateOAuthAppRequestAllowedGrantType]
+            Iterable[models.CreateOAuthAppRequestAllowedGrantType]
         ] = None,
         homepage_url: Optional[str] = None,
         privacy_policy_url: Optional[str] = None,
@@ -446,6 +467,8 @@ class OAuthApps(BaseSDK):
 
         All `/oauth-clients/*` routes share a per-user rate limiter (default 1000 req/min, configurable via the `MAX_OAUTH_CLIENT_REQUESTS_PER_MINUTE` env var).
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param name: App name (displayed to users during authorization)
         :param allowed_scopes: Scopes the app can request (non-empty)
@@ -482,9 +505,12 @@ class OAuthApps(BaseSDK):
         request = models.CreateOAuthAppRequest(
             name=name,
             description=description,
-            redirect_uris=redirect_uris,
-            allowed_grant_types=allowed_grant_types,
-            allowed_scopes=allowed_scopes,
+            redirect_uris=utils.unmarshal(redirect_uris, Optional[List[str]]),
+            allowed_grant_types=utils.unmarshal(
+                allowed_grant_types,
+                Optional[List[models.CreateOAuthAppRequestAllowedGrantType]],
+            ),
+            allowed_scopes=utils.unmarshal(allowed_scopes, List[str]),
             homepage_url=homepage_url,
             privacy_policy_url=privacy_policy_url,
             terms_of_service_url=terms_of_service_url,
@@ -510,6 +536,7 @@ class OAuthApps(BaseSDK):
                 request, False, False, "json", models.CreateOAuthAppRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -526,13 +553,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -581,6 +610,8 @@ class OAuthApps(BaseSDK):
         Shares the per-user rate limiter applied to every `/oauth-clients/*` route (default 1000 req/min, `MAX_OAUTH_CLIENT_REQUESTS_PER_MINUTE`).
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -609,6 +640,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -625,13 +657,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthScopes",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -680,6 +714,8 @@ class OAuthApps(BaseSDK):
         Shares the per-user rate limiter applied to every `/oauth-clients/*` route (default 1000 req/min, `MAX_OAUTH_CLIENT_REQUESTS_PER_MINUTE`).
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -708,6 +744,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -724,13 +761,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthScopes",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -776,6 +815,8 @@ class OAuthApps(BaseSDK):
         Access is creator-scoped: even org admins receive `404` for apps owned by other users. This avoids leaking app metadata across org members and keeps the read surface symmetric with `listOAuthApps`.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID (MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -810,6 +851,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -826,13 +868,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -878,6 +922,8 @@ class OAuthApps(BaseSDK):
         Access is creator-scoped: even org admins receive `404` for apps owned by other users. This avoids leaking app metadata across org members and keeps the read surface symmetric with `listOAuthApps`.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID (MongoDB ObjectId)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -912,6 +958,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -928,13 +975,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -970,11 +1019,11 @@ class OAuthApps(BaseSDK):
         app_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        redirect_uris: Optional[List[str]] = None,
+        redirect_uris: Optional[Iterable[str]] = None,
         allowed_grant_types: Optional[
-            List[models.UpdateOAuthAppRequestAllowedGrantType]
+            Iterable[models.UpdateOAuthAppRequestAllowedGrantType]
         ] = None,
-        allowed_scopes: Optional[List[str]] = None,
+        allowed_scopes: Optional[Iterable[str]] = None,
         homepage_url: OptionalNullable[str] = UNSET,
         privacy_policy_url: OptionalNullable[str] = UNSET,
         terms_of_service_url: OptionalNullable[str] = UNSET,
@@ -995,6 +1044,8 @@ class OAuthApps(BaseSDK):
 
         This endpoint never rotates the client secret — use `POST /oauth-clients/{appId}/regenerate-secret` for that.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param app_id: OAuth app ID
         :param name: App name
@@ -1029,9 +1080,12 @@ class OAuthApps(BaseSDK):
             body=models.UpdateOAuthAppRequest(
                 name=name,
                 description=description,
-                redirect_uris=redirect_uris,
-                allowed_grant_types=allowed_grant_types,
-                allowed_scopes=allowed_scopes,
+                redirect_uris=utils.unmarshal(redirect_uris, Optional[List[str]]),
+                allowed_grant_types=utils.unmarshal(
+                    allowed_grant_types,
+                    Optional[List[models.UpdateOAuthAppRequestAllowedGrantType]],
+                ),
+                allowed_scopes=utils.unmarshal(allowed_scopes, Optional[List[str]]),
                 homepage_url=homepage_url,
                 privacy_policy_url=privacy_policy_url,
                 terms_of_service_url=terms_of_service_url,
@@ -1057,6 +1111,7 @@ class OAuthApps(BaseSDK):
                 request.body, False, False, "json", models.UpdateOAuthAppRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1073,13 +1128,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1117,11 +1174,11 @@ class OAuthApps(BaseSDK):
         app_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        redirect_uris: Optional[List[str]] = None,
+        redirect_uris: Optional[Iterable[str]] = None,
         allowed_grant_types: Optional[
-            List[models.UpdateOAuthAppRequestAllowedGrantType]
+            Iterable[models.UpdateOAuthAppRequestAllowedGrantType]
         ] = None,
-        allowed_scopes: Optional[List[str]] = None,
+        allowed_scopes: Optional[Iterable[str]] = None,
         homepage_url: OptionalNullable[str] = UNSET,
         privacy_policy_url: OptionalNullable[str] = UNSET,
         terms_of_service_url: OptionalNullable[str] = UNSET,
@@ -1142,6 +1199,8 @@ class OAuthApps(BaseSDK):
 
         This endpoint never rotates the client secret — use `POST /oauth-clients/{appId}/regenerate-secret` for that.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param app_id: OAuth app ID
         :param name: App name
@@ -1176,9 +1235,12 @@ class OAuthApps(BaseSDK):
             body=models.UpdateOAuthAppRequest(
                 name=name,
                 description=description,
-                redirect_uris=redirect_uris,
-                allowed_grant_types=allowed_grant_types,
-                allowed_scopes=allowed_scopes,
+                redirect_uris=utils.unmarshal(redirect_uris, Optional[List[str]]),
+                allowed_grant_types=utils.unmarshal(
+                    allowed_grant_types,
+                    Optional[List[models.UpdateOAuthAppRequestAllowedGrantType]],
+                ),
+                allowed_scopes=utils.unmarshal(allowed_scopes, Optional[List[str]]),
                 homepage_url=homepage_url,
                 privacy_policy_url=privacy_policy_url,
                 terms_of_service_url=terms_of_service_url,
@@ -1204,6 +1266,7 @@ class OAuthApps(BaseSDK):
                 request.body, False, False, "json", models.UpdateOAuthAppRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1220,13 +1283,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1274,6 +1339,8 @@ class OAuthApps(BaseSDK):
         Creator-only: even org admins cannot delete apps owned by other users.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1308,6 +1375,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1324,13 +1392,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1376,6 +1446,8 @@ class OAuthApps(BaseSDK):
         Creator-only: even org admins cannot delete apps owned by other users.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1410,6 +1482,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1426,13 +1499,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="deleteOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1480,6 +1555,8 @@ class OAuthApps(BaseSDK):
         Creator-only: even org admins cannot rotate secrets for other users' apps.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1514,6 +1591,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1530,13 +1608,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="regenerateOAuthAppSecret",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1586,6 +1666,8 @@ class OAuthApps(BaseSDK):
         Creator-only: even org admins cannot rotate secrets for other users' apps.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1620,6 +1702,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1636,13 +1719,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="regenerateOAuthAppSecret",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1692,6 +1777,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1726,6 +1813,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1742,13 +1830,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="suspendOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1798,6 +1888,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1832,6 +1924,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1848,13 +1941,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="suspendOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1904,6 +1999,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1938,6 +2035,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -1954,13 +2052,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="activateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2010,6 +2110,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2044,6 +2146,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2060,13 +2163,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="activateOAuthApp",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2116,6 +2221,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2150,6 +2257,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2166,13 +2274,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2220,6 +2330,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2254,6 +2366,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2270,13 +2383,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="listOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2324,6 +2439,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2358,6 +2475,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2374,13 +2492,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="revokeAllOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2430,6 +2550,8 @@ class OAuthApps(BaseSDK):
         Creator-only.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param app_id: OAuth app ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2464,6 +2586,7 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -2480,13 +2603,15 @@ class OAuthApps(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="revokeAllOAuthAppTokens",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["OAuth Apps"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "429", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

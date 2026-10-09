@@ -7,7 +7,7 @@ Response returned by POST /knowledgeBase/reindex/record/{recordId}.
 
 | Field                   | Type                    | Required                | Description             |
 | ----------------------- | ----------------------- | ----------------------- | ----------------------- |
-| `success`               | *bool*                  | :heavy_check_mark:      | N/A                     |
+| `success`               | *Literal[True]*         | :heavy_check_mark:      | N/A                     |
 | `message`               | *str*                   | :heavy_check_mark:      | N/A                     |
 | `record_id`             | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |
 | `record_name`           | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |

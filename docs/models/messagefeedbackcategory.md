@@ -1,16 +1,25 @@
 # MessageFeedbackCategory
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import MessageFeedbackCategory
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: MessageFeedbackCategory = "incorrect_information"
+```
+
 
 ## Values
 
-| Name                     | Value                    |
-| ------------------------ | ------------------------ |
-| `INCORRECT_INFORMATION`  | incorrect_information    |
-| `MISSING_INFORMATION`    | missing_information      |
-| `IRRELEVANT_INFORMATION` | irrelevant_information   |
-| `UNCLEAR_EXPLANATION`    | unclear_explanation      |
-| `POOR_CITATIONS`         | poor_citations           |
-| `EXCELLENT_ANSWER`       | excellent_answer         |
-| `HELPFUL_CITATIONS`      | helpful_citations        |
-| `WELL_EXPLAINED`         | well_explained           |
-| `OTHER`                  | other                    |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"incorrect_information"`
+- `"missing_information"`
+- `"irrelevant_information"`
+- `"unclear_explanation"`
+- `"poor_citations"`
+- `"excellent_answer"`
+- `"helpful_citations"`
+- `"well_explained"`
+- `"other"`

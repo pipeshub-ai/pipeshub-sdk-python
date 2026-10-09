@@ -15,6 +15,11 @@ Retrieve all configured web search providers and current web search settings.
 **Authentication:** Session JWT or OAuth 2.0 access token via `Authorization: Bearer`.
 OAuth tokens must include the `config:read` scope. Admin role is not required.
 
+**API keys:** for anyone who isn't an org admin, each provider's `configuration.apiKey`
+comes back as the placeholder `****************`. Admins get the stored key, unless the
+server hides secrets from everyone (`HIDE_SECRET_CONFIG=true`). When updating a provider,
+sending the placeholder back keeps the stored key.
+
 
 ### Example Usage
 

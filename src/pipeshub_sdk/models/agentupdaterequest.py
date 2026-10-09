@@ -80,14 +80,20 @@ class AgentUpdateRequestTypedDict(TypedDict):
 
     """
     web_search: NotRequired[Nullable[AgentCreateWebSearchUnionTypedDict]]
-    r"""Web-search attachment for an agent. Accepts either a provider string
-    or an object with at least a `provider` field.
+    r"""Web-search attachment for an agent. Accepts a provider string, an object
+    with at least a `provider` field, or `null`.
 
     """
     default_reasoning_effort: NotRequired[
         Nullable[AgentUpdateRequestDefaultReasoningEffort]
     ]
     r"""Agent-level reasoning effort used when a chat request omits its own."""
+    send_user_context: NotRequired[bool]
+    r"""When true (default), include the current user's name, email, and
+    organization in this agent's system prompt. When false, omit that
+    profile data.
+
+    """
 
 
 class AgentUpdateRequest(BaseModel):
@@ -153,8 +159,8 @@ class AgentUpdateRequest(BaseModel):
     web_search: Annotated[
         OptionalNullable[AgentCreateWebSearchUnion], pydantic.Field(alias="webSearch")
     ] = UNSET
-    r"""Web-search attachment for an agent. Accepts either a provider string
-    or an object with at least a `provider` field.
+    r"""Web-search attachment for an agent. Accepts a provider string, an object
+    with at least a `provider` field, or `null`.
 
     """
 
@@ -163,6 +169,15 @@ class AgentUpdateRequest(BaseModel):
         pydantic.Field(alias="defaultReasoningEffort"),
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own."""
+
+    send_user_context: Annotated[
+        Optional[bool], pydantic.Field(alias="sendUserContext")
+    ] = None
+    r"""When true (default), include the current user's name, email, and
+    organization in this agent's system prompt. When false, omit that
+    profile data.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -182,6 +197,7 @@ class AgentUpdateRequest(BaseModel):
                 "skills",
                 "webSearch",
                 "defaultReasoningEffort",
+                "sendUserContext",
             ]
         )
         nullable_fields = set(["webSearch", "defaultReasoningEffort"])
@@ -190,7 +206,7 @@ class AgentUpdateRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

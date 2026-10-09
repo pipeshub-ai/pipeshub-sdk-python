@@ -1,8 +1,13 @@
 # GetKnowledgeHubRootNodesCodeHTTPInternalServerError
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetKnowledgeHubRootNodesCodeHTTPInternalServerError
+value: GetKnowledgeHubRootNodesCodeHTTPInternalServerError = "HTTP_INTERNAL_SERVER_ERROR"
+```
+
 
 ## Values
 
-| Name                         | Value                        |
-| ---------------------------- | ---------------------------- |
-| `HTTP_INTERNAL_SERVER_ERROR` | HTTP_INTERNAL_SERVER_ERROR   |
+- `"HTTP_INTERNAL_SERVER_ERROR"`

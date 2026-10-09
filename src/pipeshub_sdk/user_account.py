@@ -106,11 +106,13 @@ class UserAccount(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="initAuth",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=None,
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -233,11 +235,13 @@ class UserAccount(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="initAuth",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=None,
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -292,7 +296,8 @@ class UserAccount(BaseSDK):
         - `microsoft`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
         - `azureAd`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
         - `oauth`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `samlSso`: Handled via redirect flow (use `/saml/signIn` instead)
+        - `samlSso`: not accepted here; this endpoint answers `400`. SAML sign-in runs as a browser
+        redirect: send the browser to `/saml/signIn` instead
 
         **Multi-Step Response:**
 
@@ -306,8 +311,12 @@ class UserAccount(BaseSDK):
 
         **Security:**
 
-        - Account locks after 5 consecutive failed attempts
+        - Account locks for 24 hours after 5 consecutive failed attempts, and the owner is
+        sent an email saying so. While it is locked, sign-in is refused with the same answer
+        as a wrong password or code, even when the password or code is right
         - CAPTCHA may be required if enabled (pass `cf-turnstile-response`)
+        - An email with no account gets the same status and message as a real account given
+        a wrong password (`400`) or a wrong, missing or expired sign-in code (`401`)
 
 
         :param x_session_token: Session token received from `/initAuth` endpoint
@@ -372,20 +381,20 @@ class UserAccount(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="authenticate",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=None,
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "410", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthenticateResponse, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "404", "410"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -430,7 +439,8 @@ class UserAccount(BaseSDK):
         - `microsoft`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
         - `azureAd`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
         - `oauth`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `samlSso`: Handled via redirect flow (use `/saml/signIn` instead)
+        - `samlSso`: not accepted here; this endpoint answers `400`. SAML sign-in runs as a browser
+        redirect: send the browser to `/saml/signIn` instead
 
         **Multi-Step Response:**
 
@@ -444,8 +454,12 @@ class UserAccount(BaseSDK):
 
         **Security:**
 
-        - Account locks after 5 consecutive failed attempts
+        - Account locks for 24 hours after 5 consecutive failed attempts, and the owner is
+        sent an email saying so. While it is locked, sign-in is refused with the same answer
+        as a wrong password or code, even when the password or code is right
         - CAPTCHA may be required if enabled (pass `cf-turnstile-response`)
+        - An email with no account gets the same status and message as a real account given
+        a wrong password (`400`) or a wrong, missing or expired sign-in code (`401`)
 
 
         :param x_session_token: Session token received from `/initAuth` endpoint
@@ -510,20 +524,20 @@ class UserAccount(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="authenticate",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=None,
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "410", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthenticateResponse, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "404", "410"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -621,9 +635,11 @@ class UserAccount(BaseSDK):
                 operation_id="refreshToken",
                 oauth2_scopes=None,
                 security_source=get_security_from_env(security, models.Security),
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -728,9 +744,11 @@ class UserAccount(BaseSDK):
                 operation_id="refreshToken",
                 oauth2_scopes=None,
                 security_source=get_security_from_env(security, models.Security),
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -776,6 +794,8 @@ class UserAccount(BaseSDK):
         Allows a logged-in user to change their password by providing the current password and a new password.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param current_password:
         :param new_password:
         :param cf_turnstile_response: Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)
@@ -817,6 +837,7 @@ class UserAccount(BaseSDK):
                 request, False, False, "json", models.ResetPasswordRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -833,13 +854,15 @@ class UserAccount(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="resetPassword",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -887,6 +910,8 @@ class UserAccount(BaseSDK):
         Allows a logged-in user to change their password by providing the current password and a new password.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param current_password:
         :param new_password:
         :param cf_turnstile_response: Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)
@@ -928,6 +953,7 @@ class UserAccount(BaseSDK):
                 request, False, False, "json", models.ResetPasswordRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -944,13 +970,15 @@ class UserAccount(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="resetPassword",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["User Account"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

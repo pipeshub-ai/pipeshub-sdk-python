@@ -2,10 +2,15 @@
 
 Sort direction.
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListAgentsSortOrder
+value: ListAgentsSortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

@@ -2,12 +2,21 @@
 
 Supported web search provider
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import WebSearchProviderType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: WebSearchProviderType = "duckduckgo"
+```
+
 
 ## Values
 
-| Name         | Value        |
-| ------------ | ------------ |
-| `DUCKDUCKGO` | duckduckgo   |
-| `SERPER`     | serper       |
-| `TAVILY`     | tavily       |
-| `EXA`        | exa          |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"duckduckgo"`
+- `"serper"`
+- `"tavily"`
+- `"exa"`

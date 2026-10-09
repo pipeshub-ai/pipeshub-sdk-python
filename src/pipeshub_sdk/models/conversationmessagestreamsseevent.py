@@ -3,7 +3,7 @@
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 from pydantic import model_serializer
-from typing import Literal, Optional, Union
+from typing import Any, Literal, Optional, Union
 from typing_extensions import NotRequired, TypedDict
 
 
@@ -65,7 +65,7 @@ class ConversationMessageStreamSSEEventTypedDict(TypedDict):
     """
 
     event: NotRequired[ConversationMessageStreamSSEEventEvent]
-    data: NotRequired[str]
+    data: NotRequired[Any]
     r"""JSON-encoded event payload. The decoded JSON includes a `\"type\"`
     field matching `event`, plus type-specific fields. Shape depends
     on `event`. Forwarded lifecycle events may carry `runId`,
@@ -105,7 +105,7 @@ class ConversationMessageStreamSSEEvent(BaseModel):
 
     event: Optional[ConversationMessageStreamSSEEventEvent] = None
 
-    data: Optional[str] = None
+    data: Optional[Any] = None
     r"""JSON-encoded event payload. The decoded JSON includes a `\"type\"`
     field matching `event`, plus type-specific fields. Shape depends
     on `event`. Forwarded lifecycle events may carry `runId`,
@@ -121,7 +121,7 @@ class ConversationMessageStreamSSEEvent(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
