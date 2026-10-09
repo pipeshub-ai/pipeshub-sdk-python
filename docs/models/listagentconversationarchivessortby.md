@@ -1,10 +1,15 @@
 # ListAgentConversationArchivesSortBy
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListAgentConversationArchivesSortBy
+value: ListAgentConversationArchivesSortBy = "createdAt"
+```
+
 
 ## Values
 
-| Name               | Value              |
-| ------------------ | ------------------ |
-| `CREATED_AT`       | createdAt          |
-| `LAST_ACTIVITY_AT` | lastActivityAt     |
-| `TITLE`            | title              |
+- `"createdAt"`
+- `"lastActivityAt"`
+- `"title"`

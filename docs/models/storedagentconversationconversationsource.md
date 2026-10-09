@@ -1,8 +1,13 @@
 # StoredAgentConversationConversationSource
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import StoredAgentConversationConversationSource
+value: StoredAgentConversationConversationSource = "agent_chat"
+```
+
 
 ## Values
 
-| Name         | Value        |
-| ------------ | ------------ |
-| `AGENT_CHAT` | agent_chat   |
+- `"agent_chat"`

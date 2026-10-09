@@ -1,10 +1,19 @@
 # GetAllKnowledgeBaseResponseSchemaUserRole
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetAllKnowledgeBaseResponseSchemaUserRole
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: GetAllKnowledgeBaseResponseSchemaUserRole = "OWNER"
+```
+
 
 ## Values
 
-| Name     | Value    |
-| -------- | -------- |
-| `OWNER`  | OWNER    |
-| `WRITER` | WRITER   |
-| `READER` | READER   |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"OWNER"`
+- `"WRITER"`
+- `"READER"`

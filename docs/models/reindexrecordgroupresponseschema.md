@@ -7,7 +7,7 @@ Response returned by POST /knowledgeBase/reindex/record-group/{recordGroupId}.
 
 | Field                   | Type                    | Required                | Description             |
 | ----------------------- | ----------------------- | ----------------------- | ----------------------- |
-| `success`               | *bool*                  | :heavy_check_mark:      | N/A                     |
+| `success`               | *Literal[True]*         | :heavy_check_mark:      | N/A                     |
 | `message`               | *str*                   | :heavy_check_mark:      | N/A                     |
 | `record_group_id`       | *str*                   | :heavy_check_mark:      | N/A                     |
 | `depth`                 | *int*                   | :heavy_check_mark:      | N/A                     |

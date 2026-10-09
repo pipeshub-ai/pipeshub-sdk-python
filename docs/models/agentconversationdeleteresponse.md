@@ -9,7 +9,7 @@ was already deleted, the API still returns HTTP 200 with
 
 ## Fields
 
-| Field                                                                  | Type                                                                   | Required                                                               | Description                                                            |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `message`                                                              | [models.MessageEnum](../models/messageenum.md)                         | :heavy_check_mark:                                                     | N/A                                                                    |
-| `conversation`                                                         | [models.StoredAgentConversation](../models/storedagentconversation.md) | :heavy_check_mark:                                                     | Stored agent conversation document returned by non-list endpoints.<br/> |
+| Field                                                        | Type                                                         | Required                                                     | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `message`                                                    | [models.MessageEnum](../models/messageenum.md)               | :heavy_check_mark:                                           | N/A                                                          |
+| `conversation`                                               | [Nullable[models.Conversation1]](../models/conversation1.md) | :heavy_check_mark:                                           | N/A                                                          |

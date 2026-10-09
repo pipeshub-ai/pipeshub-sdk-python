@@ -1,0 +1,12 @@
+# SetConversationProjectResponse
+
+Conversation's project link updated
+
+
+## Fields
+
+| Field                                                                                                                    | Type                                                                                                                     | Required                                                                                                                 | Description                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `conversation_id`                                                                                                        | *str*                                                                                                                    | :heavy_check_mark:                                                                                                       | N/A                                                                                                                      |
+| `project_id`                                                                                                             | *OptionalNullable[str]*                                                                                                  | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |
+| `project_visibility`                                                                                                     | [OptionalNullable[models.SetConversationProjectProjectVisibility]](../models/setconversationprojectprojectvisibility.md) | :heavy_minus_sign:                                                                                                       | N/A                                                                                                                      |

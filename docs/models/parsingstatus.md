@@ -11,16 +11,25 @@ Parse-phase status (ahead of indexing/extraction):
 - EMPTY: File has no extractable content
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ParsingStatus
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: ParsingStatus = "NOT_STARTED"
+```
+
 
 ## Values
 
-| Name                      | Value                     |
-| ------------------------- | ------------------------- |
-| `NOT_STARTED`             | NOT_STARTED               |
-| `IN_PROGRESS`             | IN_PROGRESS               |
-| `FAILED`                  | FAILED                    |
-| `COMPLETED`               | COMPLETED                 |
-| `FILE_TYPE_NOT_SUPPORTED` | FILE_TYPE_NOT_SUPPORTED   |
-| `AUTO_INDEX_OFF`          | AUTO_INDEX_OFF            |
-| `EMPTY`                   | EMPTY                     |
-| `QUEUED`                  | QUEUED                    |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"NOT_STARTED"`
+- `"IN_PROGRESS"`
+- `"FAILED"`
+- `"COMPLETED"`
+- `"FILE_TYPE_NOT_SUPPORTED"`
+- `"AUTO_INDEX_OFF"`
+- `"EMPTY"`
+- `"QUEUED"`

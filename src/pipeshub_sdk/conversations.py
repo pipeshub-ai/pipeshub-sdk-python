@@ -4,40 +4,576 @@ from .basesdk import BaseSDK
 from datetime import datetime
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import OptionalNullable, UNSET
+from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
 
 class Conversations(BaseSDK):
     r"""AI-powered conversational chat management with citations and follow-up questions"""
 
-    def stream_chat(
+    def create_conversation(
         self,
         *,
         query: str,
-        chat_mode: models.ConversationStreamRequestChatMode,
-        record_ids: Optional[List[str]] = None,
+        record_ids: Optional[Iterable[str]] = None,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
         ] = None,
         attachments: Optional[
             Union[
-                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
             ]
+        ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models.CreateConversationRequestProjectVisibility
+        ] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        chat_mode: Optional[models.CreateConversationRequestChatMode] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Iterable[str]] = None,
+        protocol: Optional[models.CreateConversationRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.CreateConversationResponseResponse:
+        r"""Create conversation (non-streaming)
+
+        Start a new assistant conversation and wait for the complete answer.
+        The JSON counterpart of `POST /conversations/stream`, for API, SDK
+        and automation callers that do not consume SSE.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+        **Modes**
+
+        `chatMode: agent` (or `agent:<mode>`) runs the universal agent and
+        honours `tools` / `agentCapabilities`; `internal_search` and
+        `web_search` run the search assistant and ignore `tools`. Omitted,
+        it defaults to internal search.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param query: The user's question or prompt to start the conversation.
+            Supports natural language queries of any complexity.
+
+        :param record_ids: Limit the AI's knowledge scope to specific records/documents.
+            When provided, only these records will be searched for context.
+
+        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
+            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
+            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
+            to let the service use the agent’s stored knowledge and tool configuration. Sending
+            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
+            turn (it is not “full org default”).
+
+        :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
+            This mirrors the active selection shown in the UI and is distinct from the
+            machine-readable `filters` field used for retrieval scoping.
+
+        :param attachments: Uploaded chat attachments to associate with this conversation turn (see
+            `POST /conversations/attachments/upload`).
+
+        :param project_id: Link the new conversation to a project the caller has at least
+            viewer access to. When the project's instructions, knowledge
+            scope, or files are set and this request didn't supply its own
+            `filters`/`attachments`, they are merged in as a fallback (the
+            request always wins). Ignored on follow-up turns — only
+            meaningful when creating a conversation.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation:
+            `private` keeps it visible to the owner only; `project` exposes
+            it to every project member. Defaults from the project's
+            `chatSharing` setting when omitted.
+
+        :param model_key: Identifier for the AI model configuration to use.
+            Available models depend on organization settings.
+
+        :param model_name: Display name of the AI model
+        :param model_friendly_name: Friendly display name of the selected model
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+            `agent` uses the universal agent loop, while `internal_search`
+            and `web_search` use their corresponding assistant search paths.
+
+        :param timezone: IANA timezone identifier from the client (top-level field).
+            Used to provide time-aware context to the AI.
+
+        :param current_time: ISO 8601 / RFC 3339 datetime from the client (top-level field; UTC `Z` or numeric offset).
+
+        :param tools: Optional list of tool identifiers (fully-qualified action names such as
+            \"jira.create_issue\") that the AI agent is permitted to invoke for this
+            request. When omitted the agent may use any configured tool. Applicable
+            only when `chatMode` is `agent`.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (`RUN_STARTED`, `TEXT_MESSAGE_CONTENT`,
+            etc.). Kept in the schema for backward compatibility with callers
+            that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating. Optional — a caller that never sends
+            one just can't cooperatively cancel the run.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CreateConversationRequest(
+            query=query,
+            record_ids=utils.unmarshal(record_ids, Optional[List[str]]),
+            filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
+            applied_filters=utils.get_pydantic_model(
+                applied_filters, Optional[models.AppliedFilters]
+            ),
+            attachments=utils.get_pydantic_model(
+                attachments, Optional[List[models.ChatAttachmentRef]]
+            ),
+            project_id=project_id,
+            project_visibility=project_visibility,
+            model_key=model_key,
+            model_name=model_name,
+            model_friendly_name=model_friendly_name,
+            chat_mode=chat_mode,
+            timezone=timezone,
+            current_time=current_time,
+            tools=utils.unmarshal(tools, Optional[List[str]]),
+            protocol=protocol,
+            agent_capabilities=utils.get_pydantic_model(
+                agent_capabilities, Optional[models.AgentCapabilities]
+            ),
+            run_id=run_id,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/conversations/create",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.CreateConversationRequest
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createConversation",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "201", "application/json"):
+            return models.CreateConversationResponseResponse(
+                result=unmarshal_json_response(
+                    models.CreateConversationResponse, http_res
+                ),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def create_conversation_async(
+        self,
+        *,
+        query: str,
+        record_ids: Optional[Iterable[str]] = None,
+        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models.CreateConversationRequestProjectVisibility
+        ] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        chat_mode: Optional[models.CreateConversationRequestChatMode] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Iterable[str]] = None,
+        protocol: Optional[models.CreateConversationRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.CreateConversationResponseResponse:
+        r"""Create conversation (non-streaming)
+
+        Start a new assistant conversation and wait for the complete answer.
+        The JSON counterpart of `POST /conversations/stream`, for API, SDK
+        and automation callers that do not consume SSE.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+        **Modes**
+
+        `chatMode: agent` (or `agent:<mode>`) runs the universal agent and
+        honours `tools` / `agentCapabilities`; `internal_search` and
+        `web_search` run the search assistant and ignore `tools`. Omitted,
+        it defaults to internal search.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param query: The user's question or prompt to start the conversation.
+            Supports natural language queries of any complexity.
+
+        :param record_ids: Limit the AI's knowledge scope to specific records/documents.
+            When provided, only these records will be searched for context.
+
+        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
+            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
+            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
+            to let the service use the agent’s stored knowledge and tool configuration. Sending
+            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
+            turn (it is not “full org default”).
+
+        :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
+            This mirrors the active selection shown in the UI and is distinct from the
+            machine-readable `filters` field used for retrieval scoping.
+
+        :param attachments: Uploaded chat attachments to associate with this conversation turn (see
+            `POST /conversations/attachments/upload`).
+
+        :param project_id: Link the new conversation to a project the caller has at least
+            viewer access to. When the project's instructions, knowledge
+            scope, or files are set and this request didn't supply its own
+            `filters`/`attachments`, they are merged in as a fallback (the
+            request always wins). Ignored on follow-up turns — only
+            meaningful when creating a conversation.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation:
+            `private` keeps it visible to the owner only; `project` exposes
+            it to every project member. Defaults from the project's
+            `chatSharing` setting when omitted.
+
+        :param model_key: Identifier for the AI model configuration to use.
+            Available models depend on organization settings.
+
+        :param model_name: Display name of the AI model
+        :param model_friendly_name: Friendly display name of the selected model
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+            `agent` uses the universal agent loop, while `internal_search`
+            and `web_search` use their corresponding assistant search paths.
+
+        :param timezone: IANA timezone identifier from the client (top-level field).
+            Used to provide time-aware context to the AI.
+
+        :param current_time: ISO 8601 / RFC 3339 datetime from the client (top-level field; UTC `Z` or numeric offset).
+
+        :param tools: Optional list of tool identifiers (fully-qualified action names such as
+            \"jira.create_issue\") that the AI agent is permitted to invoke for this
+            request. When omitted the agent may use any configured tool. Applicable
+            only when `chatMode` is `agent`.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (`RUN_STARTED`, `TEXT_MESSAGE_CONTENT`,
+            etc.). Kept in the schema for backward compatibility with callers
+            that already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating. Optional — a caller that never sends
+            one just can't cooperatively cancel the run.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CreateConversationRequest(
+            query=query,
+            record_ids=utils.unmarshal(record_ids, Optional[List[str]]),
+            filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
+            applied_filters=utils.get_pydantic_model(
+                applied_filters, Optional[models.AppliedFilters]
+            ),
+            attachments=utils.get_pydantic_model(
+                attachments, Optional[List[models.ChatAttachmentRef]]
+            ),
+            project_id=project_id,
+            project_visibility=project_visibility,
+            model_key=model_key,
+            model_name=model_name,
+            model_friendly_name=model_friendly_name,
+            chat_mode=chat_mode,
+            timezone=timezone,
+            current_time=current_time,
+            tools=utils.unmarshal(tools, Optional[List[str]]),
+            protocol=protocol,
+            agent_capabilities=utils.get_pydantic_model(
+                agent_capabilities, Optional[models.AgentCapabilities]
+            ),
+            run_id=run_id,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/conversations/create",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.CreateConversationRequest
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createConversation",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "201", "application/json"):
+            return models.CreateConversationResponseResponse(
+                result=unmarshal_json_response(
+                    models.CreateConversationResponse, http_res
+                ),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def stream_chat(
+        self,
+        *,
+        query: str,
+        chat_mode: models.ConversationStreamRequestChatMode,
+        record_ids: Optional[Iterable[str]] = None,
+        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models.ConversationStreamRequestProjectVisibility
         ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
-        tools: Optional[List[str]] = None,
+        tools: Optional[Iterable[str]] = None,
         protocol: Optional[models.ConversationStreamRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -81,6 +617,8 @@ class Conversations(BaseSDK):
         ignored.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
@@ -105,6 +643,19 @@ class Conversations(BaseSDK):
 
         :param attachments: Uploaded chat attachments to associate with this conversation turn (see
             `POST /conversations/attachments/upload`).
+
+        :param project_id: Link the new conversation to a project the caller has at least
+            viewer access to. When the project's instructions, knowledge
+            scope, or files are set and this request didn't supply its own
+            `filters`/`attachments`, they are merged in as a fallback (the
+            request always wins). Ignored on follow-up turns — only
+            meaningful when creating a conversation.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation:
+            `private` keeps it visible to the owner only; `project` exposes
+            it to every project member. Defaults from the project's
+            `chatSharing` setting when omitted.
 
         :param model_key: Identifier for the AI model configuration to use.
             Available models depend on organization settings.
@@ -132,6 +683,11 @@ class Conversations(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating. Optional — a caller that never sends
+            one just can't cooperatively cancel the run.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -149,7 +705,7 @@ class Conversations(BaseSDK):
 
         request = models.ConversationStreamRequest(
             query=query,
-            record_ids=record_ids,
+            record_ids=utils.unmarshal(record_ids, Optional[List[str]]),
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             applied_filters=utils.get_pydantic_model(
                 applied_filters, Optional[models.AppliedFilters]
@@ -157,17 +713,20 @@ class Conversations(BaseSDK):
             attachments=utils.get_pydantic_model(
                 attachments, Optional[List[models.ChatAttachmentRef]]
             ),
+            project_id=project_id,
+            project_visibility=project_visibility,
             model_key=model_key,
             model_name=model_name,
             model_friendly_name=model_friendly_name,
             chat_mode=chat_mode,
             timezone=timezone,
             current_time=current_time,
-            tools=tools,
+            tools=utils.unmarshal(tools, Optional[List[str]]),
             protocol=protocol,
             agent_capabilities=utils.get_pydantic_model(
                 agent_capabilities, Optional[models.AgentCapabilities]
             ),
+            run_id=run_id,
         )
 
         req = self._build_request(
@@ -187,6 +746,7 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.ConversationStreamRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -207,9 +767,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -217,10 +779,11 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
-                lambda raw: utils.unmarshal_json(
-                    raw, models.ConversationStreamSSEEvent
+                lambda raw: unmarshal_json_response(
+                    models.ConversationStreamSSEEvent, http_res, raw
                 ),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -243,26 +806,32 @@ class Conversations(BaseSDK):
         *,
         query: str,
         chat_mode: models.ConversationStreamRequestChatMode,
-        record_ids: Optional[List[str]] = None,
+        record_ids: Optional[Iterable[str]] = None,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         applied_filters: Optional[
             Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
         ] = None,
         attachments: Optional[
             Union[
-                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
             ]
+        ] = None,
+        project_id: Optional[str] = None,
+        project_visibility: Optional[
+            models.ConversationStreamRequestProjectVisibility
         ] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
-        tools: Optional[List[str]] = None,
+        tools: Optional[Iterable[str]] = None,
         protocol: Optional[models.ConversationStreamRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -306,6 +875,8 @@ class Conversations(BaseSDK):
         ignored.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
@@ -330,6 +901,19 @@ class Conversations(BaseSDK):
 
         :param attachments: Uploaded chat attachments to associate with this conversation turn (see
             `POST /conversations/attachments/upload`).
+
+        :param project_id: Link the new conversation to a project the caller has at least
+            viewer access to. When the project's instructions, knowledge
+            scope, or files are set and this request didn't supply its own
+            `filters`/`attachments`, they are merged in as a fallback (the
+            request always wins). Ignored on follow-up turns — only
+            meaningful when creating a conversation.
+
+        :param project_visibility: Only meaningful together with `projectId`. Overrides the
+            project's default sharing behavior for this one conversation:
+            `private` keeps it visible to the owner only; `project` exposes
+            it to every project member. Defaults from the project's
+            `chatSharing` setting when omitted.
 
         :param model_key: Identifier for the AI model configuration to use.
             Available models depend on organization settings.
@@ -357,6 +941,11 @@ class Conversations(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating. Optional — a caller that never sends
+            one just can't cooperatively cancel the run.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -374,7 +963,7 @@ class Conversations(BaseSDK):
 
         request = models.ConversationStreamRequest(
             query=query,
-            record_ids=record_ids,
+            record_ids=utils.unmarshal(record_ids, Optional[List[str]]),
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             applied_filters=utils.get_pydantic_model(
                 applied_filters, Optional[models.AppliedFilters]
@@ -382,17 +971,20 @@ class Conversations(BaseSDK):
             attachments=utils.get_pydantic_model(
                 attachments, Optional[List[models.ChatAttachmentRef]]
             ),
+            project_id=project_id,
+            project_visibility=project_visibility,
             model_key=model_key,
             model_name=model_name,
             model_friendly_name=model_friendly_name,
             chat_mode=chat_mode,
             timezone=timezone,
             current_time=current_time,
-            tools=tools,
+            tools=utils.unmarshal(tools, Optional[List[str]]),
             protocol=protocol,
             agent_capabilities=utils.get_pydantic_model(
                 agent_capabilities, Optional[models.AgentCapabilities]
             ),
+            run_id=run_id,
         )
 
         req = self._build_request_async(
@@ -412,6 +1004,7 @@ class Conversations(BaseSDK):
                 request, False, False, "json", models.ConversationStreamRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -432,9 +1025,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -442,10 +1037,11 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
-                lambda raw: utils.unmarshal_json(
-                    raw, models.ConversationStreamSSEEvent
+                lambda raw: unmarshal_json_response(
+                    models.ConversationStreamSSEEvent, http_res, raw
                 ),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -476,6 +1072,7 @@ class Conversations(BaseSDK):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         shared: Optional[str] = None,
+        project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -503,6 +1100,8 @@ class Conversations(BaseSDK):
         Conversations are sorted by last activity timestamp (most recent first) by default.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param source: `owned` — owner list (`userId` filter only).
             `shared` — explicit share grant list (`isShared` + `sharedWith`).
             Defaults to `owned` when omitted.
@@ -517,6 +1116,12 @@ class Conversations(BaseSDK):
         :param end_date: Filter by `createdAt` ≤ this ISO date.
         :param shared: When set, filters by `isShared`. Accepts case-insensitive
             `true`/`false`, or `1`/`0`.
+
+        :param project_id: Restrict results to a single project. Pass a project's `id` to
+            list conversations linked to that project (visible to the
+            caller — owner, member, or org-visible project with
+            `projectVisibility: project`), or the literal string
+            `unassigned` to list conversations with no `projectId`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -544,6 +1149,7 @@ class Conversations(BaseSDK):
             start_date=start_date,
             end_date=end_date,
             shared=shared,
+            project_id=project_id,
         )
 
         req = self._build_request(
@@ -560,6 +1166,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -580,9 +1187,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -614,6 +1223,7 @@ class Conversations(BaseSDK):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         shared: Optional[str] = None,
+        project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -641,6 +1251,8 @@ class Conversations(BaseSDK):
         Conversations are sorted by last activity timestamp (most recent first) by default.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param source: `owned` — owner list (`userId` filter only).
             `shared` — explicit share grant list (`isShared` + `sharedWith`).
             Defaults to `owned` when omitted.
@@ -655,6 +1267,12 @@ class Conversations(BaseSDK):
         :param end_date: Filter by `createdAt` ≤ this ISO date.
         :param shared: When set, filters by `isShared`. Accepts case-insensitive
             `true`/`false`, or `1`/`0`.
+
+        :param project_id: Restrict results to a single project. Pass a project's `id` to
+            list conversations linked to that project (visible to the
+            caller — owner, member, or org-visible project with
+            `projectVisibility: project`), or the literal string
+            `unassigned` to list conversations with no `projectId`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -682,6 +1300,7 @@ class Conversations(BaseSDK):
             start_date=start_date,
             end_date=end_date,
             shared=shared,
+            project_id=project_id,
         )
 
         req = self._build_request_async(
@@ -698,6 +1317,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -718,9 +1338,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -782,6 +1404,8 @@ class Conversations(BaseSDK):
         to the active list.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number (1-indexed)
         :param limit: Items per page
         :param sort_by: Field to sort by
@@ -832,6 +1456,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -852,9 +1477,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -918,6 +1545,8 @@ class Conversations(BaseSDK):
         to the active list.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number (1-indexed)
         :param limit: Items per page
         :param sort_by: Field to sort by
@@ -968,6 +1597,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -988,9 +1618,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1049,6 +1681,8 @@ class Conversations(BaseSDK):
         `archivedAt`, and `archivedBy`. `agentKey` is present only when `source` is `agent`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search: Search term to match against conversation titles and message content (max 1000 chars)
         :param page: Page number (1-indexed)
         :param limit: Items per page
@@ -1087,6 +1721,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1107,9 +1742,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1168,6 +1805,8 @@ class Conversations(BaseSDK):
         `archivedAt`, and `archivedBy`. `agentKey` is present only when `source` is `agent`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search: Search term to match against conversation titles and message content (max 1000 chars)
         :param page: Page number (1-indexed)
         :param limit: Items per page
@@ -1206,6 +1845,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1226,9 +1866,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1290,6 +1932,8 @@ class Conversations(BaseSDK):
         Users can access conversations they own or that have been shared with them.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param page: Page number for message pagination
         :param limit: Number of messages per page
@@ -1342,6 +1986,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1362,9 +2007,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1424,6 +2071,8 @@ class Conversations(BaseSDK):
         Users can access conversations they own or that have been shared with them.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param page: Page number for message pagination
         :param limit: Number of messages per page
@@ -1476,6 +2125,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1496,9 +2146,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1543,6 +2195,8 @@ class Conversations(BaseSDK):
         is `write`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1577,6 +2231,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1597,9 +2252,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1646,6 +2303,8 @@ class Conversations(BaseSDK):
         is `write`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1680,6 +2339,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1700,9 +2360,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1723,6 +2385,468 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    def add_message(
+        self,
+        *,
+        conversation_id: str,
+        query: str,
+        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        chat_mode: Optional[models.AddMessageRequestChatMode] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Iterable[str]] = None,
+        protocol: Optional[models.AddMessageRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.AddMessageResponseResponse:
+        r"""Add message (non-streaming)
+
+        Ask a follow-up in an existing assistant conversation and wait for
+        the complete answer. The JSON counterpart of
+        `POST /conversations/{conversationId}/messages/stream`. Earlier turns
+        are sent to the model as history; project context comes from the
+        conversation, never from the request.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id:
+        :param query: The follow-up question or message content
+        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
+            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
+            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
+            to let the service use the agent’s stored knowledge and tool configuration. Sending
+            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
+            turn (it is not “full org default”).
+
+        :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
+            This mirrors the active selection shown in the UI and is distinct from the
+            machine-readable `filters` field used for retrieval scoping.
+
+        :param attachments: Uploaded chat attachments for this follow-up turn (see
+            `POST /conversations/attachments/upload`).
+
+        :param model_key: Override the model for this specific message
+        :param model_name: Display name of the model
+        :param model_friendly_name: Friendly display name of the model
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+
+        :param timezone: IANA timezone identifier from the client (top-level field).
+            Used to provide time-aware context to the AI.
+
+        :param current_time: ISO 8601 / RFC 3339 datetime from the client (top-level field; UTC `Z` or numeric offset).
+
+        :param tools: Optional list of tool identifiers the agent may invoke for this
+            follow-up message. Semantics are identical to the create-conversation
+            tools field.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `ConversationMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.AddMessageRequestRequest(
+            conversation_id=conversation_id,
+            body=models.AddMessageRequest(
+                query=query,
+                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
+                applied_filters=utils.get_pydantic_model(
+                    applied_filters, Optional[models.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models.ChatAttachmentRef]]
+                ),
+                model_key=model_key,
+                model_name=model_name,
+                model_friendly_name=model_friendly_name,
+                chat_mode=chat_mode,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.unmarshal(tools, Optional[List[str]]),
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/conversations/{conversationId}/messages",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.AddMessageRequest
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="addMessage",
+                oauth2_scopes=["conversation:chat"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return models.AddMessageResponseResponse(
+                result=unmarshal_json_response(models.AddMessageResponse, http_res),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, ["400", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def add_message_async(
+        self,
+        *,
+        conversation_id: str,
+        query: str,
+        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
+        applied_filters: Optional[
+            Union[models.AppliedFilters, models.AppliedFiltersTypedDict]
+        ] = None,
+        attachments: Optional[
+            Union[
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
+        model_key: Optional[str] = None,
+        model_name: Optional[str] = None,
+        model_friendly_name: Optional[str] = None,
+        chat_mode: Optional[models.AddMessageRequestChatMode] = None,
+        timezone: Optional[str] = None,
+        current_time: Optional[datetime] = None,
+        tools: Optional[Iterable[str]] = None,
+        protocol: Optional[models.AddMessageRequestProtocol] = None,
+        agent_capabilities: Optional[
+            Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
+        run_id: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.AddMessageResponseResponse:
+        r"""Add message (non-streaming)
+
+        Ask a follow-up in an existing assistant conversation and wait for
+        the complete answer. The JSON counterpart of
+        `POST /conversations/{conversationId}/messages/stream`. Earlier turns
+        are sent to the model as history; project context comes from the
+        conversation, never from the request.
+
+        **How a turn runs**
+
+        1. The user's message is saved (in its own short transaction on a
+        replica set).
+        2. The AI backend runs the same agent-loop pipeline as the `/stream`
+        route and returns only its final result. No transaction is held
+        during this call, and the call is never retried.
+        3. The answer, citations and status are saved exactly as the
+        streaming route saves them, and the updated conversation is
+        returned.
+
+        Every failure after step 1 is persisted: the conversation ends with
+        status `Failed`, a `failReason`, and an `error` message, and the
+        response carries `X-Conversation-Id` so the caller can fetch it.
+        A 4xx from the AI backend (for example no model configured) keeps
+        its status and user-facing message; other failures return 500 with
+        a generic message.
+
+        The response arrives only when the whole answer is ready, which can
+        take minutes for agent runs. Allow a generous client and proxy
+        timeout, or use the `/stream` variant for interactive clients.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id:
+        :param query: The follow-up question or message content
+        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
+            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
+            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
+            to let the service use the agent’s stored knowledge and tool configuration. Sending
+            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
+            turn (it is not “full org default”).
+
+        :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
+            This mirrors the active selection shown in the UI and is distinct from the
+            machine-readable `filters` field used for retrieval scoping.
+
+        :param attachments: Uploaded chat attachments for this follow-up turn (see
+            `POST /conversations/attachments/upload`).
+
+        :param model_key: Override the model for this specific message
+        :param model_name: Display name of the model
+        :param model_friendly_name: Friendly display name of the model
+        :param chat_mode: Optional execution mode for non-stream consumers of this shared
+            request schema.
+
+        :param timezone: IANA timezone identifier from the client (top-level field).
+            Used to provide time-aware context to the AI.
+
+        :param current_time: ISO 8601 / RFC 3339 datetime from the client (top-level field; UTC `Z` or numeric offset).
+
+        :param tools: Optional list of tool identifiers the agent may invoke for this
+            follow-up message. Semantics are identical to the create-conversation
+            tools field.
+
+        :param protocol: AG-UI is the only supported wire protocol. When present must be
+            `\"agui\"`. Omitting the field is equivalent — the server always
+            uses the AG-UI vocabulary (see `ConversationMessageStreamSSEEvent`).
+            Kept in the schema for backward compatibility with callers that
+            already send it.
+
+        :param agent_capabilities: Per-request agent capability toggles. Only meaningful when `chatMode`
+            selects an agent mode; ignored otherwise. Each field falls back to its
+            own `default` below when omitted — a missing flag is not uniformly
+            `true`. Omitting the whole object applies every default.
+
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.AddMessageRequestRequest(
+            conversation_id=conversation_id,
+            body=models.AddMessageRequest(
+                query=query,
+                filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
+                applied_filters=utils.get_pydantic_model(
+                    applied_filters, Optional[models.AppliedFilters]
+                ),
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models.ChatAttachmentRef]]
+                ),
+                model_key=model_key,
+                model_name=model_name,
+                model_friendly_name=model_friendly_name,
+                chat_mode=chat_mode,
+                timezone=timezone,
+                current_time=current_time,
+                tools=utils.unmarshal(tools, Optional[List[str]]),
+                protocol=protocol,
+                agent_capabilities=utils.get_pydantic_model(
+                    agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/conversations/{conversationId}/messages",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.AddMessageRequest
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="addMessage",
+                oauth2_scopes=["conversation:chat"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return models.AddMessageResponseResponse(
+                result=unmarshal_json_response(models.AddMessageResponse, http_res),
+                headers=utils.get_response_headers(http_res.headers),
+            )
+        if utils.match_response(http_res, ["400", "404"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "424", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["413", "422", "429"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
     def add_message_stream(
         self,
         *,
@@ -1735,7 +2859,8 @@ class Conversations(BaseSDK):
         ] = None,
         attachments: Optional[
             Union[
-                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
             ]
         ] = None,
         model_key: Optional[str] = None,
@@ -1743,11 +2868,12 @@ class Conversations(BaseSDK):
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
-        tools: Optional[List[str]] = None,
+        tools: Optional[Iterable[str]] = None,
         protocol: Optional[models.ConversationMessageStreamRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1767,6 +2893,8 @@ class Conversations(BaseSDK):
         `/conversations/stream`, while the terminal result reflects an
         existing conversation.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Identifier of the conversation to append the message to. The
             conversation must belong to the caller and must not be deleted.
@@ -1812,6 +2940,10 @@ class Conversations(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1844,11 +2976,12 @@ class Conversations(BaseSDK):
                 chat_mode=chat_mode,
                 timezone=timezone,
                 current_time=current_time,
-                tools=tools,
+                tools=utils.unmarshal(tools, Optional[List[str]]),
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -1873,6 +3006,7 @@ class Conversations(BaseSDK):
                 models.ConversationMessageStreamRequest,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1893,9 +3027,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -1903,10 +3039,11 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
-                lambda raw: utils.unmarshal_json(
-                    raw, models.ConversationMessageStreamSSEEvent
+                lambda raw: unmarshal_json_response(
+                    models.ConversationMessageStreamSSEEvent, http_res, raw
                 ),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -1936,7 +3073,8 @@ class Conversations(BaseSDK):
         ] = None,
         attachments: Optional[
             Union[
-                List[models.ChatAttachmentRef], List[models.ChatAttachmentRefTypedDict]
+                Iterable[models.ChatAttachmentRef],
+                Iterable[models.ChatAttachmentRefTypedDict],
             ]
         ] = None,
         model_key: Optional[str] = None,
@@ -1944,11 +3082,12 @@ class Conversations(BaseSDK):
         model_friendly_name: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
-        tools: Optional[List[str]] = None,
+        tools: Optional[Iterable[str]] = None,
         protocol: Optional[models.ConversationMessageStreamRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1968,6 +3107,8 @@ class Conversations(BaseSDK):
         `/conversations/stream`, while the terminal result reflects an
         existing conversation.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Identifier of the conversation to append the message to. The
             conversation must belong to the caller and must not be deleted.
@@ -2013,6 +3154,10 @@ class Conversations(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this run. Send it here to enable
+            `POST /conversations/{conversationId}/cancel {runId}` while the
+            stream is still generating.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2045,11 +3190,12 @@ class Conversations(BaseSDK):
                 chat_mode=chat_mode,
                 timezone=timezone,
                 current_time=current_time,
-                tools=tools,
+                tools=utils.unmarshal(tools, Optional[List[str]]),
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -2074,6 +3220,7 @@ class Conversations(BaseSDK):
                 models.ConversationMessageStreamRequest,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2094,9 +3241,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -2104,10 +3253,11 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
-                lambda raw: utils.unmarshal_json(
-                    raw, models.ConversationMessageStreamSSEEvent
+                lambda raw: unmarshal_json_response(
+                    models.ConversationMessageStreamSSEEvent, http_res, raw
                 ),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -2155,6 +3305,8 @@ class Conversations(BaseSDK):
         be owned by the caller (matched on `userId`), and not be soft-deleted.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param title: New conversation title
         :param retries: Override the default retry configuration for this method
@@ -2200,6 +3352,7 @@ class Conversations(BaseSDK):
                 models.UpdateConversationTitleRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2220,9 +3373,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2273,6 +3428,8 @@ class Conversations(BaseSDK):
         be owned by the caller (matched on `userId`), and not be soft-deleted.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier
         :param title: New conversation title
         :param retries: Override the default retry configuration for this method
@@ -2318,6 +3475,7 @@ class Conversations(BaseSDK):
                 models.UpdateConversationTitleRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2338,9 +3496,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2390,6 +3550,8 @@ class Conversations(BaseSDK):
         Restore one with `PATCH /conversations/{conversationId}/unarchive`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2424,6 +3586,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2444,9 +3607,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2494,6 +3659,8 @@ class Conversations(BaseSDK):
         Restore one with `PATCH /conversations/{conversationId}/unarchive`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2528,6 +3695,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2548,9 +3716,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2587,6 +3757,8 @@ class Conversations(BaseSDK):
         - Body: none
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2621,6 +3793,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2641,9 +3814,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2682,6 +3857,8 @@ class Conversations(BaseSDK):
         - Body: none
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Conversation identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2716,6 +3893,7 @@ class Conversations(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2736,9 +3914,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2771,11 +3951,12 @@ class Conversations(BaseSDK):
         chat_mode: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
-        tools: Optional[List[str]] = None,
+        tools: Optional[Iterable[str]] = None,
         protocol: Optional[models.RegenerateRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2815,6 +3996,8 @@ class Conversations(BaseSDK):
         universal agent loop. See `SSEEvent` for the event vocabulary.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
@@ -2853,6 +4036,10 @@ class Conversations(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this regeneration run. Send it
+            here to enable `POST .../cancel {runId}` while it is still
+            generating.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2879,11 +4066,12 @@ class Conversations(BaseSDK):
                 chat_mode=chat_mode,
                 timezone=timezone,
                 current_time=current_time,
-                tools=tools,
+                tools=utils.unmarshal(tools, Optional[List[str]]),
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -2908,6 +4096,7 @@ class Conversations(BaseSDK):
                 Optional[models.RegenerateRequest],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2928,9 +4117,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -2938,8 +4129,9 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
-                lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
+                lambda raw: unmarshal_json_response(models.SSEEvent, http_res, raw),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
@@ -2969,11 +4161,12 @@ class Conversations(BaseSDK):
         chat_mode: Optional[str] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
-        tools: Optional[List[str]] = None,
+        tools: Optional[Iterable[str]] = None,
         protocol: Optional[models.RegenerateRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3013,6 +4206,8 @@ class Conversations(BaseSDK):
         universal agent loop. See `SSEEvent` for the event vocabulary.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
         :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
@@ -3051,6 +4246,10 @@ class Conversations(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param run_id: Client-generated identifier for this regeneration run. Send it
+            here to enable `POST .../cancel {runId}` while it is still
+            generating.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3077,11 +4276,12 @@ class Conversations(BaseSDK):
                 chat_mode=chat_mode,
                 timezone=timezone,
                 current_time=current_time,
-                tools=tools,
+                tools=utils.unmarshal(tools, Optional[List[str]]),
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
                 ),
+                run_id=run_id,
             ),
         )
 
@@ -3106,6 +4306,7 @@ class Conversations(BaseSDK):
                 Optional[models.RegenerateRequest],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3126,9 +4327,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -3136,8 +4339,9 @@ class Conversations(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
-                lambda raw: utils.unmarshal_json(raw, models.SSEEvent),
+                lambda raw: unmarshal_json_response(models.SSEEvent, http_res, raw),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
@@ -3155,13 +4359,263 @@ class Conversations(BaseSDK):
             "Unexpected response received", http_res, http_res_text
         )
 
+    def cancel_conversation_stream(
+        self,
+        *,
+        conversation_id: str,
+        run_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.CancelConversationStreamResponse:
+        r"""Cancel an in-flight chat stream
+
+        Cooperatively stop a `POST /conversations/stream` or
+        `POST /conversations/{conversationId}/messages/stream` run that is
+        still generating, using the `runId` sent when that stream started.
+
+        This is a synchronous JSON ack, not another SSE stream. The
+        cancelled run's own stream (if still connected) receives a terminal
+        frame with a `stopped` status and whatever partial answer had
+        already generated; nothing further is delivered here.
+
+        `{ cancelled: false }` — not an error — covers a `runId` that
+        already finished or was never registered; the caller only needs to
+        know the stream is not running anymore, not why.
+
+        `runId` must belong to a run started on THIS `conversationId` — a
+        `runId` that exists but was registered under a different
+        conversation (even one owned by the same caller) is rejected with
+        `403`, same as a `runId` owned by a different user/org.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id:
+        :param run_id: The `runId` sent when the stream was started.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CancelConversationStreamRequest(
+            conversation_id=conversation_id,
+            body=models.CancelConversationStreamRequestBody(
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/conversations/{conversationId}/cancel",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.CancelConversationStreamRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="cancelConversationStream",
+                oauth2_scopes=["conversation:chat"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.CancelConversationStreamResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def cancel_conversation_stream_async(
+        self,
+        *,
+        conversation_id: str,
+        run_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.CancelConversationStreamResponse:
+        r"""Cancel an in-flight chat stream
+
+        Cooperatively stop a `POST /conversations/stream` or
+        `POST /conversations/{conversationId}/messages/stream` run that is
+        still generating, using the `runId` sent when that stream started.
+
+        This is a synchronous JSON ack, not another SSE stream. The
+        cancelled run's own stream (if still connected) receives a terminal
+        frame with a `stopped` status and whatever partial answer had
+        already generated; nothing further is delivered here.
+
+        `{ cancelled: false }` — not an error — covers a `runId` that
+        already finished or was never registered; the caller only needs to
+        know the stream is not running anymore, not why.
+
+        `runId` must belong to a run started on THIS `conversationId` — a
+        `runId` that exists but was registered under a different
+        conversation (even one owned by the same caller) is rejected with
+        `403`, same as a `runId` owned by a different user/org.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id:
+        :param run_id: The `runId` sent when the stream was started.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CancelConversationStreamRequest(
+            conversation_id=conversation_id,
+            body=models.CancelConversationStreamRequestBody(
+                run_id=run_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/conversations/{conversationId}/cancel",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.CancelConversationStreamRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="cancelConversationStream",
+                oauth2_scopes=["conversation:chat"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.CancelConversationStreamResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
     def update_message_feedback(
         self,
         *,
         conversation_id: str,
         message_id: str,
         is_helpful: Optional[bool] = None,
-        categories: Optional[List[models.MessageFeedbackSubmitRequestCategory]] = None,
+        categories: Optional[
+            Iterable[models.MessageFeedbackSubmitRequestCategory]
+        ] = None,
         comments: Optional[
             Union[
                 models.MessageFeedbackSubmitRequestComments,
@@ -3196,6 +4650,8 @@ class Conversations(BaseSDK):
         queries and system messages are rejected with `400`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier.
         :param message_id: Identifier of the bot-response message being rated.
         :param is_helpful: Overall helpfulness signal (thumbs up/down).
@@ -3221,7 +4677,10 @@ class Conversations(BaseSDK):
             message_id=message_id,
             body=models.MessageFeedbackSubmitRequest(
                 is_helpful=is_helpful,
-                categories=categories,
+                categories=utils.unmarshal(
+                    categories,
+                    Optional[List[models.MessageFeedbackSubmitRequestCategory]],
+                ),
                 comments=utils.get_pydantic_model(
                     comments, Optional[models.MessageFeedbackSubmitRequestComments]
                 ),
@@ -3245,6 +4704,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.MessageFeedbackSubmitRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3265,9 +4725,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3294,7 +4756,9 @@ class Conversations(BaseSDK):
         conversation_id: str,
         message_id: str,
         is_helpful: Optional[bool] = None,
-        categories: Optional[List[models.MessageFeedbackSubmitRequestCategory]] = None,
+        categories: Optional[
+            Iterable[models.MessageFeedbackSubmitRequestCategory]
+        ] = None,
         comments: Optional[
             Union[
                 models.MessageFeedbackSubmitRequestComments,
@@ -3329,6 +4793,8 @@ class Conversations(BaseSDK):
         queries and system messages are rejected with `400`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param conversation_id: Unique conversation identifier.
         :param message_id: Identifier of the bot-response message being rated.
         :param is_helpful: Overall helpfulness signal (thumbs up/down).
@@ -3354,7 +4820,10 @@ class Conversations(BaseSDK):
             message_id=message_id,
             body=models.MessageFeedbackSubmitRequest(
                 is_helpful=is_helpful,
-                categories=categories,
+                categories=utils.unmarshal(
+                    categories,
+                    Optional[List[models.MessageFeedbackSubmitRequestCategory]],
+                ),
                 comments=utils.get_pydantic_model(
                     comments, Optional[models.MessageFeedbackSubmitRequestComments]
                 ),
@@ -3378,6 +4847,7 @@ class Conversations(BaseSDK):
                 request.body, False, False, "json", models.MessageFeedbackSubmitRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3398,9 +4868,11 @@ class Conversations(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Conversations"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3414,6 +4886,696 @@ class Conversations(BaseSDK):
                 "API error occurred", http_res, http_res_text
             )
         if utils.match_response(http_res, ["500", "5XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def set_conversation_project(
+        self,
+        *,
+        conversation_id: str,
+        project_id: Nullable[str],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetConversationProjectResponse:
+        r"""Link or unlink a conversation to a project
+
+        Set (`projectId: <id>`) or clear (`projectId: null`) the project this
+        conversation belongs to. Initiator-only.
+
+        **Access:**
+
+        The caller must be the conversation's initiator. Linking to a
+        non-null `projectId` also requires at least viewer access to that
+        project (`404` if not visible to the caller — never `403`, to avoid
+        leaking project existence across an org boundary).
+
+        **Visibility on link:**
+
+        When linking, `projectVisibility` defaults from the project's
+        `chatSharing` setting (`members` → `project`, otherwise `private`)
+        unless the conversation was already `project`-visible, in which case
+        that is preserved. Use
+        `PATCH /conversations/{conversationId}/project-visibility` to
+        override it explicitly. Unlinking (`projectId: null`) always clears
+        both `projectId` and `projectVisibility`.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Unique conversation identifier
+        :param project_id: Target project id, or `null` to unlink.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetConversationProjectRequest(
+            conversation_id=conversation_id,
+            body=models.SetConversationProjectRequestBody(
+                project_id=project_id,
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/conversations/{conversationId}/project",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.SetConversationProjectRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setConversationProject",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations", "Projects"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetConversationProjectResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def set_conversation_project_async(
+        self,
+        *,
+        conversation_id: str,
+        project_id: Nullable[str],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetConversationProjectResponse:
+        r"""Link or unlink a conversation to a project
+
+        Set (`projectId: <id>`) or clear (`projectId: null`) the project this
+        conversation belongs to. Initiator-only.
+
+        **Access:**
+
+        The caller must be the conversation's initiator. Linking to a
+        non-null `projectId` also requires at least viewer access to that
+        project (`404` if not visible to the caller — never `403`, to avoid
+        leaking project existence across an org boundary).
+
+        **Visibility on link:**
+
+        When linking, `projectVisibility` defaults from the project's
+        `chatSharing` setting (`members` → `project`, otherwise `private`)
+        unless the conversation was already `project`-visible, in which case
+        that is preserved. Use
+        `PATCH /conversations/{conversationId}/project-visibility` to
+        override it explicitly. Unlinking (`projectId: null`) always clears
+        both `projectId` and `projectVisibility`.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Unique conversation identifier
+        :param project_id: Target project id, or `null` to unlink.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetConversationProjectRequest(
+            conversation_id=conversation_id,
+            body=models.SetConversationProjectRequestBody(
+                project_id=project_id,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/conversations/{conversationId}/project",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.SetConversationProjectRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setConversationProject",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations", "Projects"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetConversationProjectResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def set_conversation_project_visibility(
+        self,
+        *,
+        conversation_id: str,
+        visibility: models.SetConversationProjectVisibilityVisibility,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetConversationProjectVisibilityResponse:
+        r"""Override a conversation's project visibility
+
+        Explicitly set whether a project-linked conversation is visible to
+        other members of that project (`project`) or only to its owner
+        (`private`). Initiator-only. Requires the conversation to already be
+        linked to a project via
+        `PUT /conversations/{conversationId}/project`.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Unique conversation identifier
+        :param visibility:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetConversationProjectVisibilityRequest(
+            conversation_id=conversation_id,
+            body=models.SetConversationProjectVisibilityRequestBody(
+                visibility=visibility,
+            ),
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/conversations/{conversationId}/project-visibility",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.SetConversationProjectVisibilityRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setConversationProjectVisibility",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations", "Projects"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetConversationProjectVisibilityResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def set_conversation_project_visibility_async(
+        self,
+        *,
+        conversation_id: str,
+        visibility: models.SetConversationProjectVisibilityVisibility,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SetConversationProjectVisibilityResponse:
+        r"""Override a conversation's project visibility
+
+        Explicitly set whether a project-linked conversation is visible to
+        other members of that project (`project`) or only to its owner
+        (`private`). Initiator-only. Requires the conversation to already be
+        linked to a project via
+        `PUT /conversations/{conversationId}/project`.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Unique conversation identifier
+        :param visibility:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.SetConversationProjectVisibilityRequest(
+            conversation_id=conversation_id,
+            body=models.SetConversationProjectVisibilityRequestBody(
+                visibility=visibility,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/conversations/{conversationId}/project-visibility",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body,
+                False,
+                False,
+                "json",
+                models.SetConversationProjectVisibilityRequestBody,
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="setConversationProjectVisibility",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations", "Projects"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SetConversationProjectVisibilityResponse, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_project_conversations(
+        self,
+        *,
+        project_id: str,
+        page: Optional[int] = 1,
+        limit: Optional[int] = 20,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetProjectConversationsResponse:
+        r"""List a project's conversations
+
+        Requires viewer access to the project. Returns both chat and agent
+        sessions (`chatSessions`, discriminated by `sessionType`/`agentKey`)
+        that the caller may see: rows they own, plus rows with
+        `projectVisibility: project`. Access to the project is asserted
+        first, so a private conversation belonging to a *different* project
+        member never leaks through this endpoint.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param project_id:
+        :param page:
+        :param limit:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetProjectConversationsRequest(
+            project_id=project_id,
+            page=page,
+            limit=limit,
+        )
+
+        req = self._build_request(
+            method="GET",
+            path="/projects/{projectId}/conversations",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getProjectConversations",
+                oauth2_scopes=["project:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Projects", "Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.GetProjectConversationsResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_project_conversations_async(
+        self,
+        *,
+        project_id: str,
+        page: Optional[int] = 1,
+        limit: Optional[int] = 20,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetProjectConversationsResponse:
+        r"""List a project's conversations
+
+        Requires viewer access to the project. Returns both chat and agent
+        sessions (`chatSessions`, discriminated by `sessionType`/`agentKey`)
+        that the caller may see: rows they own, plus rows with
+        `projectVisibility: project`. Access to the project is asserted
+        first, so a private conversation belonging to a *different* project
+        member never leaks through this endpoint.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param project_id:
+        :param page:
+        :param limit:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetProjectConversationsRequest(
+            project_id=project_id,
+            page=page,
+            limit=limit,
+        )
+
+        req = self._build_request_async(
+            method="GET",
+            path="/projects/{projectId}/conversations",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getProjectConversations",
+                oauth2_scopes=["project:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Projects", "Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.GetProjectConversationsResponse, http_res
+            )
+        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

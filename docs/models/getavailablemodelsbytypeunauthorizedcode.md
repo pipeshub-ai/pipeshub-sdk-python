@@ -1,8 +1,13 @@
 # GetAvailableModelsByTypeUnauthorizedCode
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetAvailableModelsByTypeUnauthorizedCode
+value: GetAvailableModelsByTypeUnauthorizedCode = "HTTP_UNAUTHORIZED"
+```
+
 
 ## Values
 
-| Name                | Value               |
-| ------------------- | ------------------- |
-| `HTTP_UNAUTHORIZED` | HTTP_UNAUTHORIZED   |
+- `"HTTP_UNAUTHORIZED"`

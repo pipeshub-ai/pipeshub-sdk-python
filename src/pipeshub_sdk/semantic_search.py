@@ -42,6 +42,8 @@ class SemanticSearch(BaseSDK):
         `GET /search`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param query: Natural language search query. The system understands
             semantic meaning, not just keywords.
 
@@ -91,6 +93,7 @@ class SemanticSearch(BaseSDK):
                 request, False, False, "json", models.SemanticSearchRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -111,20 +114,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "4XX",
-                "500",
-                "502",
-                "503",
-                "504",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -173,6 +167,8 @@ class SemanticSearch(BaseSDK):
         source document's metadata. Past searches can be retrieved via
         `GET /search`.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param query: Natural language search query. The system understands
             semantic meaning, not just keywords.
@@ -223,6 +219,7 @@ class SemanticSearch(BaseSDK):
                 request, False, False, "json", models.SemanticSearchRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -243,20 +240,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "4XX",
-                "500",
-                "502",
-                "503",
-                "504",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -306,6 +294,8 @@ class SemanticSearch(BaseSDK):
         Pagination defaults to `page=1, limit=20` (maximum `limit` is 100).
         Results are sorted by most recent activity by default.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param page: Page number to return. Must be within `[1, 1000]`.
         :param limit: Number of items per page. Values are clamped to the range `[1, 100]`.
@@ -364,6 +354,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -384,9 +375,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -458,6 +451,8 @@ class SemanticSearch(BaseSDK):
         Results are sorted by most recent activity by default.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number to return. Must be within `[1, 1000]`.
         :param limit: Number of items per page. Values are clamped to the range `[1, 100]`.
         :param sort_by: Field used to sort results. Any value other than `createdAt`,
@@ -515,6 +510,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -535,9 +531,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -603,6 +601,8 @@ class SemanticSearch(BaseSDK):
         endpoint returns `404` rather than a successful no-op.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search: Restrict the deletion to rows whose `title` or `messages.content`
             matches this case-insensitive substring. Special regex characters
             are escaped before the lookup; values over 1000 chars are
@@ -651,6 +651,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -671,9 +672,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -715,6 +718,8 @@ class SemanticSearch(BaseSDK):
         (including the case where every row is already archived), the
         endpoint returns `404` rather than a successful no-op.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param search: Restrict the deletion to rows whose `title` or `messages.content`
             matches this case-insensitive substring. Special regex characters
@@ -764,6 +769,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -784,9 +790,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -825,6 +833,8 @@ class SemanticSearch(BaseSDK):
         than relying on a `404`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -859,6 +869,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -879,9 +890,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -948,6 +961,8 @@ class SemanticSearch(BaseSDK):
         than relying on a `404`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -982,6 +997,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1002,9 +1018,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1075,6 +1093,8 @@ class SemanticSearch(BaseSDK):
         already-deleted rows surface as `404`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search_id: ObjectId of the persisted search row to delete.
         :param search: Additional substring filter against `title` / `messages.content`.
             The row is only deleted if the `searchId` row also matches this
@@ -1127,6 +1147,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1147,9 +1168,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1192,6 +1215,8 @@ class SemanticSearch(BaseSDK):
         already-deleted rows surface as `404`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search_id: ObjectId of the persisted search row to delete.
         :param search: Additional substring filter against `title` / `messages.content`.
             The row is only deleted if the `searchId` row also matches this
@@ -1244,6 +1269,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1264,9 +1290,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1301,6 +1329,8 @@ class SemanticSearch(BaseSDK):
         the archive-aware listing endpoints.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1335,6 +1365,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1355,9 +1386,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1392,6 +1425,8 @@ class SemanticSearch(BaseSDK):
         the archive-aware listing endpoints.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1426,6 +1461,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1446,9 +1482,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1480,6 +1518,8 @@ class SemanticSearch(BaseSDK):
 
         Restore a previously archived search result back to the active search history.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
@@ -1515,6 +1555,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1535,9 +1576,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1569,6 +1612,8 @@ class SemanticSearch(BaseSDK):
 
         Restore a previously archived search result back to the active search history.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param search_id: Unique search identifier
         :param retries: Override the default retry configuration for this method
@@ -1604,6 +1649,7 @@ class SemanticSearch(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1624,9 +1670,11 @@ class SemanticSearch(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Semantic Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

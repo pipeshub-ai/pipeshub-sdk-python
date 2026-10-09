@@ -1,8 +1,13 @@
 # GetAvailableModelsByTypeCodeValidationError
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetAvailableModelsByTypeCodeValidationError
+value: GetAvailableModelsByTypeCodeValidationError = "VALIDATION_ERROR"
+```
+
 
 ## Values
 
-| Name               | Value              |
-| ------------------ | ------------------ |
-| `VALIDATION_ERROR` | VALIDATION_ERROR   |
+- `"VALIDATION_ERROR"`

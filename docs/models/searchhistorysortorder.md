@@ -2,10 +2,15 @@
 
 Sort direction applied to `sortBy`.
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import SearchHistorySortOrder
+value: SearchHistorySortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

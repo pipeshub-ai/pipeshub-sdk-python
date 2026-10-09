@@ -2,17 +2,26 @@
 
 Type of AI model
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ModelType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: ModelType = "llm"
+```
+
 
 ## Values
 
-| Name               | Value              |
-| ------------------ | ------------------ |
-| `LLM`              | llm                |
-| `EMBEDDING`        | embedding          |
-| `OCR`              | ocr                |
-| `SLM`              | slm                |
-| `REASONING`        | reasoning          |
-| `MULTI_MODAL`      | multiModal         |
-| `IMAGE_GENERATION` | imageGeneration    |
-| `TTS`              | tts                |
-| `STT`              | stt                |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"llm"`
+- `"embedding"`
+- `"ocr"`
+- `"slm"`
+- `"reasoning"`
+- `"multiModal"`
+- `"imageGeneration"`
+- `"tts"`
+- `"stt"`

@@ -50,7 +50,7 @@ class AuthenticateRequestTypedDict(TypedDict):
     - `microsoft`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `azureAd`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `oauth`: `{ accessToken: \"...\", idToken: \"...\" }`
-    - `samlSso`: handled via redirect flow
+    - `samlSso`: not accepted by `/userAccount/authenticate`, which answers `400`. SAML sign-in runs as a browser redirect: send the browser to `/saml/signIn` instead
 
     """
 
@@ -73,7 +73,7 @@ class AuthenticateRequest(BaseModel):
     - `microsoft`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `azureAd`: `{ accessToken: \"...\", idToken: \"...\" }`
     - `oauth`: `{ accessToken: \"...\", idToken: \"...\" }`
-    - `samlSso`: handled via redirect flow
+    - `samlSso`: not accepted by `/userAccount/authenticate`, which answers `400`. SAML sign-in runs as a browser redirect: send the browser to `/saml/signIn` instead
 
     """
 
@@ -99,7 +99,7 @@ class AuthenticateRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
