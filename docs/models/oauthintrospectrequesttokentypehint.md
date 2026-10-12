@@ -2,10 +2,15 @@
 
 Hint about token type
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import OAuthIntrospectRequestTokenTypeHint
+value: OAuthIntrospectRequestTokenTypeHint = "access_token"
+```
+
 
 ## Values
 
-| Name            | Value           |
-| --------------- | --------------- |
-| `ACCESS_TOKEN`  | access_token    |
-| `REFRESH_TOKEN` | refresh_token   |
+- `"access_token"`
+- `"refresh_token"`

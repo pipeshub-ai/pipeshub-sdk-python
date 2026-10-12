@@ -50,6 +50,7 @@ class SemanticSearchGraphRecordTypedDict(TypedDict):
     is_vlm_ocr_processed: NotRequired[Nullable[bool]]
     deleted_by_user_id: NotRequired[Nullable[str]]
     processing_started_at: NotRequired[Nullable[float]]
+    queued_at_timestamp: NotRequired[Nullable[float]]
     parsing_status: NotRequired[Nullable[str]]
     indexing_status: NotRequired[Nullable[str]]
     extraction_status: NotRequired[Nullable[str]]
@@ -180,6 +181,10 @@ class SemanticSearchGraphRecord(BaseModel):
         OptionalNullable[float], pydantic.Field(alias="processingStartedAt")
     ] = UNSET
 
+    queued_at_timestamp: Annotated[
+        OptionalNullable[float], pydantic.Field(alias="queuedAtTimestamp")
+    ] = UNSET
+
     parsing_status: Annotated[
         OptionalNullable[str], pydantic.Field(alias="parsingStatus")
     ] = UNSET
@@ -294,6 +299,7 @@ class SemanticSearchGraphRecord(BaseModel):
                 "isVLMOcrProcessed",
                 "deletedByUserId",
                 "processingStartedAt",
+                "queuedAtTimestamp",
                 "parsingStatus",
                 "indexingStatus",
                 "extractionStatus",
@@ -348,6 +354,7 @@ class SemanticSearchGraphRecord(BaseModel):
                 "isVLMOcrProcessed",
                 "deletedByUserId",
                 "processingStartedAt",
+                "queuedAtTimestamp",
                 "parsingStatus",
                 "indexingStatus",
                 "extractionStatus",
@@ -377,7 +384,7 @@ class SemanticSearchGraphRecord(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

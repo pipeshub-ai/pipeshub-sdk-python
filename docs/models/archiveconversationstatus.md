@@ -2,9 +2,14 @@
 
 New archive status of the conversation
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ArchiveConversationStatus
+value: ArchiveConversationStatus = "archived"
+```
+
 
 ## Values
 
-| Name       | Value      |
-| ---------- | ---------- |
-| `ARCHIVED` | archived   |
+- `"archived"`

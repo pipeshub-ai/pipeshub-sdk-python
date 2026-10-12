@@ -88,6 +88,15 @@ class OAuth2Scope(str, Enum):
     CONVERSATION_CHAT = "conversation:chat"
     r"""Send messages in conversations"""
 
+    PROJECT_READ = "project:read"
+    r"""Read projects and their conversations"""
+
+    PROJECT_WRITE = "project:write"
+    r"""Create and manage projects"""
+
+    PROJECT_DELETE = "project:delete"
+    r"""Delete projects"""
+
     AGENT_READ = "agent:read"
     r"""Read AI agents"""
 

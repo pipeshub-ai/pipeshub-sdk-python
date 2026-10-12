@@ -2,13 +2,18 @@
 
 Agent-level reasoning effort used when a chat request omits its own.
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AgentUpdateRequestDefaultReasoningEffort
+value: AgentUpdateRequestDefaultReasoningEffort = "none"
+```
+
 
 ## Values
 
-| Name     | Value    |
-| -------- | -------- |
-| `NONE`   | none     |
-| `LOW`    | low      |
-| `MEDIUM` | medium   |
-| `HIGH`   | high     |
-| `MAX`    | max      |
+- `"none"`
+- `"low"`
+- `"medium"`
+- `"high"`
+- `"max"`

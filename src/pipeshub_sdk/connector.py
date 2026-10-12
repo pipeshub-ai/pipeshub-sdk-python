@@ -6,7 +6,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, List, Mapping, Optional
+from typing import Any, Iterable, List, Mapping, Optional
 
 
 class Connector(BaseSDK):
@@ -51,6 +51,8 @@ class Connector(BaseSDK):
         a `403`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -85,6 +87,7 @@ class Connector(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -105,9 +108,11 @@ class Connector(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Connector"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -174,6 +179,8 @@ class Connector(BaseSDK):
         a `403`.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -208,6 +215,7 @@ class Connector(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -228,9 +236,11 @@ class Connector(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Connector"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -265,7 +275,7 @@ class Connector(BaseSDK):
         page: Optional[int] = 1,
         limit: Optional[int] = 50,
         depth: Optional[int] = 1,
-        node_types: Optional[List[str]] = None,
+        node_types: Optional[Iterable[str]] = None,
         created_after: Optional[str] = None,
         created_before: Optional[str] = None,
         modified_after: Optional[str] = None,
@@ -337,6 +347,8 @@ class Connector(BaseSDK):
         navigable.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param node_id: The node to open. Take it from an `id` in a previous navigate or lookup response. Omit it entirely for the flat listing of everything reachable — the usual starting point. A URL or an issue key such as `PA-1787` also works: it is resolved to its record automatically.
         :param page: Page number, 1-indexed.
         :param limit: Children per page. The minimum is 50 — smaller values are rejected rather than silently raised.
@@ -366,7 +378,7 @@ class Connector(BaseSDK):
             page=page,
             limit=limit,
             depth=depth,
-            node_types=node_types,
+            node_types=utils.unmarshal(node_types, Optional[List[str]]),
             created_after=created_after,
             created_before=created_before,
             modified_after=modified_after,
@@ -387,6 +399,7 @@ class Connector(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -407,9 +420,11 @@ class Connector(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Connector"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -446,7 +461,7 @@ class Connector(BaseSDK):
         page: Optional[int] = 1,
         limit: Optional[int] = 50,
         depth: Optional[int] = 1,
-        node_types: Optional[List[str]] = None,
+        node_types: Optional[Iterable[str]] = None,
         created_after: Optional[str] = None,
         created_before: Optional[str] = None,
         modified_after: Optional[str] = None,
@@ -518,6 +533,8 @@ class Connector(BaseSDK):
         navigable.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param node_id: The node to open. Take it from an `id` in a previous navigate or lookup response. Omit it entirely for the flat listing of everything reachable — the usual starting point. A URL or an issue key such as `PA-1787` also works: it is resolved to its record automatically.
         :param page: Page number, 1-indexed.
         :param limit: Children per page. The minimum is 50 — smaller values are rejected rather than silently raised.
@@ -547,7 +564,7 @@ class Connector(BaseSDK):
             page=page,
             limit=limit,
             depth=depth,
-            node_types=node_types,
+            node_types=utils.unmarshal(node_types, Optional[List[str]]),
             created_after=created_after,
             created_before=created_before,
             modified_after=modified_after,
@@ -568,6 +585,7 @@ class Connector(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -588,9 +606,11 @@ class Connector(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Connector"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -623,7 +643,7 @@ class Connector(BaseSDK):
     def lookup_record_by_identifier(
         self,
         *,
-        identifiers: List[str],
+        identifiers: Iterable[str],
         connector_name: Optional[models.ConnectorNameEnum] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -685,6 +705,8 @@ class Connector(BaseSDK):
         regardless of any source filter used elsewhere.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param identifiers: The reference(s) to resolve: a URL, an issue key such as `PA-1787`, or a bare external system ID. Repeat the parameter to batch: `?identifiers=PA-1787&identifiers=PA-1788`. Maximum 10.
         :param connector_name: Optional hint that prioritises resolution order, e.g. `JIRA`, `CONFLUENCE`, `DRIVE`, `SLACK`. Allowed values are the `ConnectorNameEnum` values. It cannot widen the search beyond the connectors the caller can already access. Useful on a retry when a lookup came back empty.
         :param retries: Override the default retry configuration for this method
@@ -703,7 +725,7 @@ class Connector(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.LookupRecordByIdentifierRequest(
-            identifiers=identifiers,
+            identifiers=utils.unmarshal(identifiers, List[str]),
             connector_name=connector_name,
         )
 
@@ -721,6 +743,7 @@ class Connector(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -741,9 +764,11 @@ class Connector(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Connector"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -774,7 +799,7 @@ class Connector(BaseSDK):
     async def lookup_record_by_identifier_async(
         self,
         *,
-        identifiers: List[str],
+        identifiers: Iterable[str],
         connector_name: Optional[models.ConnectorNameEnum] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -836,6 +861,8 @@ class Connector(BaseSDK):
         regardless of any source filter used elsewhere.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param identifiers: The reference(s) to resolve: a URL, an issue key such as `PA-1787`, or a bare external system ID. Repeat the parameter to batch: `?identifiers=PA-1787&identifiers=PA-1788`. Maximum 10.
         :param connector_name: Optional hint that prioritises resolution order, e.g. `JIRA`, `CONFLUENCE`, `DRIVE`, `SLACK`. Allowed values are the `ConnectorNameEnum` values. It cannot widen the search beyond the connectors the caller can already access. Useful on a retry when a lookup came back empty.
         :param retries: Override the default retry configuration for this method
@@ -854,7 +881,7 @@ class Connector(BaseSDK):
             base_url = self._get_url(base_url, url_variables)
 
         request = models.LookupRecordByIdentifierRequest(
-            identifiers=identifiers,
+            identifiers=utils.unmarshal(identifiers, List[str]),
             connector_name=connector_name,
         )
 
@@ -872,6 +899,7 @@ class Connector(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -892,9 +920,11 @@ class Connector(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Connector"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

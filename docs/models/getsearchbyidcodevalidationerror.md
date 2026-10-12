@@ -5,9 +5,14 @@ is emitted when the request fails Zod
 validation.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetSearchByIDCodeValidationError
+value: GetSearchByIDCodeValidationError = "VALIDATION_ERROR"
+```
+
 
 ## Values
 
-| Name               | Value              |
-| ------------------ | ------------------ |
-| `VALIDATION_ERROR` | VALIDATION_ERROR   |
+- `"VALIDATION_ERROR"`

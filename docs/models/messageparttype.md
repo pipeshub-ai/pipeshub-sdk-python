@@ -1,11 +1,20 @@
 # MessagePartType
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import MessagePartType
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: MessagePartType = "text"
+```
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `TEXT`      | text        |
-| `REASONING` | reasoning   |
-| `TOOL_CALL` | tool_call   |
-| `SUB_AGENT` | sub_agent   |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"text"`
+- `"reasoning"`
+- `"tool_call"`
+- `"sub_agent"`

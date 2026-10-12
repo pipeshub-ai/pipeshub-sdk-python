@@ -6,7 +6,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
 
 class OrganizationAuthConfig(BaseSDK):
@@ -44,6 +44,8 @@ class OrganizationAuthConfig(BaseSDK):
         **Admin Access Required:** Only organization admins can view auth configuration.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -72,6 +74,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -88,13 +91,15 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAuthMethods",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organization Auth Config"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -152,6 +157,8 @@ class OrganizationAuthConfig(BaseSDK):
         **Admin Access Required:** Only organization admins can view auth configuration.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -180,6 +187,7 @@ class OrganizationAuthConfig(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -196,13 +204,15 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="getAuthMethods",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organization Auth Config"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -231,7 +241,9 @@ class OrganizationAuthConfig(BaseSDK):
     def update_auth_method(
         self,
         *,
-        auth_method: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
+        auth_method: Union[
+            Iterable[models.AuthStep], Iterable[models.AuthStepTypedDict]
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -248,6 +260,7 @@ class OrganizationAuthConfig(BaseSDK):
         - No duplicate methods within the same step
         - No method can appear in multiple steps
         - Each step must have at least one allowed method
+        - `samlSso` is only allowed in a single-step policy; it can't be combined with other steps
 
         **Available Methods:**
         - `password`: Email/password authentication
@@ -281,6 +294,8 @@ class OrganizationAuthConfig(BaseSDK):
 
         **Admin Access Required:** Only organization admins can update auth configuration.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param auth_method: Authentication steps to set for the organization (1-3 steps)
         :param retries: Override the default retry configuration for this method
@@ -319,6 +334,7 @@ class OrganizationAuthConfig(BaseSDK):
                 request, False, False, "json", models.UpdateAuthMethodRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -335,13 +351,15 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAuthMethod",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organization Auth Config"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -370,7 +388,9 @@ class OrganizationAuthConfig(BaseSDK):
     async def update_auth_method_async(
         self,
         *,
-        auth_method: Union[List[models.AuthStep], List[models.AuthStepTypedDict]],
+        auth_method: Union[
+            Iterable[models.AuthStep], Iterable[models.AuthStepTypedDict]
+        ],
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -387,6 +407,7 @@ class OrganizationAuthConfig(BaseSDK):
         - No duplicate methods within the same step
         - No method can appear in multiple steps
         - Each step must have at least one allowed method
+        - `samlSso` is only allowed in a single-step policy; it can't be combined with other steps
 
         **Available Methods:**
         - `password`: Email/password authentication
@@ -420,6 +441,8 @@ class OrganizationAuthConfig(BaseSDK):
 
         **Admin Access Required:** Only organization admins can update auth configuration.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param auth_method: Authentication steps to set for the organization (1-3 steps)
         :param retries: Override the default retry configuration for this method
@@ -458,6 +481,7 @@ class OrganizationAuthConfig(BaseSDK):
                 request, False, False, "json", models.UpdateAuthMethodRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -474,13 +498,15 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateAuthMethod",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organization Auth Config"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -523,6 +549,8 @@ class OrganizationAuthConfig(BaseSDK):
         Set up or initialize the organization's authentication configuration.
 
 
+        If set, this operation will use `bearer_auth` from the global security.
+
         :param contact_email: Organization contact email
         :param registered_name: Organization registered name
         :param admin_full_name: Admin user full name
@@ -566,6 +594,7 @@ class OrganizationAuthConfig(BaseSDK):
                 request, False, False, "json", models.OrgAuthConfigCreateRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -582,13 +611,15 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setUpAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organization Auth Config"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -630,6 +661,8 @@ class OrganizationAuthConfig(BaseSDK):
 
         Set up or initialize the organization's authentication configuration.
 
+
+        If set, this operation will use `bearer_auth` from the global security.
 
         :param contact_email: Organization contact email
         :param registered_name: Organization registered name
@@ -674,6 +707,7 @@ class OrganizationAuthConfig(BaseSDK):
                 request, False, False, "json", models.OrgAuthConfigCreateRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
             timeout_ms=timeout_ms,
         )
 
@@ -690,13 +724,15 @@ class OrganizationAuthConfig(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="setUpAuthConfig",
-                oauth2_scopes=[],
+                oauth2_scopes=None,
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Organization Auth Config"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

@@ -1,0 +1,10 @@
+# SetAgentConversationProjectRequest
+
+
+## Fields
+
+| Field                                                                                                | Type                                                                                                 | Required                                                                                             | Description                                                                                          |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `agent_key`                                                                                          | *str*                                                                                                | :heavy_check_mark:                                                                                   | N/A                                                                                                  |
+| `conversation_id`                                                                                    | *str*                                                                                                | :heavy_check_mark:                                                                                   | N/A                                                                                                  |
+| `body`                                                                                               | [models.SetAgentConversationProjectRequestBody](../models/setagentconversationprojectrequestbody.md) | :heavy_check_mark:                                                                                   | N/A                                                                                                  |

@@ -2,9 +2,14 @@
 
 Resulting status of the search after the operation.
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ArchiveSearchStatus
+value: ArchiveSearchStatus = "archived"
+```
+
 
 ## Values
 
-| Name       | Value      |
-| ---------- | ---------- |
-| `ARCHIVED` | archived   |
+- `"archived"`

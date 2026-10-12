@@ -8,17 +8,20 @@ from pipeshub_sdk.types import (
     UNSET,
     UNSET_SENTINEL,
 )
+from pipeshub_sdk.utils import validate_const
 import pydantic
 from pydantic import model_serializer
+from pydantic.functional_validators import AfterValidator
+from typing import Literal
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class DeleteRecordResponseSchemaTypedDict(TypedDict):
     r"""Response returned by DELETE /knowledgeBase/record/{recordId}."""
 
-    success: bool
     message: str
     record_id: str
+    success: Literal[True]
     connector: NotRequired[Nullable[str]]
     timestamp: NotRequired[Nullable[int]]
 
@@ -26,11 +29,14 @@ class DeleteRecordResponseSchemaTypedDict(TypedDict):
 class DeleteRecordResponseSchema(BaseModel):
     r"""Response returned by DELETE /knowledgeBase/record/{recordId}."""
 
-    success: bool
-
     message: str
 
     record_id: Annotated[str, pydantic.Field(alias="recordId")]
+
+    success: Annotated[
+        Annotated[Literal[True], AfterValidator(validate_const(True))],
+        pydantic.Field(alias="success"),
+    ] = True
 
     connector: OptionalNullable[str] = UNSET
 
@@ -45,7 +51,7 @@ class DeleteRecordResponseSchema(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

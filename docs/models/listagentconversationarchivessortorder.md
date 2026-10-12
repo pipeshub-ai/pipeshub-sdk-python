@@ -1,9 +1,14 @@
 # ListAgentConversationArchivesSortOrder
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ListAgentConversationArchivesSortOrder
+value: ListAgentConversationArchivesSortOrder = "asc"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `ASC`  | asc    |
-| `DESC` | desc   |
+- `"asc"`
+- `"desc"`

@@ -8,7 +8,7 @@ Request to authenticate using specified method.
 - `microsoft`: `{ accessToken: "...", idToken: "..." }`
 - `azureAd`: `{ accessToken: "...", idToken: "..." }`
 - `oauth`: `{ accessToken: "...", idToken: "..." }`
-- `samlSso`: handled via redirect flow
+- `samlSso`: not accepted by `/userAccount/authenticate`, which answers `400`. SAML sign-in runs as a browser redirect: send the browser to `/saml/signIn` instead
 
 
 

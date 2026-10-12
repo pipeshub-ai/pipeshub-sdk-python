@@ -2,11 +2,16 @@
 
 Sort field. Invalid values fall back to `lastActivityAt`.
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetAllConversationsQueryParamSortBy
+value: GetAllConversationsQueryParamSortBy = "createdAt"
+```
+
 
 ## Values
 
-| Name               | Value              |
-| ------------------ | ------------------ |
-| `CREATED_AT`       | createdAt          |
-| `LAST_ACTIVITY_AT` | lastActivityAt     |
-| `TITLE`            | title              |
+- `"createdAt"`
+- `"lastActivityAt"`
+- `"title"`

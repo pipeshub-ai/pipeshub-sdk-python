@@ -54,13 +54,19 @@ class AgentCreateResponseAgentWebSearch(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
 
         return m
+
+
+WebSearchTypedDict = AgentCreateResponseAgentWebSearchTypedDict
+
+
+WebSearch = AgentCreateResponseAgentWebSearch
 
 
 AgentCreateResponseAgentDefaultReasoningEffort = Union[
@@ -85,7 +91,7 @@ class AgentCreateResponseAgentTypedDict(TypedDict):
     instructions: Nullable[str]
     models: List[str]
     tags: List[str]
-    web_search: Nullable[AgentCreateResponseAgentWebSearchTypedDict]
+    web_search: Nullable[WebSearchTypedDict]
     is_active: bool
     is_service_account: bool
     created_by: str
@@ -101,6 +107,8 @@ class AgentCreateResponseAgentTypedDict(TypedDict):
         Nullable[AgentCreateResponseAgentDefaultReasoningEffort]
     ]
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+    send_user_context: NotRequired[bool]
+    r"""When false, this agent omits user name/email/org from its system prompt."""
 
 
 class AgentCreateResponseAgent(BaseModel):
@@ -120,9 +128,7 @@ class AgentCreateResponseAgent(BaseModel):
 
     tags: List[str]
 
-    web_search: Annotated[
-        Nullable[AgentCreateResponseAgentWebSearch], pydantic.Field(alias="webSearch")
-    ]
+    web_search: Annotated[Nullable[WebSearch], pydantic.Field(alias="webSearch")]
 
     is_active: Annotated[bool, pydantic.Field(alias="isActive")]
 
@@ -154,9 +160,14 @@ class AgentCreateResponseAgent(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
+    send_user_context: Annotated[
+        Optional[bool], pydantic.Field(alias="sendUserContext")
+    ] = None
+    r"""When false, this agent omits user name/email/org from its system prompt."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["defaultReasoningEffort"])
+        optional_fields = set(["defaultReasoningEffort", "sendUserContext"])
         nullable_fields = set(
             ["instructions", "webSearch", "defaultReasoningEffort", "updatedBy"]
         )
@@ -165,7 +176,7 @@ class AgentCreateResponseAgent(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

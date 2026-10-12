@@ -8,26 +8,27 @@ from pipeshub_sdk.types import (
     UNSET,
     UNSET_SENTINEL,
 )
+from pipeshub_sdk.utils import validate_const
 import pydantic
 from pydantic import model_serializer
+from pydantic.functional_validators import AfterValidator
+from typing import Literal
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ReIndexRecordGroupResponseSchemaTypedDict(TypedDict):
     r"""Response returned by POST /knowledgeBase/reindex/record-group/{recordGroupId}."""
 
-    success: bool
     message: str
     record_group_id: str
     depth: int
     event_published: bool
+    success: Literal[True]
     connector: NotRequired[Nullable[str]]
 
 
 class ReIndexRecordGroupResponseSchema(BaseModel):
     r"""Response returned by POST /knowledgeBase/reindex/record-group/{recordGroupId}."""
-
-    success: bool
 
     message: str
 
@@ -36,6 +37,11 @@ class ReIndexRecordGroupResponseSchema(BaseModel):
     depth: int
 
     event_published: Annotated[bool, pydantic.Field(alias="eventPublished")]
+
+    success: Annotated[
+        Annotated[Literal[True], AfterValidator(validate_const(True))],
+        pydantic.Field(alias="success"),
+    ] = True
 
     connector: OptionalNullable[str] = UNSET
 
@@ -48,7 +54,7 @@ class ReIndexRecordGroupResponseSchema(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

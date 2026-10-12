@@ -7,9 +7,14 @@ Kept in the schema for backward compatibility with callers that
 already send it.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AgentAddMessageStreamRequestProtocol
+value: AgentAddMessageStreamRequestProtocol = "agui"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `AGUI` | agui   |
+- `"agui"`

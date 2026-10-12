@@ -1,8 +1,13 @@
 # AgentConversationListItemConversationSource
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AgentConversationListItemConversationSource
+value: AgentConversationListItemConversationSource = "agent_chat"
+```
+
 
 ## Values
 
-| Name         | Value        |
-| ------------ | ------------ |
-| `AGENT_CHAT` | agent_chat   |
+- `"agent_chat"`

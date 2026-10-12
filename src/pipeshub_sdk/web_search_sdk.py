@@ -27,6 +27,13 @@ class WebSearchSDK(BaseSDK):
         **Authentication:** Session JWT or OAuth 2.0 access token via `Authorization: Bearer`.
         OAuth tokens must include the `config:read` scope. Admin role is not required.
 
+        **API keys:** for anyone who isn't an org admin, each provider's `configuration.apiKey`
+        comes back as the placeholder `****************`. Admins get the stored key, unless the
+        server hides secrets from everyone (`HIDE_SECRET_CONFIG=true`). When updating a provider,
+        sending the placeholder back keeps the stored key.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -56,6 +63,7 @@ class WebSearchSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -76,9 +84,11 @@ class WebSearchSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Web Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -116,6 +126,13 @@ class WebSearchSDK(BaseSDK):
         **Authentication:** Session JWT or OAuth 2.0 access token via `Authorization: Bearer`.
         OAuth tokens must include the `config:read` scope. Admin role is not required.
 
+        **API keys:** for anyone who isn't an org admin, each provider's `configuration.apiKey`
+        comes back as the placeholder `****************`. Admins get the stored key, unless the
+        server hides secrets from everyone (`HIDE_SECRET_CONFIG=true`). When updating a provider,
+        sending the placeholder back keeps the stored key.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -145,6 +162,7 @@ class WebSearchSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -165,9 +183,11 @@ class WebSearchSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Web Search"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

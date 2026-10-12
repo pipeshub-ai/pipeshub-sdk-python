@@ -1,8 +1,13 @@
 # AgentConversationUnarchiveResponseStatus
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import AgentConversationUnarchiveResponseStatus
+value: AgentConversationUnarchiveResponseStatus = "unarchived"
+```
+
 
 ## Values
 
-| Name         | Value        |
-| ------------ | ------------ |
-| `UNARCHIVED` | unarchived   |
+- `"unarchived"`

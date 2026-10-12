@@ -127,7 +127,7 @@ class GetRecordByIDResponseSchemaFileRecord(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -231,11 +231,19 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     external_parent_id: NotRequired[Nullable[str]]
     external_revision_id: NotRequired[Nullable[str]]
     record_group_id: NotRequired[Nullable[str]]
+    root_record_group_id: NotRequired[Nullable[str]]
+    r"""Internal identifier of the top-most record group in this record's
+    chain. A group with no parent is its own root, so this is null
+    only for records written before the field existed, or by
+    connectors that do not set it.
+
+    """
     is_latest_version: NotRequired[Nullable[bool]]
     last_sync_timestamp: NotRequired[Nullable[int]]
     last_index_timestamp: NotRequired[int]
     last_extraction_timestamp: NotRequired[int]
     processing_started_at: NotRequired[Nullable[int]]
+    queued_at_timestamp: NotRequired[Nullable[int]]
     parsing_status: NotRequired[Nullable[str]]
     reason: NotRequired[Nullable[str]]
     deleted_by_user_id: NotRequired[Nullable[str]]
@@ -378,6 +386,16 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
         OptionalNullable[str], pydantic.Field(alias="recordGroupId")
     ] = UNSET
 
+    root_record_group_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="rootRecordGroupId")
+    ] = UNSET
+    r"""Internal identifier of the top-most record group in this record's
+    chain. A group with no parent is its own root, so this is null
+    only for records written before the field existed, or by
+    connectors that do not set it.
+
+    """
+
     is_latest_version: Annotated[
         OptionalNullable[bool], pydantic.Field(alias="isLatestVersion")
     ] = UNSET
@@ -396,6 +414,10 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     processing_started_at: Annotated[
         OptionalNullable[int], pydantic.Field(alias="processingStartedAt")
+    ] = UNSET
+
+    queued_at_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="queuedAtTimestamp")
     ] = UNSET
 
     parsing_status: Annotated[
@@ -464,11 +486,13 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalParentId",
                 "externalRevisionId",
                 "recordGroupId",
+                "rootRecordGroupId",
                 "isLatestVersion",
                 "lastSyncTimestamp",
                 "lastIndexTimestamp",
                 "lastExtractionTimestamp",
                 "processingStartedAt",
+                "queuedAtTimestamp",
                 "parsingStatus",
                 "reason",
                 "deletedByUserId",
@@ -493,9 +517,11 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalParentId",
                 "externalRevisionId",
                 "recordGroupId",
+                "rootRecordGroupId",
                 "isLatestVersion",
                 "lastSyncTimestamp",
                 "processingStartedAt",
+                "queuedAtTimestamp",
                 "parsingStatus",
                 "reason",
                 "deletedByUserId",
@@ -525,7 +551,7 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -733,7 +759,7 @@ class GetRecordByIDResponseSchema(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 m[k] = val

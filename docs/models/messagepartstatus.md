@@ -1,11 +1,20 @@
 # MessagePartStatus
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import MessagePartStatus
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: MessagePartStatus = "running"
+```
+
 
 ## Values
 
-| Name        | Value       |
-| ----------- | ----------- |
-| `RUNNING`   | running     |
-| `COMPLETED` | completed   |
-| `FAILED`    | failed      |
-| `BLOCKED`   | blocked     |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"running"`
+- `"completed"`
+- `"failed"`
+- `"blocked"`

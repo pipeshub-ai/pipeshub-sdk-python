@@ -11,11 +11,20 @@ Machine-readable error code.
   response.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import InternalServerErrorErrorCode
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: InternalServerErrorErrorCode = "HTTP_INTERNAL_SERVER_ERROR"
+```
+
 
 ## Values
 
-| Name                         | Value                        |
-| ---------------------------- | ---------------------------- |
-| `HTTP_INTERNAL_SERVER_ERROR` | HTTP_INTERNAL_SERVER_ERROR   |
-| `INTERNAL_ERROR`             | INTERNAL_ERROR               |
-| `MIDDLEWARE_ERROR`           | MIDDLEWARE_ERROR             |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"HTTP_INTERNAL_SERVER_ERROR"`
+- `"INTERNAL_ERROR"`
+- `"MIDDLEWARE_ERROR"`

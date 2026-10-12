@@ -37,6 +37,12 @@ class PersistedSemanticSearchCitationMetadataTypedDict(TypedDict):
     preview_renderable: NotRequired[Nullable[bool]]
     hide_weburl: NotRequired[Nullable[bool]]
     connector: NotRequired[Nullable[str]]
+    connector_id: NotRequired[Nullable[str]]
+    r"""The connector instance the record came from. `connector` names only
+    the kind of source (for example `SLACK`), which several instances can
+    share. Absent on citations saved before this field was stored.
+
+    """
     record_type: NotRequired[Nullable[str]]
     block_num: NotRequired[Nullable[List[Nullable[float]]]]
     page_num: NotRequired[Nullable[List[Nullable[float]]]]
@@ -92,6 +98,15 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
 
     connector: OptionalNullable[str] = UNSET
 
+    connector_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="connectorId")
+    ] = UNSET
+    r"""The connector instance the record came from. `connector` names only
+    the kind of source (for example `SLACK`), which several instances can
+    share. Absent on citations saved before this field was stored.
+
+    """
+
     record_type: Annotated[
         OptionalNullable[str], pydantic.Field(alias="recordType")
     ] = UNSET
@@ -142,6 +157,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
                 "previewRenderable",
                 "hideWeburl",
                 "connector",
+                "connectorId",
                 "recordType",
                 "blockNum",
                 "pageNum",
@@ -163,6 +179,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
                 "previewRenderable",
                 "hideWeburl",
                 "connector",
+                "connectorId",
                 "recordType",
                 "blockNum",
                 "pageNum",
@@ -181,7 +198,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

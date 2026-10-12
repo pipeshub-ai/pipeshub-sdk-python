@@ -7,7 +7,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, Optional, Union
 from typing_extensions import deprecated
 
 
@@ -50,6 +50,8 @@ class KnowledgeBaseSDK(BaseSDK):
         The user creating the KB automatically becomes the OWNER with full administrative rights.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_name: Name of the knowledge base
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -87,6 +89,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request, False, False, "json", models.CreateKnowledgeBaseRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -107,9 +110,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -173,6 +178,8 @@ class KnowledgeBaseSDK(BaseSDK):
         The user creating the KB automatically becomes the OWNER with full administrative rights.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_name: Name of the knowledge base
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -210,6 +217,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request, False, False, "json", models.CreateKnowledgeBaseRequest
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -230,9 +238,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -303,6 +313,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Only `page`, `limit`, `search`, `permissions`, `sortBy`, and `sortOrder` are allowed; unknown query keys are rejected.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number (1-indexed). Omitted values default to 1.
         :param limit: Results per page (max 100). Omitted values default to 20.
         :param search: Search KB names (max 1000 chars). Rejected if it contains HTML/script tags,
@@ -351,6 +363,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -371,9 +384,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -446,6 +461,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Only `page`, `limit`, `search`, `permissions`, `sortBy`, and `sortOrder` are allowed; unknown query keys are rejected.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param page: Page number (1-indexed). Omitted values default to 1.
         :param limit: Results per page (max 100). Omitted values default to 20.
         :param search: Search KB names (max 1000 chars). Rejected if it contains HTML/script tags,
@@ -494,6 +511,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -514,9 +532,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -568,6 +588,8 @@ class KnowledgeBaseSDK(BaseSDK):
         User must have at least READER permission to view KB details.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID (non-empty string)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -602,6 +624,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -622,9 +645,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -672,6 +697,8 @@ class KnowledgeBaseSDK(BaseSDK):
         User must have at least READER permission to view KB details.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID (non-empty string)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -706,6 +733,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -726,9 +754,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -779,6 +809,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - XSS and format-specifier checks are applied to `kbName` in the gateway controller
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID (UUID)
         :param kb_name: New name for the knowledge base
         :param retries: Override the default retry configuration for this method
@@ -824,6 +856,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 models.UpdateKnowledgeBaseRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -844,9 +877,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -899,6 +934,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - XSS and format-specifier checks are applied to `kbName` in the gateway controller
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID (UUID)
         :param kb_name: New name for the knowledge base
         :param retries: Override the default retry configuration for this method
@@ -944,6 +981,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 models.UpdateKnowledgeBaseRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -964,9 +1002,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1021,6 +1061,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Warning:** This action is irreversible. Consider exporting data before deletion.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID (non-empty string)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1055,6 +1097,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1075,9 +1118,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1130,6 +1175,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Warning:** This action is irreversible. Consider exporting data before deletion.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID (non-empty string)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1164,6 +1211,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1184,9 +1232,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1235,6 +1285,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Use the optional `convertTo` parameter to request file format conversion (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
         :param retries: Override the default retry configuration for this method
@@ -1271,6 +1323,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1291,9 +1344,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1344,6 +1399,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Use the optional `convertTo` parameter to request file format conversion (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param convert_to: Optional format to convert the file to (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
         :param retries: Override the default retry configuration for this method
@@ -1380,6 +1437,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1400,9 +1458,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1466,6 +1526,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - Triggers re-indexing for content changes
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param record_name: New name for the record
         :param file: Replacement file content
@@ -1513,6 +1575,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1533,9 +1596,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1599,6 +1664,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - Triggers re-indexing for content changes
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param record_name: New name for the record
         :param file: Replacement file content
@@ -1646,6 +1713,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1666,9 +1734,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1722,6 +1792,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Warning:** This action is irreversible.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1756,6 +1828,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1776,9 +1849,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1832,6 +1907,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Warning:** This action is irreversible.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1866,6 +1943,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -1886,9 +1964,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -1945,6 +2025,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Use the `convertTo` parameter to convert between formats (e.g. DOCX to PDF).
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param convert_to: Target format for conversion
         :param retries: Override the default retry configuration for this method
@@ -1981,6 +2063,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2001,9 +2084,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "409", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -2084,6 +2169,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Use the `convertTo` parameter to convert between formats (e.g. DOCX to PDF).
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param record_id: Record ID
         :param convert_to: Target format for conversion
         :param retries: Override the default retry configuration for this method
@@ -2120,6 +2207,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2140,9 +2228,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "409", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -2229,6 +2319,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Response:** Returns `id` and `name` for the created folder.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param folder_name: Name of the folder
         :param folder_id: Parent folder ID. Omit to create at the knowledge base root.
@@ -2272,6 +2364,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body, False, False, "json", models.CreateFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2292,19 +2385,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2367,6 +2452,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Response:** Returns `id` and `name` for the created folder.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param folder_name: Name of the folder
         :param folder_id: Parent folder ID. Omit to create at the knowledge base root.
@@ -2410,6 +2497,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body, False, False, "json", models.CreateFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2430,19 +2518,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2488,6 +2568,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Required permission:** WRITER or higher
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id:
         :param folder_id:
         :param folder_name:
@@ -2531,6 +2613,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body, False, False, "json", models.UpdateFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2551,19 +2634,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2609,6 +2684,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Required permission:** WRITER or higher
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id:
         :param folder_id:
         :param folder_name:
@@ -2652,6 +2729,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body, False, False, "json", models.UpdateFolderRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2672,19 +2750,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2735,6 +2805,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Warning:** This action is irreversible.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id:
         :param folder_id:
         :param retries: Override the default retry configuration for this method
@@ -2771,6 +2843,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2791,9 +2864,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2841,6 +2916,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Warning:** This action is irreversible.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id:
         :param folder_id:
         :param retries: Override the default retry configuration for this method
@@ -2877,6 +2954,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -2897,9 +2975,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -2929,7 +3009,8 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         kb_id: str,
         files: Union[
-            List[models.UploadRecordsFile], List[models.UploadRecordsFileTypedDict]
+            Iterable[models.UploadRecordsFile],
+            Iterable[models.UploadRecordsFileTypedDict],
         ],
         folder_id: Optional[str] = None,
         files_metadata: Optional[str] = None,
@@ -2977,6 +3058,8 @@ class KnowledgeBaseSDK(BaseSDK):
         `UploadStreamSSEEvent` schema for the event/payload contract.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
         :param folder_id: Target folder ID. Omit to upload to the KB root.
@@ -3026,6 +3109,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body, False, False, "multipart", models.UploadRecordsRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3046,19 +3130,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "413",
-                "429",
-                "4XX",
-                "500",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -3067,12 +3143,21 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
-                lambda raw: utils.unmarshal_json(raw, models.UploadStreamSSEEvent),
+                lambda raw: unmarshal_json_response(
+                    models.UploadStreamSSEEvent, http_res, raw
+                ),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "413", "429"], "application/json"
         ):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
             http_res_text = utils.stream_to_text(http_res)
             response_data = unmarshal_json_response(
                 errors.ErrorResponseData, http_res, http_res_text
@@ -3083,7 +3168,7 @@ class KnowledgeBaseSDK(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3099,7 +3184,8 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         kb_id: str,
         files: Union[
-            List[models.UploadRecordsFile], List[models.UploadRecordsFileTypedDict]
+            Iterable[models.UploadRecordsFile],
+            Iterable[models.UploadRecordsFileTypedDict],
         ],
         folder_id: Optional[str] = None,
         files_metadata: Optional[str] = None,
@@ -3147,6 +3233,8 @@ class KnowledgeBaseSDK(BaseSDK):
         `UploadStreamSSEEvent` schema for the event/payload contract.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base ID
         :param files: Files to upload (max 1000)
         :param folder_id: Target folder ID. Omit to upload to the KB root.
@@ -3196,6 +3284,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body, False, False, "multipart", models.UploadRecordsRequestBody
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3216,19 +3305,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "413",
-                "429",
-                "4XX",
-                "500",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             stream=True,
             retry_config=retry_config,
         )
@@ -3237,12 +3318,21 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
-                lambda raw: utils.unmarshal_json(raw, models.UploadStreamSSEEvent),
+                lambda raw: unmarshal_json_response(
+                    models.UploadStreamSSEEvent, http_res, raw
+                ),
                 client_ref=self,
+                data_required=False,
             )
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "413", "429"], "application/json"
         ):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
             http_res_text = await utils.stream_to_text_async(http_res)
             response_data = unmarshal_json_response(
                 errors.ErrorResponseData, http_res, http_res_text
@@ -3253,7 +3343,7 @@ class KnowledgeBaseSDK(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3279,6 +3369,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Use case:** Call this before uploads to validate file sizes on the client
         side and display appropriate limits to users.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3308,6 +3400,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3328,9 +3421,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3369,6 +3464,8 @@ class KnowledgeBaseSDK(BaseSDK):
         side and display appropriate limits to users.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3397,6 +3494,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3417,9 +3515,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["401", "4XX", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3448,7 +3548,7 @@ class KnowledgeBaseSDK(BaseSDK):
         record_id: str,
         depth: Optional[int] = 0,
         force: Optional[bool] = False,
-        status_filters: Optional[List[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3471,6 +3571,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Optional `statusFilters` array limits reindex to records in matching indexing states
         (e.g. `FAILED`, `AUTO_INDEX_OFF`).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id:
         :param depth: Child traversal depth (`0` = record only; higher values include
@@ -3500,7 +3602,9 @@ class KnowledgeBaseSDK(BaseSDK):
             body=models.ReindexRecordRequestBody(
                 depth=depth,
                 force=force,
-                status_filters=status_filters,
+                status_filters=utils.unmarshal(
+                    status_filters, Optional[List[models.IndexingStatusFilter]]
+                ),
             ),
         )
 
@@ -3525,6 +3629,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 Optional[models.ReindexRecordRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3545,19 +3650,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3591,7 +3688,7 @@ class KnowledgeBaseSDK(BaseSDK):
         record_id: str,
         depth: Optional[int] = 0,
         force: Optional[bool] = False,
-        status_filters: Optional[List[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3614,6 +3711,8 @@ class KnowledgeBaseSDK(BaseSDK):
         Optional `statusFilters` array limits reindex to records in matching indexing states
         (e.g. `FAILED`, `AUTO_INDEX_OFF`).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id:
         :param depth: Child traversal depth (`0` = record only; higher values include
@@ -3643,7 +3742,9 @@ class KnowledgeBaseSDK(BaseSDK):
             body=models.ReindexRecordRequestBody(
                 depth=depth,
                 force=force,
-                status_filters=status_filters,
+                status_filters=utils.unmarshal(
+                    status_filters, Optional[List[models.IndexingStatusFilter]]
+                ),
             ),
         )
 
@@ -3668,6 +3769,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 Optional[models.ReindexRecordRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3688,19 +3790,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3734,7 +3828,7 @@ class KnowledgeBaseSDK(BaseSDK):
         record_group_id: str,
         depth: Optional[int] = 0,
         force: Optional[bool] = False,
-        status_filters: Optional[List[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3752,6 +3846,8 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Optional `statusFilters` limit which child records are queued (e.g. failed-only or manual-indexing).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_group_id: Folder ID or KB ID
         :param depth: Depth of records under the record group to include.
@@ -3778,7 +3874,9 @@ class KnowledgeBaseSDK(BaseSDK):
             body=models.ReindexRecordGroupRequestBody(
                 depth=depth,
                 force=force,
-                status_filters=status_filters,
+                status_filters=utils.unmarshal(
+                    status_filters, Optional[List[models.IndexingStatusFilter]]
+                ),
             ),
         )
 
@@ -3803,6 +3901,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 Optional[models.ReindexRecordGroupRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3823,19 +3922,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -3871,7 +3962,7 @@ class KnowledgeBaseSDK(BaseSDK):
         record_group_id: str,
         depth: Optional[int] = 0,
         force: Optional[bool] = False,
-        status_filters: Optional[List[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3889,6 +3980,8 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Optional `statusFilters` limit which child records are queued (e.g. failed-only or manual-indexing).
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_group_id: Folder ID or KB ID
         :param depth: Depth of records under the record group to include.
@@ -3915,7 +4008,9 @@ class KnowledgeBaseSDK(BaseSDK):
             body=models.ReindexRecordGroupRequestBody(
                 depth=depth,
                 force=force,
-                status_filters=status_filters,
+                status_filters=utils.unmarshal(
+                    status_filters, Optional[List[models.IndexingStatusFilter]]
+                ),
             ),
         )
 
@@ -3940,6 +4035,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 Optional[models.ReindexRecordGroupRequestBody],
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -3960,19 +4056,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=[
-                "400",
-                "401",
-                "403",
-                "404",
-                "409",
-                "4XX",
-                "500",
-                "503",
-                "5XX",
-            ],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -4022,6 +4110,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Required Permission:** OWNER or WRITER
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base UUID
         :param record_id: Record identifier (file or folder)
         :param new_parent_id: Target folder ID, or null to move the record to the knowledge base root
@@ -4069,6 +4159,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 models.KnowledgeBaseMoveRecordRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4089,9 +4180,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -4141,6 +4234,8 @@ class KnowledgeBaseSDK(BaseSDK):
         **Required Permission:** OWNER or WRITER
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param kb_id: Knowledge base UUID
         :param record_id: Record identifier (file or folder)
         :param new_parent_id: Target folder ID, or null to move the record to the knowledge base root
@@ -4188,6 +4283,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 models.KnowledgeBaseMoveRecordRequestBody,
             ),
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4208,9 +4304,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "503", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -4311,6 +4409,8 @@ class KnowledgeBaseSDK(BaseSDK):
         must be present; regular JWT bearer tokens pass through without scope
         enforcement.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -4433,6 +4533,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4453,9 +4554,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base", "Knowledge Hub"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -4573,6 +4676,8 @@ class KnowledgeBaseSDK(BaseSDK):
         enforcement.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
@@ -4694,6 +4799,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4714,9 +4820,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base", "Knowledge Hub"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -4829,6 +4937,8 @@ class KnowledgeBaseSDK(BaseSDK):
         must be present; regular JWT bearer tokens pass through without scope
         enforcement.
 
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param parent_type: Type of the parent node whose children to retrieve.
 
@@ -4963,6 +5073,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -4983,9 +5094,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base", "Knowledge Hub"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 
@@ -5106,6 +5219,8 @@ class KnowledgeBaseSDK(BaseSDK):
         enforcement.
 
 
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
         :param parent_type: Type of the parent node whose children to retrieve.
 
             Must be one of: `app`, `recordGroup`, `folder`, `record`.
@@ -5239,6 +5354,7 @@ class KnowledgeBaseSDK(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
             timeout_ms=timeout_ms,
         )
 
@@ -5259,9 +5375,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
+                tags=["Knowledge Base", "Knowledge Hub"],
+                extensions=None,
             ),
             request=req,
-            error_status_codes=["400", "401", "403", "404", "4XX", "500", "5XX"],
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
             retry_config=retry_config,
         )
 

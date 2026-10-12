@@ -4,11 +4,16 @@ Optional execution mode for non-stream consumers of this shared
 request schema.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ConversationMessageStreamRequestChatMode
+value: ConversationMessageStreamRequestChatMode = "agent"
+```
+
 
 ## Values
 
-| Name              | Value             |
-| ----------------- | ----------------- |
-| `AGENT`           | agent             |
-| `INTERNAL_SEARCH` | internal_search   |
-| `WEB_SEARCH`      | web_search        |
+- `"agent"`
+- `"internal_search"`
+- `"web_search"`

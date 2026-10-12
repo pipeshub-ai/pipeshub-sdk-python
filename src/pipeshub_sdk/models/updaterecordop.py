@@ -18,7 +18,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class UpdateRecordFileTypedDict(TypedDict):
     file_name: str
-    content: Union[bytes, IO[bytes], io.BufferedReader]
+    content: Union[bytes, IO[bytes], io.IOBase]
     content_type: NotRequired[str]
 
 
@@ -28,7 +28,7 @@ class UpdateRecordFile(BaseModel):
     ]
 
     content: Annotated[
-        Union[bytes, IO[bytes], io.BufferedReader],
+        Union[bytes, IO[bytes], io.IOBase],
         pydantic.Field(alias=""),
         FieldMetadata(multipart=MultipartFormMetadata(content=True)),
     ]
@@ -47,7 +47,7 @@ class UpdateRecordFile(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -87,7 +87,7 @@ class UpdateRecordRequestBody(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -125,7 +125,7 @@ class UpdateRecordRequest(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -206,7 +206,7 @@ class UpdateRecordResponse(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:

@@ -1,0 +1,9 @@
+# CancelConversationStreamRequest
+
+
+## Fields
+
+| Field                                                                                          | Type                                                                                           | Required                                                                                       | Description                                                                                    |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                              | *str*                                                                                          | :heavy_check_mark:                                                                             | N/A                                                                                            |
+| `body`                                                                                         | [models.CancelConversationStreamRequestBody](../models/cancelconversationstreamrequestbody.md) | :heavy_check_mark:                                                                             | N/A                                                                                            |

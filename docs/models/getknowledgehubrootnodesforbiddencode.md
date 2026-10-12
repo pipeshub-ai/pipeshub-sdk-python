@@ -1,8 +1,13 @@
 # GetKnowledgeHubRootNodesForbiddenCode
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetKnowledgeHubRootNodesForbiddenCode
+value: GetKnowledgeHubRootNodesForbiddenCode = "HTTP_FORBIDDEN"
+```
+
 
 ## Values
 
-| Name             | Value            |
-| ---------------- | ---------------- |
-| `HTTP_FORBIDDEN` | HTTP_FORBIDDEN   |
+- `"HTTP_FORBIDDEN"`

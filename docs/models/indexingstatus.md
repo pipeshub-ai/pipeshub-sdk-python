@@ -13,18 +13,27 @@ Current indexing/processing status:
 - ENABLE_MULTIMODAL_MODELS: Requires multimodal AI models
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import IndexingStatus
+
+# Open enum: unrecognized values are captured as UnrecognizedStr
+value: IndexingStatus = "NOT_STARTED"
+```
+
 
 ## Values
 
-| Name                       | Value                      |
-| -------------------------- | -------------------------- |
-| `NOT_STARTED`              | NOT_STARTED                |
-| `PAUSED`                   | PAUSED                     |
-| `IN_PROGRESS`              | IN_PROGRESS                |
-| `COMPLETED`                | COMPLETED                  |
-| `FAILED`                   | FAILED                     |
-| `FILE_TYPE_NOT_SUPPORTED`  | FILE_TYPE_NOT_SUPPORTED    |
-| `AUTO_INDEX_OFF`           | AUTO_INDEX_OFF             |
-| `EMPTY`                    | EMPTY                      |
-| `ENABLE_MULTIMODAL_MODELS` | ENABLE_MULTIMODAL_MODELS   |
-| `QUEUED`                   | QUEUED                     |
+This is an open enum. Unrecognized values will not fail type checks.
+
+- `"NOT_STARTED"`
+- `"PAUSED"`
+- `"IN_PROGRESS"`
+- `"COMPLETED"`
+- `"FAILED"`
+- `"FILE_TYPE_NOT_SUPPORTED"`
+- `"AUTO_INDEX_OFF"`
+- `"EMPTY"`
+- `"ENABLE_MULTIMODAL_MODELS"`
+- `"QUEUED"`

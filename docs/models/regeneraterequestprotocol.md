@@ -6,9 +6,14 @@ uses the AG-UI vocabulary. Kept in the schema for backward
 compatibility with callers that already send it.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import RegenerateRequestProtocol
+value: RegenerateRequestProtocol = "agui"
+```
+
 
 ## Values
 
-| Name   | Value  |
-| ------ | ------ |
-| `AGUI` | agui   |
+- `"agui"`

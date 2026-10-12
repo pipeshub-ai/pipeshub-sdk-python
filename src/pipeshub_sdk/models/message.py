@@ -10,6 +10,10 @@ from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from .messagepart import MessagePart, MessagePartTypedDict
 from .messagereasoningturn import MessageReasoningTurn, MessageReasoningTurnTypedDict
 from .messagetoolcall import MessageToolCall, MessageToolCallTypedDict
+from .populatedcitationreference import (
+    PopulatedCitationReference,
+    PopulatedCitationReferenceTypedDict,
+)
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -22,10 +26,10 @@ from pipeshub_sdk.types import (
 import pydantic
 from pydantic import model_serializer
 from typing import Dict, List, Literal, Optional, Union
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
-MessageMessageType = Union[
+MessageMessageType1 = Union[
     Literal[
         "user_query",
         "bot_response",
@@ -56,6 +60,17 @@ MessageContentFormat = Union[
     UnrecognizedStr,
 ]
 r"""Format of the content for rendering"""
+
+
+Citation1TypedDict = TypeAliasType(
+    "Citation1TypedDict",
+    Union[CitationReferenceTypedDict, PopulatedCitationReferenceTypedDict],
+)
+
+
+Citation1 = TypeAliasType(
+    "Citation1", Union[CitationReference, PopulatedCitationReference]
+)
 
 
 class MessageMetadataTypedDict(TypedDict):
@@ -96,7 +111,7 @@ class MessageMetadata(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -159,7 +174,7 @@ class MessageReferenceDatum(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
@@ -176,7 +191,7 @@ class MessageTypedDict(TypedDict):
 
     id: NotRequired[str]
     r"""Unique message identifier"""
-    message_type: NotRequired[MessageMessageType]
+    message_type: NotRequired[MessageMessageType1]
     r"""Type of message:
     - `user_query` - User's question or input
     - `bot_response` - AI-generated response
@@ -190,8 +205,12 @@ class MessageTypedDict(TypedDict):
     r"""The message text content"""
     content_format: NotRequired[MessageContentFormat]
     r"""Format of the content for rendering"""
-    citations: NotRequired[List[CitationReferenceTypedDict]]
-    r"""References to source documents used in the response"""
+    citations: NotRequired[List[Citation1TypedDict]]
+    r"""References to source documents used in the response. Routes that
+    return the saved conversation after a turn (create, add message)
+    populate each item to `{ citationId, citationData }`.
+
+    """
     confidence: NotRequired[Nullable[str]]
     r"""AI confidence in the answer. Present only on `bot_response` messages,
     and only when the model emitted a trailing confidence block.
@@ -242,7 +261,7 @@ class Message(BaseModel):
     r"""Unique message identifier"""
 
     message_type: Annotated[
-        Optional[MessageMessageType], pydantic.Field(alias="messageType")
+        Optional[MessageMessageType1], pydantic.Field(alias="messageType")
     ] = None
     r"""Type of message:
     - `user_query` - User's question or input
@@ -262,8 +281,12 @@ class Message(BaseModel):
     ] = "MARKDOWN"
     r"""Format of the content for rendering"""
 
-    citations: Optional[List[CitationReference]] = None
-    r"""References to source documents used in the response"""
+    citations: Optional[List[Citation1]] = None
+    r"""References to source documents used in the response. Routes that
+    return the saved conversation after a turn (create, add message)
+    populate each item to `{ citationId, citationData }`.
+
+    """
 
     confidence: OptionalNullable[str] = UNSET
     r"""AI confidence in the answer. Present only on `bot_response` messages,
@@ -354,7 +377,7 @@ class Message(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

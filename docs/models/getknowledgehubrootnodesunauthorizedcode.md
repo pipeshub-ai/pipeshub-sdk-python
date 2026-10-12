@@ -1,8 +1,13 @@
 # GetKnowledgeHubRootNodesUnauthorizedCode
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetKnowledgeHubRootNodesUnauthorizedCode
+value: GetKnowledgeHubRootNodesUnauthorizedCode = "HTTP_UNAUTHORIZED"
+```
+
 
 ## Values
 
-| Name                | Value               |
-| ------------------- | ------------------- |
-| `HTTP_UNAUTHORIZED` | HTTP_UNAUTHORIZED   |
+- `"HTTP_UNAUTHORIZED"`

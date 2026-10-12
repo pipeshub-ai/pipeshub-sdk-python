@@ -5,9 +5,14 @@ is emitted when the addressed resource does
 not exist.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import GetSearchByIDNotFoundCode
+value: GetSearchByIDNotFoundCode = "HTTP_NOT_FOUND"
+```
+
 
 ## Values
 
-| Name             | Value            |
-| ---------------- | ---------------- |
-| `HTTP_NOT_FOUND` | HTTP_NOT_FOUND   |
+- `"HTTP_NOT_FOUND"`

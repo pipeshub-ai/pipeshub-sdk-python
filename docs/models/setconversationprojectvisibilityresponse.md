@@ -1,0 +1,11 @@
+# SetConversationProjectVisibilityResponse
+
+Conversation's project visibility updated
+
+
+## Fields
+
+| Field                                                                                                                      | Type                                                                                                                       | Required                                                                                                                   | Description                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `conversation_id`                                                                                                          | *str*                                                                                                                      | :heavy_check_mark:                                                                                                         | N/A                                                                                                                        |
+| `project_visibility`                                                                                                       | [models.SetConversationProjectVisibilityProjectVisibility](../models/setconversationprojectvisibilityprojectvisibility.md) | :heavy_check_mark:                                                                                                         | N/A                                                                                                                        |

@@ -7,7 +7,7 @@ Response returned by DELETE /knowledgeBase/record/{recordId}.
 
 | Field                   | Type                    | Required                | Description             |
 | ----------------------- | ----------------------- | ----------------------- | ----------------------- |
-| `success`               | *bool*                  | :heavy_check_mark:      | N/A                     |
+| `success`               | *Literal[True]*         | :heavy_check_mark:      | N/A                     |
 | `message`               | *str*                   | :heavy_check_mark:      | N/A                     |
 | `record_id`             | *str*                   | :heavy_check_mark:      | N/A                     |
 | `connector`             | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |

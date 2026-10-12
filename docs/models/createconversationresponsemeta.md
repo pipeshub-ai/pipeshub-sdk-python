@@ -1,0 +1,10 @@
+# CreateConversationResponseMeta
+
+
+## Fields
+
+| Field                                                                                              | Type                                                                                               | Required                                                                                           | Description                                                                                        |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `request_id`                                                                                       | *Optional[str]*                                                                                    | :heavy_minus_sign:                                                                                 | Request correlation id. Omitted when upstream middleware did<br/>not set a request id on the context.<br/> |
+| `timestamp`                                                                                        | [date](https://docs.python.org/3/library/datetime.html#date-objects)                               | :heavy_check_mark:                                                                                 | Server timestamp when the response was sent.                                                       |
+| `duration`                                                                                         | *int*                                                                                              | :heavy_check_mark:                                                                                 | Total handler duration in milliseconds.                                                            |

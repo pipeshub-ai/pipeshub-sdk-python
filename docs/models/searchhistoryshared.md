@@ -6,12 +6,17 @@ Filter results by their shared status. Accepted values are
 case-insensitive and surrounding whitespace is trimmed.
 
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import SearchHistoryShared
+value: SearchHistoryShared = "true"
+```
+
 
 ## Values
 
-| Name    | Value   |
-| ------- | ------- |
-| `TRUE`  | true    |
-| `FALSE` | false   |
-| `ONE`   | 1       |
-| `ZERO`  | 0       |
+- `"true"`
+- `"false"`
+- `"1"`
+- `"0"`

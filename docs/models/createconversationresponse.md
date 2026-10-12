@@ -1,0 +1,14 @@
+# CreateConversationResponse
+
+Envelope returned by `POST /conversations/create`. Contains the
+persisted conversation (including the initial user message and the AI
+response) plus request metadata.
+
+
+
+## Fields
+
+| Field                                                                                                                                                                    | Type                                                                                                                                                                     | Required                                                                                                                                                                 | Description                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `conversation`                                                                                                                                                           | [models.Conversation](../models/conversation.md)                                                                                                                         | :heavy_check_mark:                                                                                                                                                       | A conversation represents a chat session between a user and the AI.<br/>Conversations maintain context across multiple messages and can be<br/>shared, archived, and organized.<br/> |
+| `meta`                                                                                                                                                                   | [models.CreateConversationResponseMeta](../models/createconversationresponsemeta.md)                                                                                     | :heavy_check_mark:                                                                                                                                                       | N/A                                                                                                                                                                      |

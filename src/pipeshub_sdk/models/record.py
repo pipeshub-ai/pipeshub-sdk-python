@@ -139,7 +139,7 @@ class RecordFileRecord(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
@@ -249,6 +249,8 @@ class RecordTypedDict(TypedDict):
     r"""Source last modified timestamp (from connector)"""
     processing_started_at: NotRequired[Nullable[int]]
     r"""Epoch ms when parse/index processing began for the current attempt; null when idle"""
+    queued_at_timestamp: NotRequired[Nullable[int]]
+    r"""Epoch ms the platform last queued this record for indexing; absent until first queued. Platform-owned, unlike updatedAtTimestamp"""
     parsing_status: NotRequired[ParsingStatus]
     r"""Parse-phase status (ahead of indexing/extraction):
     - NOT_STARTED: Awaiting parsing
@@ -420,6 +422,11 @@ class Record(BaseModel):
     ] = UNSET
     r"""Epoch ms when parse/index processing began for the current attempt; null when idle"""
 
+    queued_at_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="queuedAtTimestamp")
+    ] = UNSET
+    r"""Epoch ms the platform last queued this record for indexing; absent until first queued. Platform-owned, unlike updatedAtTimestamp"""
+
     parsing_status: Annotated[
         Optional[ParsingStatus], pydantic.Field(alias="parsingStatus")
     ] = None
@@ -509,6 +516,7 @@ class Record(BaseModel):
                 "sourceCreatedAtTimestamp",
                 "sourceLastModifiedTimestamp",
                 "processingStartedAt",
+                "queuedAtTimestamp",
                 "parsingStatus",
                 "indexingStatus",
                 "isDeleted",
@@ -528,6 +536,7 @@ class Record(BaseModel):
             [
                 "folderId",
                 "processingStartedAt",
+                "queuedAtTimestamp",
                 "fileRecord",
                 "mailRecord",
                 "ticketRecord",
@@ -538,7 +547,7 @@ class Record(BaseModel):
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
-            val = serialized.get(k)
+            val = serialized.get(k, serialized.get(n))
             is_nullable_and_explicitly_set = (
                 k in nullable_fields
                 and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member

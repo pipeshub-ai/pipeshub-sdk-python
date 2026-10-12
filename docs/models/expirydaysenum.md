@@ -1,10 +1,15 @@
 # ExpiryDaysEnum
 
+## Example Usage
+
+```python
+from pipeshub_sdk.models import ExpiryDaysEnum
+value: ExpiryDaysEnum = 30
+```
+
 
 ## Values
 
-| Name                           | Value                          |
-| ------------------------------ | ------------------------------ |
-| `THIRTY`                       | 30                             |
-| `NINETY`                       | 90                             |
-| `THREE_HUNDRED_AND_SIXTY_FIVE` | 365                            |
+- `30`
+- `90`
+- `365`
