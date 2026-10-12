@@ -1,6 +1,8 @@
 # pipeshub-sdk
 pipeshub-sdk is the official python client library for integrating Pipeshub into your product and internal tools
 
+**Compatibility:** SDK version 1.7.0 is compatible with PipesHub [v0.9.1](https://github.com/pipeshub-ai/pipeshub-ai/releases/tag/v0.9.1).
+
 <!-- Start Summary [summary] -->
 ## Summary
 
