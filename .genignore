@@ -21,3 +21,7 @@
 /docs/models/agentregeneratesseevent.md
 /docs/models/conversationstreamsseevent.md
 /docs/models/conversationmessagestreamsseevent.md
+
+# Agent instructions, hand-maintained.
+/AGENTS.md
+/CLAUDE.md
