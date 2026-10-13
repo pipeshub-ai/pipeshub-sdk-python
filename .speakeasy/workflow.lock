@@ -21,7 +21,7 @@ workflow:
     sources:
         PipesHub API:
             inputs:
-                - location: /Users/anshika/work/PipesHub/pipeshub-sdk-python/pipeshub-openapi.yaml
+                - location: ../pipeshub-ai/backend/nodejs/apps/src/modules/api-docs/pipeshub-openapi.yaml
             overlays:
                 - location: .speakeasy/speakeasy-modifications-overlay.yaml
             output: .speakeasy/out.openapi.yaml
