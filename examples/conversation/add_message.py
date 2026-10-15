@@ -1,54 +1,33 @@
-"""Add a message to a conversation and wait for the complete answer (non-streaming)."""
+"""Add a follow-up message to a conversation and wait for the answer (non-streaming).
 
-import asyncio
+Env: PIPESHUB_CLIENT_ID, PIPESHUB_CLIENT_SECRET, PIPESHUB_BASE_URL, PIPESHUB_CONVERSATION_ID
+(optional PIPESHUB_TOKEN_URL).
+"""
+
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-from pipeshub_sdk import Pipeshub as SDK, models
+from pipeshub_sdk import Pipeshub, models
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 server_url = f'{os.environ["PIPESHUB_BASE_URL"].rstrip("/")}/api/v1'
-# OAuth2 client credentials. The SDK fetches the access token itself.
-security = models.Security(oauth2=models.SchemeOauth2(
-    client_id=os.environ["PIPESHUB_CLIENT_ID"],
-    client_secret=os.environ["PIPESHUB_CLIENT_SECRET"],
-    token_url=os.environ.get("PIPESHUB_TOKEN_URL") or f"{server_url}/oauth2/token",
-))
+conversation_id = os.environ["PIPESHUB_CONVERSATION_ID"]
 
-
-async def main() -> None:
-    async with SDK(
-        server_url=server_url,
-        security=security,
-        timeout_ms=300_000,
-    ) as client:
-        created = await client.conversations.create_conversation_async(
-            query="Who moved the cheese?",
-            chat_mode="internal_search",
-        )
-        conv_id = created.result.conversation.id
-        assert conv_id is not None
-        try:
-            added = await client.conversations.add_message_async(
-                conversation_id=conv_id,
-                query="Summarize that in one sentence.",
-                chat_mode="internal_search",
-            )
-            conversation = added.result.conversation
-            print(f"status: {conversation.status}")
-            answer = next(
-                message for message in reversed(conversation.messages or [])
-                if message.message_type == "bot_response"
-            )
-            print(answer.content)
-        finally:
-            await client.conversations.delete_conversation_by_id_async(
-                conversation_id=conv_id,
-            )
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+with Pipeshub(
+    server_url=server_url,
+    timeout_ms=300_000,
+    security=models.Security(oauth2=models.SchemeOauth2(
+        client_id=os.environ["PIPESHUB_CLIENT_ID"],
+        client_secret=os.environ["PIPESHUB_CLIENT_SECRET"],
+        token_url=os.environ.get("PIPESHUB_TOKEN_URL") or f"{server_url}/oauth2/token",
+    )),
+) as pipeshub:
+    res = pipeshub.conversations.add_message(
+        conversation_id=conversation_id,
+        query="Summarize that in one sentence.",
+        chat_mode="internal_search",
+    )
+    print(res.result.conversation.status)
