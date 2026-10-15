@@ -1,0 +1,10 @@
+# ByRecordType
+
+
+## Fields
+
+| Field                                                                              | Type                                                                               | Required                                                                           | Description                                                                        | Example                                                                            |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `record_type`                                                                      | *str*                                                                              | :heavy_check_mark:                                                                 | N/A                                                                                | FILE                                                                               |
+| `total`                                                                            | *int*                                                                              | :heavy_check_mark:                                                                 | N/A                                                                                |                                                                                    |
+| `indexing_status`                                                                  | [models.ConnectorIndexingStatusCounts](../models/connectorindexingstatuscounts.md) | :heavy_check_mark:                                                                 | Number of records in each indexing status.                                         |                                                                                    |

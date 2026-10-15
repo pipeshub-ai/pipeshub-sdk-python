@@ -19,6 +19,19 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
+AgentModelDefaultReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""The model's own reasoning effort, read from its stored configuration. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`. Omitted when nothing valid is stored; `none` is a legacy value that runs as `low`."""
+
+
 class Model1TypedDict(TypedDict):
     model_key: NotRequired[str]
     model_name: NotRequired[str]
@@ -32,6 +45,8 @@ class Model1TypedDict(TypedDict):
 
     """
     model_friendly_name: NotRequired[str]
+    default_reasoning_effort: NotRequired[AgentModelDefaultReasoningEffort]
+    r"""The model's own reasoning effort, read from its stored configuration. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`. Omitted when nothing valid is stored; `none` is a legacy value that runs as `low`."""
 
 
 class Model1(BaseModel):
@@ -59,6 +74,12 @@ class Model1(BaseModel):
         Optional[str], pydantic.Field(alias="modelFriendlyName")
     ] = None
 
+    default_reasoning_effort: Annotated[
+        Optional[AgentModelDefaultReasoningEffort],
+        pydantic.Field(alias="defaultReasoningEffort"),
+    ] = None
+    r"""The model's own reasoning effort, read from its stored configuration. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`. Omitted when nothing valid is stored; `none` is a legacy value that runs as `low`."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -71,6 +92,7 @@ class Model1(BaseModel):
                 "isDefault",
                 "modelType",
                 "modelFriendlyName",
+                "defaultReasoningEffort",
             ]
         )
         serialized = handler(self)

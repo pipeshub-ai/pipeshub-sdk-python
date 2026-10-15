@@ -477,6 +477,14 @@ class PermissionsTypedDict(TypedDict):
     can_edit: bool
     can_delete: bool
     can_manage_permissions: bool
+    collection_role: NotRequired[Nullable[str]]
+    r"""The caller's own role on the collection (knowledge base) this node is in, as
+    restore and `GET /knowledgeBase/{kbId}/trash` check it: OWNER, WRITER,
+    FILEORGANIZER, COMMENTER or READER. Unlike `role`, which ranks record
+    permissions inside a folder, it is the same at every level of the collection.
+    Null outside a collection.
+
+    """
 
 
 class Permissions(BaseModel):
@@ -496,6 +504,42 @@ class Permissions(BaseModel):
         bool, pydantic.Field(alias="canManagePermissions")
     ]
 
+    collection_role: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="collectionRole")
+    ] = UNSET
+    r"""The caller's own role on the collection (knowledge base) this node is in, as
+    restore and `GET /knowledgeBase/{kbId}/trash` check it: OWNER, WRITER,
+    FILEORGANIZER, COMMENTER or READER. Unlike `role`, which ranks record
+    permissions inside a folder, it is the same at every level of the collection.
+    Null outside a collection.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["collectionRole"])
+        nullable_fields = set(["collectionRole"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
 
 class KnowledgeHubNodesResponseTypedDict(TypedDict):
     r"""Response body for the Knowledge Hub nodes API. The deployed service
@@ -505,6 +549,8 @@ class KnowledgeHubNodesResponseTypedDict(TypedDict):
 
     """
 
+    max_folder_depth: int
+    r"""Deepest a collection folder may be nested; a folder directly in the collection is depth 1."""
     error: Nullable[str]
     r"""Always `null` on HTTP 200."""
     id: Nullable[str]
@@ -534,6 +580,9 @@ class KnowledgeHubNodesResponse(BaseModel):
     omitted properties).
 
     """
+
+    max_folder_depth: Annotated[int, pydantic.Field(alias="maxFolderDepth")]
+    r"""Deepest a collection folder may be nested; a folder directly in the collection is depth 1."""
 
     error: Nullable[str]
     r"""Always `null` on HTTP 200."""

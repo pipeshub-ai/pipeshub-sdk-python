@@ -238,6 +238,12 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     connectors that do not set it.
 
     """
+    uploaded_by: NotRequired[Nullable[str]]
+    r"""User id of whoever uploaded the file to the knowledge base.
+    Absent for connector records and for files uploaded before the
+    field existed.
+
+    """
     is_latest_version: NotRequired[Nullable[bool]]
     last_sync_timestamp: NotRequired[Nullable[int]]
     last_index_timestamp: NotRequired[int]
@@ -396,6 +402,15 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     """
 
+    uploaded_by: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="uploadedBy")
+    ] = UNSET
+    r"""User id of whoever uploaded the file to the knowledge base.
+    Absent for connector records and for files uploaded before the
+    field existed.
+
+    """
+
     is_latest_version: Annotated[
         OptionalNullable[bool], pydantic.Field(alias="isLatestVersion")
     ] = UNSET
@@ -487,6 +502,7 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalRevisionId",
                 "recordGroupId",
                 "rootRecordGroupId",
+                "uploadedBy",
                 "isLatestVersion",
                 "lastSyncTimestamp",
                 "lastIndexTimestamp",
@@ -518,6 +534,7 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalRevisionId",
                 "recordGroupId",
                 "rootRecordGroupId",
+                "uploadedBy",
                 "isLatestVersion",
                 "lastSyncTimestamp",
                 "processingStartedAt",

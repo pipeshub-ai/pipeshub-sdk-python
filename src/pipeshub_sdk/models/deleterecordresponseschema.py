@@ -12,7 +12,7 @@ from pipeshub_sdk.utils import validate_const
 import pydantic
 from pydantic import model_serializer
 from pydantic.functional_validators import AfterValidator
-from typing import Literal
+from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -24,6 +24,14 @@ class DeleteRecordResponseSchemaTypedDict(TypedDict):
     success: Literal[True]
     connector: NotRequired[Nullable[str]]
     timestamp: NotRequired[Nullable[int]]
+    soft_deleted: NotRequired[bool]
+    r"""True when the record went to the trash instead of being removed"""
+    batch_id: NotRequired[Nullable[str]]
+    r"""The delete batch; restoring any record in it restores all of it"""
+    vector_cleanup_pending: NotRequired[bool]
+    r"""The record is deleted, but removing its embeddings is still owed"""
+    vector_cleanup_failed_record_ids: NotRequired[List[str]]
+    vector_cleanup_failed_virtual_record_ids: NotRequired[List[str]]
 
 
 class DeleteRecordResponseSchema(BaseModel):
@@ -42,10 +50,39 @@ class DeleteRecordResponseSchema(BaseModel):
 
     timestamp: OptionalNullable[int] = UNSET
 
+    soft_deleted: Annotated[Optional[bool], pydantic.Field(alias="softDeleted")] = None
+    r"""True when the record went to the trash instead of being removed"""
+
+    batch_id: Annotated[OptionalNullable[str], pydantic.Field(alias="batchId")] = UNSET
+    r"""The delete batch; restoring any record in it restores all of it"""
+
+    vector_cleanup_pending: Annotated[
+        Optional[bool], pydantic.Field(alias="vectorCleanupPending")
+    ] = None
+    r"""The record is deleted, but removing its embeddings is still owed"""
+
+    vector_cleanup_failed_record_ids: Annotated[
+        Optional[List[str]], pydantic.Field(alias="vectorCleanupFailedRecordIds")
+    ] = None
+
+    vector_cleanup_failed_virtual_record_ids: Annotated[
+        Optional[List[str]], pydantic.Field(alias="vectorCleanupFailedVirtualRecordIds")
+    ] = None
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["connector", "timestamp"])
-        nullable_fields = set(["connector", "timestamp"])
+        optional_fields = set(
+            [
+                "connector",
+                "timestamp",
+                "softDeleted",
+                "batchId",
+                "vectorCleanupPending",
+                "vectorCleanupFailedRecordIds",
+                "vectorCleanupFailedVirtualRecordIds",
+            ]
+        )
+        nullable_fields = set(["connector", "timestamp", "batchId"])
         serialized = handler(self)
         m = {}
 

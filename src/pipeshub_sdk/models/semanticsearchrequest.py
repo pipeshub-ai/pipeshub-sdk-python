@@ -3,9 +3,10 @@
 from __future__ import annotations
 from .filters import Filters, FiltersTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
 from typing import Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class SemanticSearchRequestTypedDict(TypedDict):
@@ -40,6 +41,28 @@ class SemanticSearchRequestTypedDict(TypedDict):
     """
     limit: NotRequired[int]
     r"""Maximum number of results to return"""
+    created_after: NotRequired[str]
+    r"""Only records the source created on or after this date. `YYYY-MM-DD` (the whole
+    day, UTC) or an ISO 8601 datetime with a timezone offset. A date that is not
+    one of these, or in the future, is a `400` that says why.
+
+    """
+    created_before: NotRequired[str]
+    r"""Only records the source created on or before this date. A `YYYY-MM-DD` value
+    includes that whole day.
+
+    """
+    modified_after: NotRequired[str]
+    r"""Only records last changed in the source on or after this date. Same format as
+    `createdAfter`.
+
+    """
+    modified_before: NotRequired[str]
+    r"""Only records last changed in the source on or before this date. Same format as
+    `createdBefore`. Records with no source date are left out whenever a bound on
+    that date is set.
+
+    """
 
 
 class SemanticSearchRequest(BaseModel):
@@ -77,9 +100,50 @@ class SemanticSearchRequest(BaseModel):
     limit: Optional[int] = 10
     r"""Maximum number of results to return"""
 
+    created_after: Annotated[Optional[str], pydantic.Field(alias="createdAfter")] = None
+    r"""Only records the source created on or after this date. `YYYY-MM-DD` (the whole
+    day, UTC) or an ISO 8601 datetime with a timezone offset. A date that is not
+    one of these, or in the future, is a `400` that says why.
+
+    """
+
+    created_before: Annotated[Optional[str], pydantic.Field(alias="createdBefore")] = (
+        None
+    )
+    r"""Only records the source created on or before this date. A `YYYY-MM-DD` value
+    includes that whole day.
+
+    """
+
+    modified_after: Annotated[Optional[str], pydantic.Field(alias="modifiedAfter")] = (
+        None
+    )
+    r"""Only records last changed in the source on or after this date. Same format as
+    `createdAfter`.
+
+    """
+
+    modified_before: Annotated[
+        Optional[str], pydantic.Field(alias="modifiedBefore")
+    ] = None
+    r"""Only records last changed in the source on or before this date. Same format as
+    `createdBefore`. Records with no source date are left out whenever a bound on
+    that date is set.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["filters", "limit"])
+        optional_fields = set(
+            [
+                "filters",
+                "limit",
+                "createdAfter",
+                "createdBefore",
+                "modifiedAfter",
+                "modifiedBefore",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
@@ -92,3 +156,9 @@ class SemanticSearchRequest(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    SemanticSearchRequest.model_rebuild()
+except NameError:
+    pass

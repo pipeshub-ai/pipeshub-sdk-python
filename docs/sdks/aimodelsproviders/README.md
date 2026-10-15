@@ -22,6 +22,10 @@ receive a flat, enumerable collection.
   `isDefault: true`; all subsequent models from the same entry get `false`.
 - `modelFriendlyName` is included **only** when the provider entry contains
   exactly one model name (not a comma-separated list).
+- `defaultReasoningEffort` is included on every model of an entry whose
+  `configuration.defaultReasoningEffort` (or, when that is unset, a
+  top-level `defaultReasoningEffort`) holds a valid effort. It is left out
+  when no default is stored.
 - When no providers of the requested type are configured the endpoint still
   returns HTTP **200** with an empty `models` array — this is **not** an error.
 

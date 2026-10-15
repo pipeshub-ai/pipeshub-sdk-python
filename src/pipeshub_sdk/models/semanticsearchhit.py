@@ -41,6 +41,13 @@ class SemanticSearchHitTypedDict(TypedDict):
 
     """
     block_index: NotRequired[Nullable[int]]
+    distance_from_match: NotRequired[int]
+    r"""Set on a passage returned because a match inside its section (a thread, a list,
+    a table) brought the whole section back: how many blocks it sits from the passage
+    the search matched nearest to it. `0` is a matched passage. Absent when the hit matched
+    directly or the section matched as a whole.
+
+    """
 
 
 class SemanticSearchHit(BaseModel):
@@ -78,6 +85,16 @@ class SemanticSearchHit(BaseModel):
 
     block_index: OptionalNullable[int] = UNSET
 
+    distance_from_match: Annotated[
+        Optional[int], pydantic.Field(alias="distanceFromMatch")
+    ] = None
+    r"""Set on a passage returned because a match inside its section (a thread, a list,
+    a table) brought the whole section back: how many blocks it sits from the passage
+    the search matched nearest to it. `0` is a matched passage. Absent when the hit matched
+    directly or the section matched as a whole.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -90,6 +107,7 @@ class SemanticSearchHit(BaseModel):
                 "virtual_record_id",
                 "block_type",
                 "block_index",
+                "distanceFromMatch",
             ]
         )
         nullable_fields = set(
