@@ -242,8 +242,6 @@ with Pipeshub() as pipeshub:
 * [archive_agent_conversation](docs/sdks/agents/README.md#archive_agent_conversation) - Archive an agent conversation
 * [unarchive_agent_conversation](docs/sdks/agents/README.md#unarchive_agent_conversation) - Unarchive an agent conversation
 * [update_agent_conversation_title](docs/sdks/agents/README.md#update_agent_conversation_title) - Update agent conversation title
-* [set_agent_conversation_project](docs/sdks/agents/README.md#set_agent_conversation_project) - Link or unlink an agent conversation to a project
-* [set_agent_conversation_project_visibility](docs/sdks/agents/README.md#set_agent_conversation_project_visibility) - Override an agent conversation's project visibility
 * [delete_agent_conversation_by_id](docs/sdks/agents/README.md#delete_agent_conversation_by_id) - Delete an agent conversation
 * [get_agent_conversation_by_id](docs/sdks/agents/README.md#get_agent_conversation_by_id) - Get agent conversation by ID
 * [list_agent_conversations](docs/sdks/agents/README.md#list_agent_conversations) - List agent conversations
@@ -258,6 +256,45 @@ with Pipeshub() as pipeshub:
 * [get_record_content](docs/sdks/connector/README.md#get_record_content) - Get a record's full parsed content and metadata
 * [navigate_knowledge_graph](docs/sdks/connector/README.md#navigate_knowledge_graph) - Browse the knowledge graph from a node
 * [lookup_record_by_identifier](docs/sdks/connector/README.md#lookup_record_by_identifier) - Resolve a URL, issue key or external ID to a Record ID
+
+### [ConnectorConfiguration](docs/sdks/connectorconfiguration/README.md)
+
+* [get_connector_config](docs/sdks/connectorconfiguration/README.md#get_connector_config) - Get connector configuration
+* [update_connector_config](docs/sdks/connectorconfiguration/README.md#update_connector_config) - Update connector configuration
+* [update_connector_auth_config](docs/sdks/connectorconfiguration/README.md#update_connector_auth_config) - Update authentication configuration
+* [update_connector_filters_sync_config](docs/sdks/connectorconfiguration/README.md#update_connector_filters_sync_config) - Update filters and sync configuration
+
+### [ConnectorControl](docs/sdks/connectorcontrol/README.md)
+
+* [toggle_connector](docs/sdks/connectorcontrol/README.md#toggle_connector) - Toggle connector sync or agent
+
+### [ConnectorFilters](docs/sdks/connectorfilters/README.md)
+
+* [get_connector_filters](docs/sdks/connectorfilters/README.md#get_connector_filters) - Get filter options
+* [save_connector_filters](docs/sdks/connectorfilters/README.md#save_connector_filters) - Save filter selections
+* [get_filter_field_options](docs/sdks/connectorfilters/README.md#get_filter_field_options) - Get dynamic filter options
+
+### [ConnectorInstances](docs/sdks/connectorinstances/README.md)
+
+* [list_connector_instances](docs/sdks/connectorinstances/README.md#list_connector_instances) - List connector instances
+* [create_connector_instance](docs/sdks/connectorinstances/README.md#create_connector_instance) - Create connector instance
+* [get_connector_instance](docs/sdks/connectorinstances/README.md#get_connector_instance) - Get connector instance
+* [delete_connector_instance](docs/sdks/connectorinstances/README.md#delete_connector_instance) - Delete connector instance
+* [get_connector_stats](docs/sdks/connectorinstances/README.md#get_connector_stats) - Get connector statistics
+* [resync_connector](docs/sdks/connectorinstances/README.md#resync_connector) - Resync connector
+* [stop_connector_sync](docs/sdks/connectorinstances/README.md#stop_connector_sync) - Stop the running sync for a connector
+
+### [ConnectorOAuth](docs/sdks/connectoroauth/README.md)
+
+* [get_o_auth_authorization_url](docs/sdks/connectoroauth/README.md#get_o_auth_authorization_url) - Get OAuth authorization URL
+* [handle_o_auth_callback](docs/sdks/connectoroauth/README.md#handle_o_auth_callback) - OAuth callback handler
+
+### [ConnectorRegistry](docs/sdks/connectorregistry/README.md)
+
+* [get_connector_registry](docs/sdks/connectorregistry/README.md#get_connector_registry) - List available connector types
+* [get_connector_schema](docs/sdks/connectorregistry/README.md#get_connector_schema) - Get connector configuration schema
+* [test_connector_connection](docs/sdks/connectorregistry/README.md#test_connector_connection) - Test connector credentials before saving
+* [get_connector_egress_ips](docs/sdks/connectorregistry/README.md#get_connector_egress_ips) - Get the IP addresses connectors connect from
 
 ### [Conversations](docs/sdks/conversations/README.md)
 
@@ -276,9 +313,6 @@ with Pipeshub() as pipeshub:
 * [regenerate_answer](docs/sdks/conversations/README.md#regenerate_answer) - Regenerate AI response
 * [cancel_conversation_stream](docs/sdks/conversations/README.md#cancel_conversation_stream) - Cancel an in-flight chat stream
 * [update_message_feedback](docs/sdks/conversations/README.md#update_message_feedback) - Submit feedback on AI response
-* [set_conversation_project](docs/sdks/conversations/README.md#set_conversation_project) - Link or unlink a conversation to a project
-* [set_conversation_project_visibility](docs/sdks/conversations/README.md#set_conversation_project_visibility) - Override a conversation's project visibility
-* [get_project_conversations](docs/sdks/conversations/README.md#get_project_conversations) - List a project's conversations
 
 ### [KnowledgeBase](docs/sdks/knowledgebasesdk/README.md)
 
@@ -290,6 +324,9 @@ with Pipeshub() as pipeshub:
 * [get_record_by_id](docs/sdks/knowledgebasesdk/README.md#get_record_by_id) - Get record by ID
 * [update_record](docs/sdks/knowledgebasesdk/README.md#update_record) - Update record
 * [delete_record](docs/sdks/knowledgebasesdk/README.md#delete_record) - Delete record
+* [restore_record](docs/sdks/knowledgebasesdk/README.md#restore_record) - Restore a deleted record
+* [restore_records](docs/sdks/knowledgebasesdk/README.md#restore_records) - Restore several deleted records
+* [list_trash](docs/sdks/knowledgebasesdk/README.md#list_trash) - List a collection's recently deleted items
 * [stream_record_buffer](docs/sdks/knowledgebasesdk/README.md#stream_record_buffer) - Stream record content
 * [create_folder](docs/sdks/knowledgebasesdk/README.md#create_folder) - Create folder
 * [update_folder](docs/sdks/knowledgebasesdk/README.md#update_folder) - Update folder
@@ -321,6 +358,17 @@ with Pipeshub() as pipeshub:
 * [list_o_auth_app_tokens](docs/sdks/oauthapps/README.md#list_o_auth_app_tokens) - List app tokens
 * [revoke_all_o_auth_app_tokens](docs/sdks/oauthapps/README.md#revoke_all_o_auth_app_tokens) - Revoke all app tokens
 
+### [OAuthConfiguration](docs/sdks/oauthconfiguration/README.md)
+
+* [get_o_auth_registry](docs/sdks/oauthconfiguration/README.md#get_o_auth_registry) - List OAuth-capable connector types
+* [get_o_auth_connector_type](docs/sdks/oauthconfiguration/README.md#get_o_auth_connector_type) - Get OAuth connector type details
+* [list_o_auth_configs](docs/sdks/oauthconfiguration/README.md#list_o_auth_configs) - List OAuth configurations
+* [list_o_auth_configs_by_type](docs/sdks/oauthconfiguration/README.md#list_o_auth_configs_by_type) - List OAuth configs for connector type
+* [create_o_auth_config](docs/sdks/oauthconfiguration/README.md#create_o_auth_config) - Create OAuth configuration
+* [get_o_auth_config](docs/sdks/oauthconfiguration/README.md#get_o_auth_config) - Get OAuth configuration
+* [update_o_auth_config](docs/sdks/oauthconfiguration/README.md#update_o_auth_config) - Update OAuth configuration
+* [delete_o_auth_config](docs/sdks/oauthconfiguration/README.md#delete_o_auth_config) - Delete OAuth configuration
+
 ### [OAuthProvider](docs/sdks/oauthprovider/README.md)
 
 * [oauth_token](docs/sdks/oauthprovider/README.md#oauth_token) - Exchange authorization code for tokens
@@ -349,27 +397,6 @@ with Pipeshub() as pipeshub:
 * [revoke_personal_access_token](docs/sdks/personalaccesstokens/README.md#revoke_personal_access_token) - Revoke one of your own personal access tokens
 * [admin_list_personal_access_tokens](docs/sdks/personalaccesstokens/README.md#admin_list_personal_access_tokens) - Admin: list every active personal access token in the org
 * [admin_revoke_personal_access_token](docs/sdks/personalaccesstokens/README.md#admin_revoke_personal_access_token) - Admin: revoke any user's personal access token by id
-
-### [Projects](docs/sdks/projects/README.md)
-
-* [set_conversation_project](docs/sdks/projects/README.md#set_conversation_project) - Link or unlink a conversation to a project
-* [set_conversation_project_visibility](docs/sdks/projects/README.md#set_conversation_project_visibility) - Override a conversation's project visibility
-* [create_project](docs/sdks/projects/README.md#create_project) - Create a project
-* [list_projects](docs/sdks/projects/README.md#list_projects) - List projects
-* [get_project_by_id](docs/sdks/projects/README.md#get_project_by_id) - Get a project
-* [update_project](docs/sdks/projects/README.md#update_project) - Update a project
-* [delete_project](docs/sdks/projects/README.md#delete_project) - Delete a project
-* [archive_project](docs/sdks/projects/README.md#archive_project) - Archive a project
-* [unarchive_project](docs/sdks/projects/README.md#unarchive_project) - Unarchive a project
-* [pin_project](docs/sdks/projects/README.md#pin_project) - Pin a project
-* [unpin_project](docs/sdks/projects/README.md#unpin_project) - Unpin a project
-* [get_project_conversations](docs/sdks/projects/README.md#get_project_conversations) - List a project's conversations
-* [ensure_project_knowledge_base](docs/sdks/projects/README.md#ensure_project_knowledge_base) - Ensure (create-if-absent) the project's hidden file Collection
-* [list_project_members](docs/sdks/projects/README.md#list_project_members) - List project members
-* [upsert_project_members](docs/sdks/projects/README.md#upsert_project_members) - Add or update project members
-* [remove_project_member](docs/sdks/projects/README.md#remove_project_member) - Remove a project member
-* [set_agent_conversation_project](docs/sdks/projects/README.md#set_agent_conversation_project) - Link or unlink an agent conversation to a project
-* [set_agent_conversation_project_visibility](docs/sdks/projects/README.md#set_agent_conversation_project_visibility) - Override an agent conversation's project visibility
 
 ### [SemanticSearch](docs/sdks/semanticsearch/README.md)
 
@@ -546,7 +573,7 @@ with Pipeshub() as pipeshub:
 **Primary error:**
 * [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py): The base class for HTTP error responses.
 
-<details><summary>Less common errors (33)</summary>
+<details><summary>Less common errors (35)</summary>
 
 <br />
 
@@ -557,34 +584,36 @@ with Pipeshub() as pipeshub:
 
 
 **Inherit from [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). Applicable to 44 of 122 methods.*
-* [`OAuthClientManagementRateLimitError`](./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 20 of 122 methods.*
-* [`ApplicationJSONErrorResponse`](./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 17 of 122 methods.*
-* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Status code `401`. Applicable to 3 of 122 methods.*
-* [`GetKnowledgeHubRootNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesbadrequesterror.py): Invalid request parameters. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubChildNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesbadrequesterror.py): Invalid request parameters or path values. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 122 methods.*
-* [`SearchHistoryBadRequestError`](./src/pipeshub_sdk/errors/searchhistorybadrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 122 methods.*
-* [`GetSearchByIDBadRequestError`](./src/pipeshub_sdk/errors/getsearchbyidbadrequesterror.py): Invalid request — `searchId` failed Zod validation (not a valid ObjectId). Status code `400`. Applicable to 1 of 122 methods.*
-* [`DeleteAgentConversationChatAttachmentBadRequestError`](./src/pipeshub_sdk/errors/deleteagentconversationchatattachmentbadrequesterror.py): Invalid or blank path params (`agentKey` or `recordId`). Status code `400`. Applicable to 1 of 122 methods.*
-* [`GetAvailableModelsByTypeBadRequestError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypebadrequesterror.py): Invalid `modelType` path parameter.  The `modelType` value was not one of the supported enum categories. This response is produced by the Zod validation middleware **before** the handler runs. The `error.metadata.errors` array contains per-field detail about exactly which constraint failed. Status code `400`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubRootNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubChildNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 122 methods.*
-* [`SearchHistoryUnauthorizedError`](./src/pipeshub_sdk/errors/searchhistoryunauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 122 methods.*
-* [`GetSearchByIDUnauthorizedError`](./src/pipeshub_sdk/errors/getsearchbyidunauthorizederror.py): Missing or invalid bearer token. Status code `401`. Applicable to 1 of 122 methods.*
-* [`GetAvailableModelsByTypeUnauthorizedError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubRootNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubChildNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 122 methods.*
-* [`SearchHistoryForbiddenError`](./src/pipeshub_sdk/errors/searchhistoryforbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 122 methods.*
-* [`GetSearchByIDForbiddenError`](./src/pipeshub_sdk/errors/getsearchbyidforbiddenerror.py): Bearer token lacks the `semantic:read` scope. Status code `403`. Applicable to 1 of 122 methods.*
-* [`GetAvailableModelsByTypeForbiddenError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `config:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 122 methods.*
-* [`StreamRecordErrorResponse`](./src/pipeshub_sdk/errors/streamrecorderrorresponse.py): Error payload returned by the legacy record-stream proxy when the downstream streaming request fails after route middleware has passed. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubChildNodesNotFoundError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesnotfounderror.py): Parent node not found.  The `parentId` does not correspond to an existing node of the specified `parentType`, or the node has been deleted. Status code `404`. Applicable to 1 of 122 methods.*
-* [`GetSearchByIDNotFoundError`](./src/pipeshub_sdk/errors/getsearchbyidnotfounderror.py): Reserved for parity with sibling routes; this endpoint currently returns `200` with an empty array for an unknown id rather than emitting `404`. Status code `404`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubRootNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 122 methods.*
-* [`GetKnowledgeHubChildNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 122 methods.*
-* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 122 methods.*
-* [`GetSearchByIDInternalServerError`](./src/pipeshub_sdk/errors/getsearchbyidinternalservererror.py): Server error. Possible causes:  - Explicit `InternalServerError`   or any other 500 `BaseError` thrown by the handler. - Non-`BaseError` exception caught by the   global error middleware. - Response serializer fallback. Status code `500`. Applicable to 1 of 122 methods.*
-* [`GetAvailableModelsByTypeInternalServerError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 122 methods.*
+* [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). Applicable to 77 of 131 methods.*
+* [`OAuthClientManagementRateLimitError`](./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 20 of 131 methods.*
+* [`ApplicationJSONErrorResponse`](./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 17 of 131 methods.*
+* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Status code `401`. Applicable to 3 of 131 methods.*
+* [`RateLimitErrorResponse`](./src/pipeshub_sdk/errors/ratelimiterrorresponse.py): Rate-limit error payload (shape differs from standard error responses). Status code `429`. Applicable to 3 of 131 methods.*
+* [`LocalFsDesktopRefusalError`](./src/pipeshub_sdk/errors/localfsdesktoprefusalerror.py): 409 body returned when a Local FS connector cannot sync because of its owner device. Status code `409`. Applicable to 2 of 131 methods.*
+* [`GetKnowledgeHubRootNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesbadrequesterror.py): Invalid request parameters. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubChildNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesbadrequesterror.py): Invalid request parameters or path values. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 131 methods.*
+* [`SearchHistoryBadRequestError`](./src/pipeshub_sdk/errors/searchhistorybadrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 131 methods.*
+* [`GetSearchByIDBadRequestError`](./src/pipeshub_sdk/errors/getsearchbyidbadrequesterror.py): Invalid request — `searchId` failed Zod validation (not a valid ObjectId). Status code `400`. Applicable to 1 of 131 methods.*
+* [`DeleteAgentConversationChatAttachmentBadRequestError`](./src/pipeshub_sdk/errors/deleteagentconversationchatattachmentbadrequesterror.py): Invalid or blank path params (`agentKey` or `recordId`). Status code `400`. Applicable to 1 of 131 methods.*
+* [`GetAvailableModelsByTypeBadRequestError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypebadrequesterror.py): Invalid `modelType` path parameter.  The `modelType` value was not one of the supported enum categories. This response is produced by the Zod validation middleware **before** the handler runs. The `error.metadata.errors` array contains per-field detail about exactly which constraint failed. Status code `400`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubRootNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubChildNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 131 methods.*
+* [`SearchHistoryUnauthorizedError`](./src/pipeshub_sdk/errors/searchhistoryunauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 131 methods.*
+* [`GetSearchByIDUnauthorizedError`](./src/pipeshub_sdk/errors/getsearchbyidunauthorizederror.py): Missing or invalid bearer token. Status code `401`. Applicable to 1 of 131 methods.*
+* [`GetAvailableModelsByTypeUnauthorizedError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubRootNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubChildNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 131 methods.*
+* [`SearchHistoryForbiddenError`](./src/pipeshub_sdk/errors/searchhistoryforbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 131 methods.*
+* [`GetSearchByIDForbiddenError`](./src/pipeshub_sdk/errors/getsearchbyidforbiddenerror.py): Bearer token lacks the `semantic:read` scope. Status code `403`. Applicable to 1 of 131 methods.*
+* [`GetAvailableModelsByTypeForbiddenError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `config:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 131 methods.*
+* [`StreamRecordErrorResponse`](./src/pipeshub_sdk/errors/streamrecorderrorresponse.py): Error payload returned by the legacy record-stream proxy when the downstream streaming request fails after route middleware has passed. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubChildNodesNotFoundError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesnotfounderror.py): Parent node not found.  The `parentId` does not correspond to an existing node of the specified `parentType`, or the node has been deleted. Status code `404`. Applicable to 1 of 131 methods.*
+* [`GetSearchByIDNotFoundError`](./src/pipeshub_sdk/errors/getsearchbyidnotfounderror.py): Reserved for parity with sibling routes; this endpoint currently returns `200` with an empty array for an unknown id rather than emitting `404`. Status code `404`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubRootNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 131 methods.*
+* [`GetKnowledgeHubChildNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 131 methods.*
+* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 131 methods.*
+* [`GetSearchByIDInternalServerError`](./src/pipeshub_sdk/errors/getsearchbyidinternalservererror.py): Server error. Possible causes:  - Explicit `InternalServerError`   or any other 500 `BaseError` thrown by the handler. - Non-`BaseError` exception caught by the   global error middleware. - Response serializer fallback. Status code `500`. Applicable to 1 of 131 methods.*
+* [`GetAvailableModelsByTypeInternalServerError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 131 methods.*
 * [`ResponseValidationError`](./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>

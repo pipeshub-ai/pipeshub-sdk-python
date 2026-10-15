@@ -31,6 +31,13 @@ class SemanticSearchAiResponseTypedDict(TypedDict):
     message: str
     applied_filters: NotRequired[SemanticSearchAppliedFiltersTypedDict]
     r"""Present when KB filters were applied to the search request."""
+    omitted_passages: NotRequired[Dict[str, int]]
+    r"""Present only when some records lost passages to the per-record cap: maps a
+    `recordId` to how many of its passages were left out. Each record keeps at most
+    `max(SEARCH_PER_RECORD_FLOOR, limit / SEARCH_PER_RECORD_DIVISOR)` passages
+    (4 at the default limit): the passages that matched first, then those nearest a match.
+
+    """
     virtual_to_record_map: NotRequired[Dict[str, SemanticSearchGraphRecordTypedDict]]
     r"""Maps virtual record id (object property name) to the accessible graph record document for that id."""
 
@@ -59,12 +66,24 @@ class SemanticSearchAiResponse(BaseModel):
     ] = None
     r"""Present when KB filters were applied to the search request."""
 
+    omitted_passages: Annotated[
+        Optional[Dict[str, int]], pydantic.Field(alias="omittedPassages")
+    ] = None
+    r"""Present only when some records lost passages to the per-record cap: maps a
+    `recordId` to how many of its passages were left out. Each record keeps at most
+    `max(SEARCH_PER_RECORD_FLOOR, limit / SEARCH_PER_RECORD_DIVISOR)` passages
+    (4 at the default limit): the passages that matched first, then those nearest a match.
+
+    """
+
     virtual_to_record_map: Optional[Dict[str, SemanticSearchGraphRecord]] = None
     r"""Maps virtual record id (object property name) to the accessible graph record document for that id."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["appliedFilters", "virtual_to_record_map"])
+        optional_fields = set(
+            ["appliedFilters", "omittedPassages", "virtual_to_record_map"]
+        )
         serialized = handler(self)
         m = {}
 

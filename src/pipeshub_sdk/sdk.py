@@ -18,16 +18,22 @@ if TYPE_CHECKING:
     from pipeshub_sdk.agents import Agents
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
     from pipeshub_sdk.connector import Connector
+    from pipeshub_sdk.connector_configuration import ConnectorConfiguration
+    from pipeshub_sdk.connector_control import ConnectorControl
+    from pipeshub_sdk.connector_filters import ConnectorFilters
+    from pipeshub_sdk.connector_instances import ConnectorInstances
+    from pipeshub_sdk.connector_oauth import ConnectorOAuth
+    from pipeshub_sdk.connector_registry import ConnectorRegistry
     from pipeshub_sdk.conversations import Conversations
     from pipeshub_sdk.knowledge_base_sdk import KnowledgeBaseSDK
     from pipeshub_sdk.knowledge_hub import KnowledgeHub
     from pipeshub_sdk.oauth_apps import OAuthApps
+    from pipeshub_sdk.oauth_configuration import OAuthConfiguration
     from pipeshub_sdk.oauth_provider import OAuthProvider
     from pipeshub_sdk.openid_connect import OpenIDConnect
     from pipeshub_sdk.organization_auth_config import OrganizationAuthConfig
     from pipeshub_sdk.organizations import Organizations
     from pipeshub_sdk.personal_access_tokens import PersonalAccessTokens
-    from pipeshub_sdk.projects import Projects
     from pipeshub_sdk.semantic_search import SemanticSearch
     from pipeshub_sdk.user_account import UserAccount
     from pipeshub_sdk.web_search_sdk import WebSearchSDK
@@ -184,23 +190,26 @@ class Pipeshub(BaseSDK):
     r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
     conversations: "Conversations"
     r"""AI-powered conversational chat management with citations and follow-up questions"""
-    projects: "Projects"
-    r"""Workspaces that group related assistant and agent conversations under a
-    shared name, custom instructions, a knowledge scope, and reference
-    files. Projects can be shared with teammates; project membership only
-    grants read access to conversations explicitly marked
-    `projectVisibility: project` — a member never gets access to another
-    member's private chats. See `Conversations` for the two fields
-    (`projectId`, `projectVisibility`) that link a conversation to a
-    project.
-
-    """
     semantic_search: "SemanticSearch"
     r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
     agents: "Agents"
     r"""Custom AI agents with specialized capabilities and tool integrations"""
+    connector_registry: "ConnectorRegistry"
+    r"""Browse available connector types and their configuration schemas"""
+    connector_instances: "ConnectorInstances"
+    r"""Create, manage, and delete connector instances for your organization"""
     connector: "Connector"
     r"""Connector-related operations"""
+    connector_configuration: "ConnectorConfiguration"
+    r"""Configure authentication, sync settings, and filters for connectors"""
+    connector_control: "ConnectorControl"
+    r"""Enable/disable connectors for sync or agent functionality"""
+    connector_o_auth: "ConnectorOAuth"
+    r"""OAuth 2.0 authorization flow for connectors requiring user consent"""
+    connector_filters: "ConnectorFilters"
+    r"""Dynamic filter options for selecting which data to sync"""
+    o_auth_configuration: "OAuthConfiguration"
+    r"""Admin management of OAuth credentials for connector types"""
     ai_models_providers: "AIModelsProviders"
     r"""Manage individual AI model providers - add, update, delete, and set defaults."""
     web_search: "WebSearchSDK"
@@ -222,10 +231,25 @@ class Pipeshub(BaseSDK):
         "knowledge_base": ("pipeshub_sdk.knowledge_base_sdk", "KnowledgeBaseSDK"),
         "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
-        "projects": ("pipeshub_sdk.projects", "Projects"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
+        "connector_registry": ("pipeshub_sdk.connector_registry", "ConnectorRegistry"),
+        "connector_instances": (
+            "pipeshub_sdk.connector_instances",
+            "ConnectorInstances",
+        ),
         "connector": ("pipeshub_sdk.connector", "Connector"),
+        "connector_configuration": (
+            "pipeshub_sdk.connector_configuration",
+            "ConnectorConfiguration",
+        ),
+        "connector_control": ("pipeshub_sdk.connector_control", "ConnectorControl"),
+        "connector_o_auth": ("pipeshub_sdk.connector_oauth", "ConnectorOAuth"),
+        "connector_filters": ("pipeshub_sdk.connector_filters", "ConnectorFilters"),
+        "o_auth_configuration": (
+            "pipeshub_sdk.oauth_configuration",
+            "OAuthConfiguration",
+        ),
         "ai_models_providers": (
             "pipeshub_sdk.ai_models_providers",
             "AIModelsProviders",

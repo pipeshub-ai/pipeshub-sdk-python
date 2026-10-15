@@ -59,6 +59,10 @@ if TYPE_CHECKING:
         GetSearchByIDUnauthorizedError,
         GetSearchByIDUnauthorizedErrorData,
     )
+    from .localfsdesktoprefusal_error import (
+        LocalFsDesktopRefusalError,
+        LocalFsDesktopRefusalErrorData,
+    )
     from .no_response_error import NoResponseError
     from .oauthclientmanagementratelimiterror import (
         OAuthClientManagementRateLimitError,
@@ -66,7 +70,12 @@ if TYPE_CHECKING:
     )
     from .oautherrorresponse import OAuthErrorResponse, OAuthErrorResponseData
     from .pipeshubdefaulterror import PipeshubDefaultError
+    from .ratelimiterrorresponse import (
+        RateLimitErrorResponse,
+        RateLimitErrorResponseData,
+    )
     from .responsevalidationerror import ResponseValidationError
+    from .resyncconnectorop import ResyncConnectorConflict, ResyncConnectorConflictUnion
     from .searchhistoryop import (
         SearchHistoryBadRequestError,
         SearchHistoryBadRequestErrorData,
@@ -82,6 +91,7 @@ if TYPE_CHECKING:
         StreamRecordErrorResponse,
         StreamRecordErrorResponseData,
     )
+    from .toggleconnectorop import ToggleConnectorConflict, ToggleConnectorConflictUnion
 
 __all__ = [
     "ApplicationJSONErrorResponse",
@@ -128,6 +138,8 @@ __all__ = [
     "GetSearchByIDNotFoundErrorData",
     "GetSearchByIDUnauthorizedError",
     "GetSearchByIDUnauthorizedErrorData",
+    "LocalFsDesktopRefusalError",
+    "LocalFsDesktopRefusalErrorData",
     "NoResponseError",
     "OAuthClientManagementRateLimitError",
     "OAuthClientManagementRateLimitErrorData",
@@ -135,7 +147,11 @@ __all__ = [
     "OAuthErrorResponseData",
     "PipeshubDefaultError",
     "PipeshubError",
+    "RateLimitErrorResponse",
+    "RateLimitErrorResponseData",
     "ResponseValidationError",
+    "ResyncConnectorConflict",
+    "ResyncConnectorConflictUnion",
     "SearchHistoryBadRequestError",
     "SearchHistoryBadRequestErrorData",
     "SearchHistoryForbiddenError",
@@ -146,6 +162,8 @@ __all__ = [
     "SearchHistoryUnauthorizedErrorData",
     "StreamRecordErrorResponse",
     "StreamRecordErrorResponseData",
+    "ToggleConnectorConflict",
+    "ToggleConnectorConflictUnion",
 ]
 
 _dynamic_imports: dict[str, str] = {
@@ -191,13 +209,19 @@ _dynamic_imports: dict[str, str] = {
     "GetSearchByIDNotFoundErrorData": ".getsearchbyidop",
     "GetSearchByIDUnauthorizedError": ".getsearchbyidop",
     "GetSearchByIDUnauthorizedErrorData": ".getsearchbyidop",
+    "LocalFsDesktopRefusalError": ".localfsdesktoprefusal_error",
+    "LocalFsDesktopRefusalErrorData": ".localfsdesktoprefusal_error",
     "NoResponseError": ".no_response_error",
     "OAuthClientManagementRateLimitError": ".oauthclientmanagementratelimiterror",
     "OAuthClientManagementRateLimitErrorData": ".oauthclientmanagementratelimiterror",
     "OAuthErrorResponse": ".oautherrorresponse",
     "OAuthErrorResponseData": ".oautherrorresponse",
     "PipeshubDefaultError": ".pipeshubdefaulterror",
+    "RateLimitErrorResponse": ".ratelimiterrorresponse",
+    "RateLimitErrorResponseData": ".ratelimiterrorresponse",
     "ResponseValidationError": ".responsevalidationerror",
+    "ResyncConnectorConflict": ".resyncconnectorop",
+    "ResyncConnectorConflictUnion": ".resyncconnectorop",
     "SearchHistoryBadRequestError": ".searchhistoryop",
     "SearchHistoryBadRequestErrorData": ".searchhistoryop",
     "SearchHistoryForbiddenError": ".searchhistoryop",
@@ -210,6 +234,8 @@ _dynamic_imports: dict[str, str] = {
     "ForbiddenUnion": ".streamrecordbufferop",
     "StreamRecordErrorResponse": ".streamrecorderrorresponse",
     "StreamRecordErrorResponseData": ".streamrecorderrorresponse",
+    "ToggleConnectorConflict": ".toggleconnectorop",
+    "ToggleConnectorConflictUnion": ".toggleconnectorop",
 }
 
 

@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 from datetime import datetime
 from pipeshub_sdk import errors, models as models_, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, Iterable, List, Mapping, Optional, Union
@@ -2518,6 +2518,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentStreamCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2592,6 +2599,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -2635,6 +2652,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -2747,6 +2769,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentStreamCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2821,6 +2850,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -2864,6 +2903,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -2972,6 +3016,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3036,6 +3087,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -3077,6 +3138,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3181,6 +3247,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3245,6 +3318,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -3286,6 +3369,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3381,6 +3469,9 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3466,6 +3557,14 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this regeneration run. Send it
             here to enable `POST .../cancel {runId}` while it is still
             generating.
@@ -3501,6 +3600,9 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3596,6 +3698,9 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3681,6 +3786,14 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this regeneration run. Send it
             here to enable `POST .../cancel {runId}` while it is still
             generating.
@@ -3716,6 +3829,9 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -4330,6 +4446,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4413,6 +4536,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -4454,6 +4587,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -4565,6 +4703,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4648,6 +4793,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -4689,6 +4844,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -5427,464 +5587,6 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def set_agent_conversation_project(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        project_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectResponse:
-        r"""Link or unlink an agent conversation to a project
-
-        Agent-conversation equivalent of
-        `PUT /conversations/{conversationId}/project`. Set
-        (`projectId: <id>`) or clear (`projectId: null`) the project this
-        agent conversation belongs to. Initiator-only; linking requires at
-        least viewer access to the target project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param project_id: Target project id, or `null` to unlink.
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectRequestBody(
-                project_id=project_id,
-            ),
-        )
-
-        req = self._build_request(
-            method="PUT",
-            path="/agents/{agentKey}/conversations/{conversationId}/project",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProject",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_agent_conversation_project_async(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        project_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectResponse:
-        r"""Link or unlink an agent conversation to a project
-
-        Agent-conversation equivalent of
-        `PUT /conversations/{conversationId}/project`. Set
-        (`projectId: <id>`) or clear (`projectId: null`) the project this
-        agent conversation belongs to. Initiator-only; linking requires at
-        least viewer access to the target project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param project_id: Target project id, or `null` to unlink.
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectRequestBody(
-                project_id=project_id,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PUT",
-            path="/agents/{agentKey}/conversations/{conversationId}/project",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProject",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def set_agent_conversation_project_visibility(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        visibility: models_.SetAgentConversationProjectVisibilityVisibility,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectVisibilityResponse:
-        r"""Override an agent conversation's project visibility
-
-        Agent-conversation equivalent of
-        `PATCH /conversations/{conversationId}/project-visibility`.
-        Initiator-only; requires the conversation to already be linked to a
-        project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param visibility:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectVisibilityRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectVisibilityRequestBody(
-                visibility=visibility,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/agents/{agentKey}/conversations/{conversationId}/project-visibility",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectVisibilityRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProjectVisibility",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectVisibilityResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_agent_conversation_project_visibility_async(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        visibility: models_.SetAgentConversationProjectVisibilityVisibility,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectVisibilityResponse:
-        r"""Override an agent conversation's project visibility
-
-        Agent-conversation equivalent of
-        `PATCH /conversations/{conversationId}/project-visibility`.
-        Initiator-only; requires the conversation to already be linked to a
-        project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param visibility:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectVisibilityRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectVisibilityRequestBody(
-                visibility=visibility,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/agents/{agentKey}/conversations/{conversationId}/project-visibility",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectVisibilityRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProjectVisibility",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectVisibilityResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
     def delete_agent_conversation_by_id(
         self,
         *,
@@ -6387,7 +6089,7 @@ class Agents(BaseSDK):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         status: Optional[str] = None,
-        is_archived: Optional[models_.ListAgentConversationsIsArchived] = None,
+        is_archived: Optional[models_.IsArchived] = None,
         project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6545,7 +6247,7 @@ class Agents(BaseSDK):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         status: Optional[str] = None,
-        is_archived: Optional[models_.ListAgentConversationsIsArchived] = None,
+        is_archived: Optional[models_.IsArchived] = None,
         project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6722,6 +6424,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6813,6 +6522,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -6856,6 +6575,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -6977,6 +6701,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -7068,6 +6799,16 @@ class Agents(BaseSDK):
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
 
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
+
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
@@ -7111,6 +6852,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),

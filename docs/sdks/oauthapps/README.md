@@ -215,7 +215,7 @@ with Pipeshub(
 
 | Error Type                                 | Status Code                                | Content Type                               |
 | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ |
-| errors.ApplicationJSONErrorResponse        | 401                                        | application/json                           |
+| errors.ApplicationJSONErrorResponse        | 401, 403                                   | application/json                           |
 | errors.OAuthClientManagementRateLimitError | 429                                        | application/json                           |
 | errors.PipeshubDefaultError                | 4XX, 5XX                                   | \*/\*                                      |
 

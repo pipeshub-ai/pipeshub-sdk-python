@@ -5,6 +5,7 @@ from .agentcapabilities import AgentCapabilities, AgentCapabilitiesTypedDict
 from .appliedfilters import AppliedFilters, AppliedFiltersTypedDict
 from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .filters import Filters, FiltersTypedDict
+from .toolapprovalanswer import ToolApprovalAnswer, ToolApprovalAnswerTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
@@ -34,11 +35,21 @@ already send it.
 """
 
 
+AddMessageRequestKeywordSearchBudget = Literal[
+    "short",
+    "full",
+]
+r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+
+
 class AddMessageRequestTypedDict(TypedDict):
     r"""Request body for adding a message to an existing conversation"""
 
     query: str
-    r"""The follow-up question or message content"""
+    r"""The follow-up question or message content. Held to the same
+    100,000-character limit as the first message of a conversation.
+
+    """
     filters: NotRequired[FiltersTypedDict]
     r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
     for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
@@ -60,7 +71,11 @@ class AddMessageRequestTypedDict(TypedDict):
 
     """
     model_key: NotRequired[str]
-    r"""Override the model for this specific message"""
+    r"""Override the model for this specific message. When neither
+    `modelKey` nor `modelName` is sent, the organization's default
+    model answers and is saved in the message's `modelInfo`.
+
+    """
     model_name: NotRequired[str]
     r"""Display name of the model"""
     model_friendly_name: NotRequired[str]
@@ -100,6 +115,20 @@ class AddMessageRequestTypedDict(TypedDict):
     `true`. Omitting the whole object applies every default.
 
     """
+    include_retrieval_context: NotRequired[bool]
+    r"""Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer."""
+    keyword_search_budget: NotRequired[AddMessageRequestKeywordSearchBudget]
+    r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+    tool_approval: NotRequired[ToolApprovalAnswerTypedDict]
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
+
+    """
     run_id: NotRequired[str]
     r"""Client-generated identifier for this run. Send it here to enable
     `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -112,7 +141,10 @@ class AddMessageRequest(BaseModel):
     r"""Request body for adding a message to an existing conversation"""
 
     query: str
-    r"""The follow-up question or message content"""
+    r"""The follow-up question or message content. Held to the same
+    100,000-character limit as the first message of a conversation.
+
+    """
 
     filters: Optional[Filters] = None
     r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
@@ -140,7 +172,11 @@ class AddMessageRequest(BaseModel):
     """
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
-    r"""Override the model for this specific message"""
+    r"""Override the model for this specific message. When neither
+    `modelKey` nor `modelName` is sent, the organization's default
+    model answers and is saved in the message's `modelInfo`.
+
+    """
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
     r"""Display name of the model"""
@@ -197,6 +233,30 @@ class AddMessageRequest(BaseModel):
 
     """
 
+    include_retrieval_context: Annotated[
+        Optional[bool], pydantic.Field(alias="includeRetrievalContext")
+    ] = False
+    r"""Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer."""
+
+    keyword_search_budget: Annotated[
+        Optional[AddMessageRequestKeywordSearchBudget],
+        pydantic.Field(alias="keywordSearchBudget"),
+    ] = None
+    r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+
+    tool_approval: Annotated[
+        Optional[ToolApprovalAnswer], pydantic.Field(alias="toolApproval")
+    ] = None
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
+
+    """
+
     run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
     r"""Client-generated identifier for this run. Send it here to enable
     `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -220,6 +280,9 @@ class AddMessageRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "includeRetrievalContext",
+                "keywordSearchBudget",
+                "toolApproval",
                 "runId",
             ]
         )

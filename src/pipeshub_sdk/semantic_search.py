@@ -19,6 +19,10 @@ class SemanticSearch(BaseSDK):
         query: str,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         limit: Optional[int] = 10,
+        created_after: Optional[str] = None,
+        created_before: Optional[str] = None,
+        modified_after: Optional[str] = None,
+        modified_before: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -55,6 +59,20 @@ class SemanticSearch(BaseSDK):
             turn (it is not “full org default”).
 
         :param limit: Maximum number of results to return
+        :param created_after: Only records the source created on or after this date. `YYYY-MM-DD` (the whole
+            day, UTC) or an ISO 8601 datetime with a timezone offset. A date that is not
+            one of these, or in the future, is a `400` that says why.
+
+        :param created_before: Only records the source created on or before this date. A `YYYY-MM-DD` value
+            includes that whole day.
+
+        :param modified_after: Only records last changed in the source on or after this date. Same format as
+            `createdAfter`.
+
+        :param modified_before: Only records last changed in the source on or before this date. Same format as
+            `createdBefore`. Records with no source date are left out whenever a bound on
+            that date is set.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -74,6 +92,10 @@ class SemanticSearch(BaseSDK):
             query=query,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             limit=limit,
+            created_after=created_after,
+            created_before=created_before,
+            modified_after=modified_after,
+            modified_before=modified_before,
         )
 
         req = self._build_request(
@@ -122,11 +144,15 @@ class SemanticSearch(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.SemanticSearchExecuteResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "422"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -145,6 +171,10 @@ class SemanticSearch(BaseSDK):
         query: str,
         filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         limit: Optional[int] = 10,
+        created_after: Optional[str] = None,
+        created_before: Optional[str] = None,
+        modified_after: Optional[str] = None,
+        modified_before: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -181,6 +211,20 @@ class SemanticSearch(BaseSDK):
             turn (it is not “full org default”).
 
         :param limit: Maximum number of results to return
+        :param created_after: Only records the source created on or after this date. `YYYY-MM-DD` (the whole
+            day, UTC) or an ISO 8601 datetime with a timezone offset. A date that is not
+            one of these, or in the future, is a `400` that says why.
+
+        :param created_before: Only records the source created on or before this date. A `YYYY-MM-DD` value
+            includes that whole day.
+
+        :param modified_after: Only records last changed in the source on or after this date. Same format as
+            `createdAfter`.
+
+        :param modified_before: Only records last changed in the source on or before this date. Same format as
+            `createdBefore`. Records with no source date are left out whenever a bound on
+            that date is set.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -200,6 +244,10 @@ class SemanticSearch(BaseSDK):
             query=query,
             filters=utils.get_pydantic_model(filters, Optional[models.Filters]),
             limit=limit,
+            created_after=created_after,
+            created_before=created_before,
+            modified_after=modified_after,
+            modified_before=modified_before,
         )
 
         req = self._build_request_async(
@@ -248,11 +296,15 @@ class SemanticSearch(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.SemanticSearchExecuteResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "422"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
