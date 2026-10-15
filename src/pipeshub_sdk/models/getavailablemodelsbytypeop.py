@@ -151,6 +151,19 @@ class GetAvailableModelsByTypeErrorValidationError(BaseModel):
 GetAvailableModelsByTypeStatus = Literal["success",]
 
 
+GetAvailableModelsByTypeDefaultReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""The model's own reasoning effort. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`; a level the user picks always wins. Read from `configuration.defaultReasoningEffort`, falling back to a top-level `defaultReasoningEffort`. Present on every model expanded from the entry, and left out when no default is stored. `none` is a legacy value that runs as `low`."""
+
+
 class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     model_type: ModelType
     r"""Model category — always matches the `{modelType}` path parameter."""
@@ -168,6 +181,10 @@ class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     r"""`true` for the first model in the provider entry that was marked as default. At most one entry per `modelType` will have this set to `true`."""
     model_friendly_name: NotRequired[str]
     r"""Optional human-readable display name. Only present when the provider configuration entry contains exactly one model name (not a comma-separated list) **and** a friendly name was added during configuration."""
+    default_reasoning_effort: NotRequired[
+        GetAvailableModelsByTypeDefaultReasoningEffort
+    ]
+    r"""The model's own reasoning effort. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`; a level the user picks always wins. Read from `configuration.defaultReasoningEffort`, falling back to a top-level `defaultReasoningEffort`. Present on every model expanded from the entry, and left out when no default is stored. `none` is a legacy value that runs as `low`."""
 
 
 class GetAvailableModelsByTypeModel(BaseModel):
@@ -197,9 +214,15 @@ class GetAvailableModelsByTypeModel(BaseModel):
     ] = None
     r"""Optional human-readable display name. Only present when the provider configuration entry contains exactly one model name (not a comma-separated list) **and** a friendly name was added during configuration."""
 
+    default_reasoning_effort: Annotated[
+        Optional[GetAvailableModelsByTypeDefaultReasoningEffort],
+        pydantic.Field(alias="defaultReasoningEffort"),
+    ] = None
+    r"""The model's own reasoning effort. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`; a level the user picks always wins. Read from `configuration.defaultReasoningEffort`, falling back to a top-level `defaultReasoningEffort`. Present on every model expanded from the entry, and left out when no default is stored. `none` is a legacy value that runs as `low`."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelFriendlyName"])
+        optional_fields = set(["modelFriendlyName", "defaultReasoningEffort"])
         serialized = handler(self)
         m = {}
 

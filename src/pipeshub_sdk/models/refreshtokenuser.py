@@ -31,7 +31,7 @@ are all human.
 """
 
 
-RefreshTokenUserRole = Union[
+Role = Union[
     Literal[
         "admin",
         "member",
@@ -84,7 +84,7 @@ class RefreshTokenUserTypedDict(TypedDict):
     their own attempt from a later one. Not something to depend on.
 
     """
-    role: NotRequired[RefreshTokenUserRole]
+    role: NotRequired[Role]
     r"""Organization role stored on the user document (`admin` or `member`)"""
     address: NotRequired[AddressTypedDict]
     data_collection_consent: NotRequired[bool]
@@ -157,7 +157,7 @@ class RefreshTokenUser(BaseModel):
 
     """
 
-    role: Optional[RefreshTokenUserRole] = None
+    role: Optional[Role] = None
     r"""Organization role stored on the user document (`admin` or `member`)"""
 
     address: Optional[Address] = None

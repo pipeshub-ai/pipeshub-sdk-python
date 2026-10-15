@@ -1,0 +1,31 @@
+# RestoreRecordsResultItemSchema
+
+The outcome for one id of POST /knowledgeBase/records/restore. A restored item
+carries the fields of RestoreRecordResponseSchema; a refused one carries `reason`,
+and, when the refusal names other records, `blockedRecordId` plus the snake_case
+fields below (`external_id`, `conflicting_record_id`, `conflicting_record_name`).
+
+
+
+## Fields
+
+| Field                                                                  | Type                                                                   | Required                                                               | Description                                                            |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `record_id`                                                            | *str*                                                                  | :heavy_check_mark:                                                     | N/A                                                                    |
+| `success`                                                              | *bool*                                                                 | :heavy_check_mark:                                                     | N/A                                                                    |
+| `code`                                                                 | *Optional[int]*                                                        | :heavy_minus_sign:                                                     | N/A                                                                    |
+| `reason`                                                               | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | Why it was not restored, and what to do next                           |
+| `message`                                                              | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | N/A                                                                    |
+| `batch_id`                                                             | *OptionalNullable[str]*                                                | :heavy_minus_sign:                                                     | The delete batch that was restored                                     |
+| `restored_records`                                                     | List[[models.RestoredRecordSchema](../models/restoredrecordschema.md)] | :heavy_minus_sign:                                                     | N/A                                                                    |
+| `reindex_pending`                                                      | *Optional[bool]*                                                       | :heavy_minus_sign:                                                     | Some restored files could not be queued for indexing                   |
+| `reindex_pending_record_ids`                                           | List[*str*]                                                            | :heavy_minus_sign:                                                     | Files to reindex by hand to make them searchable again                 |
+| `reindex_pending_reason`                                               | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | N/A                                                                    |
+| `rename_pending_record_ids`                                            | List[*str*]                                                            | :heavy_minus_sign:                                                     | Items restored under a name another item next to them has; rename them |
+| `rename_pending_reason`                                                | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | N/A                                                                    |
+| `blocked_record_id`                                                    | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | The item a refusal is about                                            |
+| `external_id`                                                          | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | The source item two of the restored items came from                    |
+| `conflicting_record_id`                                                | *Optional[str]*                                                        | :heavy_minus_sign:                                                     | The live item that holds this item's place                             |
+| `conflicting_record_name`                                              | *OptionalNullable[str]*                                                | :heavy_minus_sign:                                                     | N/A                                                                    |
+| `missing`                                                              | List[*str*]                                                            | :heavy_minus_sign:                                                     | Items of the batch that were no longer in the trash                    |
+| `parent_id`                                                            | *OptionalNullable[str]*                                                | :heavy_minus_sign:                                                     | The folder still in the trash that must be restored first              |

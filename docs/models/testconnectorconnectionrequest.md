@@ -1,0 +1,9 @@
+# TestConnectorConnectionRequest
+
+
+## Fields
+
+| Field                                                                                        | Type                                                                                         | Required                                                                                     | Description                                                                                  | Example                                                                                      |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `connector_type`                                                                             | *str*                                                                                        | :heavy_check_mark:                                                                           | Connector type identifier                                                                    | PostgreSQL                                                                                   |
+| `body`                                                                                       | [models.TestConnectorConnectionRequestBody](../models/testconnectorconnectionrequestbody.md) | :heavy_check_mark:                                                                           | N/A                                                                                          |                                                                                              |

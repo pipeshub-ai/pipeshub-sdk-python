@@ -3,6 +3,7 @@
 from __future__ import annotations
 from .agentcapabilities import AgentCapabilities, AgentCapabilitiesTypedDict
 from .filters import Filters, FiltersTypedDict
+from .toolapprovalanswer import ToolApprovalAnswer, ToolApprovalAnswerTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
@@ -92,6 +93,16 @@ class RegenerateRequestTypedDict(TypedDict):
     selects an agent mode; ignored otherwise. Each field falls back to its
     own `default` below when omitted — a missing flag is not uniformly
     `true`. Omitting the whole object applies every default.
+
+    """
+    tool_approval: NotRequired[ToolApprovalAnswerTypedDict]
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
 
     """
     run_id: NotRequired[str]
@@ -192,6 +203,19 @@ class RegenerateRequest(BaseModel):
 
     """
 
+    tool_approval: Annotated[
+        Optional[ToolApprovalAnswer], pydantic.Field(alias="toolApproval")
+    ] = None
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
+
+    """
+
     run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
     r"""Client-generated identifier for this regeneration run. Send it
     here to enable `POST .../cancel {runId}` while it is still
@@ -213,6 +237,7 @@ class RegenerateRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "toolApproval",
                 "runId",
             ]
         )

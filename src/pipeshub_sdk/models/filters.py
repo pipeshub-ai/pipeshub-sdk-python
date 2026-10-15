@@ -2,9 +2,287 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import NotRequired, TypedDict
+from typing import List, Literal, Optional, Union
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
+
+
+NamedEntityKind = Literal[
+    "person",
+    "person_type",
+    "organization",
+    "event",
+    "product",
+    "skill",
+    "location",
+    "city",
+    "state",
+    "country_region",
+    "address",
+    "date",
+    "date_range",
+    "date_time",
+    "duration",
+    "currency",
+    "percentage",
+    "age",
+    "dimension",
+    "email",
+    "url",
+    "phone",
+    "ip",
+]
+
+
+FromTypedDict = TypeAliasType("FromTypedDict", Union[int, str])
+
+
+From = TypeAliasType("From", Union[int, str])
+
+
+ToTypedDict = TypeAliasType("ToTypedDict", Union[int, str])
+
+
+To = TypeAliasType("To", Union[int, str])
+
+
+class MentionedDateTypedDict(TypedDict):
+    r"""Overlap with a date the record mentions; half-open, `from` must not be after `to`."""
+
+    from_: NotRequired[FromTypedDict]
+    to: NotRequired[ToTypedDict]
+
+
+class MentionedDate(BaseModel):
+    r"""Overlap with a date the record mentions; half-open, `from` must not be after `to`."""
+
+    from_: Annotated[Optional[From], pydantic.Field(alias="from")] = None
+
+    to: Optional[To] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["from", "to"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class AmountTypedDict(TypedDict):
+    r"""`min` must not be after `max`."""
+
+    min: NotRequired[float]
+    max: NotRequired[float]
+    currency: NotRequired[str]
+    r"""ISO 4217 code, case-insensitive."""
+
+
+class Amount(BaseModel):
+    r"""`min` must not be after `max`."""
+
+    min: Optional[float] = None
+
+    max: Optional[float] = None
+
+    currency: Optional[str] = None
+    r"""ISO 4217 code, case-insensitive."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["min", "max", "currency"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class QuantityTypedDict(TypedDict):
+    r"""In SI units of the dimension. `min` must not be after `max`."""
+
+    min: NotRequired[float]
+    max: NotRequired[float]
+    dimension: NotRequired[str]
+    r"""For example `length`, `weight`, `speed`, `temperature`, `age`."""
+
+
+class Quantity(BaseModel):
+    r"""In SI units of the dimension. `min` must not be after `max`."""
+
+    min: Optional[float] = None
+
+    max: Optional[float] = None
+
+    dimension: Optional[str] = None
+    r"""For example `length`, `weight`, `speed`, `temperature`, `age`."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["min", "max", "dimension"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class PercentTypedDict(TypedDict):
+    r"""Fractions (0.125 is 12.5%). `min` must not be after `max`."""
+
+    min: NotRequired[float]
+    max: NotRequired[float]
+
+
+class Percent(BaseModel):
+    r"""Fractions (0.125 is 12.5%). `min` must not be after `max`."""
+
+    min: Optional[float] = None
+
+    max: Optional[float] = None
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["min", "max"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
+class EntityFiltersTypedDict(TypedDict):
+    r"""**Experimental** named-entity constraints (Labs flag `ENABLE_NAMED_ENTITY_EXTRACTION`, or `HIGH_ACCURACY_MODE`).
+    Every constraint must hold for the same record: an amount and a date match a record
+    that mentions both, not one entity that is both. `name`/`entityIds` match entity nodes;
+    `mentionedDate`, `amount`, `quantity` and `percent` match typed values the record
+    mentions (any date mentioned, not a role such as \"signed on\"). A kind of a typed
+    constraint's own kind narrows it (`currency` with `amount`); other kinds are a
+    constraint of their own. Only records the caller may read are considered: every empty
+    result reads the same.
+
+    An unusable filter (unknown kind, bad currency, a range whose low end is above its high
+    end, or a blank name) fails request validation with 400, including on conversation
+    requests. On `POST /search`, a valid filter matching too many readable records is
+    refused with 422. Conversation operations apply a valid filter to every search behind
+    the answer; if retrieval refuses it, the request does not fail and the answer says why
+    the filter could not be applied.
+
+    """
+
+    kinds: NotRequired[List[NamedEntityKind]]
+    r"""Lowercase, as listed. The server trims and lowercases each kind before checking it."""
+    name: NotRequired[str]
+    r"""Case-insensitive prefix of an entity name; surrounding blanks are trimmed and a blank name is refused."""
+    entity_ids: NotRequired[List[str]]
+    r"""Entity node ids, as returned by entity search. Typed values have no id."""
+    mentioned_date: NotRequired[MentionedDateTypedDict]
+    r"""Overlap with a date the record mentions; half-open, `from` must not be after `to`."""
+    amount: NotRequired[AmountTypedDict]
+    r"""`min` must not be after `max`."""
+    quantity: NotRequired[QuantityTypedDict]
+    r"""In SI units of the dimension. `min` must not be after `max`."""
+    percent: NotRequired[PercentTypedDict]
+    r"""Fractions (0.125 is 12.5%). `min` must not be after `max`."""
+
+
+class EntityFilters(BaseModel):
+    r"""**Experimental** named-entity constraints (Labs flag `ENABLE_NAMED_ENTITY_EXTRACTION`, or `HIGH_ACCURACY_MODE`).
+    Every constraint must hold for the same record: an amount and a date match a record
+    that mentions both, not one entity that is both. `name`/`entityIds` match entity nodes;
+    `mentionedDate`, `amount`, `quantity` and `percent` match typed values the record
+    mentions (any date mentioned, not a role such as \"signed on\"). A kind of a typed
+    constraint's own kind narrows it (`currency` with `amount`); other kinds are a
+    constraint of their own. Only records the caller may read are considered: every empty
+    result reads the same.
+
+    An unusable filter (unknown kind, bad currency, a range whose low end is above its high
+    end, or a blank name) fails request validation with 400, including on conversation
+    requests. On `POST /search`, a valid filter matching too many readable records is
+    refused with 422. Conversation operations apply a valid filter to every search behind
+    the answer; if retrieval refuses it, the request does not fail and the answer says why
+    the filter could not be applied.
+
+    """
+
+    kinds: Optional[List[NamedEntityKind]] = None
+    r"""Lowercase, as listed. The server trims and lowercases each kind before checking it."""
+
+    name: Optional[str] = None
+    r"""Case-insensitive prefix of an entity name; surrounding blanks are trimmed and a blank name is refused."""
+
+    entity_ids: Annotated[Optional[List[str]], pydantic.Field(alias="entityIds")] = None
+    r"""Entity node ids, as returned by entity search. Typed values have no id."""
+
+    mentioned_date: Annotated[
+        Optional[MentionedDate], pydantic.Field(alias="mentionedDate")
+    ] = None
+    r"""Overlap with a date the record mentions; half-open, `from` must not be after `to`."""
+
+    amount: Optional[Amount] = None
+    r"""`min` must not be after `max`."""
+
+    quantity: Optional[Quantity] = None
+    r"""In SI units of the dimension. `min` must not be after `max`."""
+
+    percent: Optional[Percent] = None
+    r"""Fractions (0.125 is 12.5%). `min` must not be after `max`."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "kinds",
+                "name",
+                "entityIds",
+                "mentionedDate",
+                "amount",
+                "quantity",
+                "percent",
+            ]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class FiltersTypedDict(TypedDict):
@@ -26,6 +304,24 @@ class FiltersTypedDict(TypedDict):
     kb: NotRequired[List[str]]
     r"""Knowledge-base app ids to scope retrieval for this turn.
     Each element must be a valid UUID.
+
+    """
+    entity_filters: NotRequired[EntityFiltersTypedDict]
+    r"""**Experimental** named-entity constraints (Labs flag `ENABLE_NAMED_ENTITY_EXTRACTION`, or `HIGH_ACCURACY_MODE`).
+    Every constraint must hold for the same record: an amount and a date match a record
+    that mentions both, not one entity that is both. `name`/`entityIds` match entity nodes;
+    `mentionedDate`, `amount`, `quantity` and `percent` match typed values the record
+    mentions (any date mentioned, not a role such as \"signed on\"). A kind of a typed
+    constraint's own kind narrows it (`currency` with `amount`); other kinds are a
+    constraint of their own. Only records the caller may read are considered: every empty
+    result reads the same.
+
+    An unusable filter (unknown kind, bad currency, a range whose low end is above its high
+    end, or a blank name) fails request validation with 400, including on conversation
+    requests. On `POST /search`, a valid filter matching too many readable records is
+    refused with 422. Conversation operations apply a valid filter to every search behind
+    the answer; if retrieval refuses it, the request does not fail and the answer says why
+    the filter could not be applied.
 
     """
 
@@ -53,9 +349,30 @@ class Filters(BaseModel):
 
     """
 
+    entity_filters: Annotated[
+        Optional[EntityFilters], pydantic.Field(alias="entityFilters")
+    ] = None
+    r"""**Experimental** named-entity constraints (Labs flag `ENABLE_NAMED_ENTITY_EXTRACTION`, or `HIGH_ACCURACY_MODE`).
+    Every constraint must hold for the same record: an amount and a date match a record
+    that mentions both, not one entity that is both. `name`/`entityIds` match entity nodes;
+    `mentionedDate`, `amount`, `quantity` and `percent` match typed values the record
+    mentions (any date mentioned, not a role such as \"signed on\"). A kind of a typed
+    constraint's own kind narrows it (`currency` with `amount`); other kinds are a
+    constraint of their own. Only records the caller may read are considered: every empty
+    result reads the same.
+
+    An unusable filter (unknown kind, bad currency, a range whose low end is above its high
+    end, or a blank name) fails request validation with 400, including on conversation
+    requests. On `POST /search`, a valid filter matching too many readable records is
+    refused with 422. Conversation operations apply a valid filter to every search behind
+    the answer; if retrieval refuses it, the request does not fail and the answer says why
+    the filter could not be applied.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["apps", "kb"])
+        optional_fields = set(["apps", "kb", "entityFilters"])
         serialized = handler(self)
         m = {}
 
@@ -68,3 +385,17 @@ class Filters(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    MentionedDate.model_rebuild()
+except NameError:
+    pass
+try:
+    EntityFilters.model_rebuild()
+except NameError:
+    pass
+try:
+    Filters.model_rebuild()
+except NameError:
+    pass

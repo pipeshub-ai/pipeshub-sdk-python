@@ -672,7 +672,7 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthScopesGroupedResponse, http_res)
-        if utils.match_response(http_res, "401", "application/json"):
+        if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -776,7 +776,7 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthScopesGroupedResponse, http_res)
-        if utils.match_response(http_res, "401", "application/json"):
+        if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )

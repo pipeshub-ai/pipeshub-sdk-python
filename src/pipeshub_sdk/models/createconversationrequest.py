@@ -5,6 +5,7 @@ from .agentcapabilities import AgentCapabilities, AgentCapabilitiesTypedDict
 from .appliedfilters import AppliedFilters, AppliedFiltersTypedDict
 from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .filters import Filters, FiltersTypedDict
+from .toolapprovalanswer import ToolApprovalAnswer, ToolApprovalAnswerTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
@@ -47,6 +48,13 @@ etc.). Kept in the schema for backward compatibility with callers
 that already send it.
 
 """
+
+
+CreateConversationRequestKeywordSearchBudget = Literal[
+    "short",
+    "full",
+]
+r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
 class CreateConversationRequestTypedDict(TypedDict):
@@ -112,7 +120,9 @@ class CreateConversationRequestTypedDict(TypedDict):
     """
     model_key: NotRequired[str]
     r"""Identifier for the AI model configuration to use.
-    Available models depend on organization settings.
+    Available models depend on organization settings. When neither
+    `modelKey` nor `modelName` is sent, the organization's default
+    model answers and is saved in the conversation's `modelInfo`.
 
     """
     model_name: NotRequired[str]
@@ -155,6 +165,20 @@ class CreateConversationRequestTypedDict(TypedDict):
     selects an agent mode; ignored otherwise. Each field falls back to its
     own `default` below when omitted — a missing flag is not uniformly
     `true`. Omitting the whole object applies every default.
+
+    """
+    include_retrieval_context: NotRequired[bool]
+    r"""Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer."""
+    keyword_search_budget: NotRequired[CreateConversationRequestKeywordSearchBudget]
+    r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+    tool_approval: NotRequired[ToolApprovalAnswerTypedDict]
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
 
     """
     run_id: NotRequired[str]
@@ -241,7 +265,9 @@ class CreateConversationRequest(BaseModel):
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""Identifier for the AI model configuration to use.
-    Available models depend on organization settings.
+    Available models depend on organization settings. When neither
+    `modelKey` nor `modelName` is sent, the organization's default
+    model answers and is saved in the conversation's `modelInfo`.
 
     """
 
@@ -303,6 +329,30 @@ class CreateConversationRequest(BaseModel):
 
     """
 
+    include_retrieval_context: Annotated[
+        Optional[bool], pydantic.Field(alias="includeRetrievalContext")
+    ] = False
+    r"""Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer."""
+
+    keyword_search_budget: Annotated[
+        Optional[CreateConversationRequestKeywordSearchBudget],
+        pydantic.Field(alias="keywordSearchBudget"),
+    ] = None
+    r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+
+    tool_approval: Annotated[
+        Optional[ToolApprovalAnswer], pydantic.Field(alias="toolApproval")
+    ] = None
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
+
+    """
+
     run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
     r"""Client-generated identifier for this run. Send it here to enable
     `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -330,6 +380,9 @@ class CreateConversationRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "includeRetrievalContext",
+                "keywordSearchBudget",
+                "toolApproval",
                 "runId",
             ]
         )

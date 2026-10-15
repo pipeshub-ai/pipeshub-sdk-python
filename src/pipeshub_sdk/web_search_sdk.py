@@ -15,6 +15,7 @@ class WebSearchSDK(BaseSDK):
     def get_web_search_providers(
         self,
         *,
+        reveal: Optional[models.RevealStoredSecrets] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -35,6 +36,10 @@ class WebSearchSDK(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
+        :param reveal: Set to `true` to receive stored secrets instead of placeholders. Honoured only for an
+            admin's own configuration where the deployment allows it (see `GET
+            /configurationManager/secretReveal`); ignored for OAuth-app tokens and any other value.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -49,12 +54,17 @@ class WebSearchSDK(BaseSDK):
             base_url = server_url
         else:
             base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetWebSearchProvidersRequest(
+            reveal=reveal,
+        )
+
         req = self._build_request(
             method="GET",
             path="/configurationManager/web-search",
             base_url=base_url,
             url_variables=url_variables,
-            request=None,
+            request=request,
             request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,
@@ -114,6 +124,7 @@ class WebSearchSDK(BaseSDK):
     async def get_web_search_providers_async(
         self,
         *,
+        reveal: Optional[models.RevealStoredSecrets] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -134,6 +145,10 @@ class WebSearchSDK(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
+        :param reveal: Set to `true` to receive stored secrets instead of placeholders. Honoured only for an
+            admin's own configuration where the deployment allows it (see `GET
+            /configurationManager/secretReveal`); ignored for OAuth-app tokens and any other value.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -148,12 +163,17 @@ class WebSearchSDK(BaseSDK):
             base_url = server_url
         else:
             base_url = self._get_url(base_url, url_variables)
+
+        request = models.GetWebSearchProvidersRequest(
+            reveal=reveal,
+        )
+
         req = self._build_request_async(
             method="GET",
             path="/configurationManager/web-search",
             base_url=base_url,
             url_variables=url_variables,
-            request=None,
+            request=request,
             request_body_required=False,
             request_has_path_params=False,
             request_has_query_params=True,

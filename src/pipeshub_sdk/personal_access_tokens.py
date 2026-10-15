@@ -1013,9 +1013,9 @@ class PersonalAccessTokens(BaseSDK):
         compromised laptop, where only the token's own creator could
         otherwise see or revoke it.
 
-        Requires org-admin privileges (`userAdminCheck`) — note this returns
-        **`400`**, not `403`, for a non-admin caller (shared middleware
-        behavior across the codebase, not specific to this route).
+        Requires org-admin privileges (`userAdminCheck`): a non-admin caller
+        gets `403` (`ForbiddenError`, message
+        \"You need admin access to do this. Ask an admin in your organisation.\").
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1088,7 +1088,7 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AdminPatListResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1130,9 +1130,9 @@ class PersonalAccessTokens(BaseSDK):
         compromised laptop, where only the token's own creator could
         otherwise see or revoke it.
 
-        Requires org-admin privileges (`userAdminCheck`) — note this returns
-        **`400`**, not `403`, for a non-admin caller (shared middleware
-        behavior across the codebase, not specific to this route).
+        Requires org-admin privileges (`userAdminCheck`): a non-admin caller
+        gets `403` (`ForbiddenError`, message
+        \"You need admin access to do this. Ask an admin in your organisation.\").
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1205,7 +1205,7 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AdminPatListResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1243,8 +1243,8 @@ class PersonalAccessTokens(BaseSDK):
         Revokes a token by id, scoped to the org's PAT client but **not** to
         a specific owning user — the admin counterpart to
         `DELETE /personal-access-tokens/{tokenId}`. Requires org-admin
-        privileges (`userAdminCheck`); returns `400` (not `403`) for a
-        non-admin caller, same as `GET /personal-access-tokens/admin`.
+        privileges (`userAdminCheck`); a non-admin caller gets `403`
+        (`ForbiddenError`), same as `GET /personal-access-tokens/admin`.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1326,7 +1326,9 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RevokePatResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1364,8 +1366,8 @@ class PersonalAccessTokens(BaseSDK):
         Revokes a token by id, scoped to the org's PAT client but **not** to
         a specific owning user — the admin counterpart to
         `DELETE /personal-access-tokens/{tokenId}`. Requires org-admin
-        privileges (`userAdminCheck`); returns `400` (not `403`) for a
-        non-admin caller, same as `GET /personal-access-tokens/admin`.
+        privileges (`userAdminCheck`); a non-admin caller gets `403`
+        (`ForbiddenError`), same as `GET /personal-access-tokens/admin`.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1447,7 +1449,9 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RevokePatResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )

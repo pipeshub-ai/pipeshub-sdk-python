@@ -14,6 +14,9 @@ Knowledge base management operations
 * [get_record_by_id](#get_record_by_id) - Get record by ID
 * [update_record](#update_record) - Update record
 * [delete_record](#delete_record) - Delete record
+* [restore_record](#restore_record) - Restore a deleted record
+* [restore_records](#restore_records) - Restore several deleted records
+* [list_trash](#list_trash) - List a collection's recently deleted items
 * [stream_record_buffer](#stream_record_buffer) - Stream record content
 * [create_folder](#create_folder) - Create folder
 * [update_folder](#update_folder) - Update folder
@@ -410,6 +413,8 @@ Include a new file in the request to replace the existing content. The file exte
 - Increments version if file content changed
 - Triggers re-indexing for content changes
 
+**OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
 
 ### Example Usage
 
@@ -455,7 +460,7 @@ with Pipeshub(
 
 ## delete_record
 
-Permanently delete a record from the knowledge base.
+Delete a record from the knowledge base.
 
 **Required permission:**
 
@@ -467,7 +472,12 @@ WRITER or higher
 - Associated storage file
 - Indexed content and embeddings
 
-**Warning:** This action is irreversible.
+**Trash:** With "Move Deleted Records to the Trash" on in Labs, the record
+goes to the trash instead: it disappears from search, chat and lists at once,
+its embeddings are removed, and the record and its file stay until the scheduled
+purge. The response then carries `softDeleted: true` and the `batchId`, and the
+record can be brought back with `POST /knowledgeBase/record/{recordId}/restore`.
+With the setting off, the delete is immediate and cannot be undone.
 
 
 ### Example Usage
@@ -501,6 +511,188 @@ with Pipeshub(
 ### Response
 
 **[models.DeleteRecordResponseSchema](../../models/deleterecordresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## restore_record
+
+Bring a record back from the trash, together with everything deleted in the
+same action: a folder comes back with its contents, a file with its
+attachments, a multi-select delete with every item it removed.
+
+Needs "Move Deleted Records to the Trash" on in Labs.
+
+**Required permission:** the role the delete needed. A single file needs
+OWNER, WRITER or FILEORGANIZER on its collection; a folder or several items
+need OWNER or WRITER.
+
+**Names:** an item whose name another item next to it now uses comes back
+as "name (restored)" (a file keeps its extension: "report (restored).pdf").
+
+**Search:** restored files are indexed again, so they return to search and
+chat once indexing finishes. `reindexPending` lists any that could not be
+queued; reindex those by hand. A file that is back but whose indexing never
+started is queued again when it is restored again, and the indexing service
+queues it on its own after about an hour.
+
+A record that is not in the trash answers 200 with nothing restored.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="restoreRecord" method="post" path="/knowledgeBase/record/{recordId}/restore" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.restore_record(record_id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID of any item in the delete batch                           |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.RestoreRecordResponseSchema](../../models/restorerecordresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 401, 403, 404, 409          | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## restore_records
+
+Restore up to 100 records from the trash. Each id is restored as
+`POST /knowledgeBase/record/{recordId}/restore` restores it, with everything
+deleted along with it; ids from one delete are restored once. Every id gets its
+own outcome in `results`, so one refusal does not hold the others back, and the
+answer is 200 whatever the outcomes.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="restoreRecords" method="post" path="/knowledgeBase/records/restore" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.restore_records(record_ids=[
+        "<value 1>",
+        "<value 2>",
+    ])
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_ids`                                                        | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.RestoreRecordsResponseSchema](../../models/restorerecordsresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 400, 401, 403               | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## list_trash
+
+One page of what was deleted from a collection and can still be restored,
+newest first. Each item is what one delete removed, as a restore brings it back
+whole: a folder deleted with its contents is one item, and so is a multi-select
+delete (`rootCount` items selected, some named in `otherRootNames`). `itemCount`
+says how many records it holds.
+Restore an item with `POST /knowledgeBase/record/{recordId}/restore`, using its `id`.
+
+Needs "Move Deleted Records to the Trash" on in Labs.
+
+**Who sees what:** the list holds what the caller may restore. OWNER and
+WRITER see every item; FILEORGANIZER sees single files only; other roles are
+refused. The workspace and user always come from the sign-in.
+
+**Removed for good:** the scheduled cleanup may remove an item from
+`removableAfterTimestamp` on (at least 14 days after it was deleted by
+default; it runs every 14 days, so an item stays 14 to 28 days). It is
+absent when the retention settings can't be read.
+
+An item whose folder is also in the trash (`parentInTrash`) can only be
+restored after that folder.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="listTrash" method="get" path="/knowledgeBase/{kbId}/trash" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.list_trash(kb_id="<id>", page=1, limit=25)
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Collection (knowledge base) ID                                      |
+| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.ListTrashResponseSchema](../../models/listtrashresponseschema.md)**
 
 ### Errors
 
@@ -552,11 +744,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID                                                           |
-| `convert_to`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Target format for conversion                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                                 | Type                                                                                                                      | Required                                                                                                                  | Description                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `record_id`                                                                                                               | *str*                                                                                                                     | :heavy_check_mark:                                                                                                        | Record ID                                                                                                                 |
+| `convert_to`                                                                                                              | *Optional[str]*                                                                                                           | :heavy_minus_sign:                                                                                                        | Target format for conversion                                                                                              |
+| `version`                                                                                                                 | *Optional[int]*                                                                                                           | :heavy_minus_sign:                                                                                                        | Registry version to pin ARTIFACT record content to. Omit to stream<br/>the latest version. Ignored for non-artifact records.<br/> |
+| `retries`                                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                          | :heavy_minus_sign:                                                                                                        | Configuration to override the default retry behavior of the client.                                                       |
 
 ### Response
 
@@ -819,11 +1012,11 @@ with Pipeshub(
 
 ### Errors
 
-| Error Type                   | Status Code                  | Content Type                 |
-| ---------------------------- | ---------------------------- | ---------------------------- |
-| errors.ErrorResponse         | 400, 401, 403, 404, 413, 429 | application/json             |
-| errors.ErrorResponse         | 500                          | application/json             |
-| errors.PipeshubDefaultError  | 4XX, 5XX                     | \*/\*                        |
+| Error Type                        | Status Code                       | Content Type                      |
+| --------------------------------- | --------------------------------- | --------------------------------- |
+| errors.ErrorResponse              | 400, 401, 403, 404, 409, 413, 429 | application/json                  |
+| errors.ErrorResponse              | 500                               | application/json                  |
+| errors.PipeshubDefaultError       | 4XX, 5XX                          | \*/\*                             |
 
 ## get_upload_limits
 
@@ -1055,7 +1248,7 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 400, 401, 403, 404, 409     | application/json            |
 | errors.ErrorResponse        | 500, 503                    | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 

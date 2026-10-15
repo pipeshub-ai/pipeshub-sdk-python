@@ -43,7 +43,7 @@ Exchanges an authorization code, client credentials, or refresh token for access
 **Grant Types:**
 - `authorization_code`: Exchange auth code for tokens (user-based)
 - `client_credentials`: Get tokens for machine-to-machine auth
-- `refresh_token`: Get new access token using refresh token
+- `refresh_token`: Get new access token using refresh token. The refresh token must have been issued to the presenting `client_id`; one issued to another client is rejected with `400 invalid_grant` and is left untouched (not rotated, not revoked).
 
 For **`client_credentials`**, access tokens represent the **OAuth app creator** (the user who registered the client). The JWT may encode **`userId === client_id`**; the **Node API gateway** resolves the creator (**`createdBy`** claim or OAuth app lookup) — see **OAuth Provider** tag.
 
