@@ -125,6 +125,16 @@ class KnowledgeHubNodesResponsePaginationTypedDict(TypedDict):
     total_pages: int
     has_next: bool
     has_prev: bool
+    next_cursor: NotRequired[Nullable[str]]
+    r"""Cursor for the next page; null on the last page."""
+    prev_cursor: NotRequired[Nullable[str]]
+    r"""Cursor for the previous page; null on the first page."""
+    start_index: NotRequired[Nullable[int]]
+    r"""1-based index of the first item on this page, when known."""
+    end_index: NotRequired[Nullable[int]]
+    r"""1-based index of the last item on this page, when known."""
+    current_page_items: NotRequired[Nullable[int]]
+    r"""Number of items on this page."""
 
 
 class KnowledgeHubNodesResponsePagination(BaseModel):
@@ -141,6 +151,60 @@ class KnowledgeHubNodesResponsePagination(BaseModel):
     has_next: Annotated[bool, pydantic.Field(alias="hasNext")]
 
     has_prev: Annotated[bool, pydantic.Field(alias="hasPrev")]
+
+    next_cursor: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="nextCursor")
+    ] = UNSET
+    r"""Cursor for the next page; null on the last page."""
+
+    prev_cursor: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="prevCursor")
+    ] = UNSET
+    r"""Cursor for the previous page; null on the first page."""
+
+    start_index: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="startIndex")
+    ] = UNSET
+    r"""1-based index of the first item on this page, when known."""
+
+    end_index: Annotated[OptionalNullable[int], pydantic.Field(alias="endIndex")] = (
+        UNSET
+    )
+    r"""1-based index of the last item on this page, when known."""
+
+    current_page_items: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="currentPageItems")
+    ] = UNSET
+    r"""Number of items on this page."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["nextCursor", "prevCursor", "startIndex", "endIndex", "currentPageItems"]
+        )
+        nullable_fields = set(
+            ["nextCursor", "prevCursor", "startIndex", "endIndex", "currentPageItems"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
 
 
 class CreatedAtTypedDict(TypedDict):

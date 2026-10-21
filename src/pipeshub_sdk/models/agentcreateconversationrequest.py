@@ -123,7 +123,8 @@ class AgentCreateConversationRequestTypedDict(TypedDict):
     tools: NotRequired[List[str]]
     r"""Allowed tool ids for this turn, such as `jira.create_issue`. Omit
     to let the agent use its default toolset; send `[]` to disable
-    tools for this turn.
+    tools for this turn. A list that leaves out `web_search` turns off
+    the agent's web search for the turn.
 
     """
     protocol: NotRequired[AgentCreateConversationRequestProtocol]
@@ -264,7 +265,8 @@ class AgentCreateConversationRequest(BaseModel):
     tools: Optional[List[str]] = None
     r"""Allowed tool ids for this turn, such as `jira.create_issue`. Omit
     to let the agent use its default toolset; send `[]` to disable
-    tools for this turn.
+    tools for this turn. A list that leaves out `web_search` turns off
+    the agent's web search for the turn.
 
     """
 

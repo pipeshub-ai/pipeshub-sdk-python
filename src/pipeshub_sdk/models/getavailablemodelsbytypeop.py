@@ -14,7 +14,7 @@ class GetAvailableModelsByTypeRequestTypedDict(TypedDict):
     model_type: ModelType
     r"""Category of AI model to retrieve.
 
-    Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+    Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`, `decision`.
 
     """
 
@@ -27,7 +27,7 @@ class GetAvailableModelsByTypeRequest(BaseModel):
     ]
     r"""Category of AI model to retrieve.
 
-    Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+    Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`, `decision`.
 
     """
 

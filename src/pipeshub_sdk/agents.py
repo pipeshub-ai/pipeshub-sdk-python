@@ -2586,7 +2586,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -2837,7 +2838,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3074,7 +3076,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3305,7 +3308,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3524,12 +3528,28 @@ class Agents(BaseSDK):
         :param conversation_id: ID of the agent conversation containing the target message.
         :param message_id: ID of the bot-response message to regenerate.
         :param chat_mode:
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -3545,7 +3565,13 @@ class Agents(BaseSDK):
 
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
-            regenerating. Applicable only in agent chat modes.
+            regenerating. Applicable only in agent chat modes. Regenerating
+            in the assistant's agent mode, web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
+            Regenerating a named agent's message (`AgentRegenerateRequest`),
+            a list that leaves out `web_search` turns off the agent's web
+            search for the turn, even when `agentCapabilities.webSearch` is
+            true.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3753,12 +3779,28 @@ class Agents(BaseSDK):
         :param conversation_id: ID of the agent conversation containing the target message.
         :param message_id: ID of the bot-response message to regenerate.
         :param chat_mode:
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -3774,7 +3816,13 @@ class Agents(BaseSDK):
 
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
-            regenerating. Applicable only in agent chat modes.
+            regenerating. Applicable only in agent chat modes. Regenerating
+            in the assistant's agent mode, web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
+            Regenerating a named agent's message (`AgentRegenerateRequest`),
+            a list that leaves out `web_search` turns off the agent's web
+            search for the turn, even when `agentCapabilities.webSearch` is
+            true.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3908,6 +3956,214 @@ class Agents(BaseSDK):
         raise errors.PipeshubDefaultError(
             "Unexpected response received", http_res, http_res_text
         )
+
+    def fork_agent_conversation(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        message_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.ForkConversationResponse:
+        r"""Fork agent conversation from a message
+
+        Copy this agent conversation into a new private chat owned by the
+        caller, including every message up to and including `messageId`. The
+        original conversation is left unchanged.
+
+        Only the owner of the conversation can fork it; anyone else gets 404.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param conversation_id:
+        :param message_id: Inclusive last message to copy into the new chat
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.ForkAgentConversationRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            message_id=message_id,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/fork",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="forkAgentConversation",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+                tags=["Agents"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "201", "application/json"):
+            return unmarshal_json_response(models_.ForkConversationResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def fork_agent_conversation_async(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        message_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.ForkConversationResponse:
+        r"""Fork agent conversation from a message
+
+        Copy this agent conversation into a new private chat owned by the
+        caller, including every message up to and including `messageId`. The
+        original conversation is left unchanged.
+
+        Only the owner of the conversation can fork it; anyone else gets 404.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param conversation_id:
+        :param message_id: Inclusive last message to copy into the new chat
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.ForkAgentConversationRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            message_id=message_id,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/fork",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="forkAgentConversation",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+                tags=["Agents"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "201", "application/json"):
+            return unmarshal_json_response(models_.ForkConversationResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     def cancel_agent_conversation_stream(
         self,
@@ -4523,7 +4779,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -4780,7 +5037,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -5611,6 +5869,12 @@ class Agents(BaseSDK):
         - deleting through a different `agentKey` returns success with `null`
         - deleting an already deleted conversation returns success with `null`
 
+        **Artifacts:** before the conversation is marked deleted, every artifact
+        the caller created in it is deleted for good (every version and stored
+        file). Artifacts another participant created stay theirs. If the cleanup
+        cannot be done the conversation is left in place and the error is
+        returned (for example 503); repeating the request finishes it.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -5726,6 +5990,12 @@ class Agents(BaseSDK):
         - deleting a nonexistent conversation returns success with `null`
         - deleting through a different `agentKey` returns success with `null`
         - deleting an already deleted conversation returns success with `null`
+
+        **Artifacts:** before the conversation is marked deleted, every artifact
+        the caller created in it is deleted for good (every version and stored
+        file). Artifacts another participant created stay theirs. If the cleanup
+        cannot be done the conversation is left in place and the error is
+        returned (for example 503); repeating the request finishes it.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -6509,7 +6779,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -6786,7 +7057,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always

@@ -7,6 +7,7 @@ from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, Dict, Iterable, List, Mapping, Optional
+from typing_extensions import deprecated
 
 
 class ConnectorFilters(BaseSDK):
@@ -258,6 +259,9 @@ class ConnectorFilters(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    @deprecated(
+        "warning: ** DEPRECATED ** - Use PUT /connectors/{connectorId}/config/filters-sync instead, with a body of {sync?, filters?: {sync, indexing}} (the flat filters map this route takes is ignored there: the call returns 200 and saves none of it), and only while the connector is disabled. This endpoint will be removed in a future release.."
+    )
     def save_connector_filters(
         self,
         *,
@@ -268,12 +272,18 @@ class ConnectorFilters(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.SaveConnectorFiltersResponse:
-        r"""Save filter selections
+        r"""Save filter selections (deprecated)
 
+        <b>Deprecated.</b> Save filters with
+        <code>PUT /connectors/{connectorId}/config/filters-sync</code> instead, which is what the
+        PipesHub app uses. That route takes <code>{sync?, filters?: {sync, indexing}}</code>. It ignores the
+        flat <code>filters</code> map this one takes: the call still returns 200, but nothing is saved.
+        It also refuses while the connector is active, so disable it first.
+        This endpoint will be removed in a future release.<br><br>
+        What this endpoint saves goes to <code>filters.values</code>, which sync does not read:
+        sync reads <code>filters.sync</code> and <code>filters.indexing</code>.<br><br>
         Save the user's filter selections for a connector.<br><br>
         <b>Overview:</b><br>
-        After viewing filter options, use this endpoint to save the
-        selected values. These determine what data will be synced.<br><br>
         <b>Request:</b><br>
         <code>filters</code> must hold at least one entry: <code>{\"filters\": {}}</code> is
         refused with <code>400</code>. The server stores whatever it is given under the
@@ -377,6 +387,9 @@ class ConnectorFilters(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    @deprecated(
+        "warning: ** DEPRECATED ** - Use PUT /connectors/{connectorId}/config/filters-sync instead, with a body of {sync?, filters?: {sync, indexing}} (the flat filters map this route takes is ignored there: the call returns 200 and saves none of it), and only while the connector is disabled. This endpoint will be removed in a future release.."
+    )
     async def save_connector_filters_async(
         self,
         *,
@@ -387,12 +400,18 @@ class ConnectorFilters(BaseSDK):
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
     ) -> models.SaveConnectorFiltersResponse:
-        r"""Save filter selections
+        r"""Save filter selections (deprecated)
 
+        <b>Deprecated.</b> Save filters with
+        <code>PUT /connectors/{connectorId}/config/filters-sync</code> instead, which is what the
+        PipesHub app uses. That route takes <code>{sync?, filters?: {sync, indexing}}</code>. It ignores the
+        flat <code>filters</code> map this one takes: the call still returns 200, but nothing is saved.
+        It also refuses while the connector is active, so disable it first.
+        This endpoint will be removed in a future release.<br><br>
+        What this endpoint saves goes to <code>filters.values</code>, which sync does not read:
+        sync reads <code>filters.sync</code> and <code>filters.indexing</code>.<br><br>
         Save the user's filter selections for a connector.<br><br>
         <b>Overview:</b><br>
-        After viewing filter options, use this endpoint to save the
-        selected values. These determine what data will be synced.<br><br>
         <b>Request:</b><br>
         <code>filters</code> must hold at least one entry: <code>{\"filters\": {}}</code> is
         refused with <code>400</code>. The server stores whatever it is given under the

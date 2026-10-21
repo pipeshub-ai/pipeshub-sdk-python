@@ -133,6 +133,39 @@ class GetRecordContentResponseSchemaRecord(BaseModel):
         return m
 
 
+class ThreadTypedDict(TypedDict):
+    thread_record_group_id: NotRequired[str]
+    r"""The thread's record group."""
+    record_count: NotRequired[int]
+    r"""Replies of this thread the caller may see."""
+
+
+class Thread(BaseModel):
+    thread_record_group_id: Annotated[
+        Optional[str], pydantic.Field(alias="threadRecordGroupId")
+    ] = None
+    r"""The thread's record group."""
+
+    record_count: Annotated[Optional[int], pydantic.Field(alias="recordCount")] = None
+    r"""Replies of this thread the caller may see."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["threadRecordGroupId", "recordCount"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class GetRecordContentResponseSchemaTypedDict(TypedDict):
     r"""Response returned by GET /connectors/record/{recordId}/content.
 
@@ -194,6 +227,10 @@ class GetRecordContentResponseSchemaTypedDict(TypedDict):
     r"""Thread reads only. The records shown, oldest first."""
     unreadable_record_ids: NotRequired[List[str]]
     r"""Thread reads only. Records of the thread the caller may see whose content could not be loaded."""
+    threads: NotRequired[List[ThreadTypedDict]]
+    r"""Thread reads of a Slack record in no single thread only (several channel messages in one record, or a message without replies). The threads its messages started whose replies follow it in `records`, in the order their first messages were posted; empty when none of its messages has replies the caller may see."""
+    threads_not_read: NotRequired[int]
+    r"""Thread reads of a Slack record in no single thread only. Threads of its messages left out because one read covers at most 10."""
     chars: NotRequired[int]
     r"""Budgeted reads only. Characters in `content`."""
     max_chars: NotRequired[int]
@@ -294,6 +331,14 @@ class GetRecordContentResponseSchema(BaseModel):
     ] = None
     r"""Thread reads only. Records of the thread the caller may see whose content could not be loaded."""
 
+    threads: Optional[List[Thread]] = None
+    r"""Thread reads of a Slack record in no single thread only (several channel messages in one record, or a message without replies). The threads its messages started whose replies follow it in `records`, in the order their first messages were posted; empty when none of its messages has replies the caller may see."""
+
+    threads_not_read: Annotated[
+        Optional[int], pydantic.Field(alias="threadsNotRead")
+    ] = None
+    r"""Thread reads of a Slack record in no single thread only. Threads of its messages left out because one read covers at most 10."""
+
     chars: Optional[int] = None
     r"""Budgeted reads only. Characters in `content`."""
 
@@ -320,6 +365,8 @@ class GetRecordContentResponseSchema(BaseModel):
                 "nextStartRecord",
                 "records",
                 "unreadableRecordIds",
+                "threads",
+                "threadsNotRead",
                 "chars",
                 "maxChars",
             ]
@@ -355,6 +402,10 @@ except NameError:
     pass
 try:
     GetRecordContentResponseSchemaRecord.model_rebuild()
+except NameError:
+    pass
+try:
+    Thread.model_rebuild()
 except NameError:
     pass
 try:

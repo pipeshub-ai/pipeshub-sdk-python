@@ -48,6 +48,11 @@ class SemanticSearchHitTypedDict(TypedDict):
     directly or the section matched as a whole.
 
     """
+    timeline_period: NotRequired[int]
+    r"""Set only on a search with `timeline`: the index in `timeline.periods` of the period
+    this hit's record is dated in.
+
+    """
 
 
 class SemanticSearchHit(BaseModel):
@@ -95,6 +100,14 @@ class SemanticSearchHit(BaseModel):
 
     """
 
+    timeline_period: Annotated[
+        Optional[int], pydantic.Field(alias="timelinePeriod")
+    ] = None
+    r"""Set only on a search with `timeline`: the index in `timeline.periods` of the period
+    this hit's record is dated in.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -108,6 +121,7 @@ class SemanticSearchHit(BaseModel):
                 "block_type",
                 "block_index",
                 "distanceFromMatch",
+                "timelinePeriod",
             ]
         )
         nullable_fields = set(

@@ -16,6 +16,7 @@ ModelType = Union[
         "imageGeneration",
         "tts",
         "stt",
+        "decision",
     ],
     UnrecognizedStr,
 ]

@@ -14,11 +14,24 @@ from pipeshub_sdk.types import (
     OptionalNullable,
     UNSET,
     UNSET_SENTINEL,
+    UnrecognizedStr,
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+LastSyncOutcome = Union[
+    Literal[
+        "succeeded",
+        "failed",
+        "stopped",
+        "skipped",
+    ],
+    UnrecognizedStr,
+]
+r"""How the last sync run ended"""
 
 
 class ConnectorInstanceTypedDict(TypedDict):
@@ -79,6 +92,14 @@ class ConnectorInstanceTypedDict(TypedDict):
     r"""Epoch milliseconds"""
     updated_at_timestamp: NotRequired[int]
     r"""Epoch milliseconds"""
+    last_sync_started_at_timestamp: NotRequired[Nullable[int]]
+    r"""Epoch ms when the last sync run started; absent before the first run"""
+    last_sync_finished_at_timestamp: NotRequired[Nullable[int]]
+    r"""Epoch ms when the last sync run ended, however it ended; absent until a run ends"""
+    last_sync_outcome: NotRequired[Nullable[LastSyncOutcome]]
+    r"""How the last sync run ended"""
+    last_sync_summary: NotRequired[Nullable[Dict[str, Any]]]
+    r"""What the last run did, in the connector's own terms. For a Web connector: pagesSaved (written this run), pagesStored (kept after it, which Maximum pages caps), pagesVisited, failed, failedByStatus, robotsSkipped, noindexSkipped, skippedMaxPages, deferred, pruned, sitemapUrls, stopReason (max_pages, time_limit, stalled, rate_limited or null) and resumed."""
     config: NotRequired[ConnectorSchemaTypedDict]
     r"""Configuration form for a connector type: the auth fields per auth type, the sync strategies and settings, and the sync and indexing filters."""
 
@@ -215,6 +236,26 @@ class ConnectorInstance(BaseModel):
     ] = None
     r"""Epoch milliseconds"""
 
+    last_sync_started_at_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="lastSyncStartedAtTimestamp")
+    ] = UNSET
+    r"""Epoch ms when the last sync run started; absent before the first run"""
+
+    last_sync_finished_at_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="lastSyncFinishedAtTimestamp")
+    ] = UNSET
+    r"""Epoch ms when the last sync run ended, however it ended; absent until a run ends"""
+
+    last_sync_outcome: Annotated[
+        OptionalNullable[LastSyncOutcome], pydantic.Field(alias="lastSyncOutcome")
+    ] = UNSET
+    r"""How the last sync run ended"""
+
+    last_sync_summary: Annotated[
+        OptionalNullable[Dict[str, Any]], pydantic.Field(alias="lastSyncSummary")
+    ] = UNSET
+    r"""What the last run did, in the connector's own terms. For a Web connector: pagesSaved (written this run), pagesStored (kept after it, which Maximum pages caps), pagesVisited, failed, failedByStatus, robotsSkipped, noindexSkipped, skippedMaxPages, deferred, pruned, sitemapUrls, stopReason (max_pages, time_limit, stalled, rate_limited or null) and resumed."""
+
     config: Optional[ConnectorSchema] = None
     r"""Configuration form for a connector type: the auth fields per auth type, the sync strategies and settings, and the sync and indexing filters."""
 
@@ -253,6 +294,10 @@ class ConnectorInstance(BaseModel):
                 "updatedBy",
                 "createdAtTimestamp",
                 "updatedAtTimestamp",
+                "lastSyncStartedAtTimestamp",
+                "lastSyncFinishedAtTimestamp",
+                "lastSyncOutcome",
+                "lastSyncSummary",
                 "config",
             ]
         )
@@ -264,6 +309,10 @@ class ConnectorInstance(BaseModel):
                 "ownerDeviceId",
                 "ownerDeviceName",
                 "updatedBy",
+                "lastSyncStartedAtTimestamp",
+                "lastSyncFinishedAtTimestamp",
+                "lastSyncOutcome",
+                "lastSyncSummary",
             ]
         )
         serialized = handler(self)

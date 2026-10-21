@@ -59,7 +59,10 @@ class Connector(BaseSDK):
         the budget show its most relevant blocks first, with the skipped
         ranges marked. `mode=thread` returns every message of the Slack
         thread the record belongs to, oldest first, as far as the caller may
-        see them.
+        see them. A Slack record in no single thread (several channel
+        messages in one record, or a message without replies) returns itself,
+        then the replies of each thread its messages started; the first page
+        opens with a bracketed note saying which.
 
         **Permission scoping:**
 
@@ -75,7 +78,7 @@ class Connector(BaseSDK):
         :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
         :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
         :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
-        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first; a record outside any thread answers `422`.
+        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
         :param start_record: Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -215,7 +218,10 @@ class Connector(BaseSDK):
         the budget show its most relevant blocks first, with the skipped
         ranges marked. `mode=thread` returns every message of the Slack
         thread the record belongs to, oldest first, as far as the caller may
-        see them.
+        see them. A Slack record in no single thread (several channel
+        messages in one record, or a message without replies) returns itself,
+        then the replies of each thread its messages started; the first page
+        opens with a bracketed note saying which.
 
         **Permission scoping:**
 
@@ -231,7 +237,7 @@ class Connector(BaseSDK):
         :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
         :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
         :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
-        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first; a record outside any thread answers `422`.
+        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
         :param start_record: Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method

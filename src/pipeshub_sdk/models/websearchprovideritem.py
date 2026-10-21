@@ -12,12 +12,13 @@ class WebSearchProviderItemTypedDict(TypedDict):
     r"""Web search provider configuration item returned by getWebSearchProviders"""
 
     provider: WebSearchProviderType
-    r"""Supported web search provider"""
+    r"""Supported web search provider. crawl4ai only reads pages (it backs up the built-in page reader) and cannot be the default; firecrawl both searches and reads pages. searxng, firecrawl and crawl4ai take a baseUrl; firecrawl defaults to its cloud API."""
     provider_key: str
     r"""Unique key for the provider configuration"""
     configuration: Dict[str, Any]
     r"""Provider-specific configuration as stored and returned by the gateway (open record).
-    Serper, Tavily, and Exa typically include `apiKey`; additional keys may be present.
+    API providers include `apiKey` (masked for non-admins); searxng, firecrawl and crawl4ai
+    include `baseUrl`. Additional keys may be present.
 
     """
     is_default: bool
@@ -27,14 +28,15 @@ class WebSearchProviderItem(BaseModel):
     r"""Web search provider configuration item returned by getWebSearchProviders"""
 
     provider: WebSearchProviderType
-    r"""Supported web search provider"""
+    r"""Supported web search provider. crawl4ai only reads pages (it backs up the built-in page reader) and cannot be the default; firecrawl both searches and reads pages. searxng, firecrawl and crawl4ai take a baseUrl; firecrawl defaults to its cloud API."""
 
     provider_key: Annotated[str, pydantic.Field(alias="providerKey")]
     r"""Unique key for the provider configuration"""
 
     configuration: Dict[str, Any]
     r"""Provider-specific configuration as stored and returned by the gateway (open record).
-    Serper, Tavily, and Exa typically include `apiKey`; additional keys may be present.
+    API providers include `apiKey` (masked for non-admins); searxng, firecrawl and crawl4ai
+    include `baseUrl`. Additional keys may be present.
 
     """
 

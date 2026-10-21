@@ -11,7 +11,11 @@ WebSearchProviderType = Union[
         "serper",
         "tavily",
         "exa",
+        "brave",
+        "searxng",
+        "firecrawl",
+        "crawl4ai",
     ],
     UnrecognizedStr,
 ]
-r"""Supported web search provider"""
+r"""Supported web search provider. crawl4ai only reads pages (it backs up the built-in page reader) and cannot be the default; firecrawl both searches and reads pages. searxng, firecrawl and crawl4ai take a baseUrl; firecrawl defaults to its cloud API."""

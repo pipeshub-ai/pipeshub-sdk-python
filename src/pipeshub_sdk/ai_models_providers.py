@@ -51,7 +51,7 @@ class AIModelsProviders(BaseSDK):
 
         :param model_type: Category of AI model to retrieve.
 
-            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`, `decision`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -198,7 +198,7 @@ class AIModelsProviders(BaseSDK):
 
         :param model_type: Category of AI model to retrieve.
 
-            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`, `decision`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method

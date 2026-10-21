@@ -23,6 +23,8 @@ class SemanticSearch(BaseSDK):
         created_before: Optional[str] = None,
         modified_after: Optional[str] = None,
         modified_before: Optional[str] = None,
+        rewrite_query: Optional[bool] = True,
+        timeline: Optional[models.Timeline] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -34,11 +36,21 @@ class SemanticSearch(BaseSDK):
         Matching is meaning-based, so relevant results surface even when
         the wording differs from the query.
 
-        Use optional `filters` to narrow the scope:
+        Use optional `filters` to narrow the scope (see `Filters`):
 
-        - `filters.apps` — restrict to specific connector apps (for
-        example Google Drive or Confluence).
-        - `filters.kb` — restrict to specific knowledge bases.
+        - `filters.apps` — restrict to whole apps: connector instances
+        (for example Google Drive or Confluence) and collections.
+        `filters.kb` is the older name for collections and means the
+        same.
+        - `filters.recordGroups` — restrict to record groups (a drive, a
+        space, a project), each with the groups nested in it.
+        - `filters.records` — restrict to folders or records, each with
+        everything under it.
+        - `filters.recordsExact` — restrict to records alone, without
+        what is under them.
+
+        The keys are a union. With any of the last three present, an
+        absent or empty `apps` / `kb` means no whole app.
 
         The response returns a `searchId` for the persisted search along
         with ranked matches, each carrying a relevance score and the
@@ -51,12 +63,28 @@ class SemanticSearch(BaseSDK):
         :param query: Natural language search query. The system understands
             semantic meaning, not just keywords.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param limit: Maximum number of results to return
         :param created_after: Only records the source created on or after this date. `YYYY-MM-DD` (the whole
@@ -72,6 +100,34 @@ class SemanticSearch(BaseSDK):
         :param modified_before: Only records last changed in the source on or before this date. Same format as
             `createdBefore`. Records with no source date are left out whenever a bound on
             that date is set.
+
+        :param rewrite_query: Whether the AI model rewrites the query and adds expanded variants before
+            searching. Set it to `false` to search the query exactly as sent, with no
+            model call: faster, and suited to callers that write their own queries, such
+            as an agent. The results can differ from a search with the rewrite.
+
+        :param timeline: Search a span of time period by period instead of ranking matches over the whole
+            span, for questions such as \"how did this evolve\" or \"what changed between March
+            and May\". A plain search returns the best matches overall, which bunch around one
+            moment; a timeline splits the span into up to 6 periods (calendar months, or weeks
+            within one month), searches each period on its own and beside one search of the
+            whole span, and returns the matches in date order, each labelled with its period.
+
+            The value is the date records are placed by: `created` (when the record was
+            created at its source) or `modified` (its last change). The span is that date's
+            bounds (`createdAfter` / `createdBefore`, or `modifiedAfter` / `modifiedBefore`);
+            with no start it covers the year before the end, or further back to the earliest
+            of the best matches. Bounds on the other date apply to every period. `limit` is the
+            number of matches each period's own search asks for (10 when left out); matches from
+            the search of the whole span (up to 50) are added to the periods their records are
+            dated in, so a period can hold more than `limit`. Each search applies the same permissions
+            and filters as a plain search.
+
+            Left out, a search whose bounds on one date have a start and cover more than 31
+            days (a missing end is today) runs as a timeline on that date, and
+            `timeline.automatic` is `true`; any other search is a plain ranked search. `off`
+            is always a plain ranked search. A server whose `TIMELINE_SUMMARIES` setting is
+            `false` ignores the field and never runs a timeline.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -96,6 +152,8 @@ class SemanticSearch(BaseSDK):
             created_before=created_before,
             modified_after=modified_after,
             modified_before=modified_before,
+            rewrite_query=rewrite_query,
+            timeline=timeline,
         )
 
         req = self._build_request(
@@ -175,6 +233,8 @@ class SemanticSearch(BaseSDK):
         created_before: Optional[str] = None,
         modified_after: Optional[str] = None,
         modified_before: Optional[str] = None,
+        rewrite_query: Optional[bool] = True,
+        timeline: Optional[models.Timeline] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -186,11 +246,21 @@ class SemanticSearch(BaseSDK):
         Matching is meaning-based, so relevant results surface even when
         the wording differs from the query.
 
-        Use optional `filters` to narrow the scope:
+        Use optional `filters` to narrow the scope (see `Filters`):
 
-        - `filters.apps` — restrict to specific connector apps (for
-        example Google Drive or Confluence).
-        - `filters.kb` — restrict to specific knowledge bases.
+        - `filters.apps` — restrict to whole apps: connector instances
+        (for example Google Drive or Confluence) and collections.
+        `filters.kb` is the older name for collections and means the
+        same.
+        - `filters.recordGroups` — restrict to record groups (a drive, a
+        space, a project), each with the groups nested in it.
+        - `filters.records` — restrict to folders or records, each with
+        everything under it.
+        - `filters.recordsExact` — restrict to records alone, without
+        what is under them.
+
+        The keys are a union. With any of the last three present, an
+        absent or empty `apps` / `kb` means no whole app.
 
         The response returns a `searchId` for the persisted search along
         with ranked matches, each carrying a relevance score and the
@@ -203,12 +273,28 @@ class SemanticSearch(BaseSDK):
         :param query: Natural language search query. The system understands
             semantic meaning, not just keywords.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param limit: Maximum number of results to return
         :param created_after: Only records the source created on or after this date. `YYYY-MM-DD` (the whole
@@ -224,6 +310,34 @@ class SemanticSearch(BaseSDK):
         :param modified_before: Only records last changed in the source on or before this date. Same format as
             `createdBefore`. Records with no source date are left out whenever a bound on
             that date is set.
+
+        :param rewrite_query: Whether the AI model rewrites the query and adds expanded variants before
+            searching. Set it to `false` to search the query exactly as sent, with no
+            model call: faster, and suited to callers that write their own queries, such
+            as an agent. The results can differ from a search with the rewrite.
+
+        :param timeline: Search a span of time period by period instead of ranking matches over the whole
+            span, for questions such as \"how did this evolve\" or \"what changed between March
+            and May\". A plain search returns the best matches overall, which bunch around one
+            moment; a timeline splits the span into up to 6 periods (calendar months, or weeks
+            within one month), searches each period on its own and beside one search of the
+            whole span, and returns the matches in date order, each labelled with its period.
+
+            The value is the date records are placed by: `created` (when the record was
+            created at its source) or `modified` (its last change). The span is that date's
+            bounds (`createdAfter` / `createdBefore`, or `modifiedAfter` / `modifiedBefore`);
+            with no start it covers the year before the end, or further back to the earliest
+            of the best matches. Bounds on the other date apply to every period. `limit` is the
+            number of matches each period's own search asks for (10 when left out); matches from
+            the search of the whole span (up to 50) are added to the periods their records are
+            dated in, so a period can hold more than `limit`. Each search applies the same permissions
+            and filters as a plain search.
+
+            Left out, a search whose bounds on one date have a start and cover more than 31
+            days (a missing end is today) runs as a timeline on that date, and
+            `timeline.automatic` is `true`; any other search is a plain ranked search. `off`
+            is always a plain ranked search. A server whose `TIMELINE_SUMMARIES` setting is
+            `false` ignores the field and never runs a timeline.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -248,6 +362,8 @@ class SemanticSearch(BaseSDK):
             created_before=created_before,
             modified_after=modified_after,
             modified_before=modified_before,
+            rewrite_query=rewrite_query,
+            timeline=timeline,
         )
 
         req = self._build_request_async(

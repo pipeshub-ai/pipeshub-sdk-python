@@ -13,7 +13,7 @@ GetRecordContentMode = Literal[
     "record",
     "thread",
 ]
-r"""`record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first; a record outside any thread answers `422`."""
+r"""`record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`."""
 
 
 class GetRecordContentRequestTypedDict(TypedDict):
@@ -26,7 +26,7 @@ class GetRecordContentRequestTypedDict(TypedDict):
     query: NotRequired[str]
     r"""What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked."""
     mode: NotRequired[GetRecordContentMode]
-    r"""`record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first; a record outside any thread answers `422`."""
+    r"""`record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`."""
     start_record: NotRequired[int]
     r"""Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it."""
 
@@ -63,7 +63,7 @@ class GetRecordContentRequest(BaseModel):
         Optional[GetRecordContentMode],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""`record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first; a record outside any thread answers `422`."""
+    r"""`record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`."""
 
     start_record: Annotated[
         Optional[int],

@@ -266,6 +266,13 @@ class SearchArchivedConversationsConversationTypedDict(TypedDict):
     updated_at: NotRequired[datetime]
     is_owner: NotRequired[bool]
     access_level: NotRequired[SearchArchivedConversationsAccessLevel]
+    is_pinned: NotRequired[bool]
+    r"""`true` when the owner pinned this conversation. Absent on
+    conversations that are not pinned (never `false`). Set via
+    `PATCH /conversations/{conversationId}/pin`. Only returned to the
+    owner: lists with `source=shared` omit it.
+
+    """
     project_id: NotRequired[Nullable[str]]
     r"""The project this conversation is linked to, if any. Set via
     `PUT /conversations/{conversationId}/project` or at creation
@@ -366,6 +373,14 @@ class SearchArchivedConversationsConversation(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = None
 
+    is_pinned: Annotated[Optional[bool], pydantic.Field(alias="isPinned")] = None
+    r"""`true` when the owner pinned this conversation. Absent on
+    conversations that are not pinned (never `false`). Set via
+    `PATCH /conversations/{conversationId}/pin`. Only returned to the
+    owner: lists with `source=shared` omit it.
+
+    """
+
     project_id: Annotated[OptionalNullable[str], pydantic.Field(alias="projectId")] = (
         UNSET
     )
@@ -431,6 +446,7 @@ class SearchArchivedConversationsConversation(BaseModel):
                 "updatedAt",
                 "isOwner",
                 "accessLevel",
+                "isPinned",
                 "projectId",
                 "projectVisibility",
                 "sharedBy",

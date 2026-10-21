@@ -285,6 +285,8 @@ if TYPE_CHECKING:
     from .agentfilters import AgentFilters, AgentFiltersTypedDict
     from .agentknowledgefiltersparsed import (
         AgentKnowledgeFiltersParsed,
+        AgentKnowledgeFiltersParsedNode,
+        AgentKnowledgeFiltersParsedNodeTypedDict,
         AgentKnowledgeFiltersParsedTypedDict,
     )
     from .agentlistitem import (
@@ -484,7 +486,11 @@ if TYPE_CHECKING:
         ConnectorIndexingStatusCounts,
         ConnectorIndexingStatusCountsTypedDict,
     )
-    from .connectorinstance import ConnectorInstance, ConnectorInstanceTypedDict
+    from .connectorinstance import (
+        ConnectorInstance,
+        ConnectorInstanceTypedDict,
+        LastSyncOutcome,
+    )
     from .connectornameenum import ConnectorNameEnum
     from .connectorpagination import ConnectorPagination, ConnectorPaginationTypedDict
     from .connectorregistryentry import (
@@ -589,6 +595,12 @@ if TYPE_CHECKING:
     from .conversationmodelinfo import (
         ConversationModelInfo,
         ConversationModelInfoTypedDict,
+    )
+    from .conversationpinresponse import (
+        ConversationPinResponse,
+        ConversationPinResponseMeta,
+        ConversationPinResponseMetaTypedDict,
+        ConversationPinResponseTypedDict,
     )
     from .conversationsharedby import (
         ConversationSharedBy,
@@ -791,6 +803,22 @@ if TYPE_CHECKING:
         FolderUpdateResponseSchemaTypedDict,
     )
     from .followupquestion import FollowUpQuestion, FollowUpQuestionTypedDict
+    from .forkagentconversationop import (
+        ForkAgentConversationRequest,
+        ForkAgentConversationRequestTypedDict,
+    )
+    from .forkconversationop import (
+        ForkConversationRequest,
+        ForkConversationRequestTypedDict,
+    )
+    from .forkconversationresponse import (
+        ForkConversationResponse,
+        ForkConversationResponseMeta,
+        ForkConversationResponseMetaTypedDict,
+        ForkConversationResponseTypedDict,
+        ForkedFrom,
+        ForkedFromTypedDict,
+    )
     from .getagentconversationbyidop import (
         GetAgentConversationByIDMessageType,
         GetAgentConversationByIDRequest,
@@ -1032,8 +1060,6 @@ if TYPE_CHECKING:
         ConversationPagination,
         ConversationPaginationTypedDict,
         GetConversationByIDApplied,
-        GetConversationByIDAppliedFilters,
-        GetConversationByIDAppliedFiltersTypedDict,
         GetConversationByIDAppliedTypedDict,
         GetConversationByIDAvailable,
         GetConversationByIDAvailablePagination,
@@ -1190,6 +1216,7 @@ if TYPE_CHECKING:
     )
     from .getrecordbyidop import GetRecordByIDRequest, GetRecordByIDRequestTypedDict
     from .getrecordbyidresponseschema import (
+        AccessRule,
         Department,
         DepartmentTypedDict,
         GetRecordByIDResponseSchema,
@@ -1238,6 +1265,8 @@ if TYPE_CHECKING:
         GivenUpBlockTypedDict,
         Mode,
         Order,
+        Thread,
+        ThreadTypedDict,
     )
     from .getsearchbyidop import (
         GetSearchByIDCodeValidationError,
@@ -1280,6 +1309,8 @@ if TYPE_CHECKING:
         FiltersParsed,
         FiltersParsedTypedDict,
         Knowledge,
+        KnowledgeNode,
+        KnowledgeNodeTypedDict,
         KnowledgeTypedDict,
     )
     from .knowledgebasecreateresponse import (
@@ -1633,6 +1664,10 @@ if TYPE_CHECKING:
         PersistedSemanticSearchSharedWithEntryAccessLevel,
         PersistedSemanticSearchSharedWithEntryTypedDict,
     )
+    from .pinconversationop import (
+        PinConversationRequest,
+        PinConversationRequestTypedDict,
+    )
     from .populatedcitationreference import (
         PopulatedCitationReference,
         PopulatedCitationReferenceTypedDict,
@@ -1898,9 +1933,28 @@ if TYPE_CHECKING:
         SemanticSearchHitMetadata,
         SemanticSearchHitMetadataTypedDict,
     )
+    from .semanticsearchlinkedrecord import (
+        Relation,
+        SemanticSearchLinkedRecord,
+        SemanticSearchLinkedRecordTypedDict,
+    )
+    from .semanticsearchoutsidedates import (
+        SemanticSearchOutsideDates,
+        SemanticSearchOutsideDatesTypedDict,
+    )
     from .semanticsearchrequest import (
         SemanticSearchRequest,
         SemanticSearchRequestTypedDict,
+        Timeline,
+    )
+    from .semanticsearchtimeline import (
+        DateField,
+        SemanticSearchTimeline,
+        SemanticSearchTimelineTypedDict,
+    )
+    from .semanticsearchtimelineperiod import (
+        SemanticSearchTimelinePeriod,
+        SemanticSearchTimelinePeriodTypedDict,
     )
     from .sseevent import SSEEvent, SSEEventEvent, SSEEventTypedDict
     from .stopconnectorsyncop import (
@@ -1988,6 +2042,10 @@ if TYPE_CHECKING:
         UnarchiveSearchResponse,
         UnarchiveSearchResponseTypedDict,
         UnarchiveSearchStatus,
+    )
+    from .unpinconversationop import (
+        UnpinConversationRequest,
+        UnpinConversationRequestTypedDict,
     )
     from .updateagentconversationmessagefeedbackop import (
         UpdateAgentConversationMessageFeedbackRequest,
@@ -2154,6 +2212,7 @@ if TYPE_CHECKING:
 __all__ = [
     "Access",
     "AccessAccessLevel",
+    "AccessRule",
     "AccessTypedDict",
     "AccountType",
     "ActivateOAuthAppRequest",
@@ -2330,6 +2389,8 @@ __all__ = [
     "AgentFilters",
     "AgentFiltersTypedDict",
     "AgentKnowledgeFiltersParsed",
+    "AgentKnowledgeFiltersParsedNode",
+    "AgentKnowledgeFiltersParsedNodeTypedDict",
     "AgentKnowledgeFiltersParsedTypedDict",
     "AgentListItem",
     "AgentListItemDefaultReasoningEffort",
@@ -2565,6 +2626,10 @@ __all__ = [
     "ConversationModelInfoTypedDict",
     "ConversationPagination",
     "ConversationPaginationTypedDict",
+    "ConversationPinResponse",
+    "ConversationPinResponseMeta",
+    "ConversationPinResponseMetaTypedDict",
+    "ConversationPinResponseTypedDict",
     "ConversationProjectVisibility",
     "ConversationSharedBy",
     "ConversationSharedByTypedDict",
@@ -2643,6 +2708,7 @@ __all__ = [
     "CurrentNodeTypedDict",
     "Data",
     "DataTypedDict",
+    "DateField",
     "DateFilters",
     "DateFiltersTypedDict",
     "Decision",
@@ -2730,6 +2796,16 @@ __all__ = [
     "FolderUpdateResponseSchemaTypedDict",
     "FollowUpQuestion",
     "FollowUpQuestionTypedDict",
+    "ForkAgentConversationRequest",
+    "ForkAgentConversationRequestTypedDict",
+    "ForkConversationRequest",
+    "ForkConversationRequestTypedDict",
+    "ForkConversationResponse",
+    "ForkConversationResponseMeta",
+    "ForkConversationResponseMetaTypedDict",
+    "ForkConversationResponseTypedDict",
+    "ForkedFrom",
+    "ForkedFromTypedDict",
     "From",
     "FromTypedDict",
     "GetAgentConversationByIDMessageType",
@@ -2924,8 +3000,6 @@ __all__ = [
     "GetConnectorStatsRequest",
     "GetConnectorStatsRequestTypedDict",
     "GetConversationByIDApplied",
-    "GetConversationByIDAppliedFilters",
-    "GetConversationByIDAppliedFiltersTypedDict",
     "GetConversationByIDAppliedTypedDict",
     "GetConversationByIDAvailable",
     "GetConversationByIDAvailablePagination",
@@ -3154,9 +3228,12 @@ __all__ = [
     "KnowledgeHubNodesResponsePagination",
     "KnowledgeHubNodesResponsePaginationTypedDict",
     "KnowledgeHubNodesResponseTypedDict",
+    "KnowledgeNode",
+    "KnowledgeNodeTypedDict",
     "KnowledgeTypedDict",
     "Language",
     "LanguageTypedDict",
+    "LastSyncOutcome",
     "ListAgentArchivedConversationsGroupedRequest",
     "ListAgentArchivedConversationsGroupedRequestTypedDict",
     "ListAgentConversationArchivesRequest",
@@ -3363,6 +3440,8 @@ __all__ = [
     "PersistedSemanticSearchSharedWithEntryAccessLevel",
     "PersistedSemanticSearchSharedWithEntryTypedDict",
     "PersistedSemanticSearchTypedDict",
+    "PinConversationRequest",
+    "PinConversationRequestTypedDict",
     "PointID",
     "PointIDTypedDict",
     "PopulatedCitationReference",
@@ -3417,6 +3496,7 @@ __all__ = [
     "ReindexRecordRequestBody",
     "ReindexRecordRequestBodyTypedDict",
     "ReindexRecordRequestTypedDict",
+    "Relation",
     "Relationship",
     "RequestBody1",
     "RequestBody1TypedDict",
@@ -3555,8 +3635,16 @@ __all__ = [
     "SemanticSearchHitMetadata",
     "SemanticSearchHitMetadataTypedDict",
     "SemanticSearchHitTypedDict",
+    "SemanticSearchLinkedRecord",
+    "SemanticSearchLinkedRecordTypedDict",
+    "SemanticSearchOutsideDates",
+    "SemanticSearchOutsideDatesTypedDict",
     "SemanticSearchRequest",
     "SemanticSearchRequestTypedDict",
+    "SemanticSearchTimeline",
+    "SemanticSearchTimelinePeriod",
+    "SemanticSearchTimelinePeriodTypedDict",
+    "SemanticSearchTimelineTypedDict",
     "Size",
     "SizeTypedDict",
     "SortBy",
@@ -3611,8 +3699,11 @@ __all__ = [
     "TestConnectorConnectionRequestTypedDict",
     "TestConnectorConnectionResponse",
     "TestConnectorConnectionResponseTypedDict",
+    "Thread",
+    "ThreadTypedDict",
     "TicketRecord",
     "TicketRecordTypedDict",
+    "Timeline",
     "To",
     "ToTypedDict",
     "ToggleConnectorRequest",
@@ -3646,6 +3737,8 @@ __all__ = [
     "UnarchiveSearchResponse",
     "UnarchiveSearchResponseTypedDict",
     "UnarchiveSearchStatus",
+    "UnpinConversationRequest",
+    "UnpinConversationRequestTypedDict",
     "UpdateAgentConversationMessageFeedbackRequest",
     "UpdateAgentConversationMessageFeedbackRequestTypedDict",
     "UpdateAgentConversationTitleRequest",
@@ -3958,6 +4051,8 @@ _dynamic_imports: dict[str, str] = {
     "AgentFilters": ".agentfilters",
     "AgentFiltersTypedDict": ".agentfilters",
     "AgentKnowledgeFiltersParsed": ".agentknowledgefiltersparsed",
+    "AgentKnowledgeFiltersParsedNode": ".agentknowledgefiltersparsed",
+    "AgentKnowledgeFiltersParsedNodeTypedDict": ".agentknowledgefiltersparsed",
     "AgentKnowledgeFiltersParsedTypedDict": ".agentknowledgefiltersparsed",
     "AgentListItem": ".agentlistitem",
     "AgentListItemDefaultReasoningEffort": ".agentlistitem",
@@ -4107,6 +4202,7 @@ _dynamic_imports: dict[str, str] = {
     "ConnectorIndexingStatusCountsTypedDict": ".connectorindexingstatuscounts",
     "ConnectorInstance": ".connectorinstance",
     "ConnectorInstanceTypedDict": ".connectorinstance",
+    "LastSyncOutcome": ".connectorinstance",
     "ConnectorNameEnum": ".connectornameenum",
     "ConnectorPagination": ".connectorpagination",
     "ConnectorPaginationTypedDict": ".connectorpagination",
@@ -4189,6 +4285,10 @@ _dynamic_imports: dict[str, str] = {
     "ConversationMessageStreamSSEEventTypedDict": ".conversationmessagestreamsseevent",
     "ConversationModelInfo": ".conversationmodelinfo",
     "ConversationModelInfoTypedDict": ".conversationmodelinfo",
+    "ConversationPinResponse": ".conversationpinresponse",
+    "ConversationPinResponseMeta": ".conversationpinresponse",
+    "ConversationPinResponseMetaTypedDict": ".conversationpinresponse",
+    "ConversationPinResponseTypedDict": ".conversationpinresponse",
     "ConversationSharedBy": ".conversationsharedby",
     "ConversationSharedByTypedDict": ".conversationsharedby",
     "ConversationStreamRequest": ".conversationstreamrequest",
@@ -4332,6 +4432,16 @@ _dynamic_imports: dict[str, str] = {
     "FolderUpdateResponseSchemaTypedDict": ".folderupdateresponseschema",
     "FollowUpQuestion": ".followupquestion",
     "FollowUpQuestionTypedDict": ".followupquestion",
+    "ForkAgentConversationRequest": ".forkagentconversationop",
+    "ForkAgentConversationRequestTypedDict": ".forkagentconversationop",
+    "ForkConversationRequest": ".forkconversationop",
+    "ForkConversationRequestTypedDict": ".forkconversationop",
+    "ForkConversationResponse": ".forkconversationresponse",
+    "ForkConversationResponseMeta": ".forkconversationresponse",
+    "ForkConversationResponseMetaTypedDict": ".forkconversationresponse",
+    "ForkConversationResponseTypedDict": ".forkconversationresponse",
+    "ForkedFrom": ".forkconversationresponse",
+    "ForkedFromTypedDict": ".forkconversationresponse",
     "GetAgentConversationByIDMessageType": ".getagentconversationbyidop",
     "GetAgentConversationByIDRequest": ".getagentconversationbyidop",
     "GetAgentConversationByIDRequestTypedDict": ".getagentconversationbyidop",
@@ -4550,8 +4660,6 @@ _dynamic_imports: dict[str, str] = {
     "ConversationPagination": ".getconversationbyidop",
     "ConversationPaginationTypedDict": ".getconversationbyidop",
     "GetConversationByIDApplied": ".getconversationbyidop",
-    "GetConversationByIDAppliedFilters": ".getconversationbyidop",
-    "GetConversationByIDAppliedFiltersTypedDict": ".getconversationbyidop",
     "GetConversationByIDAppliedTypedDict": ".getconversationbyidop",
     "GetConversationByIDAvailable": ".getconversationbyidop",
     "GetConversationByIDAvailablePagination": ".getconversationbyidop",
@@ -4690,6 +4798,7 @@ _dynamic_imports: dict[str, str] = {
     "GetOAuthRegistryResponseTypedDict": ".getoauthregistryop",
     "GetRecordByIDRequest": ".getrecordbyidop",
     "GetRecordByIDRequestTypedDict": ".getrecordbyidop",
+    "AccessRule": ".getrecordbyidresponseschema",
     "Department": ".getrecordbyidresponseschema",
     "DepartmentTypedDict": ".getrecordbyidresponseschema",
     "GetRecordByIDResponseSchema": ".getrecordbyidresponseschema",
@@ -4734,6 +4843,8 @@ _dynamic_imports: dict[str, str] = {
     "GivenUpBlockTypedDict": ".getrecordcontentresponseschema",
     "Mode": ".getrecordcontentresponseschema",
     "Order": ".getrecordcontentresponseschema",
+    "Thread": ".getrecordcontentresponseschema",
+    "ThreadTypedDict": ".getrecordcontentresponseschema",
     "GetSearchByIDCodeValidationError": ".getsearchbyidop",
     "GetSearchByIDErrorHTTPForbidden": ".getsearchbyidop",
     "GetSearchByIDErrorHTTPForbiddenTypedDict": ".getsearchbyidop",
@@ -4768,6 +4879,8 @@ _dynamic_imports: dict[str, str] = {
     "FiltersParsed": ".knowledge",
     "FiltersParsedTypedDict": ".knowledge",
     "Knowledge": ".knowledge",
+    "KnowledgeNode": ".knowledge",
+    "KnowledgeNodeTypedDict": ".knowledge",
     "KnowledgeTypedDict": ".knowledge",
     "KnowledgeBaseCreateResponse": ".knowledgebasecreateresponse",
     "KnowledgeBaseCreateResponseTypedDict": ".knowledgebasecreateresponse",
@@ -5017,6 +5130,8 @@ _dynamic_imports: dict[str, str] = {
     "PersistedSemanticSearchSharedWithEntry": ".persistedsemanticsearchsharedwithentry",
     "PersistedSemanticSearchSharedWithEntryAccessLevel": ".persistedsemanticsearchsharedwithentry",
     "PersistedSemanticSearchSharedWithEntryTypedDict": ".persistedsemanticsearchsharedwithentry",
+    "PinConversationRequest": ".pinconversationop",
+    "PinConversationRequestTypedDict": ".pinconversationop",
     "PopulatedCitationReference": ".populatedcitationreference",
     "PopulatedCitationReferenceTypedDict": ".populatedcitationreference",
     "RateLimitErrorResponseError": ".ratelimiterrorresponse",
@@ -5200,8 +5315,19 @@ _dynamic_imports: dict[str, str] = {
     "RecordVersionTypedDict": ".semanticsearchhitmetadata",
     "SemanticSearchHitMetadata": ".semanticsearchhitmetadata",
     "SemanticSearchHitMetadataTypedDict": ".semanticsearchhitmetadata",
+    "Relation": ".semanticsearchlinkedrecord",
+    "SemanticSearchLinkedRecord": ".semanticsearchlinkedrecord",
+    "SemanticSearchLinkedRecordTypedDict": ".semanticsearchlinkedrecord",
+    "SemanticSearchOutsideDates": ".semanticsearchoutsidedates",
+    "SemanticSearchOutsideDatesTypedDict": ".semanticsearchoutsidedates",
     "SemanticSearchRequest": ".semanticsearchrequest",
     "SemanticSearchRequestTypedDict": ".semanticsearchrequest",
+    "Timeline": ".semanticsearchrequest",
+    "DateField": ".semanticsearchtimeline",
+    "SemanticSearchTimeline": ".semanticsearchtimeline",
+    "SemanticSearchTimelineTypedDict": ".semanticsearchtimeline",
+    "SemanticSearchTimelinePeriod": ".semanticsearchtimelineperiod",
+    "SemanticSearchTimelinePeriodTypedDict": ".semanticsearchtimelineperiod",
     "SSEEvent": ".sseevent",
     "SSEEventEvent": ".sseevent",
     "SSEEventTypedDict": ".sseevent",
@@ -5266,6 +5392,8 @@ _dynamic_imports: dict[str, str] = {
     "UnarchiveSearchResponse": ".unarchivesearchop",
     "UnarchiveSearchResponseTypedDict": ".unarchivesearchop",
     "UnarchiveSearchStatus": ".unarchivesearchop",
+    "UnpinConversationRequest": ".unpinconversationop",
+    "UnpinConversationRequestTypedDict": ".unpinconversationop",
     "UpdateAgentConversationMessageFeedbackRequest": ".updateagentconversationmessagefeedbackop",
     "UpdateAgentConversationMessageFeedbackRequestTypedDict": ".updateagentconversationmessagefeedbackop",
     "UpdateAgentConversationTitleRequest": ".updateagentconversationtitleop",

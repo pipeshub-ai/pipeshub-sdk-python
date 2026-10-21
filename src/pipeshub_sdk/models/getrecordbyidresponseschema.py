@@ -17,6 +17,23 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+AccessRule = Union[
+    Literal[
+        "OPEN",
+        "STRICT",
+        "RESTRICTED",
+    ],
+    UnrecognizedStr,
+]
+r"""How this record's own permissions combine with its ancestors'.
+OPEN: an accessible parent, or a direct grant, is enough.
+STRICT: every ancestor up to the connector must be accessible too.
+RESTRICTED: strict, and a grant on the record itself is required.
+Absent on records written before the field existed; read as OPEN.
+
+"""
+
+
 class GetRecordByIDResponseSchemaFileRecordTypedDict(TypedDict):
     id: str
     org_id: str
@@ -238,6 +255,14 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     connectors that do not set it.
 
     """
+    access_rule: NotRequired[AccessRule]
+    r"""How this record's own permissions combine with its ancestors'.
+    OPEN: an accessible parent, or a direct grant, is enough.
+    STRICT: every ancestor up to the connector must be accessible too.
+    RESTRICTED: strict, and a grant on the record itself is required.
+    Absent on records written before the field existed; read as OPEN.
+
+    """
     uploaded_by: NotRequired[Nullable[str]]
     r"""User id of whoever uploaded the file to the knowledge base.
     Absent for connector records and for files uploaded before the
@@ -251,6 +276,14 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     processing_started_at: NotRequired[Nullable[int]]
     queued_at_timestamp: NotRequired[Nullable[int]]
     parsing_status: NotRequired[Nullable[str]]
+    has_indexed_copy: NotRequired[bool]
+    r"""True after the record is indexed (every COMPLETED write, including the upgrade
+    backfill for records indexed earlier), and false once it is marked EMPTY. A later
+    re-queue or a failed re-index leaves it as it is, so search keeps returning the
+    previous indexed copy until the new version is indexed. Absent until the first
+    COMPLETED or EMPTY write sets it.
+
+    """
     reason: NotRequired[Nullable[str]]
     deleted_by_user_id: NotRequired[Nullable[str]]
     is_dirty: NotRequired[Nullable[bool]]
@@ -402,6 +435,17 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     """
 
+    access_rule: Annotated[Optional[AccessRule], pydantic.Field(alias="accessRule")] = (
+        None
+    )
+    r"""How this record's own permissions combine with its ancestors'.
+    OPEN: an accessible parent, or a direct grant, is enough.
+    STRICT: every ancestor up to the connector must be accessible too.
+    RESTRICTED: strict, and a grant on the record itself is required.
+    Absent on records written before the field existed; read as OPEN.
+
+    """
+
     uploaded_by: Annotated[
         OptionalNullable[str], pydantic.Field(alias="uploadedBy")
     ] = UNSET
@@ -438,6 +482,17 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
     parsing_status: Annotated[
         OptionalNullable[str], pydantic.Field(alias="parsingStatus")
     ] = UNSET
+
+    has_indexed_copy: Annotated[
+        Optional[bool], pydantic.Field(alias="hasIndexedCopy")
+    ] = None
+    r"""True after the record is indexed (every COMPLETED write, including the upgrade
+    backfill for records indexed earlier), and false once it is marked EMPTY. A later
+    re-queue or a failed re-index leaves it as it is, so search keeps returning the
+    previous indexed copy until the new version is indexed. Absent until the first
+    COMPLETED or EMPTY write sets it.
+
+    """
 
     reason: OptionalNullable[str] = UNSET
 
@@ -502,6 +557,7 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalRevisionId",
                 "recordGroupId",
                 "rootRecordGroupId",
+                "accessRule",
                 "uploadedBy",
                 "isLatestVersion",
                 "lastSyncTimestamp",
@@ -510,6 +566,7 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "processingStartedAt",
                 "queuedAtTimestamp",
                 "parsingStatus",
+                "hasIndexedCopy",
                 "reason",
                 "deletedByUserId",
                 "isDirty",

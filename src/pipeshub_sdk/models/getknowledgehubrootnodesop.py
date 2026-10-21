@@ -39,7 +39,14 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
 
     """
     page: NotRequired[int]
-    r"""Page number (1-indexed). Combined with `limit` to paginate results.
+    r"""Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+    Prefer `cursor`: a page number is reached by reading the pages before it.
+
+    """
+    cursor: NotRequired[str]
+    r"""Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+    response. Send it with the same path, filters and sort as the request that returned
+    it; a cursor issued for another place, user or listing mode is refused with 400.
 
     """
     limit: NotRequired[int]
@@ -155,7 +162,18 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 1
-    r"""Page number (1-indexed). Combined with `limit` to paginate results.
+    r"""Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+    Prefer `cursor`: a page number is reached by reading the pages before it.
+
+    """
+
+    cursor: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+    response. Send it with the same path, filters and sort as the request that returned
+    it; a cursor issued for another place, user or listing mode is refused with 400.
 
     """
 
@@ -325,6 +343,7 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
             [
                 "onlyContainers",
                 "page",
+                "cursor",
                 "limit",
                 "sortBy",
                 "sortOrder",
