@@ -14,6 +14,11 @@ class StreamRecordBufferRequestTypedDict(TypedDict):
     r"""Record ID"""
     convert_to: NotRequired[str]
     r"""Target format for conversion"""
+    version: NotRequired[int]
+    r"""Registry version to pin ARTIFACT record content to. Omit to stream
+    the latest version. Ignored for non-artifact records.
+
+    """
 
 
 class StreamRecordBufferRequest(BaseModel):
@@ -31,9 +36,18 @@ class StreamRecordBufferRequest(BaseModel):
     ] = None
     r"""Target format for conversion"""
 
+    version: Annotated[
+        Optional[int],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Registry version to pin ARTIFACT record content to. Omit to stream
+    the latest version. Ignored for non-artifact records.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["convertTo"])
+        optional_fields = set(["convertTo", "version"])
         serialized = handler(self)
         m = {}
 

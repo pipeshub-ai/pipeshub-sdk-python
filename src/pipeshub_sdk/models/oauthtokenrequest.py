@@ -12,11 +12,17 @@ GrantType = Literal[
     "authorization_code",
     "client_credentials",
     "refresh_token",
+    "urn:ietf:params:oauth:grant-type:token-exchange",
 ]
 r"""OAuth grant type:
 - `authorization_code`: Exchange auth code for tokens
 - `client_credentials`: Machine-to-machine auth
 - `refresh_token`: Get new access token using refresh token
+- `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
+delegation (RFC 8693). Exchanges a service token for a
+short-lived token that acts as one named person. Enterprise
+edition; kept in this enum because the request shape is the same
+wherever the grant is offered.
 
 """
 
@@ -32,6 +38,11 @@ class OAuthTokenRequestTypedDict(TypedDict):
     - `authorization_code`: Exchange auth code for tokens
     - `client_credentials`: Machine-to-machine auth
     - `refresh_token`: Get new access token using refresh token
+    - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
+    delegation (RFC 8693). Exchanges a service token for a
+    short-lived token that acts as one named person. Enterprise
+    edition; kept in this enum because the request shape is the same
+    wherever the grant is offered.
 
     """
     code: NotRequired[str]
@@ -51,6 +62,24 @@ class OAuthTokenRequestTypedDict(TypedDict):
     Must be 43-128 characters from [A-Za-z0-9-._~]
 
     """
+    subject_token: NotRequired[str]
+    r"""The service token being exchanged (token-exchange grant only).
+    This is the only authentication the grant has: no `client_id` or
+    `client_secret` is sent, because the service token already carries
+    a verified identity and the scopes that bound it.
+
+    """
+    subject_token_type: NotRequired[str]
+    r"""Optional. Must be `urn:ietf:params:oauth:token-type:access_token`
+    when sent (token-exchange grant only).
+
+    """
+    requested_subject: NotRequired[str]
+    r"""The person to act as, by user id or email address (token-exchange
+    grant only). Must be on the service account's allow-list, and must
+    not be an administrator.
+
+    """
 
 
 class OAuthTokenRequest(BaseModel):
@@ -64,6 +93,11 @@ class OAuthTokenRequest(BaseModel):
     - `authorization_code`: Exchange auth code for tokens
     - `client_credentials`: Machine-to-machine auth
     - `refresh_token`: Get new access token using refresh token
+    - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
+    delegation (RFC 8693). Exchanges a service token for a
+    short-lived token that acts as one named person. Enterprise
+    edition; kept in this enum because the request shape is the same
+    wherever the grant is offered.
 
     """
 
@@ -91,6 +125,27 @@ class OAuthTokenRequest(BaseModel):
 
     """
 
+    subject_token: Annotated[Optional[str], FieldMetadata(form=True)] = None
+    r"""The service token being exchanged (token-exchange grant only).
+    This is the only authentication the grant has: no `client_id` or
+    `client_secret` is sent, because the service token already carries
+    a verified identity and the scopes that bound it.
+
+    """
+
+    subject_token_type: Annotated[Optional[str], FieldMetadata(form=True)] = None
+    r"""Optional. Must be `urn:ietf:params:oauth:token-type:access_token`
+    when sent (token-exchange grant only).
+
+    """
+
+    requested_subject: Annotated[Optional[str], FieldMetadata(form=True)] = None
+    r"""The person to act as, by user id or email address (token-exchange
+    grant only). Must be on the service account's allow-list, and must
+    not be an administrator.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -102,6 +157,9 @@ class OAuthTokenRequest(BaseModel):
                 "refresh_token",
                 "scope",
                 "code_verifier",
+                "subject_token",
+                "subject_token_type",
+                "requested_subject",
             ]
         )
         serialized = handler(self)

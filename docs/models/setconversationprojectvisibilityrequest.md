@@ -1,9 +1,0 @@
-# SetConversationProjectVisibilityRequest
-
-
-## Fields
-
-| Field                                                                                                          | Type                                                                                                           | Required                                                                                                       | Description                                                                                                    |
-| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `conversation_id`                                                                                              | *str*                                                                                                          | :heavy_check_mark:                                                                                             | Unique conversation identifier                                                                                 |
-| `body`                                                                                                         | [models.SetConversationProjectVisibilityRequestBody](../models/setconversationprojectvisibilityrequestbody.md) | :heavy_check_mark:                                                                                             | N/A                                                                                                            |

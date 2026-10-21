@@ -16,6 +16,11 @@ class Connector(BaseSDK):
         self,
         *,
         record_id: str,
+        max_chars: Optional[int] = None,
+        start_block: Optional[int] = None,
+        query: Optional[str] = None,
+        mode: Optional[models.GetRecordContentMode] = None,
+        start_record: Optional[int] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -43,6 +48,22 @@ class Connector(BaseSDK):
         full content when the search snippet or citation excerpt isn't
         enough to answer the question.
 
+        **Reading part of a long record, or a whole Slack thread:**
+
+        With no query parameters the whole record is returned, which for a
+        pull request with its diffs or a long document can run to hundreds of
+        thousands of characters. Pass any of `maxChars`, `startBlock`, `query`
+        or `mode` for a budgeted read instead: the response stays within
+        `maxChars` and says how to continue (`nextStartBlock`, or
+        `nextStartRecord` for a thread). `query` makes a record too large for
+        the budget show its most relevant blocks first, with the skipped
+        ranges marked. `mode=thread` returns every message of the Slack
+        thread the record belongs to, oldest first, as far as the caller may
+        see them. A Slack record in no single thread (several channel
+        messages in one record, or a message without replies) returns itself,
+        then the replies of each thread its messages started; the first page
+        opens with a bracketed note saying which.
+
         **Permission scoping:**
 
         The requesting user/token must have access to the record; access is
@@ -54,6 +75,11 @@ class Connector(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
+        :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
+        :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
+        :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
+        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
+        :param start_record: Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -71,6 +97,11 @@ class Connector(BaseSDK):
 
         request = models.GetRecordContentRequest(
             record_id=record_id,
+            max_chars=max_chars,
+            start_block=start_block,
+            query=query,
+            mode=mode,
+            start_record=start_record,
         )
 
         req = self._build_request(
@@ -121,7 +152,7 @@ class Connector(BaseSDK):
             return unmarshal_json_response(
                 models.GetRecordContentResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["401", "403"], "application/json"):
+        if utils.match_response(http_res, ["401", "403", "422"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -144,6 +175,11 @@ class Connector(BaseSDK):
         self,
         *,
         record_id: str,
+        max_chars: Optional[int] = None,
+        start_block: Optional[int] = None,
+        query: Optional[str] = None,
+        mode: Optional[models.GetRecordContentMode] = None,
+        start_record: Optional[int] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -171,6 +207,22 @@ class Connector(BaseSDK):
         full content when the search snippet or citation excerpt isn't
         enough to answer the question.
 
+        **Reading part of a long record, or a whole Slack thread:**
+
+        With no query parameters the whole record is returned, which for a
+        pull request with its diffs or a long document can run to hundreds of
+        thousands of characters. Pass any of `maxChars`, `startBlock`, `query`
+        or `mode` for a budgeted read instead: the response stays within
+        `maxChars` and says how to continue (`nextStartBlock`, or
+        `nextStartRecord` for a thread). `query` makes a record too large for
+        the budget show its most relevant blocks first, with the skipped
+        ranges marked. `mode=thread` returns every message of the Slack
+        thread the record belongs to, oldest first, as far as the caller may
+        see them. A Slack record in no single thread (several channel
+        messages in one record, or a message without replies) returns itself,
+        then the replies of each thread its messages started; the first page
+        opens with a bracketed note saying which.
+
         **Permission scoping:**
 
         The requesting user/token must have access to the record; access is
@@ -182,6 +234,11 @@ class Connector(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
+        :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
+        :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
+        :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
+        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
+        :param start_record: Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -199,6 +256,11 @@ class Connector(BaseSDK):
 
         request = models.GetRecordContentRequest(
             record_id=record_id,
+            max_chars=max_chars,
+            start_block=start_block,
+            query=query,
+            mode=mode,
+            start_record=start_record,
         )
 
         req = self._build_request_async(
@@ -249,7 +311,7 @@ class Connector(BaseSDK):
             return unmarshal_json_response(
                 models.GetRecordContentResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["401", "403"], "application/json"):
+        if utils.match_response(http_res, ["401", "403", "422"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):

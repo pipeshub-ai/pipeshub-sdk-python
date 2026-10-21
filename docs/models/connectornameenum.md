@@ -61,6 +61,7 @@ This is an open enum. Unrecognized values will not fail type checks.
 - `"AZURE FILES"`
 - `"LINEAR"`
 - `"ZAMMAD"`
+- `"ZENDESK"`
 - `"ZOOM"`
 - `"GITLAB"`
 - `"GITLAB PERSONAL"`
