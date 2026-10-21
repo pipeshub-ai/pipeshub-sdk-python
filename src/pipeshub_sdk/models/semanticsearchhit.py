@@ -41,6 +41,18 @@ class SemanticSearchHitTypedDict(TypedDict):
 
     """
     block_index: NotRequired[Nullable[int]]
+    distance_from_match: NotRequired[int]
+    r"""Set on a passage returned because a match inside its section (a thread, a list,
+    a table) brought the whole section back: how many blocks it sits from the passage
+    the search matched nearest to it. `0` is a matched passage. Absent when the hit matched
+    directly or the section matched as a whole.
+
+    """
+    timeline_period: NotRequired[int]
+    r"""Set only on a search with `timeline`: the index in `timeline.periods` of the period
+    this hit's record is dated in.
+
+    """
 
 
 class SemanticSearchHit(BaseModel):
@@ -78,6 +90,24 @@ class SemanticSearchHit(BaseModel):
 
     block_index: OptionalNullable[int] = UNSET
 
+    distance_from_match: Annotated[
+        Optional[int], pydantic.Field(alias="distanceFromMatch")
+    ] = None
+    r"""Set on a passage returned because a match inside its section (a thread, a list,
+    a table) brought the whole section back: how many blocks it sits from the passage
+    the search matched nearest to it. `0` is a matched passage. Absent when the hit matched
+    directly or the section matched as a whole.
+
+    """
+
+    timeline_period: Annotated[
+        Optional[int], pydantic.Field(alias="timelinePeriod")
+    ] = None
+    r"""Set only on a search with `timeline`: the index in `timeline.periods` of the period
+    this hit's record is dated in.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -90,6 +120,8 @@ class SemanticSearchHit(BaseModel):
                 "virtual_record_id",
                 "block_type",
                 "block_index",
+                "distanceFromMatch",
+                "timelinePeriod",
             ]
         )
         nullable_fields = set(

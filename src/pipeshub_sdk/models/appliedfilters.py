@@ -3,9 +3,10 @@
 from __future__ import annotations
 from .appliedfilternode import AppliedFilterNode, AppliedFilterNodeTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AppliedFiltersTypedDict(TypedDict):
@@ -19,6 +20,12 @@ class AppliedFiltersTypedDict(TypedDict):
     r"""Applied app/connector filter nodes"""
     kb: NotRequired[List[AppliedFilterNodeTypedDict]]
     r"""Applied knowledge-base filter nodes"""
+    record_groups: NotRequired[List[AppliedFilterNodeTypedDict]]
+    r"""Applied record-group filter nodes"""
+    records: NotRequired[List[AppliedFilterNodeTypedDict]]
+    r"""Applied folder and record filter nodes (each with everything under it)"""
+    records_exact: NotRequired[List[AppliedFilterNodeTypedDict]]
+    r"""Applied record filter nodes selected alone"""
 
 
 class AppliedFilters(BaseModel):
@@ -34,9 +41,22 @@ class AppliedFilters(BaseModel):
     kb: Optional[List[AppliedFilterNode]] = None
     r"""Applied knowledge-base filter nodes"""
 
+    record_groups: Annotated[
+        Optional[List[AppliedFilterNode]], pydantic.Field(alias="recordGroups")
+    ] = None
+    r"""Applied record-group filter nodes"""
+
+    records: Optional[List[AppliedFilterNode]] = None
+    r"""Applied folder and record filter nodes (each with everything under it)"""
+
+    records_exact: Annotated[
+        Optional[List[AppliedFilterNode]], pydantic.Field(alias="recordsExact")
+    ] = None
+    r"""Applied record filter nodes selected alone"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["apps", "kb"])
+        optional_fields = set(["apps", "kb", "recordGroups", "records", "recordsExact"])
         serialized = handler(self)
         m = {}
 
@@ -49,3 +69,9 @@ class AppliedFilters(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    AppliedFilters.model_rebuild()
+except NameError:
+    pass

@@ -9,7 +9,7 @@ from typing import Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
-ListAgentConversationsIsArchived = Literal[
+IsArchived = Literal[
     "true",
     "false",
 ]
@@ -66,7 +66,7 @@ class ListAgentConversationsRequestTypedDict(TypedDict):
     parameter.
 
     """
-    is_archived: NotRequired[ListAgentConversationsIsArchived]
+    is_archived: NotRequired[IsArchived]
     r"""Optional archived flag applied to the `sharedWithMeConversations`
     branch before the route-level non-archived guard is enforced.
     Accepted values are `true` and `false`.
@@ -168,7 +168,7 @@ class ListAgentConversationsRequest(BaseModel):
     """
 
     is_archived: Annotated[
-        Optional[ListAgentConversationsIsArchived],
+        Optional[IsArchived],
         pydantic.Field(alias="isArchived"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None

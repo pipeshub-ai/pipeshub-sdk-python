@@ -21,6 +21,7 @@ class KnowledgeHub(BaseSDK):
         *,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubRootNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubRootNodesSortOrder] = "desc",
@@ -90,7 +91,12 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. Send it with the same path, filters and sort as the request that returned
+            it; a cursor issued for another place, user or listing mode is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -178,6 +184,7 @@ class KnowledgeHub(BaseSDK):
         request = models.GetKnowledgeHubRootNodesRequest(
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -287,6 +294,7 @@ class KnowledgeHub(BaseSDK):
         *,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubRootNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubRootNodesSortOrder] = "desc",
@@ -356,7 +364,12 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. Send it with the same path, filters and sort as the request that returned
+            it; a cursor issued for another place, user or listing mode is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -444,6 +457,7 @@ class KnowledgeHub(BaseSDK):
         request = models.GetKnowledgeHubRootNodesRequest(
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -555,6 +569,7 @@ class KnowledgeHub(BaseSDK):
         parent_id: str,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubChildNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubChildNodesSortOrder] = "desc",
@@ -628,7 +643,12 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. Send it with the same path, filters and sort as the request that returned
+            it; a cursor issued for another place, user or listing mode is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -718,6 +738,7 @@ class KnowledgeHub(BaseSDK):
             parent_id=parent_id,
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -836,6 +857,7 @@ class KnowledgeHub(BaseSDK):
         parent_id: str,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubChildNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubChildNodesSortOrder] = "desc",
@@ -909,7 +931,12 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. Send it with the same path, filters and sort as the request that returned
+            it; a cursor issued for another place, user or listing mode is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -999,6 +1026,7 @@ class KnowledgeHub(BaseSDK):
             parent_id=parent_id,
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,

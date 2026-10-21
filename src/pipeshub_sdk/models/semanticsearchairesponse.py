@@ -10,6 +10,14 @@ from .semanticsearchgraphrecord import (
     SemanticSearchGraphRecordTypedDict,
 )
 from .semanticsearchhit import SemanticSearchHit, SemanticSearchHitTypedDict
+from .semanticsearchoutsidedates import (
+    SemanticSearchOutsideDates,
+    SemanticSearchOutsideDatesTypedDict,
+)
+from .semanticsearchtimeline import (
+    SemanticSearchTimeline,
+    SemanticSearchTimelineTypedDict,
+)
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
@@ -31,8 +39,35 @@ class SemanticSearchAiResponseTypedDict(TypedDict):
     message: str
     applied_filters: NotRequired[SemanticSearchAppliedFiltersTypedDict]
     r"""Present when KB filters were applied to the search request."""
+    omitted_passages: NotRequired[Dict[str, int]]
+    r"""Present only when some records lost passages to the per-record cap: maps a
+    `recordId` to how many of its passages were left out. Each record keeps at most
+    `max(SEARCH_PER_RECORD_FLOOR, limit / SEARCH_PER_RECORD_DIVISOR)` passages
+    (4 at the default limit): the passages that matched first, then those nearest a match.
+
+    """
     virtual_to_record_map: NotRequired[Dict[str, SemanticSearchGraphRecordTypedDict]]
     r"""Maps virtual record id (object property name) to the accessible graph record document for that id."""
+    timeline: NotRequired[SemanticSearchTimelineTypedDict]
+    r"""Present only on a search run as a timeline: one with `timeline` set, or one over a span
+    of more than 31 days with it left out. `searchResults` then come period by period,
+    oldest first, and by record date within a period; each hit's `timelinePeriod` is its
+    period's index in `periods`.
+
+    """
+    outside_dates: NotRequired[SemanticSearchOutsideDatesTypedDict]
+    r"""Present only on a search with date bounds, when the same search without them found
+    matches the bounds left out. Date bounds match when a record was written or last changed,
+    not when the event it describes happened, so release notes, a retrospective or a weekly
+    summary written after a period are left out of a search bounded to that period. The
+    search without dates, with the same query, filters and permissions and a limit of 10,
+    runs beside the bounded search (or beside a timeline's searches: one plain search, not a
+    second timeline). Its best matches outside the bounds, up to 3 records, best first, come
+    here, never in `searchResults`, which are unchanged. When nothing inside the bounds
+    matched, the response is then a `200` with empty `searchResults`. A server whose
+    `DATE_FILTER_SAFETY_NET` setting is `false` never sends this field.
+
+    """
 
 
 class SemanticSearchAiResponse(BaseModel):
@@ -59,12 +94,54 @@ class SemanticSearchAiResponse(BaseModel):
     ] = None
     r"""Present when KB filters were applied to the search request."""
 
+    omitted_passages: Annotated[
+        Optional[Dict[str, int]], pydantic.Field(alias="omittedPassages")
+    ] = None
+    r"""Present only when some records lost passages to the per-record cap: maps a
+    `recordId` to how many of its passages were left out. Each record keeps at most
+    `max(SEARCH_PER_RECORD_FLOOR, limit / SEARCH_PER_RECORD_DIVISOR)` passages
+    (4 at the default limit): the passages that matched first, then those nearest a match.
+
+    """
+
     virtual_to_record_map: Optional[Dict[str, SemanticSearchGraphRecord]] = None
     r"""Maps virtual record id (object property name) to the accessible graph record document for that id."""
 
+    timeline: Optional[SemanticSearchTimeline] = None
+    r"""Present only on a search run as a timeline: one with `timeline` set, or one over a span
+    of more than 31 days with it left out. `searchResults` then come period by period,
+    oldest first, and by record date within a period; each hit's `timelinePeriod` is its
+    period's index in `periods`.
+
+    """
+
+    outside_dates: Annotated[
+        Optional[SemanticSearchOutsideDates], pydantic.Field(alias="outsideDates")
+    ] = None
+    r"""Present only on a search with date bounds, when the same search without them found
+    matches the bounds left out. Date bounds match when a record was written or last changed,
+    not when the event it describes happened, so release notes, a retrospective or a weekly
+    summary written after a period are left out of a search bounded to that period. The
+    search without dates, with the same query, filters and permissions and a limit of 10,
+    runs beside the bounded search (or beside a timeline's searches: one plain search, not a
+    second timeline). Its best matches outside the bounds, up to 3 records, best first, come
+    here, never in `searchResults`, which are unchanged. When nothing inside the bounds
+    matched, the response is then a `200` with empty `searchResults`. A server whose
+    `DATE_FILTER_SAFETY_NET` setting is `false` never sends this field.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["appliedFilters", "virtual_to_record_map"])
+        optional_fields = set(
+            [
+                "appliedFilters",
+                "omittedPassages",
+                "virtual_to_record_map",
+                "timeline",
+                "outsideDates",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 from datetime import datetime
 from pipeshub_sdk import errors, models, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, Iterable, List, Mapping, Optional, Union
@@ -42,6 +42,13 @@ class Conversations(BaseSDK):
         protocol: Optional[models.CreateConversationRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.CreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -93,12 +100,28 @@ class Conversations(BaseSDK):
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -121,7 +144,9 @@ class Conversations(BaseSDK):
             `chatSharing` setting when omitted.
 
         :param model_key: Identifier for the AI model configuration to use.
-            Available models depend on organization settings.
+            Available models depend on organization settings. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the conversation's `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
@@ -138,7 +163,8 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names such as
             \"jira.create_issue\") that the AI agent is permitted to invoke for this
             request. When omitted the agent may use any configured tool. Applicable
-            only when `chatMode` is `agent`.
+            only when `chatMode` is `agent`. Web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -150,6 +176,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -194,6 +230,11 @@ class Conversations(BaseSDK):
             agent_capabilities=utils.get_pydantic_model(
                 agent_capabilities, Optional[models.AgentCapabilities]
             ),
+            include_retrieval_context=include_retrieval_context,
+            keyword_search_budget=keyword_search_budget,
+            tool_approval=utils.get_pydantic_model(
+                tool_approval, Optional[models.ToolApprovalAnswer]
+            ),
             run_id=run_id,
         )
 
@@ -231,7 +272,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createConversation",
-                oauth2_scopes=["conversation:write"],
+                oauth2_scopes=["conversation:chat"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -308,6 +349,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.CreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -358,12 +406,28 @@ class Conversations(BaseSDK):
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -386,7 +450,9 @@ class Conversations(BaseSDK):
             `chatSharing` setting when omitted.
 
         :param model_key: Identifier for the AI model configuration to use.
-            Available models depend on organization settings.
+            Available models depend on organization settings. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the conversation's `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
@@ -403,7 +469,8 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names such as
             \"jira.create_issue\") that the AI agent is permitted to invoke for this
             request. When omitted the agent may use any configured tool. Applicable
-            only when `chatMode` is `agent`.
+            only when `chatMode` is `agent`. Web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -415,6 +482,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -459,6 +536,11 @@ class Conversations(BaseSDK):
             agent_capabilities=utils.get_pydantic_model(
                 agent_capabilities, Optional[models.AgentCapabilities]
             ),
+            include_retrieval_context=include_retrieval_context,
+            keyword_search_budget=keyword_search_budget,
+            tool_approval=utils.get_pydantic_model(
+                tool_approval, Optional[models.ToolApprovalAnswer]
+            ),
             run_id=run_id,
         )
 
@@ -496,7 +578,7 @@ class Conversations(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createConversation",
-                oauth2_scopes=["conversation:write"],
+                oauth2_scopes=["conversation:chat"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -573,6 +655,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.ConversationStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -630,12 +719,28 @@ class Conversations(BaseSDK):
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -658,7 +763,9 @@ class Conversations(BaseSDK):
             `chatSharing` setting when omitted.
 
         :param model_key: Identifier for the AI model configuration to use.
-            Available models depend on organization settings.
+            Available models depend on organization settings. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the conversation's `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
@@ -670,7 +777,8 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names such as
             \"jira.create_issue\") that the AI agent is permitted to invoke for this
             request. When omitted the agent may use any configured tool. Applicable
-            only when `chatMode` is `agent`.
+            only when `chatMode` is `agent`. Web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -682,6 +790,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -725,6 +843,11 @@ class Conversations(BaseSDK):
             protocol=protocol,
             agent_capabilities=utils.get_pydantic_model(
                 agent_capabilities, Optional[models.AgentCapabilities]
+            ),
+            include_retrieval_context=include_retrieval_context,
+            keyword_search_budget=keyword_search_budget,
+            tool_approval=utils.get_pydantic_model(
+                tool_approval, Optional[models.ToolApprovalAnswer]
             ),
             run_id=run_id,
         )
@@ -831,6 +954,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.ConversationStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -888,12 +1018,28 @@ class Conversations(BaseSDK):
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -916,7 +1062,9 @@ class Conversations(BaseSDK):
             `chatSharing` setting when omitted.
 
         :param model_key: Identifier for the AI model configuration to use.
-            Available models depend on organization settings.
+            Available models depend on organization settings. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the conversation's `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
@@ -928,7 +1076,8 @@ class Conversations(BaseSDK):
         :param tools: Optional list of tool identifiers (fully-qualified action names such as
             \"jira.create_issue\") that the AI agent is permitted to invoke for this
             request. When omitted the agent may use any configured tool. Applicable
-            only when `chatMode` is `agent`.
+            only when `chatMode` is `agent`. Web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -940,6 +1089,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -983,6 +1142,11 @@ class Conversations(BaseSDK):
             protocol=protocol,
             agent_capabilities=utils.get_pydantic_model(
                 agent_capabilities, Optional[models.AgentCapabilities]
+            ),
+            include_retrieval_context=include_retrieval_context,
+            keyword_search_budget=keyword_search_budget,
+            tool_approval=utils.get_pydantic_model(
+                tool_approval, Optional[models.ToolApprovalAnswer]
             ),
             run_id=run_id,
         )
@@ -1098,6 +1262,9 @@ class Conversations(BaseSDK):
         **Sorting:**
 
         Conversations are sorted by last activity timestamp (most recent first) by default.
+        With `source=owned`, conversations the caller pinned
+        (`PATCH /conversations/{conversationId}/pin`) come first, in the same order,
+        whatever `sortBy` is. `source=shared` is never pinned-first.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1249,6 +1416,9 @@ class Conversations(BaseSDK):
         **Sorting:**
 
         Conversations are sorted by last activity timestamp (most recent first) by default.
+        With `source=owned`, conversations the caller pinned
+        (`PATCH /conversations/{conversationId}/pin`) come first, in the same order,
+        whatever `sortBy` is. `source=shared` is never pinned-first.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2194,6 +2364,12 @@ class Conversations(BaseSDK):
         been shared with may delete it only when their `sharedWith.accessLevel`
         is `write`.
 
+        **Artifacts:** before the conversation is marked deleted, every artifact
+        the caller created in it is deleted for good (every version and stored
+        file), and so are older stored outputs of the conversation. If that cannot
+        be done the conversation is left in place and the error is returned
+        (for example 503); repeating the request finishes the cleanup.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -2301,6 +2477,12 @@ class Conversations(BaseSDK):
         The conversation initiator can always delete. Users the conversation has
         been shared with may delete it only when their `sharedWith.accessLevel`
         is `write`.
+
+        **Artifacts:** before the conversation is marked deleted, every artifact
+        the caller created in it is deleted for good (every version and stored
+        file), and so are older stored outputs of the conversation. If that cannot
+        be done the conversation is left in place and the error is returned
+        (for example 503); repeating the request finishes the cleanup.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2411,6 +2593,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.AddMessageRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2451,13 +2640,31 @@ class Conversations(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
-        :param query: The follow-up question or message content
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param query: The follow-up question or message content. Held to the same
+            100,000-character limit as the first message of a conversation.
+
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -2466,7 +2673,10 @@ class Conversations(BaseSDK):
         :param attachments: Uploaded chat attachments for this follow-up turn (see
             `POST /conversations/attachments/upload`).
 
-        :param model_key: Override the model for this specific message
+        :param model_key: Override the model for this specific message. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the message's `modelInfo`.
+
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
@@ -2491,6 +2701,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -2532,6 +2752,11 @@ class Conversations(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -2642,6 +2867,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.AddMessageRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2682,13 +2914,31 @@ class Conversations(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id:
-        :param query: The follow-up question or message content
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param query: The follow-up question or message content. Held to the same
+            100,000-character limit as the first message of a conversation.
+
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -2697,7 +2947,10 @@ class Conversations(BaseSDK):
         :param attachments: Uploaded chat attachments for this follow-up turn (see
             `POST /conversations/attachments/upload`).
 
-        :param model_key: Override the model for this specific message
+        :param model_key: Override the model for this specific message. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the message's `modelInfo`.
+
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
@@ -2722,6 +2975,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -2763,6 +3026,11 @@ class Conversations(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -2873,6 +3141,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.ConversationMessageStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2899,16 +3174,34 @@ class Conversations(BaseSDK):
         :param conversation_id: Identifier of the conversation to append the message to. The
             conversation must belong to the caller and must not be deleted.
 
-        :param query: The follow-up question or message content
+        :param query: The follow-up question or message content. Held to the same
+            100,000-character limit as the first message of a conversation.
+
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
             request schema.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -2917,7 +3210,10 @@ class Conversations(BaseSDK):
         :param attachments: Uploaded chat attachments for this follow-up turn (see
             `POST /conversations/attachments/upload`).
 
-        :param model_key: Override the model for this specific message
+        :param model_key: Override the model for this specific message. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the message's `modelInfo`.
+
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
         :param timezone: IANA timezone identifier from the client (top-level field).
@@ -2939,6 +3235,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -2980,6 +3286,11 @@ class Conversations(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3087,6 +3398,13 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models.ConversationMessageStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3113,16 +3431,34 @@ class Conversations(BaseSDK):
         :param conversation_id: Identifier of the conversation to append the message to. The
             conversation must belong to the caller and must not be deleted.
 
-        :param query: The follow-up question or message content
+        :param query: The follow-up question or message content. Held to the same
+            100,000-character limit as the first message of a conversation.
+
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
             request schema.
 
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param applied_filters: Rich filter state selected by the user, used for display and persistence only.
             This mirrors the active selection shown in the UI and is distinct from the
@@ -3131,7 +3467,10 @@ class Conversations(BaseSDK):
         :param attachments: Uploaded chat attachments for this follow-up turn (see
             `POST /conversations/attachments/upload`).
 
-        :param model_key: Override the model for this specific message
+        :param model_key: Override the model for this specific message. When neither
+            `modelKey` nor `modelName` is sent, the organization's default
+            model answers and is saved in the message's `modelInfo`.
+
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
         :param timezone: IANA timezone identifier from the client (top-level field).
@@ -3153,6 +3492,16 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
@@ -3194,6 +3543,11 @@ class Conversations(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3939,6 +4293,440 @@ class Conversations(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    def pin_conversation(
+        self,
+        *,
+        conversation_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ConversationPinResponse:
+        r"""Pin conversation
+
+        Pin a conversation so it is listed first in the caller's own conversation list.
+
+        **Access:**
+
+        Owner only: the caller must be the conversation's `initiator`. People the
+        conversation is shared with, even with `write` access, cannot pin it, and
+        their own lists are not affected by the owner's pin.
+
+        **Behaviour:**
+
+        Idempotent: pinning an already pinned conversation succeeds and changes nothing.
+        Archived and deleted conversations cannot be pinned. Archiving a pinned
+        conversation removes its pin. Pinning does not change `lastActivityAt` or
+        `updatedAt`, so the conversation keeps its place among the other pinned chats.
+
+        - Path params: `conversationId`
+        - Query params: none
+        - Body: none
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Conversation identifier
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PinConversationRequest(
+            conversation_id=conversation_id,
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/conversations/{conversationId}/pin",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="pinConversation",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ConversationPinResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def pin_conversation_async(
+        self,
+        *,
+        conversation_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ConversationPinResponse:
+        r"""Pin conversation
+
+        Pin a conversation so it is listed first in the caller's own conversation list.
+
+        **Access:**
+
+        Owner only: the caller must be the conversation's `initiator`. People the
+        conversation is shared with, even with `write` access, cannot pin it, and
+        their own lists are not affected by the owner's pin.
+
+        **Behaviour:**
+
+        Idempotent: pinning an already pinned conversation succeeds and changes nothing.
+        Archived and deleted conversations cannot be pinned. Archiving a pinned
+        conversation removes its pin. Pinning does not change `lastActivityAt` or
+        `updatedAt`, so the conversation keeps its place among the other pinned chats.
+
+        - Path params: `conversationId`
+        - Query params: none
+        - Body: none
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Conversation identifier
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.PinConversationRequest(
+            conversation_id=conversation_id,
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/conversations/{conversationId}/pin",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="pinConversation",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ConversationPinResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def unpin_conversation(
+        self,
+        *,
+        conversation_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ConversationPinResponse:
+        r"""Unpin conversation
+
+        Remove a conversation's pin so it is listed by recent activity again.
+
+        **Access:**
+
+        Owner only, as for `PATCH /conversations/{conversationId}/pin`.
+
+        **Behaviour:**
+
+        Idempotent: unpinning a conversation that is not pinned succeeds and changes nothing.
+
+        - Path params: `conversationId`
+        - Query params: none
+        - Body: none
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Conversation identifier
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UnpinConversationRequest(
+            conversation_id=conversation_id,
+        )
+
+        req = self._build_request(
+            method="PATCH",
+            path="/conversations/{conversationId}/unpin",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="unpinConversation",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ConversationPinResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def unpin_conversation_async(
+        self,
+        *,
+        conversation_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ConversationPinResponse:
+        r"""Unpin conversation
+
+        Remove a conversation's pin so it is listed by recent activity again.
+
+        **Access:**
+
+        Owner only, as for `PATCH /conversations/{conversationId}/pin`.
+
+        **Behaviour:**
+
+        Idempotent: unpinning a conversation that is not pinned succeeds and changes nothing.
+
+        - Path params: `conversationId`
+        - Query params: none
+        - Body: none
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id: Conversation identifier
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UnpinConversationRequest(
+            conversation_id=conversation_id,
+        )
+
+        req = self._build_request_async(
+            method="PATCH",
+            path="/conversations/{conversationId}/unpin",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="unpinConversation",
+                oauth2_scopes=["conversation:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ConversationPinResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, ["500", "5XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
     def regenerate_answer(
         self,
         *,
@@ -3955,6 +4743,9 @@ class Conversations(BaseSDK):
         protocol: Optional[models.RegenerateRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
+        ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -4000,12 +4791,28 @@ class Conversations(BaseSDK):
 
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -4024,7 +4831,13 @@ class Conversations(BaseSDK):
 
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
-            regenerating. Applicable only in agent chat modes.
+            regenerating. Applicable only in agent chat modes. Regenerating
+            in the assistant's agent mode, web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
+            Regenerating a named agent's message (`AgentRegenerateRequest`),
+            a list that leaves out `web_search` turns off the agent's web
+            search for the turn, even when `agentCapabilities.webSearch` is
+            true.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -4035,6 +4848,14 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this regeneration run. Send it
             here to enable `POST .../cancel {runId}` while it is still
@@ -4070,6 +4891,9 @@ class Conversations(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -4166,6 +4990,9 @@ class Conversations(BaseSDK):
         agent_capabilities: Optional[
             Union[models.AgentCapabilities, models.AgentCapabilitiesTypedDict]
         ] = None,
+        tool_approval: Optional[
+            Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4210,12 +5037,28 @@ class Conversations(BaseSDK):
 
         :param conversation_id:
         :param message_id: ID of the message to regenerate response for
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is ignored by the gateway rather than
+            refused.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -4234,7 +5077,13 @@ class Conversations(BaseSDK):
 
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
-            regenerating. Applicable only in agent chat modes.
+            regenerating. Applicable only in agent chat modes. Regenerating
+            in the assistant's agent mode, web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
+            Regenerating a named agent's message (`AgentRegenerateRequest`),
+            a list that leaves out `web_search` turns off the agent's web
+            search for the turn, even when `agentCapabilities.webSearch` is
+            true.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -4245,6 +5094,14 @@ class Conversations(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this regeneration run. Send it
             here to enable `POST .../cancel {runId}` while it is still
@@ -4280,6 +5137,9 @@ class Conversations(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models.AgentCapabilities]
+                ),
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -4358,6 +5218,218 @@ class Conversations(BaseSDK):
         raise errors.PipeshubDefaultError(
             "Unexpected response received", http_res, http_res_text
         )
+
+    def fork_conversation(
+        self,
+        *,
+        conversation_id: str,
+        message_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ForkConversationResponse:
+        r"""Fork conversation from a message
+
+        Copy this conversation into a new private chat owned by the caller,
+        including every message up to and including `messageId`. The original
+        conversation is left unchanged.
+
+        Only the owner of the conversation can fork it. A shared recipient or a
+        project member gets 404, because their access to the original's
+        attachments and artifacts is revoked on unshare. The fork does not
+        inherit share settings. If the source is linked to a project the caller
+        can still see, the fork stays in that project but is private to the
+        caller; otherwise it is created outside the project.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id:
+        :param message_id: Inclusive last message to copy into the new chat
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.ForkConversationRequest(
+            conversation_id=conversation_id,
+            message_id=message_id,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/conversations/{conversationId}/message/{messageId}/fork",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="forkConversation",
+                oauth2_scopes=["conversation:chat"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "201", "application/json"):
+            return unmarshal_json_response(models.ForkConversationResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def fork_conversation_async(
+        self,
+        *,
+        conversation_id: str,
+        message_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ForkConversationResponse:
+        r"""Fork conversation from a message
+
+        Copy this conversation into a new private chat owned by the caller,
+        including every message up to and including `messageId`. The original
+        conversation is left unchanged.
+
+        Only the owner of the conversation can fork it. A shared recipient or a
+        project member gets 404, because their access to the original's
+        attachments and artifacts is revoked on unshare. The fork does not
+        inherit share settings. If the source is linked to a project the caller
+        can still see, the fork stays in that project but is private to the
+        caller; otherwise it is created outside the project.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param conversation_id:
+        :param message_id: Inclusive last message to copy into the new chat
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.ForkConversationRequest(
+            conversation_id=conversation_id,
+            message_id=message_id,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/conversations/{conversationId}/message/{messageId}/fork",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="forkConversation",
+                oauth2_scopes=["conversation:chat"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Conversations"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "201", "application/json"):
+            return unmarshal_json_response(models.ForkConversationResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     def cancel_conversation_stream(
         self,
@@ -4886,696 +5958,6 @@ class Conversations(BaseSDK):
                 "API error occurred", http_res, http_res_text
             )
         if utils.match_response(http_res, ["500", "5XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def set_conversation_project(
-        self,
-        *,
-        conversation_id: str,
-        project_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.SetConversationProjectResponse:
-        r"""Link or unlink a conversation to a project
-
-        Set (`projectId: <id>`) or clear (`projectId: null`) the project this
-        conversation belongs to. Initiator-only.
-
-        **Access:**
-
-        The caller must be the conversation's initiator. Linking to a
-        non-null `projectId` also requires at least viewer access to that
-        project (`404` if not visible to the caller — never `403`, to avoid
-        leaking project existence across an org boundary).
-
-        **Visibility on link:**
-
-        When linking, `projectVisibility` defaults from the project's
-        `chatSharing` setting (`members` → `project`, otherwise `private`)
-        unless the conversation was already `project`-visible, in which case
-        that is preserved. Use
-        `PATCH /conversations/{conversationId}/project-visibility` to
-        override it explicitly. Unlinking (`projectId: null`) always clears
-        both `projectId` and `projectVisibility`.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param conversation_id: Unique conversation identifier
-        :param project_id: Target project id, or `null` to unlink.
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.SetConversationProjectRequest(
-            conversation_id=conversation_id,
-            body=models.SetConversationProjectRequestBody(
-                project_id=project_id,
-            ),
-        )
-
-        req = self._build_request(
-            method="PUT",
-            path="/conversations/{conversationId}/project",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.SetConversationProjectRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setConversationProject",
-                oauth2_scopes=["conversation:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-                tags=["Conversations", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.SetConversationProjectResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_conversation_project_async(
-        self,
-        *,
-        conversation_id: str,
-        project_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.SetConversationProjectResponse:
-        r"""Link or unlink a conversation to a project
-
-        Set (`projectId: <id>`) or clear (`projectId: null`) the project this
-        conversation belongs to. Initiator-only.
-
-        **Access:**
-
-        The caller must be the conversation's initiator. Linking to a
-        non-null `projectId` also requires at least viewer access to that
-        project (`404` if not visible to the caller — never `403`, to avoid
-        leaking project existence across an org boundary).
-
-        **Visibility on link:**
-
-        When linking, `projectVisibility` defaults from the project's
-        `chatSharing` setting (`members` → `project`, otherwise `private`)
-        unless the conversation was already `project`-visible, in which case
-        that is preserved. Use
-        `PATCH /conversations/{conversationId}/project-visibility` to
-        override it explicitly. Unlinking (`projectId: null`) always clears
-        both `projectId` and `projectVisibility`.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param conversation_id: Unique conversation identifier
-        :param project_id: Target project id, or `null` to unlink.
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.SetConversationProjectRequest(
-            conversation_id=conversation_id,
-            body=models.SetConversationProjectRequestBody(
-                project_id=project_id,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PUT",
-            path="/conversations/{conversationId}/project",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.SetConversationProjectRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setConversationProject",
-                oauth2_scopes=["conversation:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-                tags=["Conversations", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.SetConversationProjectResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def set_conversation_project_visibility(
-        self,
-        *,
-        conversation_id: str,
-        visibility: models.SetConversationProjectVisibilityVisibility,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.SetConversationProjectVisibilityResponse:
-        r"""Override a conversation's project visibility
-
-        Explicitly set whether a project-linked conversation is visible to
-        other members of that project (`project`) or only to its owner
-        (`private`). Initiator-only. Requires the conversation to already be
-        linked to a project via
-        `PUT /conversations/{conversationId}/project`.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param conversation_id: Unique conversation identifier
-        :param visibility:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.SetConversationProjectVisibilityRequest(
-            conversation_id=conversation_id,
-            body=models.SetConversationProjectVisibilityRequestBody(
-                visibility=visibility,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/conversations/{conversationId}/project-visibility",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.SetConversationProjectVisibilityRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setConversationProjectVisibility",
-                oauth2_scopes=["conversation:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-                tags=["Conversations", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.SetConversationProjectVisibilityResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_conversation_project_visibility_async(
-        self,
-        *,
-        conversation_id: str,
-        visibility: models.SetConversationProjectVisibilityVisibility,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.SetConversationProjectVisibilityResponse:
-        r"""Override a conversation's project visibility
-
-        Explicitly set whether a project-linked conversation is visible to
-        other members of that project (`project`) or only to its owner
-        (`private`). Initiator-only. Requires the conversation to already be
-        linked to a project via
-        `PUT /conversations/{conversationId}/project`.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param conversation_id: Unique conversation identifier
-        :param visibility:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.SetConversationProjectVisibilityRequest(
-            conversation_id=conversation_id,
-            body=models.SetConversationProjectVisibilityRequestBody(
-                visibility=visibility,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/conversations/{conversationId}/project-visibility",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models.SetConversationProjectVisibilityRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setConversationProjectVisibility",
-                oauth2_scopes=["conversation:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-                tags=["Conversations", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.SetConversationProjectVisibilityResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def get_project_conversations(
-        self,
-        *,
-        project_id: str,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetProjectConversationsResponse:
-        r"""List a project's conversations
-
-        Requires viewer access to the project. Returns both chat and agent
-        sessions (`chatSessions`, discriminated by `sessionType`/`agentKey`)
-        that the caller may see: rows they own, plus rows with
-        `projectVisibility: project`. Access to the project is asserted
-        first, so a private conversation belonging to a *different* project
-        member never leaks through this endpoint.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param project_id:
-        :param page:
-        :param limit:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetProjectConversationsRequest(
-            project_id=project_id,
-            page=page,
-            limit=limit,
-        )
-
-        req = self._build_request(
-            method="GET",
-            path="/projects/{projectId}/conversations",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getProjectConversations",
-                oauth2_scopes=["project:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-                tags=["Projects", "Conversations"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.GetProjectConversationsResponse, http_res
-            )
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def get_project_conversations_async(
-        self,
-        *,
-        project_id: str,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.GetProjectConversationsResponse:
-        r"""List a project's conversations
-
-        Requires viewer access to the project. Returns both chat and agent
-        sessions (`chatSessions`, discriminated by `sessionType`/`agentKey`)
-        that the caller may see: rows they own, plus rows with
-        `projectVisibility: project`. Access to the project is asserted
-        first, so a private conversation belonging to a *different* project
-        member never leaks through this endpoint.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param project_id:
-        :param page:
-        :param limit:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models.GetProjectConversationsRequest(
-            project_id=project_id,
-            page=page,
-            limit=limit,
-        )
-
-        req = self._build_request_async(
-            method="GET",
-            path="/projects/{projectId}/conversations",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=False,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="getProjectConversations",
-                oauth2_scopes=["project:read"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models.Security
-                ),
-                tags=["Projects", "Conversations"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models.GetProjectConversationsResponse, http_res
-            )
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

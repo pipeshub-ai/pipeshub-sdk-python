@@ -25,6 +25,12 @@ class OAuthTokenResponseTypedDict(TypedDict):
     r"""Granted scopes (may differ from requested)"""
     id_token: NotRequired[str]
     r"""OpenID Connect ID token (JWT) if openid scope was requested"""
+    issued_token_type: NotRequired[str]
+    r"""The type of the issued token (RFC 8693 Section 2.2.1). Returned by
+    the token-exchange grant, where it is always
+    `urn:ietf:params:oauth:token-type:access_token`.
+
+    """
 
 
 class OAuthTokenResponse(BaseModel):
@@ -51,6 +57,13 @@ class OAuthTokenResponse(BaseModel):
     id_token: Optional[str] = None
     r"""OpenID Connect ID token (JWT) if openid scope was requested"""
 
+    issued_token_type: Optional[str] = None
+    r"""The type of the issued token (RFC 8693 Section 2.2.1). Returned by
+    the token-exchange grant, where it is always
+    `urn:ietf:params:oauth:token-type:access_token`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -61,6 +74,7 @@ class OAuthTokenResponse(BaseModel):
                 "refresh_token",
                 "scope",
                 "id_token",
+                "issued_token_type",
             ]
         )
         serialized = handler(self)

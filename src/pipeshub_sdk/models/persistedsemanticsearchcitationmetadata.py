@@ -5,6 +5,7 @@ from .persistedsemanticsearchboundingbox import (
     PersistedSemanticSearchBoundingBox,
     PersistedSemanticSearchBoundingBoxTypedDict,
 )
+from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -43,6 +44,11 @@ class PersistedSemanticSearchCitationMetadataTypedDict(TypedDict):
     share. Absent on citations saved before this field was stored.
 
     """
+    connector_instance_name: NotRequired[Nullable[str]]
+    r"""The name the connector instance had when the answer was written.
+    Absent on citations saved before this field was stored.
+
+    """
     record_type: NotRequired[Nullable[str]]
     block_num: NotRequired[Nullable[List[Nullable[float]]]]
     page_num: NotRequired[Nullable[List[Nullable[float]]]]
@@ -60,6 +66,8 @@ class PersistedSemanticSearchCitationMetadataTypedDict(TypedDict):
     departments: NotRequired[Nullable[List[str]]]
     languages: NotRequired[Nullable[List[str]]]
     topics: NotRequired[Nullable[List[str]]]
+    updated_at: NotRequired[Nullable[datetime]]
+    r"""When the cited record was last updated at its source."""
 
 
 class PersistedSemanticSearchCitationMetadata(BaseModel):
@@ -107,6 +115,14 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
 
     """
 
+    connector_instance_name: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="connectorInstanceName")
+    ] = UNSET
+    r"""The name the connector instance had when the answer was written.
+    Absent on citations saved before this field was stored.
+
+    """
+
     record_type: Annotated[
         OptionalNullable[str], pydantic.Field(alias="recordType")
     ] = UNSET
@@ -147,6 +163,11 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
 
     topics: OptionalNullable[List[str]] = UNSET
 
+    updated_at: Annotated[
+        OptionalNullable[datetime], pydantic.Field(alias="updatedAt")
+    ] = UNSET
+    r"""When the cited record was last updated at its source."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -158,6 +179,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
                 "hideWeburl",
                 "connector",
                 "connectorId",
+                "connectorInstanceName",
                 "recordType",
                 "blockNum",
                 "pageNum",
@@ -169,6 +191,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
                 "departments",
                 "languages",
                 "topics",
+                "updatedAt",
             ]
         )
         nullable_fields = set(
@@ -180,6 +203,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
                 "hideWeburl",
                 "connector",
                 "connectorId",
+                "connectorInstanceName",
                 "recordType",
                 "blockNum",
                 "pageNum",
@@ -191,6 +215,7 @@ class PersistedSemanticSearchCitationMetadata(BaseModel):
                 "departments",
                 "languages",
                 "topics",
+                "updatedAt",
             ]
         )
         serialized = handler(self)
