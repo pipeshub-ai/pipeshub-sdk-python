@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
   release:
@@ -46,3 +47,21 @@ jobs:
           name: v${{ steps.version.outputs.VERSION }}
           generate_release_notes: true
           files: dist/*
+
+      - name: Set up ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Push to GitHub Packages
+        working-directory: dist
+        run: |
+          oras push "ghcr.io/pipeshub-ai/pipeshub-sdk-python:${{ steps.version.outputs.VERSION }}" \
+            --artifact-type application/vnd.pipeshub.sdk.python \
+            --annotation "org.opencontainers.image.source=https://github.com/pipeshub-ai/pipeshub-ai" \
+            --annotation "org.opencontainers.image.description=PipesHub Python SDK. Install with: pip install pipeshub-sdk" \
+            --annotation "org.opencontainers.image.version=${{ steps.version.outputs.VERSION }}" \
+            --annotation "org.opencontainers.image.licenses=Apache-2.0" \
+            *
+          oras tag "ghcr.io/pipeshub-ai/pipeshub-sdk-python:${{ steps.version.outputs.VERSION }}" latest
