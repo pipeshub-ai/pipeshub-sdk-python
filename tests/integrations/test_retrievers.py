@@ -1,5 +1,6 @@
 """The framework retrievers against a mocked ``POST /retrieve``."""
 
+import copy
 import json
 
 import httpx
@@ -36,10 +37,15 @@ def sent() -> list:
 
 
 @pytest.fixture
-def client(sent: list) -> Pipeshub:
+def response() -> dict:
+    return copy.deepcopy(RESPONSE)
+
+
+@pytest.fixture
+def client(sent: list, response: dict) -> Pipeshub:
     def handler(request: httpx.Request) -> httpx.Response:
         sent.append((request.url.path, request.headers.get("authorization"), json.loads(request.content)))
-        return httpx.Response(200, json=RESPONSE)
+        return httpx.Response(200, json=response)
 
     transport = httpx.MockTransport(handler)
     return Pipeshub(
@@ -82,6 +88,25 @@ class TestLangChain:
         assert docs[0].id == "v1:4"
         assert sent[0][2] == {"query": "q", "limit": 8, "maxChunksPerRecord": 2, "rewriteQuery": False}
 
+    @pytest.mark.parametrize("key", ["recordGroups", "record_groups"])
+    def test_filters_keep_record_groups_in_either_spelling(self, client, sent, key) -> None:
+        pytest.importorskip("langchain_core")
+        from pipeshub_sdk.integrations.langchain import PipesHubRetriever
+
+        PipesHubRetriever(client=client, filters={"apps": ["a1"], key: ["g1"]}).invoke("q")
+
+        assert sent[0][2]["filters"] == {"apps": ["a1"], "recordGroups": ["g1"]}
+
+    def test_a_missing_score_is_none(self, client, response) -> None:
+        pytest.importorskip("langchain_core")
+        from pipeshub_sdk.integrations.langchain import PipesHubRetriever
+
+        del response["chunks"][0]["score"]
+        docs = PipesHubRetriever(client=client).invoke("q")
+
+        assert docs[0].metadata["score"] is None
+        json.dumps(docs[0].metadata)
+
     def test_limit_is_bounded_like_the_api(self, client) -> None:
         pytest.importorskip("langchain_core")
         from pipeshub_sdk.integrations.langchain import PipesHubRetriever
@@ -104,6 +129,14 @@ class TestLlamaIndex:
         # Links and ids are for citing, not for the model's prompt.
         assert "recordUrl" not in nodes[0].node.get_content(metadata_mode="llm")
         assert sent[0][2] == {"query": "canary rollback", "limit": 3, "rewriteQuery": True}
+
+    def test_a_missing_score_is_none(self, client, response) -> None:
+        pytest.importorskip("llama_index.core")
+        from pipeshub_sdk.integrations.llamaindex import PipesHubRetriever
+
+        del response["chunks"][0]["score"]
+
+        assert PipesHubRetriever(client=client).retrieve("q")[0].score is None
 
     @pytest.mark.asyncio
     async def test_async_uses_the_async_client(self, client, sent) -> None:

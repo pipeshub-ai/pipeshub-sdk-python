@@ -11,10 +11,11 @@ chunk id and whose ``metadata`` has the record and citation fields (see
 ``pipeshub_sdk.integrations.langchain``), with the chunk's ``score``.
 """
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
-from llama_index.core.base.base_retriever import BaseRetriever
-from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode
+# The extra may be absent where the SDK itself is typechecked and linted.
+from llama_index.core.base.base_retriever import BaseRetriever  # type: ignore[import-not-found]  # pylint: disable=import-error
+from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode  # type: ignore[import-not-found]  # pylint: disable=import-error
 
 from pipeshub_sdk import models
 from pipeshub_sdk.integrations import _chunks
@@ -28,7 +29,7 @@ class PipesHubRetriever(BaseRetriever):
         self,
         client: Pipeshub,
         limit: int = 8,
-        filters: Optional[models.FiltersTypedDict] = None,
+        filters: Optional[Union[models.Filters, models.FiltersTypedDict]] = None,
         max_chunks_per_record: Optional[int] = None,
         rewrite_query: bool = False,
         **kwargs: Any,

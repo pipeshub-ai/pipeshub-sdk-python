@@ -19,7 +19,7 @@ def main() -> None:
         retriever = PipesHubRetriever(client=client, limit=5)
         for result in retriever.retrieve("How do we roll back a canary deploy?"):
             # Pass the retriever to a query engine as usual; the links stay in node metadata.
-            print(f"{result.score:.2f}", result.node.metadata["name"], result.node.metadata["url"])
+            print(result.score, result.node.metadata["name"], result.node.metadata["url"])
 
 
 if __name__ == "__main__":

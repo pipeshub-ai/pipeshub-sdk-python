@@ -21,7 +21,7 @@ async def main() -> None:
     ) as client:
         res = await client.semantic_search.retrieve_async(query="How do we roll back a canary deploy?", limit=5)
         for chunk in res.chunks:
-            print(f"{chunk.score:.2f}  {chunk.record.name}  {chunk.citation.url}")
+            print(f"{chunk.record.name}  {chunk.citation.url}")
             print(f"      {chunk.text[:120]}")
 
 

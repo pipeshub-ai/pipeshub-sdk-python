@@ -14,12 +14,10 @@ chunk id, and ``metadata`` has the record (``recordId``, ``name``,
 
 from typing import Any, List, Optional
 
-from langchain_core.callbacks import (
-    AsyncCallbackManagerForRetrieverRun,
-    CallbackManagerForRetrieverRun,
-)
-from langchain_core.documents import Document
-from langchain_core.retrievers import BaseRetriever
+# The extra may be absent where the SDK itself is typechecked and linted.
+from langchain_core.callbacks import AsyncCallbackManagerForRetrieverRun, CallbackManagerForRetrieverRun  # type: ignore[import-not-found]  # pylint: disable=import-error
+from langchain_core.documents import Document  # type: ignore[import-not-found]  # pylint: disable=import-error
+from langchain_core.retrievers import BaseRetriever  # type: ignore[import-not-found]  # pylint: disable=import-error
 from pydantic import ConfigDict, Field
 
 from pipeshub_sdk import models
@@ -34,7 +32,8 @@ class PipesHubRetriever(BaseRetriever):
 
     client: Pipeshub
     limit: int = Field(default=8, ge=1, le=50)
-    filters: Optional[models.FiltersTypedDict] = None
+    # A model, not the TypedDict, so the API's names (recordGroups) validate as well as record_groups.
+    filters: Optional[models.Filters] = None
     max_chunks_per_record: Optional[int] = Field(default=None, ge=1, le=50)
     rewrite_query: bool = False
 
@@ -43,12 +42,12 @@ class PipesHubRetriever(BaseRetriever):
             self.limit, self.filters, self.max_chunks_per_record, self.rewrite_query
         )
 
-    def _get_relevant_documents(
+    def _get_relevant_documents(  # pylint: disable=unused-argument
         self, query: str, *, run_manager: CallbackManagerForRetrieverRun
     ) -> List[Document]:
         return [_document(c) for c in _chunks.retrieve(self.client, query, self._options())]
 
-    async def _aget_relevant_documents(
+    async def _aget_relevant_documents(  # pylint: disable=unused-argument
         self, query: str, *, run_manager: AsyncCallbackManagerForRetrieverRun
     ) -> List[Document]:
         chunks = await _chunks.retrieve_async(self.client, query, self._options())

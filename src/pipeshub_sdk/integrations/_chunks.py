@@ -1,6 +1,6 @@
 """What every framework retriever needs from ``POST /retrieve``."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from pipeshub_sdk import models
 from pipeshub_sdk.sdk import Pipeshub
@@ -8,7 +8,7 @@ from pipeshub_sdk.sdk import Pipeshub
 
 def retrieve_options(
     limit: int,
-    filters: Optional[models.FiltersTypedDict],
+    filters: Optional[Union[models.Filters, models.FiltersTypedDict]],
     max_chunks_per_record: Optional[int],
     rewrite_query: bool,
 ) -> Dict[str, Any]:
@@ -30,7 +30,8 @@ def chunk_metadata(chunk: models.RetrieveChunk) -> Dict[str, Any]:
     return {
         **chunk.record.model_dump(by_alias=True),
         **chunk.citation.model_dump(by_alias=True),
-        "score": chunk.score,
+        # An absent score is the SDK's UNSET sentinel, which frameworks cannot take.
+        "score": chunk.score if isinstance(chunk.score, float) else None,
     }
 
 
