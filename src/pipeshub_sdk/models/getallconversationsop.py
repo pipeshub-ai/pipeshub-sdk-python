@@ -23,7 +23,8 @@ QueryParamSource = Literal[
     "shared",
 ]
 r"""`owned` — owner list (`userId` filter only).
-`shared` — explicit share grant list (`isShared` + `sharedWith`).
+`shared` — explicit share grant list (`isShared` + `sharedWith`). Includes agent
+conversations shared with the caller; those rows carry `agentKey`.
 Defaults to `owned` when omitted.
 
 """
@@ -47,7 +48,8 @@ r"""Sort direction. Defaults to `desc` unless set to `asc`."""
 class GetAllConversationsRequestTypedDict(TypedDict):
     source: NotRequired[QueryParamSource]
     r"""`owned` — owner list (`userId` filter only).
-    `shared` — explicit share grant list (`isShared` + `sharedWith`).
+    `shared` — explicit share grant list (`isShared` + `sharedWith`). Includes agent
+    conversations shared with the caller; those rows carry `agentKey`.
     Defaults to `owned` when omitted.
 
     """
@@ -88,7 +90,8 @@ class GetAllConversationsRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "owned"
     r"""`owned` — owner list (`userId` filter only).
-    `shared` — explicit share grant list (`isShared` + `sharedWith`).
+    `shared` — explicit share grant list (`isShared` + `sharedWith`). Includes agent
+    conversations shared with the caller; those rows carry `agentKey`.
     Defaults to `owned` when omitted.
 
     """

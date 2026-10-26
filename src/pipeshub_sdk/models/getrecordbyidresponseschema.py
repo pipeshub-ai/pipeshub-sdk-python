@@ -3,6 +3,7 @@
 from __future__ import annotations
 from .connectornameenum import ConnectorNameEnum
 from .recordtypeenum import RecordTypeEnum
+from .stagestatesummary import StageStateSummary, StageStateSummaryTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -15,6 +16,23 @@ import pydantic
 from pydantic import model_serializer
 from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+AccessRule = Union[
+    Literal[
+        "OPEN",
+        "STRICT",
+        "RESTRICTED",
+    ],
+    UnrecognizedStr,
+]
+r"""How this record's own permissions combine with its ancestors'.
+OPEN: an accessible parent, or a direct grant, is enough.
+STRICT: every ancestor up to the connector must be accessible too.
+RESTRICTED: strict, and a grant on the record itself is required.
+Absent on records written before the field existed; read as OPEN.
+
+"""
 
 
 class GetRecordByIDResponseSchemaFileRecordTypedDict(TypedDict):
@@ -33,8 +51,19 @@ class GetRecordByIDResponseSchemaFileRecordTypedDict(TypedDict):
     mime_type: NotRequired[Nullable[str]]
     size_in_bytes: NotRequired[Nullable[int]]
     web_url: NotRequired[Nullable[str]]
+    r"""Where the file opens in its source. Kept for a connected
+    app with a limit too; it can contain the names of the
+    folders above the file.
+
+    """
     path: NotRequired[Nullable[str]]
+    r"""The file's path in its source, which names every folder
+    above it. `null` for a connected app whose limit does not
+    cover the file's whole app or collection.
+
+    """
     local_fs_relative_path: NotRequired[Nullable[str]]
+    r"""The same path on local storage; `null` in the same cases as `path`."""
 
 
 class GetRecordByIDResponseSchemaFileRecord(BaseModel):
@@ -81,12 +110,23 @@ class GetRecordByIDResponseSchemaFileRecord(BaseModel):
     ] = UNSET
 
     web_url: Annotated[OptionalNullable[str], pydantic.Field(alias="webUrl")] = UNSET
+    r"""Where the file opens in its source. Kept for a connected
+    app with a limit too; it can contain the names of the
+    folders above the file.
+
+    """
 
     path: OptionalNullable[str] = UNSET
+    r"""The file's path in its source, which names every folder
+    above it. `null` for a connected app whose limit does not
+    cover the file's whole app or collection.
+
+    """
 
     local_fs_relative_path: Annotated[
         OptionalNullable[str], pydantic.Field(alias="localFsRelativePath")
     ] = UNSET
+    r"""The same path on local storage; `null` in the same cases as `path`."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -238,18 +278,117 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     connectors that do not set it.
 
     """
+    access_rule: NotRequired[AccessRule]
+    r"""How this record's own permissions combine with its ancestors'.
+    OPEN: an accessible parent, or a direct grant, is enough.
+    STRICT: every ancestor up to the connector must be accessible too.
+    RESTRICTED: strict, and a grant on the record itself is required.
+    Absent on records written before the field existed; read as OPEN.
+
+    """
+    uploaded_by: NotRequired[Nullable[str]]
+    r"""User id of whoever uploaded the file to the knowledge base.
+    Absent for connector records and for files uploaded before the
+    field existed.
+
+    """
+    source_timestamp_origin: NotRequired[str]
+    r"""Knowledge-base uploads only: what set sourceCreatedAtTimestamp
+    and sourceLastModifiedTimestamp. `upload`: the upload time (the
+    file came without a last-modified time); `file`: the file's
+    last-modified time sent with the upload; `content`: dates the
+    document states in its header (CONTENT_DOCUMENT_DATES), stored at
+    midnight UTC of each stated day. Absent for connector records,
+    whose timestamps are the source system's, and for files uploaded
+    before the field existed.
+
+    """
+    upload_source_created_at_timestamp: NotRequired[Nullable[int]]
+    r"""With sourceTimestampOrigin `content`: the
+    sourceCreatedAtTimestamp the upload had set, kept so it can be
+    restored.
+
+    """
+    upload_source_last_modified_timestamp: NotRequired[Nullable[int]]
+    r"""With sourceTimestampOrigin `content`: the
+    sourceLastModifiedTimestamp the upload had set.
+
+    """
+    upload_source_timestamp_origin: NotRequired[str]
+    r"""With sourceTimestampOrigin `content`: what had set the upload's
+    values (`upload` or `file`).
+
+    """
     is_latest_version: NotRequired[Nullable[bool]]
     last_sync_timestamp: NotRequired[Nullable[int]]
     last_index_timestamp: NotRequired[int]
     last_extraction_timestamp: NotRequired[int]
+    entity_extraction_status: NotRequired[str]
+    r"""Where named-entity extraction (people, organizations, dates and
+    other values found in the content) stands for this record:
+    NOT_STARTED, IN_PROGRESS, COMPLETED, PARTIAL, FAILED or SKIPPED.
+    Absent when no status has been stored on the record; read that
+    as not extracted. New values may be added, so treat an unknown
+    one as not finished.
+
+    """
+    last_entity_extraction_timestamp: NotRequired[Nullable[int]]
+    r"""When named-entity extraction last ran on the record (epoch milliseconds). Absent until it is written."""
+    entity_extraction_strategy: NotRequired[Nullable[str]]
+    r"""How the named entities were found: `deterministic` (pattern
+    recognizers only), `single_call` (one model call) or `agent`.
+    Absent until it is written.
+
+    """
+    entity_extractor_version: NotRequired[Nullable[str]]
+    r"""Version of the named-entity extractor that produced the record's entities, for example `ner-1`. Absent until it is written."""
+    secrets_redacted: NotRequired[int]
+    r"""Credentials (keys, tokens, passwords) removed from a code repository file before it was indexed. Present once the file has been scanned, 0 when nothing was found."""
     processing_started_at: NotRequired[Nullable[int]]
     queued_at_timestamp: NotRequired[Nullable[int]]
+    retry_not_before: NotRequired[Nullable[int]]
+    r"""Set while the record is QUEUED because its source rate-limited
+    the content fetch: the earliest time (epoch milliseconds)
+    indexing reads it again. `reason` then says when indexing
+    resumes. Null or absent once the source serves the record or
+    indexing ends; a value on a record that is no longer QUEUED is
+    left over from an earlier wait and means nothing.
+
+    """
     parsing_status: NotRequired[Nullable[str]]
+    has_indexed_copy: NotRequired[bool]
+    r"""True after the record is indexed (every COMPLETED write, including the upgrade
+    backfill for records indexed earlier), and false once it is marked EMPTY. A later
+    re-queue or a failed re-index leaves it as it is, so search keeps returning the
+    previous indexed copy until the new version is indexed. Absent until the first
+    COMPLETED or EMPTY write sets it.
+
+    """
     reason: NotRequired[Nullable[str]]
     deleted_by_user_id: NotRequired[Nullable[str]]
+    restored_at_timestamp: NotRequired[Nullable[int]]
+    r"""When a restore last brought this knowledge-base file back from
+    the trash and queued it to be indexed again (epoch
+    milliseconds). Absent on records never restored, on folders, and
+    on files restored while their indexing was turned off.
+
+    """
     is_dirty: NotRequired[Nullable[bool]]
     md5_checksum: NotRequired[Nullable[str]]
     virtual_record_id: NotRequired[Nullable[str]]
+    content_rev: NotRequired[Nullable[str]]
+    r"""Revision of the record's content, 16 lowercase hex characters:
+    the start of the SHA-256 of the content the indexer received
+    for the record. If a record still has no revision stored when
+    its vectors are written, a digest of its parsed blocks is
+    stored instead.
+    Identical content gives the same value, and a copy whose content
+    matches another record carries that record's value.
+    `stageStates` describes this revision. Set when indexing
+    starts; absent on records not indexed since pipeline stages
+    were introduced.
+
+    """
     summary_document_id: NotRequired[Nullable[str]]
     storage_document_id: NotRequired[Nullable[str]]
     preview_renderable: NotRequired[Nullable[bool]]
@@ -396,6 +535,65 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     """
 
+    access_rule: Annotated[Optional[AccessRule], pydantic.Field(alias="accessRule")] = (
+        None
+    )
+    r"""How this record's own permissions combine with its ancestors'.
+    OPEN: an accessible parent, or a direct grant, is enough.
+    STRICT: every ancestor up to the connector must be accessible too.
+    RESTRICTED: strict, and a grant on the record itself is required.
+    Absent on records written before the field existed; read as OPEN.
+
+    """
+
+    uploaded_by: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="uploadedBy")
+    ] = UNSET
+    r"""User id of whoever uploaded the file to the knowledge base.
+    Absent for connector records and for files uploaded before the
+    field existed.
+
+    """
+
+    source_timestamp_origin: Annotated[
+        Optional[str], pydantic.Field(alias="sourceTimestampOrigin")
+    ] = None
+    r"""Knowledge-base uploads only: what set sourceCreatedAtTimestamp
+    and sourceLastModifiedTimestamp. `upload`: the upload time (the
+    file came without a last-modified time); `file`: the file's
+    last-modified time sent with the upload; `content`: dates the
+    document states in its header (CONTENT_DOCUMENT_DATES), stored at
+    midnight UTC of each stated day. Absent for connector records,
+    whose timestamps are the source system's, and for files uploaded
+    before the field existed.
+
+    """
+
+    upload_source_created_at_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="uploadSourceCreatedAtTimestamp")
+    ] = UNSET
+    r"""With sourceTimestampOrigin `content`: the
+    sourceCreatedAtTimestamp the upload had set, kept so it can be
+    restored.
+
+    """
+
+    upload_source_last_modified_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="uploadSourceLastModifiedTimestamp")
+    ] = UNSET
+    r"""With sourceTimestampOrigin `content`: the
+    sourceLastModifiedTimestamp the upload had set.
+
+    """
+
+    upload_source_timestamp_origin: Annotated[
+        Optional[str], pydantic.Field(alias="uploadSourceTimestampOrigin")
+    ] = None
+    r"""With sourceTimestampOrigin `content`: what had set the upload's
+    values (`upload` or `file`).
+
+    """
+
     is_latest_version: Annotated[
         OptionalNullable[bool], pydantic.Field(alias="isLatestVersion")
     ] = UNSET
@@ -412,6 +610,42 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
         Optional[int], pydantic.Field(alias="lastExtractionTimestamp")
     ] = None
 
+    entity_extraction_status: Annotated[
+        Optional[str], pydantic.Field(alias="entityExtractionStatus")
+    ] = None
+    r"""Where named-entity extraction (people, organizations, dates and
+    other values found in the content) stands for this record:
+    NOT_STARTED, IN_PROGRESS, COMPLETED, PARTIAL, FAILED or SKIPPED.
+    Absent when no status has been stored on the record; read that
+    as not extracted. New values may be added, so treat an unknown
+    one as not finished.
+
+    """
+
+    last_entity_extraction_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="lastEntityExtractionTimestamp")
+    ] = UNSET
+    r"""When named-entity extraction last ran on the record (epoch milliseconds). Absent until it is written."""
+
+    entity_extraction_strategy: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="entityExtractionStrategy")
+    ] = UNSET
+    r"""How the named entities were found: `deterministic` (pattern
+    recognizers only), `single_call` (one model call) or `agent`.
+    Absent until it is written.
+
+    """
+
+    entity_extractor_version: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="entityExtractorVersion")
+    ] = UNSET
+    r"""Version of the named-entity extractor that produced the record's entities, for example `ner-1`. Absent until it is written."""
+
+    secrets_redacted: Annotated[
+        Optional[int], pydantic.Field(alias="secretsRedacted")
+    ] = None
+    r"""Credentials (keys, tokens, passwords) removed from a code repository file before it was indexed. Present once the file has been scanned, 0 when nothing was found."""
+
     processing_started_at: Annotated[
         OptionalNullable[int], pydantic.Field(alias="processingStartedAt")
     ] = UNSET
@@ -420,15 +654,48 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
         OptionalNullable[int], pydantic.Field(alias="queuedAtTimestamp")
     ] = UNSET
 
+    retry_not_before: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="retryNotBefore")
+    ] = UNSET
+    r"""Set while the record is QUEUED because its source rate-limited
+    the content fetch: the earliest time (epoch milliseconds)
+    indexing reads it again. `reason` then says when indexing
+    resumes. Null or absent once the source serves the record or
+    indexing ends; a value on a record that is no longer QUEUED is
+    left over from an earlier wait and means nothing.
+
+    """
+
     parsing_status: Annotated[
         OptionalNullable[str], pydantic.Field(alias="parsingStatus")
     ] = UNSET
+
+    has_indexed_copy: Annotated[
+        Optional[bool], pydantic.Field(alias="hasIndexedCopy")
+    ] = None
+    r"""True after the record is indexed (every COMPLETED write, including the upgrade
+    backfill for records indexed earlier), and false once it is marked EMPTY. A later
+    re-queue or a failed re-index leaves it as it is, so search keeps returning the
+    previous indexed copy until the new version is indexed. Absent until the first
+    COMPLETED or EMPTY write sets it.
+
+    """
 
     reason: OptionalNullable[str] = UNSET
 
     deleted_by_user_id: Annotated[
         OptionalNullable[str], pydantic.Field(alias="deletedByUserId")
     ] = UNSET
+
+    restored_at_timestamp: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="restoredAtTimestamp")
+    ] = UNSET
+    r"""When a restore last brought this knowledge-base file back from
+    the trash and queued it to be indexed again (epoch
+    milliseconds). Absent on records never restored, on folders, and
+    on files restored while their indexing was turned off.
+
+    """
 
     is_dirty: Annotated[OptionalNullable[bool], pydantic.Field(alias="isDirty")] = UNSET
 
@@ -439,6 +706,22 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
     virtual_record_id: Annotated[
         OptionalNullable[str], pydantic.Field(alias="virtualRecordId")
     ] = UNSET
+
+    content_rev: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="contentRev")
+    ] = UNSET
+    r"""Revision of the record's content, 16 lowercase hex characters:
+    the start of the SHA-256 of the content the indexer received
+    for the record. If a record still has no revision stored when
+    its vectors are written, a digest of its parsed blocks is
+    stored instead.
+    Identical content gives the same value, and a copy whose content
+    matches another record carries that record's value.
+    `stageStates` describes this revision. Set when indexing
+    starts; absent on records not indexed since pipeline stages
+    were introduced.
+
+    """
 
     summary_document_id: Annotated[
         OptionalNullable[str], pydantic.Field(alias="summaryDocumentId")
@@ -487,18 +770,33 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalRevisionId",
                 "recordGroupId",
                 "rootRecordGroupId",
+                "accessRule",
+                "uploadedBy",
+                "sourceTimestampOrigin",
+                "uploadSourceCreatedAtTimestamp",
+                "uploadSourceLastModifiedTimestamp",
+                "uploadSourceTimestampOrigin",
                 "isLatestVersion",
                 "lastSyncTimestamp",
                 "lastIndexTimestamp",
                 "lastExtractionTimestamp",
+                "entityExtractionStatus",
+                "lastEntityExtractionTimestamp",
+                "entityExtractionStrategy",
+                "entityExtractorVersion",
+                "secretsRedacted",
                 "processingStartedAt",
                 "queuedAtTimestamp",
+                "retryNotBefore",
                 "parsingStatus",
+                "hasIndexedCopy",
                 "reason",
                 "deletedByUserId",
+                "restoredAtTimestamp",
                 "isDirty",
                 "md5Checksum",
                 "virtualRecordId",
+                "contentRev",
                 "summaryDocumentId",
                 "storageDocumentId",
                 "previewRenderable",
@@ -518,19 +816,28 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
                 "externalRevisionId",
                 "recordGroupId",
                 "rootRecordGroupId",
+                "uploadedBy",
+                "uploadSourceCreatedAtTimestamp",
+                "uploadSourceLastModifiedTimestamp",
                 "isLatestVersion",
                 "lastSyncTimestamp",
+                "lastEntityExtractionTimestamp",
+                "entityExtractionStrategy",
+                "entityExtractorVersion",
                 "processingStartedAt",
                 "queuedAtTimestamp",
+                "retryNotBefore",
                 "parsingStatus",
                 "reason",
                 "deletedByUserId",
+                "restoredAtTimestamp",
                 "isDirty",
                 "isVLMOcrProcessed",
                 "mimeType",
                 "sizeInBytes",
                 "md5Checksum",
                 "virtualRecordId",
+                "contentRev",
                 "summaryDocumentId",
                 "storageDocumentId",
                 "webUrl",
@@ -727,17 +1034,45 @@ class GetRecordByIDResponseSchemaPermission(BaseModel):
 
 
 class GetRecordByIDResponseSchemaTypedDict(TypedDict):
-    r"""Response returned by GET /knowledgeBase/record/{recordId}."""
+    r"""Response returned by GET /knowledgeBase/record/{recordId}.
+
+    For a connected app with a limit, a collection or folder the limit
+    leaves out is not named: `knowledgeBase` and `folder` are `null` for
+    it, as are the record's own `recordGroupId` (with `externalGroupId`),
+    `rootRecordGroupId` and `parentNodeId` (with `externalParentId`).
+    `externalParentId` is also `null` when there is no `parentNodeId` to
+    check it by, unless the limit covers the record's whole app.
+    `fileRecord.path` is `null` unless the limit covers the whole app or
+    collection; `webUrl` is kept.
+
+    """
 
     record: GetRecordByIDResponseSchemaRecordTypedDict
     knowledge_base: Nullable[GetRecordByIDResponseSchemaKnowledgeBaseTypedDict]
     folder: Nullable[GetRecordByIDResponseSchemaFolderTypedDict]
     metadata: GetRecordByIDResponseSchemaMetadataTypedDict
     permissions: List[GetRecordByIDResponseSchemaPermissionTypedDict]
+    stage_states: NotRequired[List[StageStateSummaryTypedDict]]
+    r"""Per-stage pipeline status for the record's current content revision.
+    Empty for records indexed before pipeline stages existed. The
+    `classify` stage's status is mirrored on `record.extractionStatus`.
+
+    """
 
 
 class GetRecordByIDResponseSchema(BaseModel):
-    r"""Response returned by GET /knowledgeBase/record/{recordId}."""
+    r"""Response returned by GET /knowledgeBase/record/{recordId}.
+
+    For a connected app with a limit, a collection or folder the limit
+    leaves out is not named: `knowledgeBase` and `folder` are `null` for
+    it, as are the record's own `recordGroupId` (with `externalGroupId`),
+    `rootRecordGroupId` and `parentNodeId` (with `externalParentId`).
+    `externalParentId` is also `null` when there is no `parentNodeId` to
+    check it by, unless the limit covers the record's whole app.
+    `fileRecord.path` is `null` unless the limit covers the whole app or
+    collection; `webUrl` is kept.
+
+    """
 
     record: GetRecordByIDResponseSchemaRecord
 
@@ -752,17 +1087,37 @@ class GetRecordByIDResponseSchema(BaseModel):
 
     permissions: List[GetRecordByIDResponseSchemaPermission]
 
+    stage_states: Annotated[
+        Optional[List[StageStateSummary]], pydantic.Field(alias="stageStates")
+    ] = None
+    r"""Per-stage pipeline status for the record's current content revision.
+    Empty for records indexed before pipeline stages existed. The
+    `classify` stage's status is mirrored on `record.extractionStatus`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
+        optional_fields = set(["stageStates"])
+        nullable_fields = set(["knowledgeBase", "folder"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                m[k] = val
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
 
         return m
 

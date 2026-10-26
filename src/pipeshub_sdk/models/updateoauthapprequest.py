@@ -21,6 +21,54 @@ UpdateOAuthAppRequestAllowedGrantType = Literal[
 ]
 
 
+class UpdateOAuthAppRequestKnowledgeLimitTypedDict(TypedDict):
+    r"""`null` lifts the limit. Any change, a lift included, revokes the
+    app's outstanding tokens, so users connect again.
+
+    """
+
+    apps: NotRequired[List[str]]
+    r"""Whole connectors and collections."""
+    record_groups: NotRequired[List[str]]
+    r"""Record groups (a drive, space or project), with the groups nested in them."""
+    records: NotRequired[List[str]]
+    r"""Folders or records, with everything under them."""
+
+
+class UpdateOAuthAppRequestKnowledgeLimit(BaseModel):
+    r"""`null` lifts the limit. Any change, a lift included, revokes the
+    app's outstanding tokens, so users connect again.
+
+    """
+
+    apps: Optional[List[str]] = None
+    r"""Whole connectors and collections."""
+
+    record_groups: Annotated[
+        Optional[List[str]], pydantic.Field(alias="recordGroups")
+    ] = None
+    r"""Record groups (a drive, space or project), with the groups nested in them."""
+
+    records: Optional[List[str]] = None
+    r"""Folders or records, with everything under them."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["apps", "recordGroups", "records"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
+
+
 class UpdateOAuthAppRequestTypedDict(TypedDict):
     r"""Request to update an OAuth app (`updateAppSchema` in `oauth.validators.ts`).
 
@@ -46,6 +94,11 @@ class UpdateOAuthAppRequestTypedDict(TypedDict):
     terms_of_service_url: NotRequired[Nullable[str]]
     access_token_lifetime: NotRequired[int]
     refresh_token_lifetime: NotRequired[int]
+    knowledge_limit: NotRequired[Nullable[UpdateOAuthAppRequestKnowledgeLimitTypedDict]]
+    r"""`null` lifts the limit. Any change, a lift included, revokes the
+    app's outstanding tokens, so users connect again.
+
+    """
 
 
 class UpdateOAuthAppRequest(BaseModel):
@@ -100,6 +153,15 @@ class UpdateOAuthAppRequest(BaseModel):
         Optional[int], pydantic.Field(alias="refreshTokenLifetime")
     ] = None
 
+    knowledge_limit: Annotated[
+        OptionalNullable[UpdateOAuthAppRequestKnowledgeLimit],
+        pydantic.Field(alias="knowledgeLimit"),
+    ] = UNSET
+    r"""`null` lifts the limit. Any change, a lift included, revokes the
+    app's outstanding tokens, so users connect again.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -114,9 +176,12 @@ class UpdateOAuthAppRequest(BaseModel):
                 "termsOfServiceUrl",
                 "accessTokenLifetime",
                 "refreshTokenLifetime",
+                "knowledgeLimit",
             ]
         )
-        nullable_fields = set(["homepageUrl", "privacyPolicyUrl", "termsOfServiceUrl"])
+        nullable_fields = set(
+            ["homepageUrl", "privacyPolicyUrl", "termsOfServiceUrl", "knowledgeLimit"]
+        )
         serialized = handler(self)
         m = {}
 
@@ -139,6 +204,10 @@ class UpdateOAuthAppRequest(BaseModel):
         return m
 
 
+try:
+    UpdateOAuthAppRequestKnowledgeLimit.model_rebuild()
+except NameError:
+    pass
 try:
     UpdateOAuthAppRequest.model_rebuild()
 except NameError:

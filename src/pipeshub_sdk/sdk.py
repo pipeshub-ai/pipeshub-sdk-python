@@ -18,16 +18,22 @@ if TYPE_CHECKING:
     from pipeshub_sdk.agents import Agents
     from pipeshub_sdk.ai_models_providers import AIModelsProviders
     from pipeshub_sdk.connector import Connector
+    from pipeshub_sdk.connector_configuration import ConnectorConfiguration
+    from pipeshub_sdk.connector_control import ConnectorControl
+    from pipeshub_sdk.connector_filters import ConnectorFilters
+    from pipeshub_sdk.connector_instances import ConnectorInstances
+    from pipeshub_sdk.connector_oauth import ConnectorOAuth
+    from pipeshub_sdk.connector_registry import ConnectorRegistry
     from pipeshub_sdk.conversations import Conversations
     from pipeshub_sdk.knowledge_base_sdk import KnowledgeBaseSDK
     from pipeshub_sdk.knowledge_hub import KnowledgeHub
     from pipeshub_sdk.oauth_apps import OAuthApps
+    from pipeshub_sdk.oauth_configuration import OAuthConfiguration
     from pipeshub_sdk.oauth_provider import OAuthProvider
     from pipeshub_sdk.openid_connect import OpenIDConnect
     from pipeshub_sdk.organization_auth_config import OrganizationAuthConfig
     from pipeshub_sdk.organizations import Organizations
     from pipeshub_sdk.personal_access_tokens import PersonalAccessTokens
-    from pipeshub_sdk.projects import Projects
     from pipeshub_sdk.semantic_search import SemanticSearch
     from pipeshub_sdk.user_account import UserAccount
     from pipeshub_sdk.web_search_sdk import WebSearchSDK
@@ -49,10 +55,13 @@ class Pipeshub(BaseSDK):
     ## Authentication
     Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
 
-    **OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the OAuth **app creator** and sets the authenticated user accordingly. See the **OAuth Provider** tag for full behavior.
+    **OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the application's **token identity** — the service account it is pointed at (`tokenIdentityUserId`), or its creator for an application registered before that was required and never bound, and sets the authenticated user accordingly. See the **OAuth Provider** tag for full behavior.
 
     ## Base URLs
     All endpoints use the `/api/v1` prefix unless otherwise noted.
+
+    ## Query parameter names
+    On every `/api/v1` and `/mcp` endpoint, a query parameter whose name starts with `$` or contains `.` (including a nested name such as `filter[$ne]` or `a.b`) is refused with `400` and error code `VALIDATION_ERROR`. Only names are checked: values may contain dots, such as file names.
 
     """
 
@@ -76,11 +85,13 @@ class Pipeshub(BaseSDK):
     - Discovery endpoint for automatic configuration
 
     **Machine tokens (`client_credentials`) — gateway and downstream identity:**
-    Access tokens may encode **`userId === client_id`**. The **Node.js API gateway** resolves the effective user to the OAuth **app creator**: first using the JWT **`createdBy`** claim when present, otherwise by loading the OAuth app by **`client_id`** from the registry. After verification it sets the authenticated session to that creator.
+    Access tokens may encode **`userId === client_id`**. The **Node.js API gateway** resolves the effective user to the application's **token identity**: the service account it is pointed at (**`tokenIdentityUserId`**), or its creator for an application registered before a service account was required and never bound. It loads the application by **`client_id`** on every such token and takes the identity from that record.
 
-    **Python services:** Validate `Authorization: Bearer` as today and use the JWT payload’s **`userId`** as-is for scopes and user-scoped logic (which may still equal **`client_id`** for machine tokens).
+    The JWT's **`createdBy`** claim is a cross-check rather than a source: despite its name it carries the identity, not who registered the application, and a token whose claim disagrees with the record is refused with **401**. Pointing an application at a different service account also revokes the tokens it has already issued, so a stale claim should not arrive in the first place.
 
-    **Operational note:** Prefer tokens whose JWT already carries the creator as **`userId`**; use **`POST /oauth-clients/{appId}/revoke-all-tokens`** and obtain new tokens from **`POST /oauth2/token`** when rotating integrations.
+    **Python services:** Validate `Authorization: Bearer` as today and use the JWT payload’s **`userId`** as-is for scopes and user-scoped logic. Where a machine token carries **`userId === client_id`** and a **`createdBy`** claim, Python copies that claim onto **`userId`** first, so both halves of the product agree on the identity.
+
+    **Operational note:** Prefer tokens whose JWT already carries the identity as **`userId`**; use **`POST /oauth-clients/{appId}/revoke-all-tokens`** and obtain new tokens from **`POST /oauth2/token`** when rotating integrations.
 
     """
     open_id_connect: "OpenIDConnect"
@@ -115,7 +126,7 @@ class Pipeshub(BaseSDK):
 
     **Who authorizes vs. client credentials**
     - **Authorization code:** Any authenticated user in the workspace may complete consent for a valid `client_id`; issued tokens represent **that user**.
-    - **Client credentials:** Access tokens represent the **OAuth app creator** (who registered the client), not the caller.
+    - **Client credentials:** Access tokens represent the **service account the app is pointed at**, never the caller. An app that allows this grant must name one at creation, and only an administrator may choose it. Apps created before that rule, and never bound, still represent the **OAuth app creator** — the fallback this rule exists to remove.
 
     **Scopes**
     - `GET /oauth-clients/scopes` returns scopes grouped by category for the **signed-in user's role**.
@@ -184,23 +195,26 @@ class Pipeshub(BaseSDK):
     r"""Unified browse API for root and child nodes (apps, record groups, folders, records) with filtering and search"""
     conversations: "Conversations"
     r"""AI-powered conversational chat management with citations and follow-up questions"""
-    projects: "Projects"
-    r"""Workspaces that group related assistant and agent conversations under a
-    shared name, custom instructions, a knowledge scope, and reference
-    files. Projects can be shared with teammates; project membership only
-    grants read access to conversations explicitly marked
-    `projectVisibility: project` — a member never gets access to another
-    member's private chats. See `Conversations` for the two fields
-    (`projectId`, `projectVisibility`) that link a conversation to a
-    project.
-
-    """
     semantic_search: "SemanticSearch"
     r"""Enterprise semantic search across all indexed knowledge with relevance scoring"""
     agents: "Agents"
     r"""Custom AI agents with specialized capabilities and tool integrations"""
+    connector_registry: "ConnectorRegistry"
+    r"""Browse available connector types and their configuration schemas"""
+    connector_instances: "ConnectorInstances"
+    r"""Create, manage, and delete connector instances for your organization"""
     connector: "Connector"
     r"""Connector-related operations"""
+    connector_configuration: "ConnectorConfiguration"
+    r"""Configure authentication, sync settings, and filters for connectors"""
+    connector_control: "ConnectorControl"
+    r"""Enable/disable connectors for sync or agent functionality"""
+    connector_o_auth: "ConnectorOAuth"
+    r"""OAuth 2.0 authorization flow for connectors requiring user consent"""
+    connector_filters: "ConnectorFilters"
+    r"""Dynamic filter options for selecting which data to sync"""
+    o_auth_configuration: "OAuthConfiguration"
+    r"""Admin management of OAuth credentials for connector types"""
     ai_models_providers: "AIModelsProviders"
     r"""Manage individual AI model providers - add, update, delete, and set defaults."""
     web_search: "WebSearchSDK"
@@ -222,10 +236,25 @@ class Pipeshub(BaseSDK):
         "knowledge_base": ("pipeshub_sdk.knowledge_base_sdk", "KnowledgeBaseSDK"),
         "knowledge_hub": ("pipeshub_sdk.knowledge_hub", "KnowledgeHub"),
         "conversations": ("pipeshub_sdk.conversations", "Conversations"),
-        "projects": ("pipeshub_sdk.projects", "Projects"),
         "semantic_search": ("pipeshub_sdk.semantic_search", "SemanticSearch"),
         "agents": ("pipeshub_sdk.agents", "Agents"),
+        "connector_registry": ("pipeshub_sdk.connector_registry", "ConnectorRegistry"),
+        "connector_instances": (
+            "pipeshub_sdk.connector_instances",
+            "ConnectorInstances",
+        ),
         "connector": ("pipeshub_sdk.connector", "Connector"),
+        "connector_configuration": (
+            "pipeshub_sdk.connector_configuration",
+            "ConnectorConfiguration",
+        ),
+        "connector_control": ("pipeshub_sdk.connector_control", "ConnectorControl"),
+        "connector_o_auth": ("pipeshub_sdk.connector_oauth", "ConnectorOAuth"),
+        "connector_filters": ("pipeshub_sdk.connector_filters", "ConnectorFilters"),
+        "o_auth_configuration": (
+            "pipeshub_sdk.oauth_configuration",
+            "OAuthConfiguration",
+        ),
         "ai_models_providers": (
             "pipeshub_sdk.ai_models_providers",
             "AIModelsProviders",

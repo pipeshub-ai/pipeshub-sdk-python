@@ -19,6 +19,12 @@ class AppliedFilterNodeTypedDict(TypedDict):
     r"""Type of the node (e.g. app, recordGroup, folder, record)"""
     connector: NotRequired[str]
     r"""Connector identifier associated with this node"""
+    extension: NotRequired[str]
+    r"""File extension of a record node, for its icon"""
+    mime_type: NotRequired[str]
+    r"""MIME type of a record node, for its icon"""
+    mentioned: NotRequired[bool]
+    r"""True when the node was picked with an @ mention in the message"""
 
 
 class AppliedFilterNode(BaseModel):
@@ -36,9 +42,28 @@ class AppliedFilterNode(BaseModel):
     connector: Optional[str] = None
     r"""Connector identifier associated with this node"""
 
+    extension: Optional[str] = None
+    r"""File extension of a record node, for its icon"""
+
+    mime_type: Annotated[Optional[str], pydantic.Field(alias="mimeType")] = None
+    r"""MIME type of a record node, for its icon"""
+
+    mentioned: Optional[bool] = None
+    r"""True when the node was picked with an @ mention in the message"""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["id", "name", "nodeType", "connector"])
+        optional_fields = set(
+            [
+                "id",
+                "name",
+                "nodeType",
+                "connector",
+                "extension",
+                "mimeType",
+                "mentioned",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

@@ -1,0 +1,11 @@
+# RetrieveChunkCitation
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `url`                                                                            | *OptionalNullable[str]*                                                          | :heavy_minus_sign:                                                               | Deep link to the passage (a `#:~:text=` fragment where the source supports one). |
+| `record_url`                                                                     | *OptionalNullable[str]*                                                          | :heavy_minus_sign:                                                               | Link to the record itself.                                                       |
+| `page_num`                                                                       | List[*int*]                                                                      | :heavy_minus_sign:                                                               | N/A                                                                              |
+| `block_index`                                                                    | *OptionalNullable[int]*                                                          | :heavy_minus_sign:                                                               | N/A                                                                              |

@@ -48,6 +48,8 @@ class SemanticSearchHitMetadataTypedDict(TypedDict):
     origin: NotRequired[Nullable[str]]
     connector: NotRequired[Nullable[str]]
     connector_id: NotRequired[Nullable[str]]
+    connector_instance_name: NotRequired[Nullable[str]]
+    r"""The name the admin gave the connector instance; `connector` is only its type."""
     connector_name: NotRequired[Nullable[str]]
     block_text: NotRequired[Nullable[str]]
     block_type: NotRequired[Nullable[str]]
@@ -128,6 +130,11 @@ class SemanticSearchHitMetadata(BaseModel):
     connector_id: Annotated[
         OptionalNullable[str], pydantic.Field(alias="connectorId")
     ] = UNSET
+
+    connector_instance_name: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="connectorInstanceName")
+    ] = UNSET
+    r"""The name the admin gave the connector instance; `connector` is only its type."""
 
     connector_name: Annotated[
         OptionalNullable[str], pydantic.Field(alias="connectorName")
@@ -255,6 +262,7 @@ class SemanticSearchHitMetadata(BaseModel):
                 "origin",
                 "connector",
                 "connectorId",
+                "connectorInstanceName",
                 "connectorName",
                 "blockText",
                 "blockType",
@@ -300,6 +308,7 @@ class SemanticSearchHitMetadata(BaseModel):
                 "origin",
                 "connector",
                 "connectorId",
+                "connectorInstanceName",
                 "connectorName",
                 "blockText",
                 "blockType",

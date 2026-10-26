@@ -69,7 +69,12 @@ class CurrentNode(BaseModel):
 
 
 class ParentNodeTypedDict(TypedDict):
-    r"""Parent of `currentNode` when present; `null` when not applicable."""
+    r"""Parent of `currentNode` when present; `null` when not applicable,
+    and for a connected app whose limit leaves that parent out. For
+    such an app, `breadcrumbs` likewise names only the nodes inside
+    its limit.
+
+    """
 
     id: str
     name: str
@@ -79,7 +84,12 @@ class ParentNodeTypedDict(TypedDict):
 
 
 class ParentNode(BaseModel):
-    r"""Parent of `currentNode` when present; `null` when not applicable."""
+    r"""Parent of `currentNode` when present; `null` when not applicable,
+    and for a connected app whose limit leaves that parent out. For
+    such an app, `breadcrumbs` likewise names only the nodes inside
+    its limit.
+
+    """
 
     id: str
 
@@ -122,9 +132,24 @@ class KnowledgeHubNodesResponsePaginationTypedDict(TypedDict):
     limit: int
     r"""Page size."""
     total_items: int
+    r"""Items in the whole result. For a search by a connected app
+    limited to spaces, folders or files, the matches found so far: it can
+    grow from page to page and is final once `hasNext` is false.
+
+    """
     total_pages: int
     has_next: bool
     has_prev: bool
+    next_cursor: NotRequired[Nullable[str]]
+    r"""Cursor for the next page; null on the last page."""
+    prev_cursor: NotRequired[Nullable[str]]
+    r"""Cursor for the previous page; null on the first page."""
+    start_index: NotRequired[Nullable[int]]
+    r"""1-based index of the first item on this page, when known."""
+    end_index: NotRequired[Nullable[int]]
+    r"""1-based index of the last item on this page, when known."""
+    current_page_items: NotRequired[Nullable[int]]
+    r"""Number of items on this page."""
 
 
 class KnowledgeHubNodesResponsePagination(BaseModel):
@@ -135,12 +160,71 @@ class KnowledgeHubNodesResponsePagination(BaseModel):
     r"""Page size."""
 
     total_items: Annotated[int, pydantic.Field(alias="totalItems")]
+    r"""Items in the whole result. For a search by a connected app
+    limited to spaces, folders or files, the matches found so far: it can
+    grow from page to page and is final once `hasNext` is false.
+
+    """
 
     total_pages: Annotated[int, pydantic.Field(alias="totalPages")]
 
     has_next: Annotated[bool, pydantic.Field(alias="hasNext")]
 
     has_prev: Annotated[bool, pydantic.Field(alias="hasPrev")]
+
+    next_cursor: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="nextCursor")
+    ] = UNSET
+    r"""Cursor for the next page; null on the last page."""
+
+    prev_cursor: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="prevCursor")
+    ] = UNSET
+    r"""Cursor for the previous page; null on the first page."""
+
+    start_index: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="startIndex")
+    ] = UNSET
+    r"""1-based index of the first item on this page, when known."""
+
+    end_index: Annotated[OptionalNullable[int], pydantic.Field(alias="endIndex")] = (
+        UNSET
+    )
+    r"""1-based index of the last item on this page, when known."""
+
+    current_page_items: Annotated[
+        OptionalNullable[int], pydantic.Field(alias="currentPageItems")
+    ] = UNSET
+    r"""Number of items on this page."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            ["nextCursor", "prevCursor", "startIndex", "endIndex", "currentPageItems"]
+        )
+        nullable_fields = set(
+            ["nextCursor", "prevCursor", "startIndex", "endIndex", "currentPageItems"]
+        )
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
 
 
 class CreatedAtTypedDict(TypedDict):
@@ -344,6 +428,13 @@ class KnowledgeHubNodesResponseAvailableTypedDict(TypedDict):
     record_types: List[FilterOptionTypedDict]
     origins: List[FilterOptionTypedDict]
     connectors: List[FilterOptionTypedDict]
+    r"""The apps and collections to filter by, each with its own name. For a
+    connected app with a limit, only those the limit covers whole: an app
+    or collection it covers only in part (some of its spaces, folders or
+    files) is not offered. The other option lists are fixed and name no
+    source.
+
+    """
     indexing_status: List[FilterOptionTypedDict]
     sort_by: List[FilterOptionTypedDict]
     sort_order: List[FilterOptionTypedDict]
@@ -359,6 +450,13 @@ class KnowledgeHubNodesResponseAvailable(BaseModel):
     origins: List[FilterOption]
 
     connectors: List[FilterOption]
+    r"""The apps and collections to filter by, each with its own name. For a
+    connected app with a limit, only those the limit covers whole: an app
+    or collection it covers only in part (some of its spaces, folders or
+    files) is not offered. The other option lists are fixed and name no
+    source.
+
+    """
 
     indexing_status: Annotated[
         List[FilterOption], pydantic.Field(alias="indexingStatus")
@@ -477,6 +575,14 @@ class PermissionsTypedDict(TypedDict):
     can_edit: bool
     can_delete: bool
     can_manage_permissions: bool
+    collection_role: NotRequired[Nullable[str]]
+    r"""The caller's own role on the collection (knowledge base) this node is in, as
+    restore and `GET /knowledgeBase/{kbId}/trash` check it: OWNER, WRITER,
+    FILEORGANIZER, COMMENTER or READER. Unlike `role`, which ranks record
+    permissions inside a folder, it is the same at every level of the collection.
+    Null outside a collection.
+
+    """
 
 
 class Permissions(BaseModel):
@@ -496,6 +602,42 @@ class Permissions(BaseModel):
         bool, pydantic.Field(alias="canManagePermissions")
     ]
 
+    collection_role: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="collectionRole")
+    ] = UNSET
+    r"""The caller's own role on the collection (knowledge base) this node is in, as
+    restore and `GET /knowledgeBase/{kbId}/trash` check it: OWNER, WRITER,
+    FILEORGANIZER, COMMENTER or READER. Unlike `role`, which ranks record
+    permissions inside a folder, it is the same at every level of the collection.
+    Null outside a collection.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["collectionRole"])
+        nullable_fields = set(["collectionRole"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
 
 class KnowledgeHubNodesResponseTypedDict(TypedDict):
     r"""Response body for the Knowledge Hub nodes API. The deployed service
@@ -505,6 +647,8 @@ class KnowledgeHubNodesResponseTypedDict(TypedDict):
 
     """
 
+    max_folder_depth: int
+    r"""Deepest a collection folder may be nested; a folder directly in the collection is depth 1."""
     error: Nullable[str]
     r"""Always `null` on HTTP 200."""
     id: Nullable[str]
@@ -512,7 +656,12 @@ class KnowledgeHubNodesResponseTypedDict(TypedDict):
     current_node: Nullable[CurrentNodeTypedDict]
     r"""Node being browsed when `parentId` is in the path; `null` at root."""
     parent_node: Nullable[ParentNodeTypedDict]
-    r"""Parent of `currentNode` when present; `null` when not applicable."""
+    r"""Parent of `currentNode` when present; `null` when not applicable,
+    and for a connected app whose limit leaves that parent out. For
+    such an app, `breadcrumbs` likewise names only the nodes inside
+    its limit.
+
+    """
     items: List[KnowledgeHubNodeTypedDict]
     r"""Page of nodes for the current browse or search."""
     pagination: KnowledgeHubNodesResponsePaginationTypedDict
@@ -535,6 +684,9 @@ class KnowledgeHubNodesResponse(BaseModel):
 
     """
 
+    max_folder_depth: Annotated[int, pydantic.Field(alias="maxFolderDepth")]
+    r"""Deepest a collection folder may be nested; a folder directly in the collection is depth 1."""
+
     error: Nullable[str]
     r"""Always `null` on HTTP 200."""
 
@@ -545,7 +697,12 @@ class KnowledgeHubNodesResponse(BaseModel):
     r"""Node being browsed when `parentId` is in the path; `null` at root."""
 
     parent_node: Annotated[Nullable[ParentNode], pydantic.Field(alias="parentNode")]
-    r"""Parent of `currentNode` when present; `null` when not applicable."""
+    r"""Parent of `currentNode` when present; `null` when not applicable,
+    and for a connected app whose limit leaves that parent out. For
+    such an app, `breadcrumbs` likewise names only the nodes inside
+    its limit.
+
+    """
 
     items: List[KnowledgeHubNode]
     r"""Page of nodes for the current browse or search."""

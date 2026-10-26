@@ -8,37 +8,76 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+class AgentKnowledgeFiltersParsedNodeTypedDict(TypedDict):
+    id: str
+    name: str
+    node_type: str
+    r"""`recordGroup`, `folder` or `record`."""
+
+
+class AgentKnowledgeFiltersParsedNode(BaseModel):
+    id: str
+
+    name: str
+
+    node_type: Annotated[str, pydantic.Field(alias="nodeType")]
+    r"""`recordGroup`, `folder` or `record`."""
+
+
 class AgentKnowledgeFiltersParsedTypedDict(TypedDict):
-    r"""Indexed scope for a knowledge connector: record-group ids and
-    individual record ids. On GET, `filtersParsed` is this shape parsed
-    from the stored `filters` JSON string.
+    r"""What a knowledge source is limited to. With both lists empty the agent
+    searches the whole source; otherwise it searches only the listed
+    record groups, folders and records, each with everything under it, and
+    a selection made in a chat must lie under them. On GET, `filtersParsed`
+    is this shape parsed from the stored `filters` JSON string.
+
+    On create and update, `filters` may be this object or its JSON text.
+    The two lists must hold valid UUIDs, at most 200 across both; a value
+    that cannot be read is refused with 400 rather than saved as \"no
+    limit\", and so is a limit that covers more nodes than one search may
+    (50,000 by default). A stored limit that cannot be read limits the
+    source to nothing.
 
     """
 
     record_groups: NotRequired[List[str]]
-    r"""Deprecated/legacy: record-group ids for connector record-group scoping (e.g. Confluence spaces, Jira projects). No longer set for KB (Collection) entries — a KB is identified by its own `connectorId`, not by an id in this list."""
+    r"""Record-group ids (e.g. Confluence spaces, Jira projects), each with the groups nested in it. Not set for KB (Collection) entries — a KB is identified by its own `connectorId`; an id equal to a source's `connectorId` is ignored."""
     records: NotRequired[List[str]]
-    r"""Individual record ids in scope."""
+    r"""Folder or record ids, each with everything under it."""
+    nodes: NotRequired[List[AgentKnowledgeFiltersParsedNodeTypedDict]]
+    r"""Names of the ids above, for display. Not used for search."""
 
 
 class AgentKnowledgeFiltersParsed(BaseModel):
-    r"""Indexed scope for a knowledge connector: record-group ids and
-    individual record ids. On GET, `filtersParsed` is this shape parsed
-    from the stored `filters` JSON string.
+    r"""What a knowledge source is limited to. With both lists empty the agent
+    searches the whole source; otherwise it searches only the listed
+    record groups, folders and records, each with everything under it, and
+    a selection made in a chat must lie under them. On GET, `filtersParsed`
+    is this shape parsed from the stored `filters` JSON string.
+
+    On create and update, `filters` may be this object or its JSON text.
+    The two lists must hold valid UUIDs, at most 200 across both; a value
+    that cannot be read is refused with 400 rather than saved as \"no
+    limit\", and so is a limit that covers more nodes than one search may
+    (50,000 by default). A stored limit that cannot be read limits the
+    source to nothing.
 
     """
 
     record_groups: Annotated[
         Optional[List[str]], pydantic.Field(alias="recordGroups")
     ] = None
-    r"""Deprecated/legacy: record-group ids for connector record-group scoping (e.g. Confluence spaces, Jira projects). No longer set for KB (Collection) entries — a KB is identified by its own `connectorId`, not by an id in this list."""
+    r"""Record-group ids (e.g. Confluence spaces, Jira projects), each with the groups nested in it. Not set for KB (Collection) entries — a KB is identified by its own `connectorId`; an id equal to a source's `connectorId` is ignored."""
 
     records: Optional[List[str]] = None
-    r"""Individual record ids in scope."""
+    r"""Folder or record ids, each with everything under it."""
+
+    nodes: Optional[List[AgentKnowledgeFiltersParsedNode]] = None
+    r"""Names of the ids above, for display. Not used for search."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["recordGroups", "records"])
+        optional_fields = set(["recordGroups", "records", "nodes"])
         serialized = handler(self)
         m = {}
 
@@ -53,6 +92,10 @@ class AgentKnowledgeFiltersParsed(BaseModel):
         return m
 
 
+try:
+    AgentKnowledgeFiltersParsedNode.model_rebuild()
+except NameError:
+    pass
 try:
     AgentKnowledgeFiltersParsed.model_rebuild()
 except NameError:

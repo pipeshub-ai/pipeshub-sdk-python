@@ -9,6 +9,22 @@ from typing import List, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+class KnowledgeNodeTypedDict(TypedDict):
+    id: str
+    name: str
+    node_type: str
+    r"""`recordGroup`, `folder` or `record`."""
+
+
+class KnowledgeNode(BaseModel):
+    id: str
+
+    name: str
+
+    node_type: Annotated[str, pydantic.Field(alias="nodeType")]
+    r"""`recordGroup`, `folder` or `record`."""
+
+
 class FiltersParsedTypedDict(TypedDict):
     r"""Server-derived read-only object parsed from the stored
     `filters` JSON by the graph provider on GET (Neo4j / Arango).
@@ -17,9 +33,11 @@ class FiltersParsedTypedDict(TypedDict):
     """
 
     record_groups: NotRequired[List[str]]
-    r"""Deprecated/legacy: record-group ids for connector record-group scoping (e.g. Confluence spaces, Jira projects). No longer set for KB (Collection) entries — a KB is identified by its own `connectorId`, not by an id in this list."""
+    r"""Record-group ids (e.g. Confluence spaces, Jira projects), each with the groups nested in it. Not set for KB (Collection) entries — a KB is identified by its own `connectorId`; an id equal to a source's `connectorId` is ignored."""
     records: NotRequired[List[str]]
-    r"""Individual record ids in scope."""
+    r"""Folder or record ids, each with everything under it."""
+    nodes: NotRequired[List[KnowledgeNodeTypedDict]]
+    r"""Names of the ids above, for display. Not used for search."""
 
 
 class FiltersParsed(BaseModel):
@@ -32,14 +50,17 @@ class FiltersParsed(BaseModel):
     record_groups: Annotated[
         Optional[List[str]], pydantic.Field(alias="recordGroups")
     ] = None
-    r"""Deprecated/legacy: record-group ids for connector record-group scoping (e.g. Confluence spaces, Jira projects). No longer set for KB (Collection) entries — a KB is identified by its own `connectorId`, not by an id in this list."""
+    r"""Record-group ids (e.g. Confluence spaces, Jira projects), each with the groups nested in it. Not set for KB (Collection) entries — a KB is identified by its own `connectorId`; an id equal to a source's `connectorId` is ignored."""
 
     records: Optional[List[str]] = None
-    r"""Individual record ids in scope."""
+    r"""Folder or record ids, each with everything under it."""
+
+    nodes: Optional[List[KnowledgeNode]] = None
+    r"""Names of the ids above, for display. Not used for search."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["recordGroups", "records"])
+        optional_fields = set(["recordGroups", "records", "nodes"])
         serialized = handler(self)
         m = {}
 
@@ -142,6 +163,10 @@ class Knowledge(BaseModel):
         return m
 
 
+try:
+    KnowledgeNode.model_rebuild()
+except NameError:
+    pass
 try:
     FiltersParsed.model_rebuild()
 except NameError:

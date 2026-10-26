@@ -413,6 +413,11 @@ class GetArchivedConversationsConversationTypedDict(TypedDict):
     conversation initiator (the only user who can share a chat).
 
     """
+    agent_key: NotRequired[str]
+    r"""Only on agent conversations (returned by `GET /conversations?source=shared`). Open
+    them with `GET /agents/{agentKey}/conversations/{conversationId}`.
+
+    """
     archived_at: NotRequired[datetime]
     r"""Timestamp when the conversation was archived"""
 
@@ -555,6 +560,12 @@ class GetArchivedConversationsConversation(BaseModel):
 
     """
 
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""Only on agent conversations (returned by `GET /conversations?source=shared`). Open
+    them with `GET /agents/{agentKey}/conversations/{conversationId}`.
+
+    """
+
     archived_at: Annotated[Optional[datetime], pydantic.Field(alias="archivedAt")] = (
         None
     )
@@ -590,6 +601,7 @@ class GetArchivedConversationsConversation(BaseModel):
                 "projectId",
                 "projectVisibility",
                 "sharedBy",
+                "agentKey",
                 "archivedAt",
             ]
         )

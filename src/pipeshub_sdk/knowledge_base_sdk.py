@@ -1525,6 +1525,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - Increments version if file content changed
         - Triggers re-indexing for content changes
 
+        **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1592,7 +1594,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateRecord",
-                oauth2_scopes=["kb:write"],
+                oauth2_scopes=["kb:write", "kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1663,6 +1665,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - Increments version if file content changed
         - Triggers re-indexing for content changes
 
+        **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1730,7 +1734,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="updateRecord",
-                oauth2_scopes=["kb:write"],
+                oauth2_scopes=["kb:write", "kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -1777,7 +1781,7 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.DeleteRecordResponseSchema:
         r"""Delete record
 
-        Permanently delete a record from the knowledge base.
+        Delete a record from the knowledge base.
 
         **Required permission:**
 
@@ -1789,7 +1793,12 @@ class KnowledgeBaseSDK(BaseSDK):
         - Associated storage file
         - Indexed content and embeddings
 
-        **Warning:** This action is irreversible.
+        **Trash:** With \"Move Deleted Records to the Trash\" on in Labs, the record
+        goes to the trash instead: it disappears from search, chat and lists at once,
+        its embeddings are removed, and the record and its file stay until the scheduled
+        purge. The response then carries `softDeleted: true` and the `batchId`, and the
+        record can be brought back with `POST /knowledgeBase/record/{recordId}/restore`.
+        With the setting off, the delete is immediate and cannot be undone.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1892,7 +1901,7 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.DeleteRecordResponseSchema:
         r"""Delete record
 
-        Permanently delete a record from the knowledge base.
+        Delete a record from the knowledge base.
 
         **Required permission:**
 
@@ -1904,7 +1913,12 @@ class KnowledgeBaseSDK(BaseSDK):
         - Associated storage file
         - Indexed content and embeddings
 
-        **Warning:** This action is irreversible.
+        **Trash:** With \"Move Deleted Records to the Trash\" on in Labs, the record
+        goes to the trash instead: it disappears from search, chat and lists at once,
+        its embeddings are removed, and the record and its file stay until the scheduled
+        purge. The response then carries `softDeleted: true` and the `batchId`, and the
+        record can be brought back with `POST /knowledgeBase/record/{recordId}/restore`.
+        With the setting off, the delete is immediate and cannot be undone.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1996,11 +2010,732 @@ class KnowledgeBaseSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
+    def restore_record(
+        self,
+        *,
+        record_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RestoreRecordResponseSchema:
+        r"""Restore a deleted record
+
+        Bring a record back from the trash, together with everything deleted in the
+        same action: a folder comes back with its contents, a file with its
+        attachments, a multi-select delete with every item it removed.
+
+        Needs \"Move Deleted Records to the Trash\" on in Labs.
+
+        **Required permission:** the role the delete needed. A single file needs
+        OWNER, WRITER or FILEORGANIZER on its collection; a folder or several items
+        need OWNER or WRITER.
+
+        **Names:** an item whose name another item next to it now uses comes back
+        as \"name (restored)\" (a file keeps its extension: \"report (restored).pdf\").
+
+        **Search:** restored files are indexed again, so they return to search and
+        chat once indexing finishes. `reindexPending` lists any that could not be
+        queued; reindex those by hand. A file that is back but whose indexing never
+        started is queued again when it is restored again, and the indexing service
+        queues it on its own after about an hour.
+
+        A record that is not in the trash answers 200 with nothing restored.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_id: Record ID of any item in the delete batch
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.RestoreRecordRequest(
+            record_id=record_id,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/knowledgeBase/record/{recordId}/restore",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="restoreRecord",
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.RestoreRecordResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def restore_record_async(
+        self,
+        *,
+        record_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RestoreRecordResponseSchema:
+        r"""Restore a deleted record
+
+        Bring a record back from the trash, together with everything deleted in the
+        same action: a folder comes back with its contents, a file with its
+        attachments, a multi-select delete with every item it removed.
+
+        Needs \"Move Deleted Records to the Trash\" on in Labs.
+
+        **Required permission:** the role the delete needed. A single file needs
+        OWNER, WRITER or FILEORGANIZER on its collection; a folder or several items
+        need OWNER or WRITER.
+
+        **Names:** an item whose name another item next to it now uses comes back
+        as \"name (restored)\" (a file keeps its extension: \"report (restored).pdf\").
+
+        **Search:** restored files are indexed again, so they return to search and
+        chat once indexing finishes. `reindexPending` lists any that could not be
+        queued; reindex those by hand. A file that is back but whose indexing never
+        started is queued again when it is restored again, and the indexing service
+        queues it on its own after about an hour.
+
+        A record that is not in the trash answers 200 with nothing restored.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_id: Record ID of any item in the delete batch
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.RestoreRecordRequest(
+            record_id=record_id,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/knowledgeBase/record/{recordId}/restore",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="restoreRecord",
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.RestoreRecordResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def restore_records(
+        self,
+        *,
+        record_ids: Iterable[str],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RestoreRecordsResponseSchema:
+        r"""Restore several deleted records
+
+        Restore up to 100 records from the trash. Each id is restored as
+        `POST /knowledgeBase/record/{recordId}/restore` restores it, with everything
+        deleted along with it; ids from one delete are restored once. Every id gets its
+        own outcome in `results`, so one refusal does not hold the others back, and the
+        answer is 200 whatever the outcomes.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_ids:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.RestoreRecordsRequestBody(
+            record_ids=utils.unmarshal(record_ids, List[str]),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/knowledgeBase/records/restore",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.RestoreRecordsRequestBody
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="restoreRecords",
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.RestoreRecordsResponseSchema, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def restore_records_async(
+        self,
+        *,
+        record_ids: Iterable[str],
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.RestoreRecordsResponseSchema:
+        r"""Restore several deleted records
+
+        Restore up to 100 records from the trash. Each id is restored as
+        `POST /knowledgeBase/record/{recordId}/restore` restores it, with everything
+        deleted along with it; ids from one delete are restored once. Every id gets its
+        own outcome in `results`, so one refusal does not hold the others back, and the
+        answer is 200 whatever the outcomes.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_ids:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.RestoreRecordsRequestBody(
+            record_ids=utils.unmarshal(record_ids, List[str]),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/knowledgeBase/records/restore",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request, False, False, "json", models.RestoreRecordsRequestBody
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="restoreRecords",
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.RestoreRecordsResponseSchema, http_res
+            )
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def list_trash(
+        self,
+        *,
+        kb_id: str,
+        page: Optional[int] = 1,
+        limit: Optional[int] = 25,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ListTrashResponseSchema:
+        r"""List a collection's recently deleted items
+
+        One page of what was deleted from a collection and can still be restored,
+        newest first. Each item is what one delete removed, as a restore brings it back
+        whole: a folder deleted with its contents is one item, and so is a multi-select
+        delete (`rootCount` items selected, some named in `otherRootNames`). `itemCount`
+        says how many records it holds.
+        Restore an item with `POST /knowledgeBase/record/{recordId}/restore`, using its `id`.
+
+        Needs \"Move Deleted Records to the Trash\" on in Labs.
+
+        **Who sees what:** the list holds what the caller may restore. OWNER and
+        WRITER see every item; FILEORGANIZER sees single files only; other roles are
+        refused. The workspace and user always come from the sign-in.
+
+        **Removed for good:** the scheduled cleanup may remove an item from
+        `removableAfterTimestamp` on (at least 14 days after it was deleted by
+        default; it runs every 14 days, so an item stays 14 to 28 days). It is
+        absent when the retention settings can't be read.
+
+        An item whose folder is also in the trash (`parentInTrash`) can only be
+        restored after that folder.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param kb_id: Collection (knowledge base) ID
+        :param page:
+        :param limit:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.ListTrashRequest(
+            kb_id=kb_id,
+            page=page,
+            limit=limit,
+        )
+
+        req = self._build_request(
+            method="GET",
+            path="/knowledgeBase/{kbId}/trash",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="listTrash",
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ListTrashResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def list_trash_async(
+        self,
+        *,
+        kb_id: str,
+        page: Optional[int] = 1,
+        limit: Optional[int] = 25,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.ListTrashResponseSchema:
+        r"""List a collection's recently deleted items
+
+        One page of what was deleted from a collection and can still be restored,
+        newest first. Each item is what one delete removed, as a restore brings it back
+        whole: a folder deleted with its contents is one item, and so is a multi-select
+        delete (`rootCount` items selected, some named in `otherRootNames`). `itemCount`
+        says how many records it holds.
+        Restore an item with `POST /knowledgeBase/record/{recordId}/restore`, using its `id`.
+
+        Needs \"Move Deleted Records to the Trash\" on in Labs.
+
+        **Who sees what:** the list holds what the caller may restore. OWNER and
+        WRITER see every item; FILEORGANIZER sees single files only; other roles are
+        refused. The workspace and user always come from the sign-in.
+
+        **Removed for good:** the scheduled cleanup may remove an item from
+        `removableAfterTimestamp` on (at least 14 days after it was deleted by
+        default; it runs every 14 days, so an item stays 14 to 28 days). It is
+        absent when the retention settings can't be read.
+
+        An item whose folder is also in the trash (`parentInTrash`) can only be
+        restored after that folder.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param kb_id: Collection (knowledge base) ID
+        :param page:
+        :param limit:
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.ListTrashRequest(
+            kb_id=kb_id,
+            page=page,
+            limit=limit,
+        )
+
+        req = self._build_request_async(
+            method="GET",
+            path="/knowledgeBase/{kbId}/trash",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="listTrash",
+                oauth2_scopes=["kb:delete"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.ListTrashResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
     def stream_record_buffer(
         self,
         *,
         record_id: str,
         convert_to: Optional[str] = None,
+        version: Optional[int] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2029,6 +2764,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         :param record_id: Record ID
         :param convert_to: Target format for conversion
+        :param version: Registry version to pin ARTIFACT record content to. Omit to stream
+            the latest version. Ignored for non-artifact records.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2047,6 +2785,7 @@ class KnowledgeBaseSDK(BaseSDK):
         request = models.StreamRecordBufferRequest(
             record_id=record_id,
             convert_to=convert_to,
+            version=version,
         )
 
         req = self._build_request(
@@ -2145,6 +2884,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_id: str,
         convert_to: Optional[str] = None,
+        version: Optional[int] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2173,6 +2913,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         :param record_id: Record ID
         :param convert_to: Target format for conversion
+        :param version: Registry version to pin ARTIFACT record content to. Omit to stream
+            the latest version. Ignored for non-artifact records.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2191,6 +2934,7 @@ class KnowledgeBaseSDK(BaseSDK):
         request = models.StreamRecordBufferRequest(
             record_id=record_id,
             convert_to=convert_to,
+            version=version,
         )
 
         req = self._build_request_async(
@@ -2514,6 +3258,268 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="createFolder",
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.FolderCreateResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def create_subfolder(
+        self,
+        *,
+        kb_id: str,
+        folder_id: str,
+        folder_name: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.FolderCreateResponseSchema:
+        r"""Create subfolder
+
+        Create a nested subfolder inside an existing parent folder.
+
+        **Required permission:** WRITER or higher
+
+        **Folder features:**
+
+        - Organize records hierarchically
+        - Support nested subfolders (unlimited depth)
+        - Inherit parent KB permissions
+
+        **Naming rules:**
+
+        - 1–255 characters
+        - XSS protection applied
+        - Spaces and special characters allowed
+        - Duplicate names rejected within the same parent (`409`)
+
+        **Response:** Returns `id` and `name` for the created folder.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param kb_id: Knowledge base ID
+        :param folder_id: Parent folder ID
+        :param folder_name: Name of the folder
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CreateSubfolderRequest(
+            kb_id=kb_id,
+            folder_id=folder_id,
+            body=models.CreateSubfolderRequestBody(
+                folder_name=folder_name,
+            ),
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.CreateSubfolderRequestBody
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createSubfolder",
+                oauth2_scopes=["kb:write"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.FolderCreateResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def create_subfolder_async(
+        self,
+        *,
+        kb_id: str,
+        folder_id: str,
+        folder_name: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.FolderCreateResponseSchema:
+        r"""Create subfolder
+
+        Create a nested subfolder inside an existing parent folder.
+
+        **Required permission:** WRITER or higher
+
+        **Folder features:**
+
+        - Organize records hierarchically
+        - Support nested subfolders (unlimited depth)
+        - Inherit parent KB permissions
+
+        **Naming rules:**
+
+        - 1–255 characters
+        - XSS protection applied
+        - Spaces and special characters allowed
+        - Duplicate names rejected within the same parent (`409`)
+
+        **Response:** Returns `id` and `name` for the created folder.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param kb_id: Knowledge base ID
+        :param folder_id: Parent folder ID
+        :param folder_name: Name of the folder
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.CreateSubfolderRequest(
+            kb_id=kb_id,
+            folder_id=folder_id,
+            body=models.CreateSubfolderRequestBody(
+                folder_name=folder_name,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=True,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body, False, False, "json", models.CreateSubfolderRequestBody
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="createSubfolder",
                 oauth2_scopes=["kb:write"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
@@ -3126,7 +4132,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadRecords",
-                oauth2_scopes=["kb:upload"],
+                oauth2_scopes=["kb:upload", "kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3150,7 +4156,9 @@ class KnowledgeBaseSDK(BaseSDK):
                 data_required=False,
             )
         if utils.match_response(
-            http_res, ["400", "401", "403", "404", "413", "429"], "application/json"
+            http_res,
+            ["400", "401", "403", "404", "409", "413", "429"],
+            "application/json",
         ):
             http_res_text = utils.stream_to_text(http_res)
             response_data = unmarshal_json_response(
@@ -3301,7 +4309,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="uploadRecords",
-                oauth2_scopes=["kb:upload"],
+                oauth2_scopes=["kb:upload", "kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -3325,7 +4333,9 @@ class KnowledgeBaseSDK(BaseSDK):
                 data_required=False,
             )
         if utils.match_response(
-            http_res, ["400", "401", "403", "404", "413", "429"], "application/json"
+            http_res,
+            ["400", "401", "403", "404", "409", "413", "429"],
+            "application/json",
         ):
             http_res_text = await utils.stream_to_text_async(http_res)
             response_data = unmarshal_json_response(
@@ -4194,7 +5204,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 models.KnowledgeBaseMoveRecordResponse, http_res
             )
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -4318,7 +5328,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 models.KnowledgeBaseMoveRecordResponse, http_res
             )
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -4346,6 +5356,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubRootNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubRootNodesSortOrder] = "desc",
@@ -4364,7 +5375,7 @@ class KnowledgeBaseSDK(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubRootNodesResponse:
         r"""Get knowledge hub root nodes
 
         Returns root-level nodes (connector apps and Collection apps) or, when
@@ -4403,6 +5414,29 @@ class KnowledgeBaseSDK(BaseSDK):
         - `breadcrumbs` — adds the breadcrumb trail (empty at root level)
         - `permissions` — adds the caller's permission flags
 
+        **A connected app with a limit**
+
+        A token that may see only some sources pages and counts only what
+        its limit lets it see:
+        - Limited to whole sources (apps or collections) only: the listing
+        and the search cover those, with exact totals and counts.
+        - Limited to any spaces, folders or files, alone or beside whole
+        sources: the listing returns each whole source, space (record
+        group), folder and file the limit names, one item each, to open
+        by its `id`. `totalItems` counts those items, not what is inside
+        them. A search reads
+        forward only (`prevCursor` is always null), and takes a `page`
+        number up to 5; for later pages, send `nextCursor`. Its `totalItems` counts
+        the matches found so far and can grow from page to page; it is
+        final once `hasNext` is false. `counts` is returned only when the
+        whole result fits in the first page read, and is `null` otherwise.
+        - An item can sit in a folder the limit leaves out, as a file the
+        limit names does. Its `parentId` and `parent` are then `null`: the
+        item is returned, and the folder above it is not named.
+        - A `nextCursor` or `prevCursor` belongs to the limit it was read
+        under. A token with a different limit that sends it gets a `400`;
+        start that listing again without a cursor.
+
         **Access control**
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
@@ -4415,7 +5449,16 @@ class KnowledgeBaseSDK(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+            A search by a connected app whose limit names any spaces, folders or files
+            takes a page number of at most 5; for later pages, send `nextCursor`.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -4503,6 +5546,7 @@ class KnowledgeBaseSDK(BaseSDK):
         request = models.GetKnowledgeHubRootNodesRequest(
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -4564,7 +5608,12 @@ class KnowledgeBaseSDK(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubRootNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
@@ -4584,11 +5633,25 @@ class KnowledgeBaseSDK(BaseSDK):
                 errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -4612,6 +5675,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubRootNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubRootNodesSortOrder] = "desc",
@@ -4630,7 +5694,7 @@ class KnowledgeBaseSDK(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubRootNodesResponse:
         r"""Get knowledge hub root nodes
 
         Returns root-level nodes (connector apps and Collection apps) or, when
@@ -4669,6 +5733,29 @@ class KnowledgeBaseSDK(BaseSDK):
         - `breadcrumbs` — adds the breadcrumb trail (empty at root level)
         - `permissions` — adds the caller's permission flags
 
+        **A connected app with a limit**
+
+        A token that may see only some sources pages and counts only what
+        its limit lets it see:
+        - Limited to whole sources (apps or collections) only: the listing
+        and the search cover those, with exact totals and counts.
+        - Limited to any spaces, folders or files, alone or beside whole
+        sources: the listing returns each whole source, space (record
+        group), folder and file the limit names, one item each, to open
+        by its `id`. `totalItems` counts those items, not what is inside
+        them. A search reads
+        forward only (`prevCursor` is always null), and takes a `page`
+        number up to 5; for later pages, send `nextCursor`. Its `totalItems` counts
+        the matches found so far and can grow from page to page; it is
+        final once `hasNext` is false. `counts` is returned only when the
+        whole result fits in the first page read, and is `null` otherwise.
+        - An item can sit in a folder the limit leaves out, as a file the
+        limit names does. Its `parentId` and `parent` are then `null`: the
+        item is returned, and the folder above it is not named.
+        - A `nextCursor` or `prevCursor` belongs to the limit it was read
+        under. A token with a different limit that sends it gets a `400`;
+        start that listing again without a cursor.
+
         **Access control**
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
@@ -4681,7 +5768,16 @@ class KnowledgeBaseSDK(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+            A search by a connected app whose limit names any spaces, folders or files
+            takes a page number of at most 5; for later pages, send `nextCursor`.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -4769,6 +5865,7 @@ class KnowledgeBaseSDK(BaseSDK):
         request = models.GetKnowledgeHubRootNodesRequest(
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -4830,7 +5927,12 @@ class KnowledgeBaseSDK(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubRootNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
@@ -4850,11 +5952,25 @@ class KnowledgeBaseSDK(BaseSDK):
                 errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -4880,6 +5996,7 @@ class KnowledgeBaseSDK(BaseSDK):
         parent_id: str,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubChildNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubChildNodesSortOrder] = "desc",
@@ -4898,7 +6015,7 @@ class KnowledgeBaseSDK(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubChildNodesResponse:
         r"""Get knowledge hub child nodes
 
         Returns the children of a specific node in the knowledge hub tree.
@@ -4928,8 +6045,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         When `include=breadcrumbs` is set, the response contains a
         `breadcrumbs` array tracing the path from the root to the current
-        node. The `currentNode` and `parentNode` objects are always populated
-        for non-root requests.
+        node. The `currentNode` object is always populated for non-root
+        requests. `parentNode` is too, except at the top of a source and for
+        a connected app whose limit leaves that parent out: it is `null` then.
 
         **Access control**
 
@@ -4953,7 +6071,14 @@ class KnowledgeBaseSDK(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -5043,6 +6168,7 @@ class KnowledgeBaseSDK(BaseSDK):
             parent_id=parent_id,
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -5104,7 +6230,12 @@ class KnowledgeBaseSDK(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubChildNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
@@ -5131,11 +6262,25 @@ class KnowledgeBaseSDK(BaseSDK):
                 errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -5161,6 +6306,7 @@ class KnowledgeBaseSDK(BaseSDK):
         parent_id: str,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubChildNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubChildNodesSortOrder] = "desc",
@@ -5179,7 +6325,7 @@ class KnowledgeBaseSDK(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubChildNodesResponse:
         r"""Get knowledge hub child nodes
 
         Returns the children of a specific node in the knowledge hub tree.
@@ -5209,8 +6355,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         When `include=breadcrumbs` is set, the response contains a
         `breadcrumbs` array tracing the path from the root to the current
-        node. The `currentNode` and `parentNode` objects are always populated
-        for non-root requests.
+        node. The `currentNode` object is always populated for non-root
+        requests. `parentNode` is too, except at the top of a source and for
+        a connected app whose limit leaves that parent out: it is `null` then.
 
         **Access control**
 
@@ -5234,7 +6381,14 @@ class KnowledgeBaseSDK(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -5324,6 +6478,7 @@ class KnowledgeBaseSDK(BaseSDK):
             parent_id=parent_id,
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -5385,7 +6540,12 @@ class KnowledgeBaseSDK(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubChildNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
@@ -5412,11 +6572,25 @@ class KnowledgeBaseSDK(BaseSDK):
                 errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):

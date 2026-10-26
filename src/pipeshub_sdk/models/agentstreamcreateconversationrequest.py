@@ -5,6 +5,7 @@ from .agentcapabilities import AgentCapabilities, AgentCapabilitiesTypedDict
 from .appliedfilters import AppliedFilters, AppliedFiltersTypedDict
 from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .filters import Filters, FiltersTypedDict
+from .toolapprovalanswer import ToolApprovalAnswer, ToolApprovalAnswerTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
@@ -39,6 +40,13 @@ the schema for backward compatibility with callers that already
 send it.
 
 """
+
+
+AgentStreamCreateConversationRequestKeywordSearchBudget = Literal[
+    "short",
+    "full",
+]
+r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
 class AgentStreamCreateConversationRequestTypedDict(TypedDict):
@@ -116,7 +124,8 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     tools: NotRequired[List[str]]
     r"""Allowed tool ids for this turn, such as `jira.create_issue`. Omit
     to let the agent use its default toolset; send `[]` to disable
-    tools for this turn.
+    tools for this turn. A list that leaves out `web_search` turns off
+    the agent's web search for the turn.
 
     """
     protocol: NotRequired[AgentStreamCreateConversationRequestProtocol]
@@ -132,6 +141,22 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     selects an agent mode; ignored otherwise. Each field falls back to its
     own `default` below when omitted — a missing flag is not uniformly
     `true`. Omitting the whole object applies every default.
+
+    """
+    include_retrieval_context: NotRequired[bool]
+    r"""Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer."""
+    keyword_search_budget: NotRequired[
+        AgentStreamCreateConversationRequestKeywordSearchBudget
+    ]
+    r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+    tool_approval: NotRequired[ToolApprovalAnswerTypedDict]
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
 
     """
     run_id: NotRequired[str]
@@ -239,7 +264,8 @@ class AgentStreamCreateConversationRequest(BaseModel):
     tools: Optional[List[str]] = None
     r"""Allowed tool ids for this turn, such as `jira.create_issue`. Omit
     to let the agent use its default toolset; send `[]` to disable
-    tools for this turn.
+    tools for this turn. A list that leaves out `web_search` turns off
+    the agent's web search for the turn.
 
     """
 
@@ -259,6 +285,30 @@ class AgentStreamCreateConversationRequest(BaseModel):
     selects an agent mode; ignored otherwise. Each field falls back to its
     own `default` below when omitted — a missing flag is not uniformly
     `true`. Omitting the whole object applies every default.
+
+    """
+
+    include_retrieval_context: Annotated[
+        Optional[bool], pydantic.Field(alias="includeRetrievalContext")
+    ] = False
+    r"""Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer."""
+
+    keyword_search_budget: Annotated[
+        Optional[AgentStreamCreateConversationRequestKeywordSearchBudget],
+        pydantic.Field(alias="keywordSearchBudget"),
+    ] = None
+    r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
+
+    tool_approval: Annotated[
+        Optional[ToolApprovalAnswer], pydantic.Field(alias="toolApproval")
+    ] = None
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
 
     """
 
@@ -287,6 +337,9 @@ class AgentStreamCreateConversationRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "includeRetrievalContext",
+                "keywordSearchBudget",
+                "toolApproval",
                 "runId",
             ]
         )

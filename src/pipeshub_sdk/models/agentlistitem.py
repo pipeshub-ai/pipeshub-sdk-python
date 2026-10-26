@@ -155,6 +155,12 @@ class AgentListItemTypedDict(TypedDict):
     r"""Short human-readable description of the agent."""
     instructions: NotRequired[Nullable[str]]
     r"""Additional execution instructions stored on the agent."""
+    service_account_user_id: NotRequired[Nullable[str]]
+    r"""The `userId` of the service account this agent searches knowledge
+    as, or null when it searches as its creator. Only set on a
+    service-account agent.
+
+    """
     start_message: NotRequired[Nullable[str]]
     r"""Greeting shown at conversation start."""
     system_prompt: NotRequired[Nullable[str]]
@@ -179,6 +185,12 @@ class AgentListItemTypedDict(TypedDict):
     """
     default_reasoning_effort: NotRequired[Nullable[AgentListItemDefaultReasoningEffort]]
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+    api_toolset_tools: NotRequired[List[str]]
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
     send_user_context: NotRequired[bool]
     r"""When false, this agent omits user name/email/org from its system prompt."""
 
@@ -281,6 +293,15 @@ class AgentListItem(BaseModel):
     instructions: OptionalNullable[str] = UNSET
     r"""Additional execution instructions stored on the agent."""
 
+    service_account_user_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="serviceAccountUserId")
+    ] = UNSET
+    r"""The `userId` of the service account this agent searches knowledge
+    as, or null when it searches as its creator. Only set on a
+    service-account agent.
+
+    """
+
     start_message: Annotated[
         OptionalNullable[str], pydantic.Field(alias="startMessage")
     ] = UNSET
@@ -324,6 +345,15 @@ class AgentListItem(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
+    api_toolset_tools: Annotated[
+        Optional[List[str]], pydantic.Field(alias="apiToolsetTools")
+    ] = None
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
+
     send_user_context: Annotated[
         Optional[bool], pydantic.Field(alias="sendUserContext")
     ] = None
@@ -336,12 +366,14 @@ class AgentListItem(BaseModel):
                 "_rev",
                 "description",
                 "instructions",
+                "serviceAccountUserId",
                 "startMessage",
                 "systemPrompt",
                 "updatedBy",
                 "usesOrgDefault",
                 "webSearch",
                 "defaultReasoningEffort",
+                "apiToolsetTools",
                 "sendUserContext",
             ]
         )
@@ -349,6 +381,7 @@ class AgentListItem(BaseModel):
             [
                 "description",
                 "instructions",
+                "serviceAccountUserId",
                 "startMessage",
                 "systemPrompt",
                 "updatedBy",

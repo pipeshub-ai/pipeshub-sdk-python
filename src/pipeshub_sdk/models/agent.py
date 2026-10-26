@@ -19,6 +19,19 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
+AgentModelDefaultReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""The model's own reasoning effort, read from its stored configuration. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`. Omitted when nothing valid is stored; `none` is a legacy value that runs as `low`."""
+
+
 class Model1TypedDict(TypedDict):
     model_key: NotRequired[str]
     model_name: NotRequired[str]
@@ -32,6 +45,8 @@ class Model1TypedDict(TypedDict):
 
     """
     model_friendly_name: NotRequired[str]
+    default_reasoning_effort: NotRequired[AgentModelDefaultReasoningEffort]
+    r"""The model's own reasoning effort, read from its stored configuration. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`. Omitted when nothing valid is stored; `none` is a legacy value that runs as `low`."""
 
 
 class Model1(BaseModel):
@@ -59,6 +74,12 @@ class Model1(BaseModel):
         Optional[str], pydantic.Field(alias="modelFriendlyName")
     ] = None
 
+    default_reasoning_effort: Annotated[
+        Optional[AgentModelDefaultReasoningEffort],
+        pydantic.Field(alias="defaultReasoningEffort"),
+    ] = None
+    r"""The model's own reasoning effort, read from its stored configuration. It applies only when the chat request sets no `reasoningEffort` and the agent has no `defaultReasoningEffort`. Omitted when nothing valid is stored; `none` is a legacy value that runs as `low`."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -71,6 +92,7 @@ class Model1(BaseModel):
                 "isDefault",
                 "modelType",
                 "modelFriendlyName",
+                "defaultReasoningEffort",
             ]
         )
         serialized = handler(self)
@@ -224,6 +246,12 @@ class AgentTypedDict(TypedDict):
     r"""Web search provider attached to this agent. Null when none is configured."""
     default_reasoning_effort: NotRequired[Nullable[AgentDefaultReasoningEffort]]
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+    api_toolset_tools: NotRequired[List[str]]
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
     send_user_context: NotRequired[bool]
     r"""When true (default), the agent's system prompt includes the current
     user's name, email, and organization. When false, the agent relies
@@ -232,6 +260,12 @@ class AgentTypedDict(TypedDict):
     """
     updated_by: NotRequired[Nullable[str]]
     r"""User id of the last updater, if present."""
+    service_account_user_id: NotRequired[Nullable[str]]
+    r"""The `userId` of the service account this agent searches knowledge
+    as, or null when it searches as its creator. Only set on a
+    service-account agent.
+
+    """
 
 
 class Agent(BaseModel):
@@ -351,6 +385,15 @@ class Agent(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
+    api_toolset_tools: Annotated[
+        Optional[List[str]], pydantic.Field(alias="apiToolsetTools")
+    ] = None
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
+
     send_user_context: Annotated[
         Optional[bool], pydantic.Field(alias="sendUserContext")
     ] = None
@@ -365,6 +408,15 @@ class Agent(BaseModel):
     )
     r"""User id of the last updater, if present."""
 
+    service_account_user_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="serviceAccountUserId")
+    ] = UNSET
+    r"""The `userId` of the service account this agent searches knowledge
+    as, or null when it searches as its creator. Only set on a
+    service-account agent.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -377,12 +429,20 @@ class Agent(BaseModel):
                 "usesOrgDefault",
                 "webSearch",
                 "defaultReasoningEffort",
+                "apiToolsetTools",
                 "sendUserContext",
                 "updatedBy",
+                "serviceAccountUserId",
             ]
         )
         nullable_fields = set(
-            ["instructions", "webSearch", "defaultReasoningEffort", "updatedBy"]
+            [
+                "instructions",
+                "webSearch",
+                "defaultReasoningEffort",
+                "updatedBy",
+                "serviceAccountUserId",
+            ]
         )
         serialized = handler(self)
         m = {}

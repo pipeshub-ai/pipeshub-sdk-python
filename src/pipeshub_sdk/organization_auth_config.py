@@ -106,7 +106,9 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthConfig, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -219,7 +221,9 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthConfig, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -260,16 +264,13 @@ class OrganizationAuthConfig(BaseSDK):
         - No duplicate methods within the same step
         - No method can appear in multiple steps
         - Each step must have at least one allowed method
-        - `samlSso` is only allowed in a single-step policy; it can't be combined with other steps
+        - `samlSso` and `oauth` were removed in 1.0 and are refused; use `microsoft` in place of `azureAd`
 
         **Available Methods:**
         - `password`: Email/password authentication
         - `otp`: One-time password via email
         - `google`: Google OAuth 2.0
         - `microsoft`: Microsoft OAuth 2.0
-        - `azureAd`: Azure Active Directory
-        - `samlSso`: SAML 2.0 Single Sign-On
-        - `oauth`: Generic OAuth 2.0 provider
 
         **Example - Single Factor (Password or Google):**
 
@@ -366,7 +367,9 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateAuthMethodResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -407,16 +410,13 @@ class OrganizationAuthConfig(BaseSDK):
         - No duplicate methods within the same step
         - No method can appear in multiple steps
         - Each step must have at least one allowed method
-        - `samlSso` is only allowed in a single-step policy; it can't be combined with other steps
+        - `samlSso` and `oauth` were removed in 1.0 and are refused; use `microsoft` in place of `azureAd`
 
         **Available Methods:**
         - `password`: Email/password authentication
         - `otp`: One-time password via email
         - `google`: Google OAuth 2.0
         - `microsoft`: Microsoft OAuth 2.0
-        - `azureAd`: Azure Active Directory
-        - `samlSso`: SAML 2.0 Single Sign-On
-        - `oauth`: Generic OAuth 2.0 provider
 
         **Example - Single Factor (Password or Google):**
 
@@ -513,7 +513,9 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateAuthMethodResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -626,7 +628,9 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, ["200", "201"], "application/json"):
             return unmarshal_json_response(models.OrgAuthConfigSetupResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -739,7 +743,9 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, ["200", "201"], "application/json"):
             return unmarshal_json_response(models.OrgAuthConfigSetupResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):

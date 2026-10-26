@@ -11,6 +11,32 @@ from pipeshub_sdk.types import BaseModel
 from typing import Optional
 
 
+class GetKnowledgeHubRootNodesServiceUnavailableErrorData(BaseModel):
+    error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesServiceUnavailableError
+
+
+@dataclass(unsafe_hash=True)
+class GetKnowledgeHubRootNodesServiceUnavailableError(PipeshubError):
+    r"""The database could not give this listing the memory it needs right now, because other requests were using
+    it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself.
+    The body is the gateway's own busy message, not the service's wording.
+
+    """
+
+    data: GetKnowledgeHubRootNodesServiceUnavailableErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: GetKnowledgeHubRootNodesServiceUnavailableErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.error.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 class GetKnowledgeHubRootNodesInternalServerErrorData(BaseModel):
     error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesErrorHTTPInternalServerError
 
@@ -24,6 +50,35 @@ class GetKnowledgeHubRootNodesInternalServerError(PipeshubError):
     def __init__(
         self,
         data: GetKnowledgeHubRootNodesInternalServerErrorData,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        fallback = body or raw_response.text
+        message = str(data.error.message) or fallback
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
+class GetKnowledgeHubRootNodesUnprocessableEntityErrorData(BaseModel):
+    error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesUnprocessableEntityError
+
+
+@dataclass(unsafe_hash=True)
+class GetKnowledgeHubRootNodesUnprocessableEntityError(PipeshubError):
+    r"""A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the
+    database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder
+    (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),
+    which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as
+    `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the
+    connector allows it and is not affected.
+
+    """
+
+    data: GetKnowledgeHubRootNodesUnprocessableEntityErrorData = field(hash=False)
+
+    def __init__(
+        self,
+        data: GetKnowledgeHubRootNodesUnprocessableEntityErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

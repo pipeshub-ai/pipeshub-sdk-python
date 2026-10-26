@@ -237,6 +237,8 @@ class SearchArchivedConversationsConversationTypedDict(TypedDict):
 
     """
 
+    agent_key: NotRequired[str]
+    r"""Agent identifier — present only when `source` is `agent`"""
     id: NotRequired[str]
     user_id: NotRequired[str]
     org_id: NotRequired[str]
@@ -266,6 +268,13 @@ class SearchArchivedConversationsConversationTypedDict(TypedDict):
     updated_at: NotRequired[datetime]
     is_owner: NotRequired[bool]
     access_level: NotRequired[SearchArchivedConversationsAccessLevel]
+    is_pinned: NotRequired[bool]
+    r"""`true` when the owner pinned this conversation. Absent on
+    conversations that are not pinned (never `false`). Set via
+    `PATCH /conversations/{conversationId}/pin`. Only returned to the
+    owner: lists with `source=shared` omit it.
+
+    """
     project_id: NotRequired[Nullable[str]]
     r"""The project this conversation is linked to, if any. Set via
     `PUT /conversations/{conversationId}/project` or at creation
@@ -288,8 +297,6 @@ class SearchArchivedConversationsConversationTypedDict(TypedDict):
     """
     source: NotRequired[SearchArchivedConversationsSource]
     r"""Origin collection of the conversation"""
-    agent_key: NotRequired[str]
-    r"""Agent identifier — present only when `source` is `agent`"""
     archived_at: NotRequired[datetime]
     r"""Timestamp when the conversation was archived"""
 
@@ -300,6 +307,9 @@ class SearchArchivedConversationsConversation(BaseModel):
     Fetch a single conversation to retrieve its messages.
 
     """
+
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""Agent identifier — present only when `source` is `agent`"""
 
     id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
 
@@ -366,6 +376,14 @@ class SearchArchivedConversationsConversation(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = None
 
+    is_pinned: Annotated[Optional[bool], pydantic.Field(alias="isPinned")] = None
+    r"""`true` when the owner pinned this conversation. Absent on
+    conversations that are not pinned (never `false`). Set via
+    `PATCH /conversations/{conversationId}/pin`. Only returned to the
+    owner: lists with `source=shared` omit it.
+
+    """
+
     project_id: Annotated[OptionalNullable[str], pydantic.Field(alias="projectId")] = (
         UNSET
     )
@@ -397,9 +415,6 @@ class SearchArchivedConversationsConversation(BaseModel):
     source: Optional[SearchArchivedConversationsSource] = None
     r"""Origin collection of the conversation"""
 
-    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
-    r"""Agent identifier — present only when `source` is `agent`"""
-
     archived_at: Annotated[Optional[datetime], pydantic.Field(alias="archivedAt")] = (
         None
     )
@@ -409,6 +424,7 @@ class SearchArchivedConversationsConversation(BaseModel):
     def serialize_model(self, handler):
         optional_fields = set(
             [
+                "agentKey",
                 "_id",
                 "userId",
                 "orgId",
@@ -431,11 +447,11 @@ class SearchArchivedConversationsConversation(BaseModel):
                 "updatedAt",
                 "isOwner",
                 "accessLevel",
+                "isPinned",
                 "projectId",
                 "projectVisibility",
                 "sharedBy",
                 "source",
-                "agentKey",
                 "archivedAt",
             ]
         )

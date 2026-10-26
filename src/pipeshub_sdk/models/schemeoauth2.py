@@ -10,7 +10,7 @@ class SchemeOauth2TypedDict(TypedDict):
     r"""OAuth 2.0 authentication with fine-grained scopes.
     Supports authorization_code (with PKCE) and client_credentials flows.
     OAuth tokens are Bearer JWTs — use the same Authorization header as regular tokens.
-    For **client_credentials**, machine JWTs may use `userId === client_id`; the Node gateway resolves the OAuth app creator — see **OAuth Provider** tag.
+    For **client_credentials**, machine JWTs may use `userId === client_id`; the Node gateway resolves the application's token identity — the service account it is pointed at, or its creator for an application registered before that was required — see **OAuth Provider** tag.
 
     """
 
@@ -23,7 +23,7 @@ class SchemeOauth2(BaseModel):
     r"""OAuth 2.0 authentication with fine-grained scopes.
     Supports authorization_code (with PKCE) and client_credentials flows.
     OAuth tokens are Bearer JWTs — use the same Authorization header as regular tokens.
-    For **client_credentials**, machine JWTs may use `userId === client_id`; the Node gateway resolves the OAuth app creator — see **OAuth Provider** tag.
+    For **client_credentials**, machine JWTs may use `userId === client_id`; the Node gateway resolves the application's token identity — the service account it is pointed at, or its creator for an application registered before that was required — see **OAuth Provider** tag.
 
     """
 

@@ -266,6 +266,9 @@ class PersonalAccessTokens(BaseSDK):
         expiry_days: Optional[
             Union[models.ExpiryDays, models.ExpiryDaysTypedDict]
         ] = None,
+        knowledge_limit: Optional[
+            Union[models.KnowledgeLimit, models.KnowledgeLimitTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -309,6 +312,13 @@ class PersonalAccessTokens(BaseSDK):
             underlying schema field is required and TTL-indexed, so there's
             no literal null option).
 
+        :param knowledge_limit: What a connected app may see: an OAuth app's limit is picked by its
+            creator and holds for every user who connects it; a personal access
+            token's by its owner. Search, chat, agent chat and every record read by
+            id stay inside it, and inside the connecting user's own permissions.
+            Omit it for everything the user can see. Sent, it must name at least one id and at
+            most 50 in all, since it is signed into every token the app gets.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -328,6 +338,9 @@ class PersonalAccessTokens(BaseSDK):
             name=name,
             scopes=utils.unmarshal(scopes, Optional[List[str]]),
             expiry_days=expiry_days,
+            knowledge_limit=utils.get_pydantic_model(
+                knowledge_limit, Optional[models.KnowledgeLimit]
+            ),
         )
 
         req = self._build_request(
@@ -410,6 +423,9 @@ class PersonalAccessTokens(BaseSDK):
         expiry_days: Optional[
             Union[models.ExpiryDays, models.ExpiryDaysTypedDict]
         ] = None,
+        knowledge_limit: Optional[
+            Union[models.KnowledgeLimit, models.KnowledgeLimitTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -453,6 +469,13 @@ class PersonalAccessTokens(BaseSDK):
             underlying schema field is required and TTL-indexed, so there's
             no literal null option).
 
+        :param knowledge_limit: What a connected app may see: an OAuth app's limit is picked by its
+            creator and holds for every user who connects it; a personal access
+            token's by its owner. Search, chat, agent chat and every record read by
+            id stay inside it, and inside the connecting user's own permissions.
+            Omit it for everything the user can see. Sent, it must name at least one id and at
+            most 50 in all, since it is signed into every token the app gets.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -472,6 +495,9 @@ class PersonalAccessTokens(BaseSDK):
             name=name,
             scopes=utils.unmarshal(scopes, Optional[List[str]]),
             expiry_days=expiry_days,
+            knowledge_limit=utils.get_pydantic_model(
+                knowledge_limit, Optional[models.KnowledgeLimit]
+            ),
         )
 
         req = self._build_request_async(
@@ -1013,9 +1039,9 @@ class PersonalAccessTokens(BaseSDK):
         compromised laptop, where only the token's own creator could
         otherwise see or revoke it.
 
-        Requires org-admin privileges (`userAdminCheck`) — note this returns
-        **`400`**, not `403`, for a non-admin caller (shared middleware
-        behavior across the codebase, not specific to this route).
+        Requires org-admin privileges (`userAdminCheck`): a non-admin caller
+        gets `403` (`ForbiddenError`, message
+        \"You need admin access to do this. Ask an admin in your organisation.\").
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1088,7 +1114,7 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AdminPatListResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1130,9 +1156,9 @@ class PersonalAccessTokens(BaseSDK):
         compromised laptop, where only the token's own creator could
         otherwise see or revoke it.
 
-        Requires org-admin privileges (`userAdminCheck`) — note this returns
-        **`400`**, not `403`, for a non-admin caller (shared middleware
-        behavior across the codebase, not specific to this route).
+        Requires org-admin privileges (`userAdminCheck`): a non-admin caller
+        gets `403` (`ForbiddenError`, message
+        \"You need admin access to do this. Ask an admin in your organisation.\").
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1205,7 +1231,7 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AdminPatListResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1243,8 +1269,8 @@ class PersonalAccessTokens(BaseSDK):
         Revokes a token by id, scoped to the org's PAT client but **not** to
         a specific owning user — the admin counterpart to
         `DELETE /personal-access-tokens/{tokenId}`. Requires org-admin
-        privileges (`userAdminCheck`); returns `400` (not `403`) for a
-        non-admin caller, same as `GET /personal-access-tokens/admin`.
+        privileges (`userAdminCheck`); a non-admin caller gets `403`
+        (`ForbiddenError`), same as `GET /personal-access-tokens/admin`.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1326,7 +1352,9 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RevokePatResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1364,8 +1392,8 @@ class PersonalAccessTokens(BaseSDK):
         Revokes a token by id, scoped to the org's PAT client but **not** to
         a specific owning user — the admin counterpart to
         `DELETE /personal-access-tokens/{tokenId}`. Requires org-admin
-        privileges (`userAdminCheck`); returns `400` (not `403`) for a
-        non-admin caller, same as `GET /personal-access-tokens/admin`.
+        privileges (`userAdminCheck`); a non-admin caller gets `403`
+        (`ForbiddenError`), same as `GET /personal-access-tokens/admin`.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1447,7 +1475,9 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RevokePatResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )

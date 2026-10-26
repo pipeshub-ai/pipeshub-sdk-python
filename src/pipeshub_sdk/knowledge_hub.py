@@ -21,6 +21,7 @@ class KnowledgeHub(BaseSDK):
         *,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubRootNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubRootNodesSortOrder] = "desc",
@@ -39,7 +40,7 @@ class KnowledgeHub(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubRootNodesResponse:
         r"""Get knowledge hub root nodes
 
         Returns root-level nodes (connector apps and Collection apps) or, when
@@ -78,6 +79,29 @@ class KnowledgeHub(BaseSDK):
         - `breadcrumbs` — adds the breadcrumb trail (empty at root level)
         - `permissions` — adds the caller's permission flags
 
+        **A connected app with a limit**
+
+        A token that may see only some sources pages and counts only what
+        its limit lets it see:
+        - Limited to whole sources (apps or collections) only: the listing
+        and the search cover those, with exact totals and counts.
+        - Limited to any spaces, folders or files, alone or beside whole
+        sources: the listing returns each whole source, space (record
+        group), folder and file the limit names, one item each, to open
+        by its `id`. `totalItems` counts those items, not what is inside
+        them. A search reads
+        forward only (`prevCursor` is always null), and takes a `page`
+        number up to 5; for later pages, send `nextCursor`. Its `totalItems` counts
+        the matches found so far and can grow from page to page; it is
+        final once `hasNext` is false. `counts` is returned only when the
+        whole result fits in the first page read, and is `null` otherwise.
+        - An item can sit in a folder the limit leaves out, as a file the
+        limit names does. Its `parentId` and `parent` are then `null`: the
+        item is returned, and the folder above it is not named.
+        - A `nextCursor` or `prevCursor` belongs to the limit it was read
+        under. A token with a different limit that sends it gets a `400`;
+        start that listing again without a cursor.
+
         **Access control**
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
@@ -90,7 +114,16 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+            A search by a connected app whose limit names any spaces, folders or files
+            takes a page number of at most 5; for later pages, send `nextCursor`.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -178,6 +211,7 @@ class KnowledgeHub(BaseSDK):
         request = models.GetKnowledgeHubRootNodesRequest(
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -239,7 +273,12 @@ class KnowledgeHub(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubRootNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
@@ -259,11 +298,25 @@ class KnowledgeHub(BaseSDK):
                 errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -287,6 +340,7 @@ class KnowledgeHub(BaseSDK):
         *,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubRootNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubRootNodesSortOrder] = "desc",
@@ -305,7 +359,7 @@ class KnowledgeHub(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubRootNodesResponse:
         r"""Get knowledge hub root nodes
 
         Returns root-level nodes (connector apps and Collection apps) or, when
@@ -344,6 +398,29 @@ class KnowledgeHub(BaseSDK):
         - `breadcrumbs` — adds the breadcrumb trail (empty at root level)
         - `permissions` — adds the caller's permission flags
 
+        **A connected app with a limit**
+
+        A token that may see only some sources pages and counts only what
+        its limit lets it see:
+        - Limited to whole sources (apps or collections) only: the listing
+        and the search cover those, with exact totals and counts.
+        - Limited to any spaces, folders or files, alone or beside whole
+        sources: the listing returns each whole source, space (record
+        group), folder and file the limit names, one item each, to open
+        by its `id`. `totalItems` counts those items, not what is inside
+        them. A search reads
+        forward only (`prevCursor` is always null), and takes a `page`
+        number up to 5; for later pages, send `nextCursor`. Its `totalItems` counts
+        the matches found so far and can grow from page to page; it is
+        final once `hasNext` is false. `counts` is returned only when the
+        whole result fits in the first page read, and is `null` otherwise.
+        - An item can sit in a folder the limit leaves out, as a file the
+        limit names does. Its `parentId` and `parent` are then `null`: the
+        item is returned, and the folder above it is not named.
+        - A `nextCursor` or `prevCursor` belongs to the limit it was read
+        under. A token with a different limit that sends it gets a `400`;
+        start that listing again without a cursor.
+
         **Access control**
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
@@ -356,7 +433,16 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+            A search by a connected app whose limit names any spaces, folders or files
+            takes a page number of at most 5; for later pages, send `nextCursor`.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -444,6 +530,7 @@ class KnowledgeHub(BaseSDK):
         request = models.GetKnowledgeHubRootNodesRequest(
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -505,7 +592,12 @@ class KnowledgeHub(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubRootNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
@@ -525,11 +617,25 @@ class KnowledgeHub(BaseSDK):
                 errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubRootNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubRootNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -555,6 +661,7 @@ class KnowledgeHub(BaseSDK):
         parent_id: str,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubChildNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubChildNodesSortOrder] = "desc",
@@ -573,7 +680,7 @@ class KnowledgeHub(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubChildNodesResponse:
         r"""Get knowledge hub child nodes
 
         Returns the children of a specific node in the knowledge hub tree.
@@ -603,8 +710,9 @@ class KnowledgeHub(BaseSDK):
 
         When `include=breadcrumbs` is set, the response contains a
         `breadcrumbs` array tracing the path from the root to the current
-        node. The `currentNode` and `parentNode` objects are always populated
-        for non-root requests.
+        node. The `currentNode` object is always populated for non-root
+        requests. `parentNode` is too, except at the top of a source and for
+        a connected app whose limit leaves that parent out: it is `null` then.
 
         **Access control**
 
@@ -628,7 +736,14 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -718,6 +833,7 @@ class KnowledgeHub(BaseSDK):
             parent_id=parent_id,
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -779,7 +895,12 @@ class KnowledgeHub(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubChildNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
@@ -806,11 +927,25 @@ class KnowledgeHub(BaseSDK):
                 errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):
@@ -836,6 +971,7 @@ class KnowledgeHub(BaseSDK):
         parent_id: str,
         only_containers: Optional[bool] = False,
         page: Optional[int] = 1,
+        cursor: Optional[str] = None,
         limit: Optional[int] = 50,
         sort_by: Optional[models.GetKnowledgeHubChildNodesSortBy] = "updatedAt",
         sort_order: Optional[models.GetKnowledgeHubChildNodesSortOrder] = "desc",
@@ -854,7 +990,7 @@ class KnowledgeHub(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.KnowledgeHubNodesResponse:
+    ) -> models.GetKnowledgeHubChildNodesResponse:
         r"""Get knowledge hub child nodes
 
         Returns the children of a specific node in the knowledge hub tree.
@@ -884,8 +1020,9 @@ class KnowledgeHub(BaseSDK):
 
         When `include=breadcrumbs` is set, the response contains a
         `breadcrumbs` array tracing the path from the root to the current
-        node. The `currentNode` and `parentNode` objects are always populated
-        for non-root requests.
+        node. The `currentNode` object is always populated for non-root
+        requests. `parentNode` is too, except at the top of a source and for
+        a connected app whose limit leaves that parent out: it is `null` then.
 
         **Access control**
 
@@ -909,7 +1046,14 @@ class KnowledgeHub(BaseSDK):
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
 
-        :param page: Page number (1-indexed). Combined with `limit` to paginate results.
+        :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
+            Prefer `cursor`: a page number is reached by reading the pages before it.
+
+        :param cursor: Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous
+            response. It decides the listing mode, parent, filters and sort. `include` and
+            `limit` come from this request. A next cursor returns the following page, and a previous
+            cursor returns the page before. A cursor whose parent disagrees with the URL, or
+            that was issued for another user, is refused with 400.
 
         :param limit: Maximum number of items to return per page.
 
@@ -999,6 +1143,7 @@ class KnowledgeHub(BaseSDK):
             parent_id=parent_id,
             only_containers=only_containers,
             page=page,
+            cursor=cursor,
             limit=limit,
             sort_by=sort_by,
             sort_order=sort_order,
@@ -1060,7 +1205,12 @@ class KnowledgeHub(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.KnowledgeHubNodesResponse, http_res)
+            return models.GetKnowledgeHubChildNodesResponse(
+                result=unmarshal_json_response(
+                    models.KnowledgeHubNodesResponse, http_res
+                ),
+                headers={},
+            )
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
@@ -1087,11 +1237,25 @@ class KnowledgeHub(BaseSDK):
                 errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesUnprocessableEntityError(
+                response_data, http_res
+            )
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
             )
             raise errors.GetKnowledgeHubChildNodesInternalServerError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "503", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res
+            )
+            raise errors.GetKnowledgeHubChildNodesServiceUnavailableError(
                 response_data, http_res
             )
         if utils.match_response(http_res, "4XX", "*"):

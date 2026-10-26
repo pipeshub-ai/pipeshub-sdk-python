@@ -1,0 +1,11 @@
+# GetConnectorSchemaResponse
+
+Connector schema retrieved
+
+
+## Fields
+
+| Field                                                                                                                                        | Type                                                                                                                                         | Required                                                                                                                                     | Description                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `success`                                                                                                                                    | *bool*                                                                                                                                       | :heavy_check_mark:                                                                                                                           | N/A                                                                                                                                          |
+| `schema_`                                                                                                                                    | [models.ConnectorSchema](../models/connectorschema.md)                                                                                       | :heavy_check_mark:                                                                                                                           | Configuration form for a connector type: the auth fields per auth type, the sync strategies and settings, and the sync and indexing filters. |

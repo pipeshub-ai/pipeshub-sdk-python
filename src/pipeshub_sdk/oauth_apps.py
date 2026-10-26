@@ -6,7 +6,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Any, Iterable, List, Mapping, Optional
+from typing import Any, Iterable, List, Mapping, Optional, Union
 
 
 class OAuthApps(BaseSDK):
@@ -23,7 +23,7 @@ class OAuthApps(BaseSDK):
 
     **Who authorizes vs. client credentials**
     - **Authorization code:** Any authenticated user in the workspace may complete consent for a valid `client_id`; issued tokens represent **that user**.
-    - **Client credentials:** Access tokens represent the **OAuth app creator** (who registered the client), not the caller.
+    - **Client credentials:** Access tokens represent the **service account the app is pointed at**, never the caller. An app that allows this grant must name one at creation, and only an administrator may choose it. Apps created before that rule, and never bound, still represent the **OAuth app creator** — the fallback this rule exists to remove.
 
     **Scopes**
     - `GET /oauth-clients/scopes` returns scopes grouped by category for the **signed-in user's role**.
@@ -286,6 +286,7 @@ class OAuthApps(BaseSDK):
         *,
         name: str,
         allowed_scopes: Iterable[str],
+        token_identity_user_id: Optional[str] = None,
         description: Optional[str] = None,
         redirect_uris: Optional[Iterable[str]] = None,
         allowed_grant_types: Optional[
@@ -297,6 +298,9 @@ class OAuthApps(BaseSDK):
         is_confidential: Optional[bool] = True,
         access_token_lifetime: Optional[int] = 3600,
         refresh_token_lifetime: Optional[int] = 2592000,
+        knowledge_limit: Optional[
+            Union[models.KnowledgeLimit, models.KnowledgeLimitTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -317,6 +321,12 @@ class OAuthApps(BaseSDK):
 
         :param name: App name (displayed to users during authorization)
         :param allowed_scopes: Scopes the app can request (non-empty)
+        :param token_identity_user_id: The service account this app's own tokens act as. Required when
+            `allowedGrantTypes` includes `client_credentials`, ignored otherwise.
+
+            Must name a service account in the same organisation that is not disabled;
+            an ordinary user's id is refused. Administrators only.
+
         :param description: App description
         :param redirect_uris: Allowed redirect URIs (max 10). Required when an effective grant list includes `authorization_code`
             (including the default when `allowedGrantTypes` is omitted).
@@ -332,6 +342,13 @@ class OAuthApps(BaseSDK):
 
         :param access_token_lifetime: Access token lifetime in seconds (300–86400)
         :param refresh_token_lifetime: Refresh token lifetime in seconds (3600–31536000)
+        :param knowledge_limit: What a connected app may see: an OAuth app's limit is picked by its
+            creator and holds for every user who connects it; a personal access
+            token's by its owner. Search, chat, agent chat and every record read by
+            id stay inside it, and inside the connecting user's own permissions.
+            Omit it for everything the user can see. Sent, it must name at least one id and at
+            most 50 in all, since it is signed into every token the app gets.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -349,6 +366,7 @@ class OAuthApps(BaseSDK):
 
         request = models.CreateOAuthAppRequest(
             name=name,
+            token_identity_user_id=token_identity_user_id,
             description=description,
             redirect_uris=utils.unmarshal(redirect_uris, Optional[List[str]]),
             allowed_grant_types=utils.unmarshal(
@@ -362,6 +380,9 @@ class OAuthApps(BaseSDK):
             is_confidential=is_confidential,
             access_token_lifetime=access_token_lifetime,
             refresh_token_lifetime=refresh_token_lifetime,
+            knowledge_limit=utils.get_pydantic_model(
+                knowledge_limit, Optional[models.KnowledgeLimit]
+            ),
         )
 
         req = self._build_request(
@@ -413,7 +434,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.CreateOAuthAppResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -441,6 +464,7 @@ class OAuthApps(BaseSDK):
         *,
         name: str,
         allowed_scopes: Iterable[str],
+        token_identity_user_id: Optional[str] = None,
         description: Optional[str] = None,
         redirect_uris: Optional[Iterable[str]] = None,
         allowed_grant_types: Optional[
@@ -452,6 +476,9 @@ class OAuthApps(BaseSDK):
         is_confidential: Optional[bool] = True,
         access_token_lifetime: Optional[int] = 3600,
         refresh_token_lifetime: Optional[int] = 2592000,
+        knowledge_limit: Optional[
+            Union[models.KnowledgeLimit, models.KnowledgeLimitTypedDict]
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -472,6 +499,12 @@ class OAuthApps(BaseSDK):
 
         :param name: App name (displayed to users during authorization)
         :param allowed_scopes: Scopes the app can request (non-empty)
+        :param token_identity_user_id: The service account this app's own tokens act as. Required when
+            `allowedGrantTypes` includes `client_credentials`, ignored otherwise.
+
+            Must name a service account in the same organisation that is not disabled;
+            an ordinary user's id is refused. Administrators only.
+
         :param description: App description
         :param redirect_uris: Allowed redirect URIs (max 10). Required when an effective grant list includes `authorization_code`
             (including the default when `allowedGrantTypes` is omitted).
@@ -487,6 +520,13 @@ class OAuthApps(BaseSDK):
 
         :param access_token_lifetime: Access token lifetime in seconds (300–86400)
         :param refresh_token_lifetime: Refresh token lifetime in seconds (3600–31536000)
+        :param knowledge_limit: What a connected app may see: an OAuth app's limit is picked by its
+            creator and holds for every user who connects it; a personal access
+            token's by its owner. Search, chat, agent chat and every record read by
+            id stay inside it, and inside the connecting user's own permissions.
+            Omit it for everything the user can see. Sent, it must name at least one id and at
+            most 50 in all, since it is signed into every token the app gets.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -504,6 +544,7 @@ class OAuthApps(BaseSDK):
 
         request = models.CreateOAuthAppRequest(
             name=name,
+            token_identity_user_id=token_identity_user_id,
             description=description,
             redirect_uris=utils.unmarshal(redirect_uris, Optional[List[str]]),
             allowed_grant_types=utils.unmarshal(
@@ -517,6 +558,9 @@ class OAuthApps(BaseSDK):
             is_confidential=is_confidential,
             access_token_lifetime=access_token_lifetime,
             refresh_token_lifetime=refresh_token_lifetime,
+            knowledge_limit=utils.get_pydantic_model(
+                knowledge_limit, Optional[models.KnowledgeLimit]
+            ),
         )
 
         req = self._build_request_async(
@@ -568,7 +612,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.CreateOAuthAppResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -672,7 +718,7 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthScopesGroupedResponse, http_res)
-        if utils.match_response(http_res, "401", "application/json"):
+        if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -776,7 +822,7 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthScopesGroupedResponse, http_res)
-        if utils.match_response(http_res, "401", "application/json"):
+        if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1029,6 +1075,12 @@ class OAuthApps(BaseSDK):
         terms_of_service_url: OptionalNullable[str] = UNSET,
         access_token_lifetime: Optional[int] = None,
         refresh_token_lifetime: Optional[int] = None,
+        knowledge_limit: OptionalNullable[
+            Union[
+                models.UpdateOAuthAppRequestKnowledgeLimit,
+                models.UpdateOAuthAppRequestKnowledgeLimitTypedDict,
+            ]
+        ] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1037,6 +1089,16 @@ class OAuthApps(BaseSDK):
         r"""Update OAuth app
 
         Update an OAuth app's configuration. All body fields are optional — supply only what should change. URL fields (`homepageUrl`, `privacyPolicyUrl`, `termsOfServiceUrl`) accept `null` to clear them.
+
+        **Adding `client_credentials`** to `allowedGrantTypes` requires an organisation administrator, because
+        it settles whose documents the application's tokens reach. A non-administrator answers `403`, and that
+        check runs first — so a member sees `403` whether or not a service account is bound.
+
+        For an administrator, it answers `400` when no service account is bound or the bound account is
+        disabled, and `404` when the bound identity no longer exists or is not a service account — distinct
+        from the `404` for an application this caller cannot see. Point the application at one first with
+        `PUT /oauth-clients/{appId}/token-identity`. An application that already allows the grant without a
+        service account predates this rule and can still be edited.
 
         Creator-only: even org admins cannot edit apps owned by other users.
 
@@ -1060,6 +1122,9 @@ class OAuthApps(BaseSDK):
         :param terms_of_service_url:
         :param access_token_lifetime:
         :param refresh_token_lifetime:
+        :param knowledge_limit: `null` lifts the limit. Any change, a lift included, revokes the
+            app's outstanding tokens, so users connect again.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1091,6 +1156,10 @@ class OAuthApps(BaseSDK):
                 terms_of_service_url=terms_of_service_url,
                 access_token_lifetime=access_token_lifetime,
                 refresh_token_lifetime=refresh_token_lifetime,
+                knowledge_limit=utils.get_pydantic_model(
+                    knowledge_limit,
+                    OptionalNullable[models.UpdateOAuthAppRequestKnowledgeLimit],
+                ),
             ),
         )
 
@@ -1184,6 +1253,12 @@ class OAuthApps(BaseSDK):
         terms_of_service_url: OptionalNullable[str] = UNSET,
         access_token_lifetime: Optional[int] = None,
         refresh_token_lifetime: Optional[int] = None,
+        knowledge_limit: OptionalNullable[
+            Union[
+                models.UpdateOAuthAppRequestKnowledgeLimit,
+                models.UpdateOAuthAppRequestKnowledgeLimitTypedDict,
+            ]
+        ] = UNSET,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1192,6 +1267,16 @@ class OAuthApps(BaseSDK):
         r"""Update OAuth app
 
         Update an OAuth app's configuration. All body fields are optional — supply only what should change. URL fields (`homepageUrl`, `privacyPolicyUrl`, `termsOfServiceUrl`) accept `null` to clear them.
+
+        **Adding `client_credentials`** to `allowedGrantTypes` requires an organisation administrator, because
+        it settles whose documents the application's tokens reach. A non-administrator answers `403`, and that
+        check runs first — so a member sees `403` whether or not a service account is bound.
+
+        For an administrator, it answers `400` when no service account is bound or the bound account is
+        disabled, and `404` when the bound identity no longer exists or is not a service account — distinct
+        from the `404` for an application this caller cannot see. Point the application at one first with
+        `PUT /oauth-clients/{appId}/token-identity`. An application that already allows the grant without a
+        service account predates this rule and can still be edited.
 
         Creator-only: even org admins cannot edit apps owned by other users.
 
@@ -1215,6 +1300,9 @@ class OAuthApps(BaseSDK):
         :param terms_of_service_url:
         :param access_token_lifetime:
         :param refresh_token_lifetime:
+        :param knowledge_limit: `null` lifts the limit. Any change, a lift included, revokes the
+            app's outstanding tokens, so users connect again.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1246,6 +1334,10 @@ class OAuthApps(BaseSDK):
                 terms_of_service_url=terms_of_service_url,
                 access_token_lifetime=access_token_lifetime,
                 refresh_token_lifetime=refresh_token_lifetime,
+                knowledge_limit=utils.get_pydantic_model(
+                    knowledge_limit,
+                    OptionalNullable[models.UpdateOAuthAppRequestKnowledgeLimit],
+                ),
             ),
         )
 

@@ -4,7 +4,7 @@ from .basesdk import BaseSDK
 from datetime import datetime
 from pipeshub_sdk import errors, models as models_, utils
 from pipeshub_sdk._hooks import HookContext
-from pipeshub_sdk.types import Nullable, OptionalNullable, UNSET
+from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import eventstreaming, get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
 from typing import Any, Iterable, List, Mapping, Optional, Union
@@ -280,6 +280,7 @@ class Agents(BaseSDK):
         tags: Optional[Iterable[str]] = None,
         share_with_org: Optional[bool] = False,
         is_service_account: Optional[bool] = False,
+        service_account_user_id: Optional[str] = None,
         toolsets: Optional[
             Union[
                 Iterable[models_.AgentCreateToolset],
@@ -307,6 +308,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentCreateRequestDefaultReasoningEffort
         ] = UNSET,
+        api_toolset_tools: Optional[Iterable[str]] = None,
         send_user_context: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -351,6 +353,13 @@ class Agents(BaseSDK):
         :param tags:
         :param share_with_org: Share agent with the organization
         :param is_service_account: Create the agent as a service-account agent
+        :param service_account_user_id: The `userId` of the service account this agent should search
+            knowledge as, as returned by the service accounts API. Only valid
+            on a service-account agent: sending it without `isServiceAccount`
+            is refused rather than ignored, so a request cannot quietly create
+            an agent that searches as its creator. Omit it and the agent
+            searches as its creator.
+
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
@@ -358,6 +367,10 @@ class Agents(BaseSDK):
             with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
+            (see `/api-toolsets`). A service-account agent may only use toolsets with a
+            shared credential.
+
         :param send_user_context: When true (default), include the current user's name, email, and
             organization in this agent's system prompt. When false, omit that
             profile data.
@@ -389,6 +402,7 @@ class Agents(BaseSDK):
             tags=utils.unmarshal(tags, Optional[List[str]]),
             share_with_org=share_with_org,
             is_service_account=is_service_account,
+            service_account_user_id=service_account_user_id,
             toolsets=utils.get_pydantic_model(
                 toolsets, Optional[List[models_.AgentCreateToolset]]
             ),
@@ -402,6 +416,7 @@ class Agents(BaseSDK):
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
             ),
             default_reasoning_effort=default_reasoning_effort,
+            api_toolset_tools=utils.unmarshal(api_toolset_tools, Optional[List[str]]),
             send_user_context=send_user_context,
         )
 
@@ -483,6 +498,7 @@ class Agents(BaseSDK):
         tags: Optional[Iterable[str]] = None,
         share_with_org: Optional[bool] = False,
         is_service_account: Optional[bool] = False,
+        service_account_user_id: Optional[str] = None,
         toolsets: Optional[
             Union[
                 Iterable[models_.AgentCreateToolset],
@@ -510,6 +526,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentCreateRequestDefaultReasoningEffort
         ] = UNSET,
+        api_toolset_tools: Optional[Iterable[str]] = None,
         send_user_context: Optional[bool] = True,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -554,6 +571,13 @@ class Agents(BaseSDK):
         :param tags:
         :param share_with_org: Share agent with the organization
         :param is_service_account: Create the agent as a service-account agent
+        :param service_account_user_id: The `userId` of the service account this agent should search
+            knowledge as, as returned by the service accounts API. Only valid
+            on a service-account agent: sending it without `isServiceAccount`
+            is refused rather than ignored, so a request cannot quietly create
+            an agent that searches as its creator. Omit it and the agent
+            searches as its creator.
+
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
@@ -561,6 +585,10 @@ class Agents(BaseSDK):
             with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
+            (see `/api-toolsets`). A service-account agent may only use toolsets with a
+            shared credential.
+
         :param send_user_context: When true (default), include the current user's name, email, and
             organization in this agent's system prompt. When false, omit that
             profile data.
@@ -592,6 +620,7 @@ class Agents(BaseSDK):
             tags=utils.unmarshal(tags, Optional[List[str]]),
             share_with_org=share_with_org,
             is_service_account=is_service_account,
+            service_account_user_id=service_account_user_id,
             toolsets=utils.get_pydantic_model(
                 toolsets, Optional[List[models_.AgentCreateToolset]]
             ),
@@ -605,6 +634,7 @@ class Agents(BaseSDK):
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
             ),
             default_reasoning_effort=default_reasoning_effort,
+            api_toolset_tools=utils.unmarshal(api_toolset_tools, Optional[List[str]]),
             send_user_context=send_user_context,
         )
 
@@ -903,6 +933,7 @@ class Agents(BaseSDK):
         tags: Optional[Iterable[str]] = None,
         share_with_org: Optional[bool] = False,
         is_service_account: Optional[bool] = False,
+        service_account_user_id: OptionalNullable[str] = UNSET,
         toolsets: Optional[
             Union[
                 Iterable[models_.AgentCreateToolset],
@@ -930,6 +961,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentUpdateRequestDefaultReasoningEffort
         ] = UNSET,
+        api_toolset_tools: Optional[Iterable[str]] = None,
         send_user_context: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -985,6 +1017,13 @@ class Agents(BaseSDK):
         :param tags:
         :param share_with_org: Share agent with the organization
         :param is_service_account: Mark agent as a service account
+        :param service_account_user_id: The `userId` of the service account this agent should search
+            knowledge as. Only valid on a service-account agent, checked
+            against what the agent will be once the request is applied, so one
+            request may convert an agent and bind it. Null is accepted on any
+            agent and clears the binding, going back to searching as the
+            agent's creator.
+
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Complete replacement set of skills assigned to the agent. Send
@@ -994,6 +1033,10 @@ class Agents(BaseSDK):
             with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
+            (see `/api-toolsets`). A service-account agent may only use toolsets with a
+            shared credential.
+
         :param send_user_context: When true (default), include the current user's name, email, and
             organization in this agent's system prompt. When false, omit that
             profile data.
@@ -1027,6 +1070,7 @@ class Agents(BaseSDK):
                 tags=utils.unmarshal(tags, Optional[List[str]]),
                 share_with_org=share_with_org,
                 is_service_account=is_service_account,
+                service_account_user_id=service_account_user_id,
                 toolsets=utils.get_pydantic_model(
                     toolsets, Optional[List[models_.AgentCreateToolset]]
                 ),
@@ -1040,6 +1084,9 @@ class Agents(BaseSDK):
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
                 default_reasoning_effort=default_reasoning_effort,
+                api_toolset_tools=utils.unmarshal(
+                    api_toolset_tools, Optional[List[str]]
+                ),
                 send_user_context=send_user_context,
             ),
         )
@@ -1132,6 +1179,7 @@ class Agents(BaseSDK):
         tags: Optional[Iterable[str]] = None,
         share_with_org: Optional[bool] = False,
         is_service_account: Optional[bool] = False,
+        service_account_user_id: OptionalNullable[str] = UNSET,
         toolsets: Optional[
             Union[
                 Iterable[models_.AgentCreateToolset],
@@ -1159,6 +1207,7 @@ class Agents(BaseSDK):
         default_reasoning_effort: OptionalNullable[
             models_.AgentUpdateRequestDefaultReasoningEffort
         ] = UNSET,
+        api_toolset_tools: Optional[Iterable[str]] = None,
         send_user_context: Optional[bool] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1214,6 +1263,13 @@ class Agents(BaseSDK):
         :param tags:
         :param share_with_org: Share agent with the organization
         :param is_service_account: Mark agent as a service account
+        :param service_account_user_id: The `userId` of the service account this agent should search
+            knowledge as. Only valid on a service-account agent, checked
+            against what the agent will be once the request is applied, so one
+            request may convert an agent and bind it. Null is accepted on any
+            agent and clears the binding, going back to searching as the
+            agent's creator.
+
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Complete replacement set of skills assigned to the agent. Send
@@ -1223,6 +1279,10 @@ class Agents(BaseSDK):
             with at least a `provider` field, or `null`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
+        :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
+            (see `/api-toolsets`). A service-account agent may only use toolsets with a
+            shared credential.
+
         :param send_user_context: When true (default), include the current user's name, email, and
             organization in this agent's system prompt. When false, omit that
             profile data.
@@ -1256,6 +1316,7 @@ class Agents(BaseSDK):
                 tags=utils.unmarshal(tags, Optional[List[str]]),
                 share_with_org=share_with_org,
                 is_service_account=is_service_account,
+                service_account_user_id=service_account_user_id,
                 toolsets=utils.get_pydantic_model(
                     toolsets, Optional[List[models_.AgentCreateToolset]]
                 ),
@@ -1269,6 +1330,9 @@ class Agents(BaseSDK):
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
                 default_reasoning_effort=default_reasoning_effort,
+                api_toolset_tools=utils.unmarshal(
+                    api_toolset_tools, Optional[List[str]]
+                ),
                 send_user_context=send_user_context,
             ),
         )
@@ -2518,6 +2582,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentStreamCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2579,7 +2650,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -2591,6 +2663,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -2635,6 +2717,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -2747,6 +2834,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentStreamCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2808,7 +2902,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -2820,6 +2915,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -2864,6 +2969,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -2972,6 +3082,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3023,7 +3140,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3035,6 +3153,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -3077,6 +3205,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3181,6 +3314,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageStreamRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -3232,7 +3372,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3244,6 +3385,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -3286,6 +3437,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3370,7 +3526,15 @@ class Agents(BaseSDK):
         conversation_id: str,
         message_id: str,
         chat_mode: models_.AgentRegenerateRequestChatMode,
+        query: Optional[str] = None,
+        attachments: Optional[
+            Union[
+                Iterable[models_.ChatAttachmentRef],
+                Iterable[models_.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
+        answers: Optional[str] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
@@ -3380,6 +3544,9 @@ class Agents(BaseSDK):
         protocol: Optional[models_.AgentRegenerateRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -3401,6 +3568,7 @@ class Agents(BaseSDK):
 
         `chatMode: quick` is required. Other fields are optional and reuse
         the original model/context when omitted. The body supports:
+        - `query` and `attachments` (an edited question and its files, as on the assistant endpoint)
         - `filters`
         - `chatMode`
         - `modelKey`
@@ -3433,12 +3601,55 @@ class Agents(BaseSDK):
         :param conversation_id: ID of the agent conversation containing the target message.
         :param message_id: ID of the bot-response message to regenerate.
         :param chat_mode:
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param query: The edited question to answer in place of the stored one. Only the
+            last question of a conversation can be edited, and not one that ran
+            an approved action or is itself a tool-approval or question-card
+            answer. A turn that went through an answered question card can be
+            edited: the question is rewritten and the whole turn, including its
+            card and the card's answers, is replaced by the new answer. A card
+            turn that spans more than 50 saved rows cannot be edited; the
+            request is refused and the stored answer is left as it was. So is
+            an edit of an older question while a newer question has no answer.
+            A run that ends in an error answer, or whose answer cannot be
+            saved, leaves the stored question, its files and the rows of its
+            card turn as they were.
+
+        :param attachments: The files of the edited question, replacing the stored ones. An
+            empty list removes them all; omitted keeps the stored files. A
+            change of files alone, with the same `query`, also counts as an
+            edit. Files are not deleted when removed from a question: a fork
+            of the chat may still refer to them.
+
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is refused with 400; the message names
+            the key and lists the allowed ones. A value of the wrong type is refused with 400 too.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
+
+        :param answers: The answers to the question card this reply followed, in the form
+            the app sends them (`User selections:` followed by one
+            `N. \"question\" → answer` line each). When present, the turn is
+            re-run with these answers instead of the saved ones, and they are
+            saved in their place. Rejected with 400 when the reply being
+            regenerated did not follow a question card, or when the request
+            also edits the question (`query` or `attachments`).
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -3454,7 +3665,13 @@ class Agents(BaseSDK):
 
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
-            regenerating. Applicable only in agent chat modes.
+            regenerating. Applicable only in agent chat modes. Regenerating
+            in the assistant's agent mode, web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
+            Regenerating a named agent's message (`AgentRegenerateRequest`),
+            a list that leaves out `web_search` turns off the agent's web
+            search for the turn, even when `agentCapabilities.webSearch` is
+            true.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3465,6 +3682,14 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this regeneration run. Send it
             here to enable `POST .../cancel {runId}` while it is still
@@ -3490,7 +3715,12 @@ class Agents(BaseSDK):
             conversation_id=conversation_id,
             message_id=message_id,
             body=models_.AgentRegenerateRequest(
+                query=query,
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models_.ChatAttachmentRef]]
+                ),
                 filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
+                answers=answers,
                 model_key=model_key,
                 model_name=model_name,
                 model_friendly_name=model_friendly_name,
@@ -3501,6 +3731,9 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3585,7 +3818,15 @@ class Agents(BaseSDK):
         conversation_id: str,
         message_id: str,
         chat_mode: models_.AgentRegenerateRequestChatMode,
+        query: Optional[str] = None,
+        attachments: Optional[
+            Union[
+                Iterable[models_.ChatAttachmentRef],
+                Iterable[models_.ChatAttachmentRefTypedDict],
+            ]
+        ] = None,
         filters: Optional[Union[models_.Filters, models_.FiltersTypedDict]] = None,
+        answers: Optional[str] = None,
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
@@ -3595,6 +3836,9 @@ class Agents(BaseSDK):
         protocol: Optional[models_.AgentRegenerateRequestProtocol] = None,
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
@@ -3616,6 +3860,7 @@ class Agents(BaseSDK):
 
         `chatMode: quick` is required. Other fields are optional and reuse
         the original model/context when omitted. The body supports:
+        - `query` and `attachments` (an edited question and its files, as on the assistant endpoint)
         - `filters`
         - `chatMode`
         - `modelKey`
@@ -3648,12 +3893,55 @@ class Agents(BaseSDK):
         :param conversation_id: ID of the agent conversation containing the target message.
         :param message_id: ID of the bot-response message to regenerate.
         :param chat_mode:
-        :param filters: App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-            for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-            For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-            to let the service use the agent’s stored knowledge and tool configuration. Sending
-            `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-            turn (it is not “full org default”).
+        :param query: The edited question to answer in place of the stored one. Only the
+            last question of a conversation can be edited, and not one that ran
+            an approved action or is itself a tool-approval or question-card
+            answer. A turn that went through an answered question card can be
+            edited: the question is rewritten and the whole turn, including its
+            card and the card's answers, is replaced by the new answer. A card
+            turn that spans more than 50 saved rows cannot be edited; the
+            request is refused and the stored answer is left as it was. So is
+            an edit of an older question while a newer question has no answer.
+            A run that ends in an error answer, or whose answer cannot be
+            saved, leaves the stored question, its files and the rows of its
+            card turn as they were.
+
+        :param attachments: The files of the edited question, replacing the stored ones. An
+            empty list removes them all; omitted keeps the stored files. A
+            change of files alone, with the same `query`, also counts as an
+            edit. Files are not deleted when removed from a question: a fork
+            of the chat may still refer to them.
+
+        :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
+            level (record groups, folders, records). The keys are a union. For **org assistant**
+            chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+            or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+            and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+            **no** knowledge sources for that turn (it is not “full org default”).
+
+            A selection below app level is the whole scope of the turn: with `recordGroups`,
+            `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+            them. A selected node that does not exist or that the caller cannot read contributes
+            nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+            for that; a chat turn is not failed, its search simply finds nothing.
+            At most 200 ids may be sent in one request, counted across all keys, and every id must
+            be a valid UUID. A key this schema does not list is refused with 400; the message names
+            the key and lists the allowed ones. A value of the wrong type is refused with 400 too.
+
+            A selection that covers more than the configured number of nodes (50,000 by default),
+            or that touches a source still being prepared for folder-level search, is refused:
+            `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+            stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+            whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+            says what to change. No model call is made for such a turn.
+
+        :param answers: The answers to the question card this reply followed, in the form
+            the app sends them (`User selections:` followed by one
+            `N. \"question\" → answer` line each). When present, the turn is
+            re-run with these answers instead of the saved ones, and they are
+            saved in their place. Rejected with 400 when the reply being
+            regenerated did not follow a question card, or when the request
+            also edits the question (`query` or `attachments`).
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -3669,7 +3957,13 @@ class Agents(BaseSDK):
 
         :param tools: Optional list of tool identifiers (fully-qualified action names
             such as `jira.create_issue`) the agent may invoke when
-            regenerating. Applicable only in agent chat modes.
+            regenerating. Applicable only in agent chat modes. Regenerating
+            in the assistant's agent mode, web search is not governed by this
+            list; `agentCapabilities.webSearch` turns it on or off.
+            Regenerating a named agent's message (`AgentRegenerateRequest`),
+            a list that leaves out `web_search` turns off the agent's web
+            search for the turn, even when `agentCapabilities.webSearch` is
+            true.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -3680,6 +3974,14 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this regeneration run. Send it
             here to enable `POST .../cancel {runId}` while it is still
@@ -3705,7 +4007,12 @@ class Agents(BaseSDK):
             conversation_id=conversation_id,
             message_id=message_id,
             body=models_.AgentRegenerateRequest(
+                query=query,
+                attachments=utils.get_pydantic_model(
+                    attachments, Optional[List[models_.ChatAttachmentRef]]
+                ),
                 filters=utils.get_pydantic_model(filters, Optional[models_.Filters]),
+                answers=answers,
                 model_key=model_key,
                 model_name=model_name,
                 model_friendly_name=model_friendly_name,
@@ -3716,6 +4023,9 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -3792,6 +4102,214 @@ class Agents(BaseSDK):
         raise errors.PipeshubDefaultError(
             "Unexpected response received", http_res, http_res_text
         )
+
+    def fork_agent_conversation(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        message_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.ForkConversationResponse:
+        r"""Fork agent conversation from a message
+
+        Copy this agent conversation into a new private chat owned by the
+        caller, including every message up to and including `messageId`. The
+        original conversation is left unchanged.
+
+        Only the owner of the conversation can fork it; anyone else gets 404.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param conversation_id:
+        :param message_id: Inclusive last message to copy into the new chat
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.ForkAgentConversationRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            message_id=message_id,
+        )
+
+        req = self._build_request(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/fork",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="forkAgentConversation",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+                tags=["Agents"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "201", "application/json"):
+            return unmarshal_json_response(models_.ForkConversationResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def fork_agent_conversation_async(
+        self,
+        *,
+        agent_key: str,
+        conversation_id: str,
+        message_id: str,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models_.ForkConversationResponse:
+        r"""Fork agent conversation from a message
+
+        Copy this agent conversation into a new private chat owned by the
+        caller, including every message up to and including `messageId`. The
+        original conversation is left unchanged.
+
+        Only the owner of the conversation can fork it; anyone else gets 404.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param agent_key:
+        :param conversation_id:
+        :param message_id: Inclusive last message to copy into the new chat
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models_.ForkAgentConversationRequest(
+            agent_key=agent_key,
+            conversation_id=conversation_id,
+            message_id=message_id,
+        )
+
+        req = self._build_request_async(
+            method="POST",
+            path="/agents/{agentKey}/conversations/{conversationId}/message/{messageId}/fork",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="forkAgentConversation",
+                oauth2_scopes=["agent:execute"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models_.Security
+                ),
+                tags=["Agents"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        if utils.match_response(http_res, "201", "application/json"):
+            return unmarshal_json_response(models_.ForkConversationResponse, http_res)
+        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
     def cancel_agent_conversation_stream(
         self,
@@ -4330,6 +4848,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4400,7 +4925,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -4412,6 +4938,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -4454,6 +4990,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -4565,6 +5106,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentAddMessageRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4635,7 +5183,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -4647,6 +5196,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -4689,6 +5248,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -5427,464 +5991,6 @@ class Agents(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def set_agent_conversation_project(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        project_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectResponse:
-        r"""Link or unlink an agent conversation to a project
-
-        Agent-conversation equivalent of
-        `PUT /conversations/{conversationId}/project`. Set
-        (`projectId: <id>`) or clear (`projectId: null`) the project this
-        agent conversation belongs to. Initiator-only; linking requires at
-        least viewer access to the target project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param project_id: Target project id, or `null` to unlink.
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectRequestBody(
-                project_id=project_id,
-            ),
-        )
-
-        req = self._build_request(
-            method="PUT",
-            path="/agents/{agentKey}/conversations/{conversationId}/project",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProject",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_agent_conversation_project_async(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        project_id: Nullable[str],
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectResponse:
-        r"""Link or unlink an agent conversation to a project
-
-        Agent-conversation equivalent of
-        `PUT /conversations/{conversationId}/project`. Set
-        (`projectId: <id>`) or clear (`projectId: null`) the project this
-        agent conversation belongs to. Initiator-only; linking requires at
-        least viewer access to the target project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param project_id: Target project id, or `null` to unlink.
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectRequestBody(
-                project_id=project_id,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PUT",
-            path="/agents/{agentKey}/conversations/{conversationId}/project",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProject",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    def set_agent_conversation_project_visibility(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        visibility: models_.SetAgentConversationProjectVisibilityVisibility,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectVisibilityResponse:
-        r"""Override an agent conversation's project visibility
-
-        Agent-conversation equivalent of
-        `PATCH /conversations/{conversationId}/project-visibility`.
-        Initiator-only; requires the conversation to already be linked to a
-        project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param visibility:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectVisibilityRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectVisibilityRequestBody(
-                visibility=visibility,
-            ),
-        )
-
-        req = self._build_request(
-            method="PATCH",
-            path="/agents/{agentKey}/conversations/{conversationId}/project-visibility",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectVisibilityRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = self.do_request(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProjectVisibility",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectVisibilityResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = utils.stream_to_text(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
-    async def set_agent_conversation_project_visibility_async(
-        self,
-        *,
-        agent_key: str,
-        conversation_id: str,
-        visibility: models_.SetAgentConversationProjectVisibilityVisibility,
-        retries: OptionalNullable[utils.RetryConfig] = UNSET,
-        server_url: Optional[str] = None,
-        timeout_ms: Optional[int] = None,
-        http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models_.SetAgentConversationProjectVisibilityResponse:
-        r"""Override an agent conversation's project visibility
-
-        Agent-conversation equivalent of
-        `PATCH /conversations/{conversationId}/project-visibility`.
-        Initiator-only; requires the conversation to already be linked to a
-        project.
-
-
-        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
-
-        :param agent_key:
-        :param conversation_id:
-        :param visibility:
-        :param retries: Override the default retry configuration for this method
-        :param server_url: Override the default server URL for this method
-        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
-        :param http_headers: Additional headers to set or replace on requests.
-        """
-        base_url = None
-        url_variables = None
-        if timeout_ms is None:
-            timeout_ms = self.sdk_configuration.timeout_ms
-
-        if server_url is not None:
-            base_url = server_url
-        else:
-            base_url = self._get_url(base_url, url_variables)
-
-        request = models_.SetAgentConversationProjectVisibilityRequest(
-            agent_key=agent_key,
-            conversation_id=conversation_id,
-            body=models_.SetAgentConversationProjectVisibilityRequestBody(
-                visibility=visibility,
-            ),
-        )
-
-        req = self._build_request_async(
-            method="PATCH",
-            path="/agents/{agentKey}/conversations/{conversationId}/project-visibility",
-            base_url=base_url,
-            url_variables=url_variables,
-            request=request,
-            request_body_required=True,
-            request_has_path_params=True,
-            request_has_query_params=True,
-            user_agent_header="user-agent",
-            accept_header_value="application/json",
-            http_headers=http_headers,
-            security=self.sdk_configuration.security,
-            get_serialized_body=lambda: utils.serialize_request_body(
-                request.body,
-                False,
-                False,
-                "json",
-                models_.SetAgentConversationProjectVisibilityRequestBody,
-            ),
-            allow_empty_value=None,
-            allowed_fields=["bearer_auth", "oauth2"],
-            timeout_ms=timeout_ms,
-        )
-
-        if retries == UNSET:
-            if self.sdk_configuration.retry_config is not UNSET:
-                retries = self.sdk_configuration.retry_config
-
-        retry_config = None
-        if isinstance(retries, utils.RetryConfig):
-            retry_config = (retries, ["429", "500", "502", "503", "504"])
-
-        http_res = await self.do_request_async(
-            hook_ctx=HookContext(
-                config=self.sdk_configuration,
-                base_url=base_url or "",
-                operation_id="setAgentConversationProjectVisibility",
-                oauth2_scopes=["agent:write"],
-                security_source=get_security_from_env(
-                    self.sdk_configuration.security, models_.Security
-                ),
-                tags=["Agents", "Projects"],
-                extensions=None,
-            ),
-            request=req,
-            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
-            retry_config=retry_config,
-        )
-
-        if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(
-                models_.SetAgentConversationProjectVisibilityResponse, http_res
-            )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-        if utils.match_response(http_res, "5XX", "*"):
-            http_res_text = await utils.stream_to_text_async(http_res)
-            raise errors.PipeshubDefaultError(
-                "API error occurred", http_res, http_res_text
-            )
-
-        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
-
     def delete_agent_conversation_by_id(
         self,
         *,
@@ -5908,6 +6014,12 @@ class Agents(BaseSDK):
         - deleting a nonexistent conversation returns success with `null`
         - deleting through a different `agentKey` returns success with `null`
         - deleting an already deleted conversation returns success with `null`
+
+        **Artifacts:** before the conversation is marked deleted, every artifact
+        the caller created in it is deleted for good (every version and stored
+        file). Artifacts another participant created stay theirs. If the cleanup
+        cannot be done the conversation is left in place and the error is
+        returned (for example 503); repeating the request finishes it.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -6024,6 +6136,12 @@ class Agents(BaseSDK):
         - deleting a nonexistent conversation returns success with `null`
         - deleting through a different `agentKey` returns success with `null`
         - deleting an already deleted conversation returns success with `null`
+
+        **Artifacts:** before the conversation is marked deleted, every artifact
+        the caller created in it is deleted for good (every version and stored
+        file). Artifacts another participant created stay theirs. If the cleanup
+        cannot be done the conversation is left in place and the error is
+        returned (for example 503); repeating the request finishes it.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -6387,7 +6505,7 @@ class Agents(BaseSDK):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         status: Optional[str] = None,
-        is_archived: Optional[models_.ListAgentConversationsIsArchived] = None,
+        is_archived: Optional[models_.IsArchived] = None,
         project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6545,7 +6663,7 @@ class Agents(BaseSDK):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         status: Optional[str] = None,
-        is_archived: Optional[models_.ListAgentConversationsIsArchived] = None,
+        is_archived: Optional[models_.IsArchived] = None,
         project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6722,6 +6840,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6800,7 +6925,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -6812,6 +6938,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -6856,6 +6992,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),
@@ -6977,6 +7118,13 @@ class Agents(BaseSDK):
         agent_capabilities: Optional[
             Union[models_.AgentCapabilities, models_.AgentCapabilitiesTypedDict]
         ] = None,
+        include_retrieval_context: Optional[bool] = False,
+        keyword_search_budget: Optional[
+            models_.AgentCreateConversationRequestKeywordSearchBudget
+        ] = None,
+        tool_approval: Optional[
+            Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
+        ] = None,
         run_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -7055,7 +7203,8 @@ class Agents(BaseSDK):
 
         :param tools: Allowed tool ids for this turn, such as `jira.create_issue`. Omit
             to let the agent use its default toolset; send `[]` to disable
-            tools for this turn.
+            tools for this turn. A list that leaves out `web_search` turns off
+            the agent's web search for the turn.
 
         :param protocol: AG-UI is the only supported wire protocol. When present must be
             `\"agui\"`. Omitting the field is equivalent — the server always
@@ -7067,6 +7216,16 @@ class Agents(BaseSDK):
             selects an agent mode; ignored otherwise. Each field falls back to its
             own `default` below when omitted — a missing flag is not uniformly
             `true`. Omitting the whole object applies every default.
+
+        :param include_retrieval_context: Opt in to measurement frames on this stream: CUSTOM `retrieval_context` events naming the records and blocks that reached the model, and one CUSTOM `run_usage` event carrying the run's token totals and loop outcome. Identifiers only, never block text. Does not change the answer.
+        :param keyword_search_budget: How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full.
+        :param tool_approval: The person's answer to a tool approval card. The web app sends it with the query
+            `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+            stopped on the card: the saved call runs (when allowed) and its result answers the call
+            the model made, in the same reply. The call is the one saved server-side when the card was
+            shown (answerable for 15 minutes, settled once, bound to the asking user and
+            conversation); only its id and the answer travel here. A reply that answered a card
+            can't be regenerated.
 
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
@@ -7111,6 +7270,11 @@ class Agents(BaseSDK):
                 protocol=protocol,
                 agent_capabilities=utils.get_pydantic_model(
                     agent_capabilities, Optional[models_.AgentCapabilities]
+                ),
+                include_retrieval_context=include_retrieval_context,
+                keyword_search_budget=keyword_search_budget,
+                tool_approval=utils.get_pydantic_model(
+                    tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
             ),

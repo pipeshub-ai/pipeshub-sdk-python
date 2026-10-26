@@ -60,6 +60,15 @@ class AgentCreateRequestTypedDict(TypedDict):
     r"""Share agent with the organization"""
     is_service_account: NotRequired[bool]
     r"""Create the agent as a service-account agent"""
+    service_account_user_id: NotRequired[str]
+    r"""The `userId` of the service account this agent should search
+    knowledge as, as returned by the service accounts API. Only valid
+    on a service-account agent: sending it without `isServiceAccount`
+    is refused rather than ignored, so a request cannot quietly create
+    an agent that searches as its creator. Omit it and the agent
+    searches as its creator.
+
+    """
     toolsets: NotRequired[List[AgentCreateToolsetTypedDict]]
     r"""Toolsets attached to the agent (instance-aware)"""
     knowledge: NotRequired[List[AgentCreateKnowledgeTypedDict]]
@@ -75,6 +84,12 @@ class AgentCreateRequestTypedDict(TypedDict):
         Nullable[AgentCreateRequestDefaultReasoningEffort]
     ]
     r"""Agent-level reasoning effort used when a chat request omits its own."""
+    api_toolset_tools: NotRequired[List[str]]
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
     send_user_context: NotRequired[bool]
     r"""When true (default), include the current user's name, email, and
     organization in this agent's system prompt. When false, omit that
@@ -121,6 +136,18 @@ class AgentCreateRequest(BaseModel):
     ] = False
     r"""Create the agent as a service-account agent"""
 
+    service_account_user_id: Annotated[
+        Optional[str], pydantic.Field(alias="serviceAccountUserId")
+    ] = None
+    r"""The `userId` of the service account this agent should search
+    knowledge as, as returned by the service accounts API. Only valid
+    on a service-account agent: sending it without `isServiceAccount`
+    is refused rather than ignored, so a request cannot quietly create
+    an agent that searches as its creator. Omit it and the agent
+    searches as its creator.
+
+    """
+
     toolsets: Optional[List[AgentCreateToolset]] = None
     r"""Toolsets attached to the agent (instance-aware)"""
 
@@ -144,6 +171,15 @@ class AgentCreateRequest(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own."""
 
+    api_toolset_tools: Annotated[
+        Optional[List[str]], pydantic.Field(alias="apiToolsetTools")
+    ] = None
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
+
     send_user_context: Annotated[
         Optional[bool], pydantic.Field(alias="sendUserContext")
     ] = True
@@ -165,11 +201,13 @@ class AgentCreateRequest(BaseModel):
                 "tags",
                 "shareWithOrg",
                 "isServiceAccount",
+                "serviceAccountUserId",
                 "toolsets",
                 "knowledge",
                 "skills",
                 "webSearch",
                 "defaultReasoningEffort",
+                "apiToolsetTools",
                 "sendUserContext",
             ]
         )

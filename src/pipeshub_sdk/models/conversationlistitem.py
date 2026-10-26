@@ -182,6 +182,11 @@ class ConversationListItemTypedDict(TypedDict):
 
     """
 
+    agent_key: NotRequired[str]
+    r"""Only on agent conversations (returned by `GET /conversations?source=shared`). Open
+    them with `GET /agents/{agentKey}/conversations/{conversationId}`.
+
+    """
     id: NotRequired[str]
     user_id: NotRequired[str]
     org_id: NotRequired[str]
@@ -211,6 +216,13 @@ class ConversationListItemTypedDict(TypedDict):
     updated_at: NotRequired[datetime]
     is_owner: NotRequired[bool]
     access_level: NotRequired[ConversationListItemAccessLevel]
+    is_pinned: NotRequired[bool]
+    r"""`true` when the owner pinned this conversation. Absent on
+    conversations that are not pinned (never `false`). Set via
+    `PATCH /conversations/{conversationId}/pin`. Only returned to the
+    owner: lists with `source=shared` omit it.
+
+    """
     project_id: NotRequired[Nullable[str]]
     r"""The project this conversation is linked to, if any. Set via
     `PUT /conversations/{conversationId}/project` or at creation
@@ -235,6 +247,12 @@ class ConversationListItem(BaseModel):
     r"""Conversation summary returned by list endpoints. Identical to
     `Conversation` but omits `messages` to keep list payloads small.
     Fetch a single conversation to retrieve its messages.
+
+    """
+
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""Only on agent conversations (returned by `GET /conversations?source=shared`). Open
+    them with `GET /agents/{agentKey}/conversations/{conversationId}`.
 
     """
 
@@ -301,6 +319,14 @@ class ConversationListItem(BaseModel):
         Optional[ConversationListItemAccessLevel], pydantic.Field(alias="accessLevel")
     ] = None
 
+    is_pinned: Annotated[Optional[bool], pydantic.Field(alias="isPinned")] = None
+    r"""`true` when the owner pinned this conversation. Absent on
+    conversations that are not pinned (never `false`). Set via
+    `PATCH /conversations/{conversationId}/pin`. Only returned to the
+    owner: lists with `source=shared` omit it.
+
+    """
+
     project_id: Annotated[OptionalNullable[str], pydantic.Field(alias="projectId")] = (
         UNSET
     )
@@ -333,6 +359,7 @@ class ConversationListItem(BaseModel):
     def serialize_model(self, handler):
         optional_fields = set(
             [
+                "agentKey",
                 "_id",
                 "userId",
                 "orgId",
@@ -355,6 +382,7 @@ class ConversationListItem(BaseModel):
                 "updatedAt",
                 "isOwner",
                 "accessLevel",
+                "isPinned",
                 "projectId",
                 "projectVisibility",
                 "sharedBy",

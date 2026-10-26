@@ -1,6 +1,10 @@
 # ParentNode
 
-Parent of `currentNode` when present; `null` when not applicable.
+Parent of `currentNode` when present; `null` when not applicable,
+and for a connected app whose limit leaves that parent out. For
+such an app, `breadcrumbs` likewise names only the nodes inside
+its limit.
+
 
 
 ## Fields

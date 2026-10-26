@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 from .agentcapabilities import AgentCapabilities, AgentCapabilitiesTypedDict
+from .chatattachmentref import ChatAttachmentRef, ChatAttachmentRefTypedDict
 from .filters import Filters, FiltersTypedDict
+from .toolapprovalanswer import ToolApprovalAnswer, ToolApprovalAnswerTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
@@ -26,6 +28,12 @@ class RegenerateRequestTypedDict(TypedDict):
     original message are reused.
 
     Supported fields:
+    - `attachments` — optional files of the edited question, replacing the
+    stored ones (an empty list removes them all); omitted keeps them.
+    At most 10, each a ref from the attachment upload
+    - `query` — optional edited question. When it differs from the stored
+    question, the answer is regenerated for it and the stored question is
+    replaced once the new answer is saved; a failed run keeps the original
     - `filters` — optional `{ apps?, kb? }` filter object
     - `chatMode` — optional non-empty chat mode string
     - `modelKey`, `modelName`, `modelFriendlyName` —
@@ -37,16 +45,67 @@ class RegenerateRequestTypedDict(TypedDict):
     - `protocol` — optional inert compatibility field; when present it must
     be `agui`, which is also the protocol used when the field is omitted
     - `agentCapabilities` — optional per-request agent capability toggles
+    - `answers` — optional changed answers to the question card the reply
+    followed; the turn is re-run with them and they replace the saved ones
 
     """
 
+    query: NotRequired[str]
+    r"""The edited question to answer in place of the stored one. Only the
+    last question of a conversation can be edited, and not one that ran
+    an approved action or is itself a tool-approval or question-card
+    answer. A turn that went through an answered question card can be
+    edited: the question is rewritten and the whole turn, including its
+    card and the card's answers, is replaced by the new answer. A card
+    turn that spans more than 50 saved rows cannot be edited; the
+    request is refused and the stored answer is left as it was. So is
+    an edit of an older question while a newer question has no answer.
+    A run that ends in an error answer, or whose answer cannot be
+    saved, leaves the stored question, its files and the rows of its
+    card turn as they were.
+
+    """
+    attachments: NotRequired[List[ChatAttachmentRefTypedDict]]
+    r"""The files of the edited question, replacing the stored ones. An
+    empty list removes them all; omitted keeps the stored files. A
+    change of files alone, with the same `query`, also counts as an
+    edit. Files are not deleted when removed from a question: a fork
+    of the chat may still refer to them.
+
+    """
     filters: NotRequired[FiltersTypedDict]
-    r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-    for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-    For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-    to let the service use the agent’s stored knowledge and tool configuration. Sending
-    `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-    turn (it is not “full org default”).
+    r"""What retrieval is narrowed to for a turn: whole apps, and selections below app
+    level (record groups, folders, records). The keys are a union. For **org assistant**
+    chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+    or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+    and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+    **no** knowledge sources for that turn (it is not “full org default”).
+
+    A selection below app level is the whole scope of the turn: with `recordGroups`,
+    `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+    them. A selected node that does not exist or that the caller cannot read contributes
+    nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+    for that; a chat turn is not failed, its search simply finds nothing.
+    At most 200 ids may be sent in one request, counted across all keys, and every id must
+    be a valid UUID. A key this schema does not list is refused with 400; the message names
+    the key and lists the allowed ones. A value of the wrong type is refused with 400 too.
+
+    A selection that covers more than the configured number of nodes (50,000 by default),
+    or that touches a source still being prepared for folder-level search, is refused:
+    `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+    stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+    whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+    says what to change. No model call is made for such a turn.
+
+    """
+    answers: NotRequired[str]
+    r"""The answers to the question card this reply followed, in the form
+    the app sends them (`User selections:` followed by one
+    `N. \"question\" → answer` line each). When present, the turn is
+    re-run with these answers instead of the saved ones, and they are
+    saved in their place. Rejected with 400 when the reply being
+    regenerated did not follow a question card, or when the request
+    also edits the question (`query` or `attachments`).
 
     """
     model_key: NotRequired[str]
@@ -77,7 +136,13 @@ class RegenerateRequestTypedDict(TypedDict):
     tools: NotRequired[List[str]]
     r"""Optional list of tool identifiers (fully-qualified action names
     such as `jira.create_issue`) the agent may invoke when
-    regenerating. Applicable only in agent chat modes.
+    regenerating. Applicable only in agent chat modes. Regenerating
+    in the assistant's agent mode, web search is not governed by this
+    list; `agentCapabilities.webSearch` turns it on or off.
+    Regenerating a named agent's message (`AgentRegenerateRequest`),
+    a list that leaves out `web_search` turns off the agent's web
+    search for the turn, even when `agentCapabilities.webSearch` is
+    true.
 
     """
     protocol: NotRequired[RegenerateRequestProtocol]
@@ -94,6 +159,16 @@ class RegenerateRequestTypedDict(TypedDict):
     `true`. Omitting the whole object applies every default.
 
     """
+    tool_approval: NotRequired[ToolApprovalAnswerTypedDict]
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
+
+    """
     run_id: NotRequired[str]
     r"""Client-generated identifier for this regeneration run. Send it
     here to enable `POST .../cancel {runId}` while it is still
@@ -108,6 +183,12 @@ class RegenerateRequest(BaseModel):
     original message are reused.
 
     Supported fields:
+    - `attachments` — optional files of the edited question, replacing the
+    stored ones (an empty list removes them all); omitted keeps them.
+    At most 10, each a ref from the attachment upload
+    - `query` — optional edited question. When it differs from the stored
+    question, the answer is regenerated for it and the stored question is
+    replaced once the new answer is saved; a failed run keeps the original
     - `filters` — optional `{ apps?, kb? }` filter object
     - `chatMode` — optional non-empty chat mode string
     - `modelKey`, `modelName`, `modelFriendlyName` —
@@ -119,16 +200,70 @@ class RegenerateRequest(BaseModel):
     - `protocol` — optional inert compatibility field; when present it must
     be `agui`, which is also the protocol used when the field is omitted
     - `agentCapabilities` — optional per-request agent capability toggles
+    - `answers` — optional changed answers to the question card the reply
+    followed; the turn is re-run with them and they replace the saved ones
+
+    """
+
+    query: Optional[str] = None
+    r"""The edited question to answer in place of the stored one. Only the
+    last question of a conversation can be edited, and not one that ran
+    an approved action or is itself a tool-approval or question-card
+    answer. A turn that went through an answered question card can be
+    edited: the question is rewritten and the whole turn, including its
+    card and the card's answers, is replaced by the new answer. A card
+    turn that spans more than 50 saved rows cannot be edited; the
+    request is refused and the stored answer is left as it was. So is
+    an edit of an older question while a newer question has no answer.
+    A run that ends in an error answer, or whose answer cannot be
+    saved, leaves the stored question, its files and the rows of its
+    card turn as they were.
+
+    """
+
+    attachments: Optional[List[ChatAttachmentRef]] = None
+    r"""The files of the edited question, replacing the stored ones. An
+    empty list removes them all; omitted keeps the stored files. A
+    change of files alone, with the same `query`, also counts as an
+    edit. Files are not deleted when removed from a question: a fork
+    of the chat may still refer to them.
 
     """
 
     filters: Optional[Filters] = None
-    r"""App connector instance ids and knowledge-base / record-group ids that narrow retrieval
-    for a turn. For **org assistant** chat streams, send explicit `apps` / `kb` lists.
-    For **agent** chat streams, send explicit id lists, or **omit** `filters` (and `tools`)
-    to let the service use the agent’s stored knowledge and tool configuration. Sending
-    `{ \"apps\": [], \"kb\": [] }` on an agent stream means **no** knowledge sources for that
-    turn (it is not “full org default”).
+    r"""What retrieval is narrowed to for a turn: whole apps, and selections below app
+    level (record groups, folders, records). The keys are a union. For **org assistant**
+    chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
+    or **omit** `filters` (and `tools`) to let the service use the agent’s stored knowledge
+    and tool configuration. Sending `{ \"apps\": [], \"kb\": [] }` on an agent stream means
+    **no** knowledge sources for that turn (it is not “full org default”).
+
+    A selection below app level is the whole scope of the turn: with `recordGroups`,
+    `records` or `recordsExact` present, an absent or empty `apps` / `kb` means none of
+    them. A selected node that does not exist or that the caller cannot read contributes
+    nothing; when nothing valid remains the turn searches nothing. `/search` answers 404
+    for that; a chat turn is not failed, its search simply finds nothing.
+    At most 200 ids may be sent in one request, counted across all keys, and every id must
+    be a valid UUID. A key this schema does not list is refused with 400; the message names
+    the key and lists the allowed ones. A value of the wrong type is refused with 400 too.
+
+    A selection that covers more than the configured number of nodes (50,000 by default),
+    or that touches a source still being prepared for folder-level search, is refused:
+    `/search` and the non-streaming chat routes answer 422 with the message, and a chat
+    stream ends with an error frame (`RUN_ERROR`, or `error` on the legacy protocol)
+    whose `code` is `selection_too_large` or `selection_not_ready` and whose `message`
+    says what to change. No model call is made for such a turn.
+
+    """
+
+    answers: Optional[str] = None
+    r"""The answers to the question card this reply followed, in the form
+    the app sends them (`User selections:` followed by one
+    `N. \"question\" → answer` line each). When present, the turn is
+    re-run with these answers instead of the saved ones, and they are
+    saved in their place. Rejected with 400 when the reply being
+    regenerated did not follow a question card, or when the request
+    also edits the question (`query` or `attachments`).
 
     """
 
@@ -170,7 +305,13 @@ class RegenerateRequest(BaseModel):
     tools: Optional[List[str]] = None
     r"""Optional list of tool identifiers (fully-qualified action names
     such as `jira.create_issue`) the agent may invoke when
-    regenerating. Applicable only in agent chat modes.
+    regenerating. Applicable only in agent chat modes. Regenerating
+    in the assistant's agent mode, web search is not governed by this
+    list; `agentCapabilities.webSearch` turns it on or off.
+    Regenerating a named agent's message (`AgentRegenerateRequest`),
+    a list that leaves out `web_search` turns off the agent's web
+    search for the turn, even when `agentCapabilities.webSearch` is
+    true.
 
     """
 
@@ -192,6 +333,19 @@ class RegenerateRequest(BaseModel):
 
     """
 
+    tool_approval: Annotated[
+        Optional[ToolApprovalAnswer], pydantic.Field(alias="toolApproval")
+    ] = None
+    r"""The person's answer to a tool approval card. The web app sends it with the query
+    `Tool approval: allow` or `Tool approval: deny`, and the request carries on the turn that
+    stopped on the card: the saved call runs (when allowed) and its result answers the call
+    the model made, in the same reply. The call is the one saved server-side when the card was
+    shown (answerable for 15 minutes, settled once, bound to the asking user and
+    conversation); only its id and the answer travel here. A reply that answered a card
+    can't be regenerated.
+
+    """
+
     run_id: Annotated[Optional[str], pydantic.Field(alias="runId")] = None
     r"""Client-generated identifier for this regeneration run. Send it
     here to enable `POST .../cancel {runId}` while it is still
@@ -203,7 +357,10 @@ class RegenerateRequest(BaseModel):
     def serialize_model(self, handler):
         optional_fields = set(
             [
+                "query",
+                "attachments",
                 "filters",
+                "answers",
                 "modelKey",
                 "modelName",
                 "modelFriendlyName",
@@ -213,6 +370,7 @@ class RegenerateRequest(BaseModel):
                 "tools",
                 "protocol",
                 "agentCapabilities",
+                "toolApproval",
                 "runId",
             ]
         )
