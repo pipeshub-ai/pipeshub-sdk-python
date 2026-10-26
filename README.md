@@ -169,6 +169,28 @@ asyncio.run(main())
 ```
 <!-- End SDK Example Usage [usage] -->
 
+## Retrieval for RAG and agent frameworks
+
+`semantic_search.retrieve` returns permission-filtered passages ("chunks"), each with its record and a citation link. It stores no search history, so you can call it on every request your application serves. See the [Retrieval API](https://docs.pipeshub.com/developer/retrieval-api) docs.
+
+Ready-made retrievers ship as extras:
+
+```bash
+pip install "pipeshub-sdk[langchain]"    # pipeshub_sdk.integrations.langchain.PipesHubRetriever
+pip install "pipeshub-sdk[llamaindex]"   # pipeshub_sdk.integrations.llamaindex.PipesHubRetriever
+```
+
+```python
+from pipeshub_sdk import Pipeshub, models
+from pipeshub_sdk.integrations.langchain import PipesHubRetriever
+
+with Pipeshub(server_url="https://your-pipeshub-instance.com/api/v1",
+              security=models.Security(bearer_auth="phpat_...")) as client:
+    docs = PipesHubRetriever(client=client, limit=5).invoke("How do we roll back a canary deploy?")
+```
+
+Each result carries the chunk text and, in its metadata, the record (`recordId`, `name`, `connector`, `mimeType`, `updatedAt`), the citation (`url`, `recordUrl`, `pageNum`, `blockIndex`) and `score`. Both retrievers take `limit`, `filters`, `max_chunks_per_record` and `rewrite_query`, and support async. Examples: [`examples/retrievers/`](examples/retrievers/).
+
 <!-- Start Authentication [security] -->
 ## Authentication
 
