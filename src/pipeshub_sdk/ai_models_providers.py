@@ -35,6 +35,10 @@ class AIModelsProviders(BaseSDK):
         `isDefault: true`; all subsequent models from the same entry get `false`.
         - `modelFriendlyName` is included **only** when the provider entry contains
         exactly one model name (not a comma-separated list).
+        - `defaultReasoningEffort` is included on every model of an entry whose
+        `configuration.defaultReasoningEffort` (or, when that is unset, a
+        top-level `defaultReasoningEffort`) holds a valid effort. It is left out
+        when no default is stored.
         - When no providers of the requested type are configured the endpoint still
         returns HTTP **200** with an empty `models` array — this is **not** an error.
 
@@ -47,7 +51,7 @@ class AIModelsProviders(BaseSDK):
 
         :param model_type: Category of AI model to retrieve.
 
-            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`, `decision`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -178,6 +182,10 @@ class AIModelsProviders(BaseSDK):
         `isDefault: true`; all subsequent models from the same entry get `false`.
         - `modelFriendlyName` is included **only** when the provider entry contains
         exactly one model name (not a comma-separated list).
+        - `defaultReasoningEffort` is included on every model of an entry whose
+        `configuration.defaultReasoningEffort` (or, when that is unset, a
+        top-level `defaultReasoningEffort`) holds a valid effort. It is left out
+        when no default is stored.
         - When no providers of the requested type are configured the endpoint still
         returns HTTP **200** with an empty `models` array — this is **not** an error.
 
@@ -190,7 +198,7 @@ class AIModelsProviders(BaseSDK):
 
         :param model_type: Category of AI model to retrieve.
 
-            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`.
+            Must be one of: `llm`, `embedding`, `ocr`, `slm`, `reasoning`, `multiModal`, `imageGeneration`, `tts`, `stt`, `decision`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method

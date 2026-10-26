@@ -107,8 +107,20 @@ class AgentCreateResponseAgentTypedDict(TypedDict):
         Nullable[AgentCreateResponseAgentDefaultReasoningEffort]
     ]
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
+    api_toolset_tools: NotRequired[List[str]]
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
     send_user_context: NotRequired[bool]
     r"""When false, this agent omits user name/email/org from its system prompt."""
+    service_account_user_id: NotRequired[Nullable[str]]
+    r"""The `userId` of the service account this agent searches knowledge
+    as, or null when it searches as its creator. Only set on a
+    service-account agent.
+
+    """
 
 
 class AgentCreateResponseAgent(BaseModel):
@@ -160,16 +172,47 @@ class AgentCreateResponseAgent(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own. Null when unset."""
 
+    api_toolset_tools: Annotated[
+        Optional[List[str]], pydantic.Field(alias="apiToolsetTools")
+    ] = None
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
+
     send_user_context: Annotated[
         Optional[bool], pydantic.Field(alias="sendUserContext")
     ] = None
     r"""When false, this agent omits user name/email/org from its system prompt."""
 
+    service_account_user_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="serviceAccountUserId")
+    ] = UNSET
+    r"""The `userId` of the service account this agent searches knowledge
+    as, or null when it searches as its creator. Only set on a
+    service-account agent.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["defaultReasoningEffort", "sendUserContext"])
+        optional_fields = set(
+            [
+                "defaultReasoningEffort",
+                "apiToolsetTools",
+                "sendUserContext",
+                "serviceAccountUserId",
+            ]
+        )
         nullable_fields = set(
-            ["instructions", "webSearch", "defaultReasoningEffort", "updatedBy"]
+            [
+                "instructions",
+                "webSearch",
+                "defaultReasoningEffort",
+                "serviceAccountUserId",
+                "updatedBy",
+            ]
         )
         serialized = handler(self)
         m = {}

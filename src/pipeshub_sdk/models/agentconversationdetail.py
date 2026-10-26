@@ -14,6 +14,7 @@ from .agentconversationdetailpagination import (
     AgentConversationDetailPaginationTypedDict,
 )
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
+from .conversationsharedby import ConversationSharedBy, ConversationSharedByTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
@@ -32,11 +33,14 @@ AgentConversationDetailAccessLevel = Union[
 
 
 class AgentConversationDetailSharedWithTypedDict(TypedDict):
+    id: NotRequired[str]
     user_id: NotRequired[str]
     access_level: NotRequired[AgentConversationDetailAccessLevel]
 
 
 class AgentConversationDetailSharedWith(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
     access_level: Annotated[
@@ -46,7 +50,7 @@ class AgentConversationDetailSharedWith(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["_id", "userId", "accessLevel"])
         serialized = handler(self)
         m = {}
 
@@ -79,12 +83,14 @@ class AgentConversationDetailTypedDict(TypedDict):
     `userId`, `orgId`, `conversationSource`, and root-level `messages`
     metadata outside the selected slice are omitted.
 
+    `sharedWith` is the owner's list of recipients, so it is present only for the
+    owner. A recipient gets `sharedBy` (who shared the chat) instead.
+
     """
 
     id: str
     created_at: datetime
     is_shared: bool
-    shared_with: List[AgentConversationDetailSharedWithTypedDict]
     messages: List[AgentConversationDetailMessageTypedDict]
     pagination: AgentConversationDetailPaginationTypedDict
     r"""Message pagination returned inside the `conversation` object. The
@@ -95,8 +101,14 @@ class AgentConversationDetailTypedDict(TypedDict):
     access: AgentConversationDetailAccessTypedDict
     title: NotRequired[str]
     initiator: NotRequired[str]
+    shared_with: NotRequired[List[AgentConversationDetailSharedWithTypedDict]]
     status: NotRequired[AgentConversationDetailStatus]
     fail_reason: NotRequired[str]
+    shared_by: NotRequired[ConversationSharedByTypedDict]
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
     model_info: NotRequired[ConversationModelInfoTypedDict]
     r"""AI model configuration recorded against a conversation or message."""
 
@@ -107,6 +119,9 @@ class AgentConversationDetail(BaseModel):
     `userId`, `orgId`, `conversationSource`, and root-level `messages`
     metadata outside the selected slice are omitted.
 
+    `sharedWith` is the owner's list of recipients, so it is present only for the
+    owner. A recipient gets `sharedBy` (who shared the chat) instead.
+
     """
 
     id: str
@@ -114,10 +129,6 @@ class AgentConversationDetail(BaseModel):
     created_at: Annotated[datetime, pydantic.Field(alias="createdAt")]
 
     is_shared: Annotated[bool, pydantic.Field(alias="isShared")]
-
-    shared_with: Annotated[
-        List[AgentConversationDetailSharedWith], pydantic.Field(alias="sharedWith")
-    ]
 
     messages: List[AgentConversationDetailMessage]
 
@@ -134,9 +145,22 @@ class AgentConversationDetail(BaseModel):
 
     initiator: Optional[str] = None
 
+    shared_with: Annotated[
+        Optional[List[AgentConversationDetailSharedWith]],
+        pydantic.Field(alias="sharedWith"),
+    ] = None
+
     status: Optional[AgentConversationDetailStatus] = None
 
     fail_reason: Annotated[Optional[str], pydantic.Field(alias="failReason")] = None
+
+    shared_by: Annotated[
+        Optional[ConversationSharedBy], pydantic.Field(alias="sharedBy")
+    ] = None
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
 
     model_info: Annotated[
         Optional[ConversationModelInfo], pydantic.Field(alias="modelInfo")
@@ -146,7 +170,15 @@ class AgentConversationDetail(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["title", "initiator", "status", "failReason", "modelInfo"]
+            [
+                "title",
+                "initiator",
+                "sharedWith",
+                "status",
+                "failReason",
+                "sharedBy",
+                "modelInfo",
+            ]
         )
         serialized = handler(self)
         m = {}

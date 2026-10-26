@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from .conversationmodelinfo import ConversationModelInfo, ConversationModelInfoTypedDict
+from .conversationsharedby import ConversationSharedBy, ConversationSharedByTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -39,11 +40,14 @@ AgentConversationListItemSharedWithAccessLevel = Union[
 
 
 class AgentConversationListItemSharedWithTypedDict(TypedDict):
+    id: NotRequired[str]
     user_id: NotRequired[str]
     access_level: NotRequired[AgentConversationListItemSharedWithAccessLevel]
 
 
 class AgentConversationListItemSharedWith(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
 
     access_level: Annotated[
@@ -53,7 +57,7 @@ class AgentConversationListItemSharedWith(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["_id", "userId", "accessLevel"])
         serialized = handler(self)
         m = {}
 
@@ -187,6 +191,11 @@ class AgentConversationListItemTypedDict(TypedDict):
     explicit share grant is attached to the serialized row.
 
     """
+    shared_by: NotRequired[ConversationSharedByTypedDict]
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
     project_id: NotRequired[Nullable[str]]
     r"""The project this agent conversation is linked to, if any."""
     project_visibility: NotRequired[
@@ -291,6 +300,14 @@ class AgentConversationListItem(BaseModel):
 
     """
 
+    shared_by: Annotated[
+        Optional[ConversationSharedBy], pydantic.Field(alias="sharedBy")
+    ] = None
+    r"""Present on conversations the caller received via share. Identifies the
+    conversation initiator (the only user who can share a chat).
+
+    """
+
     project_id: Annotated[OptionalNullable[str], pydantic.Field(alias="projectId")] = (
         UNSET
     )
@@ -333,6 +350,7 @@ class AgentConversationListItem(BaseModel):
                 "updatedAt",
                 "isOwner",
                 "accessLevel",
+                "sharedBy",
                 "projectId",
                 "projectVisibility",
             ]

@@ -1,7 +1,8 @@
 # QueryParamSource
 
 `owned` — owner list (`userId` filter only).
-`shared` — explicit share grant list (`isShared` + `sharedWith`).
+`shared` — explicit share grant list (`isShared` + `sharedWith`). Includes agent
+conversations shared with the caller; those rows carry `agentKey`.
 Defaults to `owned` when omitted.
 
 

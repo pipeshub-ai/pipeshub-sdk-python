@@ -32,12 +32,37 @@ a chat citation's `recordId`, then call this endpoint to read the
 full content when the search snippet or citation excerpt isn't
 enough to answer the question.
 
+**Reading part of a long record, or a whole Slack thread:**
+
+With no query parameters the record is returned up to 140,000
+characters (a longer one is cut and marked `truncated`), which for a
+pull request with its diffs or a long document is a large response. Pass any of `maxChars`, `startBlock`, `query`
+or `mode` for a budgeted read instead: the response stays within
+`maxChars` and says how to continue (`nextStartBlock`, or
+`nextStartRecord` for a thread). `query` makes a record too large for
+the budget show its most relevant blocks first, with the skipped
+ranges marked. `mode=thread` returns every message of the Slack
+thread the record belongs to, oldest first, as far as the caller may
+see them. A Slack record in no single thread (several channel
+messages in one record, or a message without replies) returns itself,
+then the replies of each thread its messages started; the first page
+opens with a bracketed note saying which.
+
 **Permission scoping:**
 
 The requesting user/token must have access to the record; access is
 verified via the knowledge graph before content is returned — a
 caller with a valid scope but no access to this specific record gets
 a `403`.
+
+**A connected app with a limit:** the rendered text names nothing
+outside the limit beside the record. Its `External Parent ID` reads
+`N/A` for a parent the limit leaves out, and a code file's `Path:`
+line is left out unless the limit covers the whole app. Linked
+records, related tables, a deal's orgs and products, and live Jira
+parent, epic, sub-task and linked-issue lines appear only for
+records inside the limit. `Web URL` is kept, though it can contain
+folder names.
 
 
 ### Example Usage
@@ -63,10 +88,15 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                                                                        | Type                                                                                                                             | Required                                                                                                                         | Description                                                                                                                      |
-| -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `record_id`                                                                                                                      | *str*                                                                                                                            | :heavy_check_mark:                                                                                                               | Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`). |
-| `retries`                                                                                                                        | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                 | :heavy_minus_sign:                                                                                                               | Configuration to override the default retry behavior of the client.                                                              |
+| Parameter                                                                                                                                                                                                                                                                           | Type                                                                                                                                                                                                                                                                                | Required                                                                                                                                                                                                                                                                            | Description                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `record_id`                                                                                                                                                                                                                                                                         | *str*                                                                                                                                                                                                                                                                               | :heavy_check_mark:                                                                                                                                                                                                                                                                  | Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).                                                                                                                                                    |
+| `max_chars`                                                                                                                                                                                                                                                                         | *Optional[int]*                                                                                                                                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                                                                                                                                  | Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.                                                                                                                                                   |
+| `start_block`                                                                                                                                                                                                                                                                       | *Optional[int]*                                                                                                                                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                                                                                                                                  | Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.                                                         |
+| `query`                                                                                                                                                                                                                                                                             | *Optional[str]*                                                                                                                                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                                                                                                                                  | What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.                                                                                                               |
+| `mode`                                                                                                                                                                                                                                                                              | [Optional[models.GetRecordContentMode]](../../models/getrecordcontentmode.md)                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                  | `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`. |
+| `start_record`                                                                                                                                                                                                                                                                      | *Optional[int]*                                                                                                                                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                                                                                                                                  | Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.                                                                                                                                                |
+| `retries`                                                                                                                                                                                                                                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                                                                                                    | :heavy_minus_sign:                                                                                                                                                                                                                                                                  | Configuration to override the default retry behavior of the client.                                                                                                                                                                                                                 |
 
 ### Response
 
@@ -76,7 +106,7 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 401, 403                    | application/json            |
+| errors.ErrorResponse        | 401, 403, 422               | application/json            |
 | errors.ErrorResponse        | 500, 503                    | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
@@ -87,9 +117,10 @@ explorer across every connected source.
 
 Call it with no `nodeId` for a flat listing of every record group and
 record the caller can reach, newest first. This is a starting point to
-pick a node from, not a roster of connected apps — app nodes are never
-returned in a listing, though an app's `id` is accepted as a `nodeId`
-and lists that app's record groups. Pass a node's `id` to descend:
+pick a node from, not a roster of connected apps — app nodes are not
+returned in a listing (except at the root of a limited connected app,
+below), though an app's `id` is accepted as a `nodeId` and lists that
+app's record groups. Pass a node's `id` to descend:
 record groups contain records and folders, and a record contains its
 own children — comments, attachments, sub-tasks — plus a `related`
 section of cross-referenced records, such as the Confluence page linked
@@ -125,7 +156,19 @@ its own `level`, instead of only direct children.
 
 **Scope:** everything the caller can read, across both connectors and
 Knowledge Base collections. No connector-level filter is applied — the
-listing is bounded by per-node permissions alone.
+listing is bounded by per-node permissions, and for a connected app
+with a limit by that limit too: no row, breadcrumb or related node
+outside it is returned.
+
+**A connected app with a limit:** with no `nodeId`, the root depends
+on what the limit names.
+- Whole sources (apps or collections) only: the usual flat root,
+  every record group and record in those sources.
+- Any spaces, folders or files, alone or beside whole sources: one
+  row for each whole source, space (record group), folder and file
+  the limit names, and nothing from inside them. `pagination.total`
+  counts those rows, not the records inside them. `depth` is not
+  applied on this call; pass a row's `id` as `nodeId` to open it.
 
 **Permission scoping:**
 
@@ -140,6 +183,16 @@ alone, without a permission check. For a record shared directly with
 the caller, it can therefore name ancestors the caller cannot open.
 Treat breadcrumb entries as labels, not as nodes guaranteed to be
 navigable.
+
+**A connected app with a limit:** the opened record's `context_block`, and each row's
+`context_summary`, names nothing
+outside the limit beside the record. Its `External Parent ID` reads
+`N/A` for a parent the limit leaves out, and a code file's `Path:`
+line is left out unless the limit covers the whole app. Linked
+records, related tables, a deal's orgs and products, and live Jira
+parent, epic, sub-task and linked-issue lines appear only for
+records inside the limit. `Web URL` is kept, though it can contain
+folder names.
 
 
 ### Example Usage
@@ -243,6 +296,15 @@ covered, so a retry with `connectorName` is often the right next move.
 
 **Scope:** resolution searches every connector the caller can access,
 regardless of any source filter used elsewhere.
+
+**A connected app with a limit:** each match's `context_block` names nothing
+outside the limit beside the record. Its `External Parent ID` reads
+`N/A` for a parent the limit leaves out, and a code file's `Path:`
+line is left out unless the limit covers the whole app. Linked
+records, related tables, a deal's orgs and products, and live Jira
+parent, epic, sub-task and linked-issue lines appear only for
+records inside the limit. `Web URL` is kept, though it can contain
+folder names.
 
 
 ### Example Usage

@@ -70,6 +70,15 @@ class AgentUpdateRequestTypedDict(TypedDict):
     r"""Share agent with the organization"""
     is_service_account: NotRequired[bool]
     r"""Mark agent as a service account"""
+    service_account_user_id: NotRequired[Nullable[str]]
+    r"""The `userId` of the service account this agent should search
+    knowledge as. Only valid on a service-account agent, checked
+    against what the agent will be once the request is applied, so one
+    request may convert an agent and bind it. Null is accepted on any
+    agent and clears the binding, going back to searching as the
+    agent's creator.
+
+    """
     toolsets: NotRequired[List[AgentCreateToolsetTypedDict]]
     r"""Toolsets attached to the agent (instance-aware)"""
     knowledge: NotRequired[List[AgentCreateKnowledgeTypedDict]]
@@ -88,6 +97,12 @@ class AgentUpdateRequestTypedDict(TypedDict):
         Nullable[AgentUpdateRequestDefaultReasoningEffort]
     ]
     r"""Agent-level reasoning effort used when a chat request omits its own."""
+    api_toolset_tools: NotRequired[List[str]]
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
     send_user_context: NotRequired[bool]
     r"""When true (default), include the current user's name, email, and
     organization in this agent's system prompt. When false, omit that
@@ -144,6 +159,18 @@ class AgentUpdateRequest(BaseModel):
     ] = False
     r"""Mark agent as a service account"""
 
+    service_account_user_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="serviceAccountUserId")
+    ] = UNSET
+    r"""The `userId` of the service account this agent should search
+    knowledge as. Only valid on a service-account agent, checked
+    against what the agent will be once the request is applied, so one
+    request may convert an agent and bind it. Null is accepted on any
+    agent and clears the binding, going back to searching as the
+    agent's creator.
+
+    """
+
     toolsets: Optional[List[AgentCreateToolset]] = None
     r"""Toolsets attached to the agent (instance-aware)"""
 
@@ -170,6 +197,15 @@ class AgentUpdateRequest(BaseModel):
     ] = UNSET
     r"""Agent-level reasoning effort used when a chat request omits its own."""
 
+    api_toolset_tools: Annotated[
+        Optional[List[str]], pydantic.Field(alias="apiToolsetTools")
+    ] = None
+    r"""API toolset operations the agent may call, each `<toolsetId>:<operation>`
+    (see `/api-toolsets`). A service-account agent may only use toolsets with a
+    shared credential.
+
+    """
+
     send_user_context: Annotated[
         Optional[bool], pydantic.Field(alias="sendUserContext")
     ] = None
@@ -192,15 +228,19 @@ class AgentUpdateRequest(BaseModel):
                 "tags",
                 "shareWithOrg",
                 "isServiceAccount",
+                "serviceAccountUserId",
                 "toolsets",
                 "knowledge",
                 "skills",
                 "webSearch",
                 "defaultReasoningEffort",
+                "apiToolsetTools",
                 "sendUserContext",
             ]
         )
-        nullable_fields = set(["webSearch", "defaultReasoningEffort"])
+        nullable_fields = set(
+            ["serviceAccountUserId", "webSearch", "defaultReasoningEffort"]
+        )
         serialized = handler(self)
         m = {}
 

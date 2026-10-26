@@ -14,8 +14,12 @@ Knowledge base management operations
 * [get_record_by_id](#get_record_by_id) - Get record by ID
 * [update_record](#update_record) - Update record
 * [delete_record](#delete_record) - Delete record
+* [restore_record](#restore_record) - Restore a deleted record
+* [restore_records](#restore_records) - Restore several deleted records
+* [list_trash](#list_trash) - List a collection's recently deleted items
 * [stream_record_buffer](#stream_record_buffer) - Stream record content
 * [create_folder](#create_folder) - Create folder
+* [create_subfolder](#create_subfolder) - Create subfolder
 * [update_folder](#update_folder) - Update folder
 * [delete_folder](#delete_folder) - Delete folder
 * [upload_records](#upload_records) - Upload files to knowledge base or folder
@@ -410,6 +414,8 @@ Include a new file in the request to replace the existing content. The file exte
 - Increments version if file content changed
 - Triggers re-indexing for content changes
 
+**OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
 
 ### Example Usage
 
@@ -455,7 +461,7 @@ with Pipeshub(
 
 ## delete_record
 
-Permanently delete a record from the knowledge base.
+Delete a record from the knowledge base.
 
 **Required permission:**
 
@@ -467,7 +473,12 @@ WRITER or higher
 - Associated storage file
 - Indexed content and embeddings
 
-**Warning:** This action is irreversible.
+**Trash:** With "Move Deleted Records to the Trash" on in Labs, the record
+goes to the trash instead: it disappears from search, chat and lists at once,
+its embeddings are removed, and the record and its file stay until the scheduled
+purge. The response then carries `softDeleted: true` and the `batchId`, and the
+record can be brought back with `POST /knowledgeBase/record/{recordId}/restore`.
+With the setting off, the delete is immediate and cannot be undone.
 
 
 ### Example Usage
@@ -501,6 +512,188 @@ with Pipeshub(
 ### Response
 
 **[models.DeleteRecordResponseSchema](../../models/deleterecordresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## restore_record
+
+Bring a record back from the trash, together with everything deleted in the
+same action: a folder comes back with its contents, a file with its
+attachments, a multi-select delete with every item it removed.
+
+Needs "Move Deleted Records to the Trash" on in Labs.
+
+**Required permission:** the role the delete needed. A single file needs
+OWNER, WRITER or FILEORGANIZER on its collection; a folder or several items
+need OWNER or WRITER.
+
+**Names:** an item whose name another item next to it now uses comes back
+as "name (restored)" (a file keeps its extension: "report (restored).pdf").
+
+**Search:** restored files are indexed again, so they return to search and
+chat once indexing finishes. `reindexPending` lists any that could not be
+queued; reindex those by hand. A file that is back but whose indexing never
+started is queued again when it is restored again, and the indexing service
+queues it on its own after about an hour.
+
+A record that is not in the trash answers 200 with nothing restored.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="restoreRecord" method="post" path="/knowledgeBase/record/{recordId}/restore" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.restore_record(record_id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID of any item in the delete batch                           |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.RestoreRecordResponseSchema](../../models/restorerecordresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 401, 403, 404, 409          | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## restore_records
+
+Restore up to 100 records from the trash. Each id is restored as
+`POST /knowledgeBase/record/{recordId}/restore` restores it, with everything
+deleted along with it; ids from one delete are restored once. Every id gets its
+own outcome in `results`, so one refusal does not hold the others back, and the
+answer is 200 whatever the outcomes.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="restoreRecords" method="post" path="/knowledgeBase/records/restore" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.restore_records(record_ids=[
+        "<value 1>",
+        "<value 2>",
+    ])
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `record_ids`                                                        | List[*str*]                                                         | :heavy_check_mark:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.RestoreRecordsResponseSchema](../../models/restorerecordsresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 400, 401, 403               | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## list_trash
+
+One page of what was deleted from a collection and can still be restored,
+newest first. Each item is what one delete removed, as a restore brings it back
+whole: a folder deleted with its contents is one item, and so is a multi-select
+delete (`rootCount` items selected, some named in `otherRootNames`). `itemCount`
+says how many records it holds.
+Restore an item with `POST /knowledgeBase/record/{recordId}/restore`, using its `id`.
+
+Needs "Move Deleted Records to the Trash" on in Labs.
+
+**Who sees what:** the list holds what the caller may restore. OWNER and
+WRITER see every item; FILEORGANIZER sees single files only; other roles are
+refused. The workspace and user always come from the sign-in.
+
+**Removed for good:** the scheduled cleanup may remove an item from
+`removableAfterTimestamp` on (at least 14 days after it was deleted by
+default; it runs every 14 days, so an item stays 14 to 28 days). It is
+absent when the retention settings can't be read.
+
+An item whose folder is also in the trash (`parentInTrash`) can only be
+restored after that folder.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="listTrash" method="get" path="/knowledgeBase/{kbId}/trash" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.list_trash(kb_id="<id>", page=1, limit=25)
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Collection (knowledge base) ID                                      |
+| `page`                                                              | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `limit`                                                             | *Optional[int]*                                                     | :heavy_minus_sign:                                                  | N/A                                                                 |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+
+### Response
+
+**[models.ListTrashResponseSchema](../../models/listtrashresponseschema.md)**
 
 ### Errors
 
@@ -552,11 +745,12 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `record_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Record ID                                                           |
-| `convert_to`                                                        | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Target format for conversion                                        |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                                 | Type                                                                                                                      | Required                                                                                                                  | Description                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `record_id`                                                                                                               | *str*                                                                                                                     | :heavy_check_mark:                                                                                                        | Record ID                                                                                                                 |
+| `convert_to`                                                                                                              | *Optional[str]*                                                                                                           | :heavy_minus_sign:                                                                                                        | Target format for conversion                                                                                              |
+| `version`                                                                                                                 | *Optional[int]*                                                                                                           | :heavy_minus_sign:                                                                                                        | Registry version to pin ARTIFACT record content to. Omit to stream<br/>the latest version. Ignored for non-artifact records.<br/> |
+| `retries`                                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                          | :heavy_minus_sign:                                                                                                        | Configuration to override the default retry behavior of the client.                                                       |
 
 ### Response
 
@@ -625,6 +819,70 @@ with Pipeshub(
 | `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   |                                                                     |
 | `folder_name`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Name of the folder                                                  | Project Documents                                                   |
 | `folder_id`                                                         | *Optional[str]*                                                     | :heavy_minus_sign:                                                  | Parent folder ID. Omit to create at the knowledge base root.        |                                                                     |
+| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
+
+### Response
+
+**[models.FolderCreateResponseSchema](../../models/foldercreateresponseschema.md)**
+
+### Errors
+
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 400, 401, 403, 404, 409     | application/json            |
+| errors.ErrorResponse        | 500, 503                    | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+
+## create_subfolder
+
+Create a nested subfolder inside an existing parent folder.
+
+**Required permission:** WRITER or higher
+
+**Folder features:**
+
+- Organize records hierarchically
+- Support nested subfolders (unlimited depth)
+- Inherit parent KB permissions
+
+**Naming rules:**
+
+- 1–255 characters
+- XSS protection applied
+- Spaces and special characters allowed
+- Duplicate names rejected within the same parent (`409`)
+
+**Response:** Returns `id` and `name` for the created folder.
+
+
+### Example Usage
+
+<!-- UsageSnippet language="python" operationID="createSubfolder" method="post" path="/knowledgeBase/{kbId}/folder/{folderId}/subfolder" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.create_subfolder(kb_id="<id>", folder_id="<id>", folder_name="<value>")
+
+    # Handle response
+    print(res)
+
+```
+
+### Parameters
+
+| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `kb_id`                                                             | *str*                                                               | :heavy_check_mark:                                                  | Knowledge base ID                                                   |                                                                     |
+| `folder_id`                                                         | *str*                                                               | :heavy_check_mark:                                                  | Parent folder ID                                                    |                                                                     |
+| `folder_name`                                                       | *str*                                                               | :heavy_check_mark:                                                  | Name of the folder                                                  | Project Documents                                                   |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |                                                                     |
 
 ### Response
@@ -819,11 +1077,11 @@ with Pipeshub(
 
 ### Errors
 
-| Error Type                   | Status Code                  | Content Type                 |
-| ---------------------------- | ---------------------------- | ---------------------------- |
-| errors.ErrorResponse         | 400, 401, 403, 404, 413, 429 | application/json             |
-| errors.ErrorResponse         | 500                          | application/json             |
-| errors.PipeshubDefaultError  | 4XX, 5XX                     | \*/\*                        |
+| Error Type                        | Status Code                       | Content Type                      |
+| --------------------------------- | --------------------------------- | --------------------------------- |
+| errors.ErrorResponse              | 400, 401, 403, 404, 409, 413, 429 | application/json                  |
+| errors.ErrorResponse              | 500                               | application/json                  |
+| errors.PipeshubDefaultError       | 4XX, 5XX                          | \*/\*                             |
 
 ## get_upload_limits
 
@@ -1055,7 +1313,7 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 400, 401, 403, 404, 409     | application/json            |
 | errors.ErrorResponse        | 500, 503                    | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
@@ -1097,6 +1355,29 @@ Use the `include` parameter to request additional sections:
 - `breadcrumbs` — adds the breadcrumb trail (empty at root level)
 - `permissions` — adds the caller's permission flags
 
+**A connected app with a limit**
+
+A token that may see only some sources pages and counts only what
+its limit lets it see:
+- Limited to whole sources (apps or collections) only: the listing
+  and the search cover those, with exact totals and counts.
+- Limited to any spaces, folders or files, alone or beside whole
+  sources: the listing returns each whole source, space (record
+  group), folder and file the limit names, one item each, to open
+  by its `id`. `totalItems` counts those items, not what is inside
+  them. A search reads
+  forward only (`prevCursor` is always null), and takes a `page`
+  number up to 5; for later pages, send `nextCursor`. Its `totalItems` counts
+  the matches found so far and can grow from page to page; it is
+  final once `hasNext` is false. `counts` is returned only when the
+  whole result fits in the first page read, and is `null` otherwise.
+- An item can sit in a folder the limit leaves out, as a file the
+  limit names does. Its `parentId` and `parent` are then `null`: the
+  item is returned, and the folder above it is not named.
+- A `nextCursor` or `prevCursor` belongs to the limit it was read
+  under. A token with a different limit that sends it gets a `400`;
+  start that listing again without a cursor.
+
 **Access control**
 
 Requires a valid bearer token. For OAuth tokens the `kb:read` scope
@@ -1132,7 +1413,8 @@ with Pipeshub(
 | Parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Required                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Example                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `only_containers`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | *Optional[bool]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | When `true`, only nodes that have children are returned (useful for<br/>building sidebar / tree navigation). Leaf nodes are excluded.<br/>                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `page`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | *Optional[int]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Page number (1-indexed). Combined with `limit` to paginate results.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `page`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | *Optional[int]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Page number (1-indexed, at most 50). Combined with `limit` to paginate results.<br/>Prefer `cursor`: a page number is reached by reading the pages before it.<br/>A search by a connected app whose limit names any spaces, folders or files<br/>takes a page number of at most 5; for later pages, send `nextCursor`.<br/>                                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `cursor`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous<br/>response. It decides the listing mode, parent, filters and sort. `include` and<br/>`limit` come from this request. A next cursor returns the following page, and a previous<br/>cursor returns the page before. A cursor whose parent disagrees with the URL, or<br/>that was issued for another user, is refused with 400.<br/>                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `limit`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | *Optional[int]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Maximum number of items to return per page.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `sort_by`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | [Optional[models.GetKnowledgeHubRootNodesSortBy]](../../models/getknowledgehubrootnodessortby.md)                                                                                                                                                                                                                                                                                                                                                                                                                                         | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Field to sort results by. Omitted → default `updatedAt`.<br/>Unknown value → silently falls back to `name`.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `sort_order`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | [Optional[models.GetKnowledgeHubRootNodesSortOrder]](../../models/getknowledgehubrootnodessortorder.md)                                                                                                                                                                                                                                                                                                                                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Sort direction. Omitted → default `desc`.<br/>Unknown value → silently falls back to `asc`.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -1151,17 +1433,19 @@ with Pipeshub(
 
 ### Response
 
-**[models.KnowledgeHubNodesResponse](../../models/knowledgehubnodesresponse.md)**
+**[models.GetKnowledgeHubRootNodesResponse](../../models/getknowledgehubrootnodesresponse.md)**
 
 ### Errors
 
-| Error Type                                         | Status Code                                        | Content Type                                       |
-| -------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
-| errors.GetKnowledgeHubRootNodesBadRequestError     | 400                                                | application/json                                   |
-| errors.GetKnowledgeHubRootNodesUnauthorizedError   | 401                                                | application/json                                   |
-| errors.GetKnowledgeHubRootNodesForbiddenError      | 403                                                | application/json                                   |
-| errors.GetKnowledgeHubRootNodesInternalServerError | 500                                                | application/json                                   |
-| errors.PipeshubDefaultError                        | 4XX, 5XX                                           | \*/\*                                              |
+| Error Type                                              | Status Code                                             | Content Type                                            |
+| ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| errors.GetKnowledgeHubRootNodesBadRequestError          | 400                                                     | application/json                                        |
+| errors.GetKnowledgeHubRootNodesUnauthorizedError        | 401                                                     | application/json                                        |
+| errors.GetKnowledgeHubRootNodesForbiddenError           | 403                                                     | application/json                                        |
+| errors.GetKnowledgeHubRootNodesUnprocessableEntityError | 422                                                     | application/json                                        |
+| errors.GetKnowledgeHubRootNodesInternalServerError      | 500                                                     | application/json                                        |
+| errors.GetKnowledgeHubRootNodesServiceUnavailableError  | 503                                                     | application/json                                        |
+| errors.PipeshubDefaultError                             | 4XX, 5XX                                                | \*/\*                                                   |
 
 ## ~~get_knowledge_hub_child_nodes~~
 
@@ -1192,8 +1476,9 @@ provided, the search spans all descendants of the parent node.
 
 When `include=breadcrumbs` is set, the response contains a
 `breadcrumbs` array tracing the path from the root to the current
-node. The `currentNode` and `parentNode` objects are always populated
-for non-root requests.
+node. The `currentNode` object is always populated for non-root
+requests. `parentNode` is too, except at the top of a source and for
+a connected app whose limit leaves that parent out: it is `null` then.
 
 **Access control**
 
@@ -1232,7 +1517,8 @@ with Pipeshub(
 | `parent_type`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | [models.ParentType](../../models/parenttype.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Type of the parent node whose children to retrieve.<br/><br/>Must be one of: `app`, `recordGroup`, `folder`, `record`.<br/>Any other value returns a 400 error.<br/>                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `parent_id`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | *str*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | :heavy_check_mark:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Identifier of the parent node. Must be a valid UUID<br/>(e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).<br/><br/>Any value that does not match this format returns a 400 error.<br/>                                                                                                                                                                                                                                                                                                                                                       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `only_containers`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | *Optional[bool]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | When `true`, only nodes that have children are returned (useful for<br/>building sidebar / tree navigation). Leaf nodes are excluded.<br/>                                                                                                                                                                                                                                                                                                                                                                                                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `page`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | *Optional[int]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Page number (1-indexed). Combined with `limit` to paginate results.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `page`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | *Optional[int]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Page number (1-indexed, at most 50). Combined with `limit` to paginate results.<br/>Prefer `cursor`: a page number is reached by reading the pages before it.<br/>                                                                                                                                                                                                                                                                                                                                                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `cursor`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | *Optional[str]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Opaque cursor from `pagination.nextCursor` or `pagination.prevCursor` of a previous<br/>response. It decides the listing mode, parent, filters and sort. `include` and<br/>`limit` come from this request. A next cursor returns the following page, and a previous<br/>cursor returns the page before. A cursor whose parent disagrees with the URL, or<br/>that was issued for another user, is refused with 400.<br/>                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `limit`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | *Optional[int]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Maximum number of items to return per page.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `sort_by`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | [Optional[models.GetKnowledgeHubChildNodesSortBy]](../../models/getknowledgehubchildnodessortby.md)                                                                                                                                                                                                                                                                                                                                                                                                                                       | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Field to sort results by. Omitted → default `updatedAt`.<br/>Unknown value → silently falls back to `name`.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `sort_order`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | [Optional[models.GetKnowledgeHubChildNodesSortOrder]](../../models/getknowledgehubchildnodessortorder.md)                                                                                                                                                                                                                                                                                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Sort direction. Omitted → default `desc`.<br/>Unknown value → silently falls back to `asc`.<br/>                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -1251,15 +1537,17 @@ with Pipeshub(
 
 ### Response
 
-**[models.KnowledgeHubNodesResponse](../../models/knowledgehubnodesresponse.md)**
+**[models.GetKnowledgeHubChildNodesResponse](../../models/getknowledgehubchildnodesresponse.md)**
 
 ### Errors
 
-| Error Type                                          | Status Code                                         | Content Type                                        |
-| --------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------- |
-| errors.GetKnowledgeHubChildNodesBadRequestError     | 400                                                 | application/json                                    |
-| errors.GetKnowledgeHubChildNodesUnauthorizedError   | 401                                                 | application/json                                    |
-| errors.GetKnowledgeHubChildNodesForbiddenError      | 403                                                 | application/json                                    |
-| errors.GetKnowledgeHubChildNodesNotFoundError       | 404                                                 | application/json                                    |
-| errors.GetKnowledgeHubChildNodesInternalServerError | 500                                                 | application/json                                    |
-| errors.PipeshubDefaultError                         | 4XX, 5XX                                            | \*/\*                                               |
+| Error Type                                               | Status Code                                              | Content Type                                             |
+| -------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| errors.GetKnowledgeHubChildNodesBadRequestError          | 400                                                      | application/json                                         |
+| errors.GetKnowledgeHubChildNodesUnauthorizedError        | 401                                                      | application/json                                         |
+| errors.GetKnowledgeHubChildNodesForbiddenError           | 403                                                      | application/json                                         |
+| errors.GetKnowledgeHubChildNodesNotFoundError            | 404                                                      | application/json                                         |
+| errors.GetKnowledgeHubChildNodesUnprocessableEntityError | 422                                                      | application/json                                         |
+| errors.GetKnowledgeHubChildNodesInternalServerError      | 500                                                      | application/json                                         |
+| errors.GetKnowledgeHubChildNodesServiceUnavailableError  | 503                                                      | application/json                                         |
+| errors.PipeshubDefaultError                              | 4XX, 5XX                                                 | \*/\*                                                    |

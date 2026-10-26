@@ -48,6 +48,7 @@ ConnectorNameEnum = Union[
         "AZURE FILES",
         "LINEAR",
         "ZAMMAD",
+        "ZENDESK",
         "ZOOM",
         "GITLAB",
         "GITLAB PERSONAL",

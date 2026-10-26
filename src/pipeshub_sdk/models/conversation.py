@@ -284,6 +284,11 @@ class ConversationTypedDict(TypedDict):
     conversation initiator (the only user who can share a chat).
 
     """
+    agent_key: NotRequired[str]
+    r"""Only on agent conversations (returned by `GET /conversations?source=shared`). Open
+    them with `GET /agents/{agentKey}/conversations/{conversationId}`.
+
+    """
 
 
 class Conversation(BaseModel):
@@ -422,6 +427,12 @@ class Conversation(BaseModel):
 
     """
 
+    agent_key: Annotated[Optional[str], pydantic.Field(alias="agentKey")] = None
+    r"""Only on agent conversations (returned by `GET /conversations?source=shared`). Open
+    them with `GET /agents/{agentKey}/conversations/{conversationId}`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -452,6 +463,7 @@ class Conversation(BaseModel):
                 "projectId",
                 "projectVisibility",
                 "sharedBy",
+                "agentKey",
             ]
         )
         nullable_fields = set(["archivedBy", "projectId", "projectVisibility"])

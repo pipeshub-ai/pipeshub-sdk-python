@@ -125,6 +125,11 @@ class UserAccount(BaseSDK):
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "429", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.RateLimitErrorResponseData, http_res
+            )
+            raise errors.RateLimitErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -254,6 +259,11 @@ class UserAccount(BaseSDK):
         if utils.match_response(http_res, "400", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "429", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.RateLimitErrorResponseData, http_res
+            )
+            raise errors.RateLimitErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -294,10 +304,9 @@ class UserAccount(BaseSDK):
         - `otp`: `{ \"credentials\": { \"otp\": \"123456\" } }` (6-digit code, valid for 10 minutes)
         - `google`: `{ \"credentials\": \"google-id-token-string\" }`
         - `microsoft`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `azureAd`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `oauth`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `samlSso`: not accepted here; this endpoint answers `400`. SAML sign-in runs as a browser
-        redirect: send the browser to `/saml/signIn` instead
+
+        SAML (`samlSso`), generic OAuth (`oauth`) and Azure AD (`azureAd`) sign-in were removed in 1.0;
+        this endpoint answers `400` for them. Azure AD accounts sign in with `microsoft`.
 
         **Multi-Step Response:**
 
@@ -397,6 +406,11 @@ class UserAccount(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "429", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.RateLimitErrorResponseData, http_res
+            )
+            raise errors.RateLimitErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -437,10 +451,9 @@ class UserAccount(BaseSDK):
         - `otp`: `{ \"credentials\": { \"otp\": \"123456\" } }` (6-digit code, valid for 10 minutes)
         - `google`: `{ \"credentials\": \"google-id-token-string\" }`
         - `microsoft`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `azureAd`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `oauth`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
-        - `samlSso`: not accepted here; this endpoint answers `400`. SAML sign-in runs as a browser
-        redirect: send the browser to `/saml/signIn` instead
+
+        SAML (`samlSso`), generic OAuth (`oauth`) and Azure AD (`azureAd`) sign-in were removed in 1.0;
+        this endpoint answers `400` for them. Azure AD accounts sign in with `microsoft`.
 
         **Multi-Step Response:**
 
@@ -540,6 +553,11 @@ class UserAccount(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "429", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.RateLimitErrorResponseData, http_res
+            )
+            raise errors.RateLimitErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -874,6 +892,11 @@ class UserAccount(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "429", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.RateLimitErrorResponseData, http_res
+            )
+            raise errors.RateLimitErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -990,6 +1013,11 @@ class UserAccount(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "429", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.RateLimitErrorResponseData, http_res
+            )
+            raise errors.RateLimitErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)

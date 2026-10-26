@@ -10,13 +10,10 @@ from typing_extensions import Annotated, TypedDict
 
 AllowedMethod = Union[
     Literal[
-        "samlSso",
         "otp",
         "password",
         "google",
         "microsoft",
-        "azureAd",
-        "oauth",
     ],
     UnrecognizedStr,
 ]

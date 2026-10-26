@@ -158,6 +158,13 @@ class UpdateRecordResponseTypedDict(TypedDict):
     file_updated: NotRequired[bool]
     location: NotRequired[Location]
     kb: NotRequired[Dict[str, Any]]
+    r"""The collection the record is in, with its folders. For a
+    connected app whose limit does not cover the whole collection,
+    an empty object; under a limit that does, `folders` lists only
+    the folders inside it. The updated record names no parent, and
+    no source path, outside the limit.
+
+    """
     user_permission: NotRequired[str]
 
 
@@ -182,6 +189,13 @@ class UpdateRecordResponse(BaseModel):
     location: Optional[Location] = None
 
     kb: Optional[Dict[str, Any]] = None
+    r"""The collection the record is in, with its folders. For a
+    connected app whose limit does not cover the whole collection,
+    an empty object; under a limit that does, `folders` lists only
+    the folders inside it. The updated record names no parent, and
+    no source path, outside the limit.
+
+    """
 
     user_permission: Annotated[
         Optional[str], pydantic.Field(alias="userPermission")

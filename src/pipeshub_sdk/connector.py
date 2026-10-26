@@ -16,6 +16,11 @@ class Connector(BaseSDK):
         self,
         *,
         record_id: str,
+        max_chars: Optional[int] = None,
+        start_block: Optional[int] = None,
+        query: Optional[str] = None,
+        mode: Optional[models.GetRecordContentMode] = None,
+        start_record: Optional[int] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -43,6 +48,22 @@ class Connector(BaseSDK):
         full content when the search snippet or citation excerpt isn't
         enough to answer the question.
 
+        **Reading part of a long record, or a whole Slack thread:**
+
+        With no query parameters the record is returned up to 140,000
+        characters (a longer one is cut and marked `truncated`), which for a
+        pull request with its diffs or a long document is a large response. Pass any of `maxChars`, `startBlock`, `query`
+        or `mode` for a budgeted read instead: the response stays within
+        `maxChars` and says how to continue (`nextStartBlock`, or
+        `nextStartRecord` for a thread). `query` makes a record too large for
+        the budget show its most relevant blocks first, with the skipped
+        ranges marked. `mode=thread` returns every message of the Slack
+        thread the record belongs to, oldest first, as far as the caller may
+        see them. A Slack record in no single thread (several channel
+        messages in one record, or a message without replies) returns itself,
+        then the replies of each thread its messages started; the first page
+        opens with a bracketed note saying which.
+
         **Permission scoping:**
 
         The requesting user/token must have access to the record; access is
@@ -50,10 +71,24 @@ class Connector(BaseSDK):
         caller with a valid scope but no access to this specific record gets
         a `403`.
 
+        **A connected app with a limit:** the rendered text names nothing
+        outside the limit beside the record. Its `External Parent ID` reads
+        `N/A` for a parent the limit leaves out, and a code file's `Path:`
+        line is left out unless the limit covers the whole app. Linked
+        records, related tables, a deal's orgs and products, and live Jira
+        parent, epic, sub-task and linked-issue lines appear only for
+        records inside the limit. `Web URL` is kept, though it can contain
+        folder names.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
+        :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
+        :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
+        :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
+        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
+        :param start_record: Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -71,6 +106,11 @@ class Connector(BaseSDK):
 
         request = models.GetRecordContentRequest(
             record_id=record_id,
+            max_chars=max_chars,
+            start_block=start_block,
+            query=query,
+            mode=mode,
+            start_record=start_record,
         )
 
         req = self._build_request(
@@ -121,7 +161,7 @@ class Connector(BaseSDK):
             return unmarshal_json_response(
                 models.GetRecordContentResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["401", "403"], "application/json"):
+        if utils.match_response(http_res, ["401", "403", "422"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -144,6 +184,11 @@ class Connector(BaseSDK):
         self,
         *,
         record_id: str,
+        max_chars: Optional[int] = None,
+        start_block: Optional[int] = None,
+        query: Optional[str] = None,
+        mode: Optional[models.GetRecordContentMode] = None,
+        start_record: Optional[int] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -171,6 +216,22 @@ class Connector(BaseSDK):
         full content when the search snippet or citation excerpt isn't
         enough to answer the question.
 
+        **Reading part of a long record, or a whole Slack thread:**
+
+        With no query parameters the record is returned up to 140,000
+        characters (a longer one is cut and marked `truncated`), which for a
+        pull request with its diffs or a long document is a large response. Pass any of `maxChars`, `startBlock`, `query`
+        or `mode` for a budgeted read instead: the response stays within
+        `maxChars` and says how to continue (`nextStartBlock`, or
+        `nextStartRecord` for a thread). `query` makes a record too large for
+        the budget show its most relevant blocks first, with the skipped
+        ranges marked. `mode=thread` returns every message of the Slack
+        thread the record belongs to, oldest first, as far as the caller may
+        see them. A Slack record in no single thread (several channel
+        messages in one record, or a message without replies) returns itself,
+        then the replies of each thread its messages started; the first page
+        opens with a bracketed note saying which.
+
         **Permission scoping:**
 
         The requesting user/token must have access to the record; access is
@@ -178,10 +239,24 @@ class Connector(BaseSDK):
         caller with a valid scope but no access to this specific record gets
         a `403`.
 
+        **A connected app with a limit:** the rendered text names nothing
+        outside the limit beside the record. Its `External Parent ID` reads
+        `N/A` for a parent the limit leaves out, and a code file's `Path:`
+        line is left out unless the limit covers the whole app. Linked
+        records, related tables, a deal's orgs and products, and live Jira
+        parent, epic, sub-task and linked-issue lines appear only for
+        records inside the limit. `Web URL` is kept, though it can contain
+        folder names.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
+        :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
+        :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
+        :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
+        :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
+        :param start_record: Thread mode: start at this record of the thread, the `nextStartRecord` of a previous read. Pass the read's `nextStartBlock` with it.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -199,6 +274,11 @@ class Connector(BaseSDK):
 
         request = models.GetRecordContentRequest(
             record_id=record_id,
+            max_chars=max_chars,
+            start_block=start_block,
+            query=query,
+            mode=mode,
+            start_record=start_record,
         )
 
         req = self._build_request_async(
@@ -249,7 +329,7 @@ class Connector(BaseSDK):
             return unmarshal_json_response(
                 models.GetRecordContentResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["401", "403"], "application/json"):
+        if utils.match_response(http_res, ["401", "403", "422"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -292,9 +372,10 @@ class Connector(BaseSDK):
 
         Call it with no `nodeId` for a flat listing of every record group and
         record the caller can reach, newest first. This is a starting point to
-        pick a node from, not a roster of connected apps — app nodes are never
-        returned in a listing, though an app's `id` is accepted as a `nodeId`
-        and lists that app's record groups. Pass a node's `id` to descend:
+        pick a node from, not a roster of connected apps — app nodes are not
+        returned in a listing (except at the root of a limited connected app,
+        below), though an app's `id` is accepted as a `nodeId` and lists that
+        app's record groups. Pass a node's `id` to descend:
         record groups contain records and folders, and a record contains its
         own children — comments, attachments, sub-tasks — plus a `related`
         section of cross-referenced records, such as the Confluence page linked
@@ -330,7 +411,19 @@ class Connector(BaseSDK):
 
         **Scope:** everything the caller can read, across both connectors and
         Knowledge Base collections. No connector-level filter is applied — the
-        listing is bounded by per-node permissions alone.
+        listing is bounded by per-node permissions, and for a connected app
+        with a limit by that limit too: no row, breadcrumb or related node
+        outside it is returned.
+
+        **A connected app with a limit:** with no `nodeId`, the root depends
+        on what the limit names.
+        - Whole sources (apps or collections) only: the usual flat root,
+        every record group and record in those sources.
+        - Any spaces, folders or files, alone or beside whole sources: one
+        row for each whole source, space (record group), folder and file
+        the limit names, and nothing from inside them. `pagination.total`
+        counts those rows, not the records inside them. `depth` is not
+        applied on this call; pass a row's `id` as `nodeId` to open it.
 
         **Permission scoping:**
 
@@ -345,6 +438,16 @@ class Connector(BaseSDK):
         the caller, it can therefore name ancestors the caller cannot open.
         Treat breadcrumb entries as labels, not as nodes guaranteed to be
         navigable.
+
+        **A connected app with a limit:** the opened record's `context_block`, and each row's
+        `context_summary`, names nothing
+        outside the limit beside the record. Its `External Parent ID` reads
+        `N/A` for a parent the limit leaves out, and a code file's `Path:`
+        line is left out unless the limit covers the whole app. Linked
+        records, related tables, a deal's orgs and products, and live Jira
+        parent, epic, sub-task and linked-issue lines appear only for
+        records inside the limit. `Web URL` is kept, though it can contain
+        folder names.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -478,9 +581,10 @@ class Connector(BaseSDK):
 
         Call it with no `nodeId` for a flat listing of every record group and
         record the caller can reach, newest first. This is a starting point to
-        pick a node from, not a roster of connected apps — app nodes are never
-        returned in a listing, though an app's `id` is accepted as a `nodeId`
-        and lists that app's record groups. Pass a node's `id` to descend:
+        pick a node from, not a roster of connected apps — app nodes are not
+        returned in a listing (except at the root of a limited connected app,
+        below), though an app's `id` is accepted as a `nodeId` and lists that
+        app's record groups. Pass a node's `id` to descend:
         record groups contain records and folders, and a record contains its
         own children — comments, attachments, sub-tasks — plus a `related`
         section of cross-referenced records, such as the Confluence page linked
@@ -516,7 +620,19 @@ class Connector(BaseSDK):
 
         **Scope:** everything the caller can read, across both connectors and
         Knowledge Base collections. No connector-level filter is applied — the
-        listing is bounded by per-node permissions alone.
+        listing is bounded by per-node permissions, and for a connected app
+        with a limit by that limit too: no row, breadcrumb or related node
+        outside it is returned.
+
+        **A connected app with a limit:** with no `nodeId`, the root depends
+        on what the limit names.
+        - Whole sources (apps or collections) only: the usual flat root,
+        every record group and record in those sources.
+        - Any spaces, folders or files, alone or beside whole sources: one
+        row for each whole source, space (record group), folder and file
+        the limit names, and nothing from inside them. `pagination.total`
+        counts those rows, not the records inside them. `depth` is not
+        applied on this call; pass a row's `id` as `nodeId` to open it.
 
         **Permission scoping:**
 
@@ -531,6 +647,16 @@ class Connector(BaseSDK):
         the caller, it can therefore name ancestors the caller cannot open.
         Treat breadcrumb entries as labels, not as nodes guaranteed to be
         navigable.
+
+        **A connected app with a limit:** the opened record's `context_block`, and each row's
+        `context_summary`, names nothing
+        outside the limit beside the record. Its `External Parent ID` reads
+        `N/A` for a parent the limit leaves out, and a code file's `Path:`
+        line is left out unless the limit covers the whole app. Linked
+        records, related tables, a deal's orgs and products, and live Jira
+        parent, epic, sub-task and linked-issue lines appear only for
+        records inside the limit. `Web URL` is kept, though it can contain
+        folder names.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -704,6 +830,15 @@ class Connector(BaseSDK):
         **Scope:** resolution searches every connector the caller can access,
         regardless of any source filter used elsewhere.
 
+        **A connected app with a limit:** each match's `context_block` names nothing
+        outside the limit beside the record. Its `External Parent ID` reads
+        `N/A` for a parent the limit leaves out, and a code file's `Path:`
+        line is left out unless the limit covers the whole app. Linked
+        records, related tables, a deal's orgs and products, and live Jira
+        parent, epic, sub-task and linked-issue lines appear only for
+        records inside the limit. `Web URL` is kept, though it can contain
+        folder names.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -859,6 +994,15 @@ class Connector(BaseSDK):
 
         **Scope:** resolution searches every connector the caller can access,
         regardless of any source filter used elsewhere.
+
+        **A connected app with a limit:** each match's `context_block` names nothing
+        outside the limit beside the record. Its `External Parent ID` reads
+        `N/A` for a parent the limit leaves out, and a code file's `Path:`
+        line is left out unless the limit covers the whole app. Linked
+        records, related tables, a deal's orgs and products, and live Jira
+        parent, epic, sub-task and linked-issue lines appear only for
+        records inside the limit. `Web URL` is kept, though it can contain
+        folder names.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.

@@ -6,9 +6,6 @@ Request to authenticate using specified method.
 - `otp`: `{ otp: "123456" }` (6-digit code)
 - `google`: `"google-id-token-string"`
 - `microsoft`: `{ accessToken: "...", idToken: "..." }`
-- `azureAd`: `{ accessToken: "...", idToken: "..." }`
-- `oauth`: `{ accessToken: "...", idToken: "..." }`
-- `samlSso`: not accepted by `/userAccount/authenticate`, which answers `400`. SAML sign-in runs as a browser redirect: send the browser to `/saml/signIn` instead
 
 
 

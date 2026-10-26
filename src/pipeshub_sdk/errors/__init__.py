@@ -34,8 +34,12 @@ if TYPE_CHECKING:
         GetKnowledgeHubChildNodesInternalServerErrorData,
         GetKnowledgeHubChildNodesNotFoundError,
         GetKnowledgeHubChildNodesNotFoundErrorData,
+        GetKnowledgeHubChildNodesServiceUnavailableError,
+        GetKnowledgeHubChildNodesServiceUnavailableErrorData,
         GetKnowledgeHubChildNodesUnauthorizedError,
         GetKnowledgeHubChildNodesUnauthorizedErrorData,
+        GetKnowledgeHubChildNodesUnprocessableEntityError,
+        GetKnowledgeHubChildNodesUnprocessableEntityErrorData,
     )
     from .getknowledgehubrootnodesop import (
         GetKnowledgeHubRootNodesBadRequestError,
@@ -44,8 +48,12 @@ if TYPE_CHECKING:
         GetKnowledgeHubRootNodesForbiddenErrorData,
         GetKnowledgeHubRootNodesInternalServerError,
         GetKnowledgeHubRootNodesInternalServerErrorData,
+        GetKnowledgeHubRootNodesServiceUnavailableError,
+        GetKnowledgeHubRootNodesServiceUnavailableErrorData,
         GetKnowledgeHubRootNodesUnauthorizedError,
         GetKnowledgeHubRootNodesUnauthorizedErrorData,
+        GetKnowledgeHubRootNodesUnprocessableEntityError,
+        GetKnowledgeHubRootNodesUnprocessableEntityErrorData,
     )
     from .getsearchbyidop import (
         GetSearchByIDBadRequestError,
@@ -59,6 +67,10 @@ if TYPE_CHECKING:
         GetSearchByIDUnauthorizedError,
         GetSearchByIDUnauthorizedErrorData,
     )
+    from .localfsdesktoprefusal_error import (
+        LocalFsDesktopRefusalError,
+        LocalFsDesktopRefusalErrorData,
+    )
     from .no_response_error import NoResponseError
     from .oauthclientmanagementratelimiterror import (
         OAuthClientManagementRateLimitError,
@@ -66,7 +78,12 @@ if TYPE_CHECKING:
     )
     from .oautherrorresponse import OAuthErrorResponse, OAuthErrorResponseData
     from .pipeshubdefaulterror import PipeshubDefaultError
+    from .ratelimiterrorresponse import (
+        RateLimitErrorResponse,
+        RateLimitErrorResponseData,
+    )
     from .responsevalidationerror import ResponseValidationError
+    from .resyncconnectorop import ResyncConnectorConflict, ResyncConnectorConflictUnion
     from .searchhistoryop import (
         SearchHistoryBadRequestError,
         SearchHistoryBadRequestErrorData,
@@ -82,6 +99,7 @@ if TYPE_CHECKING:
         StreamRecordErrorResponse,
         StreamRecordErrorResponseData,
     )
+    from .toggleconnectorop import ToggleConnectorConflict, ToggleConnectorConflictUnion
 
 __all__ = [
     "ApplicationJSONErrorResponse",
@@ -108,16 +126,24 @@ __all__ = [
     "GetKnowledgeHubChildNodesInternalServerErrorData",
     "GetKnowledgeHubChildNodesNotFoundError",
     "GetKnowledgeHubChildNodesNotFoundErrorData",
+    "GetKnowledgeHubChildNodesServiceUnavailableError",
+    "GetKnowledgeHubChildNodesServiceUnavailableErrorData",
     "GetKnowledgeHubChildNodesUnauthorizedError",
     "GetKnowledgeHubChildNodesUnauthorizedErrorData",
+    "GetKnowledgeHubChildNodesUnprocessableEntityError",
+    "GetKnowledgeHubChildNodesUnprocessableEntityErrorData",
     "GetKnowledgeHubRootNodesBadRequestError",
     "GetKnowledgeHubRootNodesBadRequestErrorData",
     "GetKnowledgeHubRootNodesForbiddenError",
     "GetKnowledgeHubRootNodesForbiddenErrorData",
     "GetKnowledgeHubRootNodesInternalServerError",
     "GetKnowledgeHubRootNodesInternalServerErrorData",
+    "GetKnowledgeHubRootNodesServiceUnavailableError",
+    "GetKnowledgeHubRootNodesServiceUnavailableErrorData",
     "GetKnowledgeHubRootNodesUnauthorizedError",
     "GetKnowledgeHubRootNodesUnauthorizedErrorData",
+    "GetKnowledgeHubRootNodesUnprocessableEntityError",
+    "GetKnowledgeHubRootNodesUnprocessableEntityErrorData",
     "GetSearchByIDBadRequestError",
     "GetSearchByIDBadRequestErrorData",
     "GetSearchByIDForbiddenError",
@@ -128,6 +154,8 @@ __all__ = [
     "GetSearchByIDNotFoundErrorData",
     "GetSearchByIDUnauthorizedError",
     "GetSearchByIDUnauthorizedErrorData",
+    "LocalFsDesktopRefusalError",
+    "LocalFsDesktopRefusalErrorData",
     "NoResponseError",
     "OAuthClientManagementRateLimitError",
     "OAuthClientManagementRateLimitErrorData",
@@ -135,7 +163,11 @@ __all__ = [
     "OAuthErrorResponseData",
     "PipeshubDefaultError",
     "PipeshubError",
+    "RateLimitErrorResponse",
+    "RateLimitErrorResponseData",
     "ResponseValidationError",
+    "ResyncConnectorConflict",
+    "ResyncConnectorConflictUnion",
     "SearchHistoryBadRequestError",
     "SearchHistoryBadRequestErrorData",
     "SearchHistoryForbiddenError",
@@ -146,6 +178,8 @@ __all__ = [
     "SearchHistoryUnauthorizedErrorData",
     "StreamRecordErrorResponse",
     "StreamRecordErrorResponseData",
+    "ToggleConnectorConflict",
+    "ToggleConnectorConflictUnion",
 ]
 
 _dynamic_imports: dict[str, str] = {
@@ -171,16 +205,24 @@ _dynamic_imports: dict[str, str] = {
     "GetKnowledgeHubChildNodesInternalServerErrorData": ".getknowledgehubchildnodesop",
     "GetKnowledgeHubChildNodesNotFoundError": ".getknowledgehubchildnodesop",
     "GetKnowledgeHubChildNodesNotFoundErrorData": ".getknowledgehubchildnodesop",
+    "GetKnowledgeHubChildNodesServiceUnavailableError": ".getknowledgehubchildnodesop",
+    "GetKnowledgeHubChildNodesServiceUnavailableErrorData": ".getknowledgehubchildnodesop",
     "GetKnowledgeHubChildNodesUnauthorizedError": ".getknowledgehubchildnodesop",
     "GetKnowledgeHubChildNodesUnauthorizedErrorData": ".getknowledgehubchildnodesop",
+    "GetKnowledgeHubChildNodesUnprocessableEntityError": ".getknowledgehubchildnodesop",
+    "GetKnowledgeHubChildNodesUnprocessableEntityErrorData": ".getknowledgehubchildnodesop",
     "GetKnowledgeHubRootNodesBadRequestError": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesBadRequestErrorData": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesForbiddenError": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesForbiddenErrorData": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesInternalServerError": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesInternalServerErrorData": ".getknowledgehubrootnodesop",
+    "GetKnowledgeHubRootNodesServiceUnavailableError": ".getknowledgehubrootnodesop",
+    "GetKnowledgeHubRootNodesServiceUnavailableErrorData": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesUnauthorizedError": ".getknowledgehubrootnodesop",
     "GetKnowledgeHubRootNodesUnauthorizedErrorData": ".getknowledgehubrootnodesop",
+    "GetKnowledgeHubRootNodesUnprocessableEntityError": ".getknowledgehubrootnodesop",
+    "GetKnowledgeHubRootNodesUnprocessableEntityErrorData": ".getknowledgehubrootnodesop",
     "GetSearchByIDBadRequestError": ".getsearchbyidop",
     "GetSearchByIDBadRequestErrorData": ".getsearchbyidop",
     "GetSearchByIDForbiddenError": ".getsearchbyidop",
@@ -191,13 +233,19 @@ _dynamic_imports: dict[str, str] = {
     "GetSearchByIDNotFoundErrorData": ".getsearchbyidop",
     "GetSearchByIDUnauthorizedError": ".getsearchbyidop",
     "GetSearchByIDUnauthorizedErrorData": ".getsearchbyidop",
+    "LocalFsDesktopRefusalError": ".localfsdesktoprefusal_error",
+    "LocalFsDesktopRefusalErrorData": ".localfsdesktoprefusal_error",
     "NoResponseError": ".no_response_error",
     "OAuthClientManagementRateLimitError": ".oauthclientmanagementratelimiterror",
     "OAuthClientManagementRateLimitErrorData": ".oauthclientmanagementratelimiterror",
     "OAuthErrorResponse": ".oautherrorresponse",
     "OAuthErrorResponseData": ".oautherrorresponse",
     "PipeshubDefaultError": ".pipeshubdefaulterror",
+    "RateLimitErrorResponse": ".ratelimiterrorresponse",
+    "RateLimitErrorResponseData": ".ratelimiterrorresponse",
     "ResponseValidationError": ".responsevalidationerror",
+    "ResyncConnectorConflict": ".resyncconnectorop",
+    "ResyncConnectorConflictUnion": ".resyncconnectorop",
     "SearchHistoryBadRequestError": ".searchhistoryop",
     "SearchHistoryBadRequestErrorData": ".searchhistoryop",
     "SearchHistoryForbiddenError": ".searchhistoryop",
@@ -210,6 +258,8 @@ _dynamic_imports: dict[str, str] = {
     "ForbiddenUnion": ".streamrecordbufferop",
     "StreamRecordErrorResponse": ".streamrecorderrorresponse",
     "StreamRecordErrorResponseData": ".streamrecorderrorresponse",
+    "ToggleConnectorConflict": ".toggleconnectorop",
+    "ToggleConnectorConflictUnion": ".toggleconnectorop",
 }
 
 

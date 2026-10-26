@@ -20,6 +20,7 @@ This is an open enum. Unrecognized values will not fail type checks.
 - `"clickup"`
 - `"confluence"`
 - `"confluencedatacenter"`
+- `"docs"`
 - `"drive"`
 - `"github"`
 - `"gmail"`
@@ -32,6 +33,7 @@ This is an open enum. Unrecognized values will not fail type checks.
 - `"redshift"`
 - `"salesforce"`
 - `"sharepoint"`
+- `"sheets"`
 - `"slack"`
 - `"teams"`
 - `"zoom"`

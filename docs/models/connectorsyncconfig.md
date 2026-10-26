@@ -1,0 +1,13 @@
+# ConnectorSyncConfig
+
+Sync strategy plus connector-specific sync settings, flat: send each field listed under `sync.customFields` in the registry schema by its `name`.
+
+
+## Fields
+
+| Field                                                                                                    | Type                                                                                                     | Required                                                                                                 | Description                                                                                              |
+| -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `selected_strategy`                                                                                      | [Optional[models.ConnectorSyncConfigSelectedStrategy]](../models/connectorsyncconfigselectedstrategy.md) | :heavy_minus_sign:                                                                                       | N/A                                                                                                      |
+| `scheduled_config`                                                                                       | [Optional[models.ConnectorSyncConfigScheduledConfig]](../models/connectorsyncconfigscheduledconfig.md)   | :heavy_minus_sign:                                                                                       | N/A                                                                                                      |
+| `webhook_config`                                                                                         | [Optional[models.ConnectorSyncConfigWebhookConfig]](../models/connectorsyncconfigwebhookconfig.md)       | :heavy_minus_sign:                                                                                       | N/A                                                                                                      |
+| `__pydantic_extra__`                                                                                     | Dict[str, *Any*]                                                                                         | :heavy_minus_sign:                                                                                       | N/A                                                                                                      |

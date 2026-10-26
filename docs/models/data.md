@@ -1,0 +1,12 @@
+# Data
+
+
+## Fields
+
+| Field                                                         | Type                                                          | Required                                                      | Description                                                   | Example                                                       |
+| ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `org_id`                                                      | *str*                                                         | :heavy_check_mark:                                            | N/A                                                           |                                                               |
+| `connector_id`                                                | *str*                                                         | :heavy_check_mark:                                            | N/A                                                           |                                                               |
+| `origin`                                                      | *str*                                                         | :heavy_check_mark:                                            | Where the records come from; `CONNECTOR` for a connector.     | CONNECTOR                                                     |
+| `stats`                                                       | [models.Stats](../models/stats.md)                            | :heavy_check_mark:                                            | N/A                                                           |                                                               |
+| `by_record_type`                                              | List[[models.ByRecordType](../models/byrecordtype.md)]        | :heavy_check_mark:                                            | The same counts per record type; empty before the first sync. |                                                               |

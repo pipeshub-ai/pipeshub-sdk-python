@@ -6,16 +6,13 @@ Authentication method to use
 
 ```python
 from pipeshub_sdk.models import Method
-value: Method = "samlSso"
+value: Method = "otp"
 ```
 
 
 ## Values
 
-- `"samlSso"`
 - `"otp"`
 - `"password"`
 - `"google"`
 - `"microsoft"`
-- `"azureAd"`
-- `"oauth"`

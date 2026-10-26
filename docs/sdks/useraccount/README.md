@@ -73,11 +73,12 @@ with Pipeshub() as pipeshub:
 
 ### Errors
 
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 400                         | application/json            |
-| errors.ErrorResponse        | 500                         | application/json            |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+| Error Type                    | Status Code                   | Content Type                  |
+| ----------------------------- | ----------------------------- | ----------------------------- |
+| errors.ErrorResponse          | 400                           | application/json              |
+| errors.RateLimitErrorResponse | 429                           | application/json              |
+| errors.ErrorResponse          | 500                           | application/json              |
+| errors.PipeshubDefaultError   | 4XX, 5XX                      | \*/\*                         |
 
 ## authenticate
 
@@ -90,10 +91,9 @@ Requires a valid session token from `/initAuth`.
 - `otp`: `{ "credentials": { "otp": "123456" } }` (6-digit code, valid for 10 minutes)
 - `google`: `{ "credentials": "google-id-token-string" }`
 - `microsoft`: `{ "credentials": { "accessToken": "...", "idToken": "..." } }`
-- `azureAd`: `{ "credentials": { "accessToken": "...", "idToken": "..." } }`
-- `oauth`: `{ "credentials": { "accessToken": "...", "idToken": "..." } }`
-- `samlSso`: not accepted here; this endpoint answers `400`. SAML sign-in runs as a browser
-  redirect: send the browser to `/saml/signIn` instead
+
+SAML (`samlSso`), generic OAuth (`oauth`) and Azure AD (`azureAd`) sign-in were removed in 1.0;
+this endpoint answers `400` for them. Azure AD accounts sign in with `microsoft`.
 
 **Multi-Step Response:**
 
@@ -124,7 +124,7 @@ from pipeshub_sdk import Pipeshub
 
 with Pipeshub() as pipeshub:
 
-    res = pipeshub.user_account.authenticate(x_session_token="<value>", method="oauth", credentials={
+    res = pipeshub.user_account.authenticate(x_session_token="<value>", method="microsoft", credentials={
         "password": "o_5N_tt72qMx3WV",
     })
 
@@ -150,11 +150,12 @@ with Pipeshub() as pipeshub:
 
 ### Errors
 
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 400, 401, 404               | application/json            |
-| errors.ErrorResponse        | 500                         | application/json            |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+| Error Type                    | Status Code                   | Content Type                  |
+| ----------------------------- | ----------------------------- | ----------------------------- |
+| errors.ErrorResponse          | 400, 401, 404                 | application/json              |
+| errors.RateLimitErrorResponse | 429                           | application/json              |
+| errors.ErrorResponse          | 500                           | application/json              |
+| errors.PipeshubDefaultError   | 4XX, 5XX                      | \*/\*                         |
 
 ## refresh_token
 
@@ -260,8 +261,9 @@ with Pipeshub(
 
 ### Errors
 
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 400, 401, 404               | application/json            |
-| errors.ErrorResponse        | 500                         | application/json            |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+| Error Type                    | Status Code                   | Content Type                  |
+| ----------------------------- | ----------------------------- | ----------------------------- |
+| errors.ErrorResponse          | 400, 401, 404                 | application/json              |
+| errors.RateLimitErrorResponse | 429                           | application/json              |
+| errors.ErrorResponse          | 500                           | application/json              |
+| errors.PipeshubDefaultError   | 4XX, 5XX                      | \*/\*                         |
