@@ -9,9 +9,9 @@ pip install "pipeshub-sdk>=1.7.0" python-dotenv
 ## Connectors
 
 `connectors/` has one program per connector operation, new in SDK 2.0.0. They sign in with
-**OAuth2 client credentials**: create an OAuth app with the `client_credentials` grant and the
-`connector:*` scopes, then set `PIPESHUB_CLIENT_ID` and `PIPESHUB_CLIENT_SECRET`. The SDK fetches the
-token from `PIPESHUB_TOKEN_URL`, or `${PIPESHUB_BASE_URL}/api/v1/oauth2/token` when that is unset.
+a **personal access token** in `PIPESHUB_BEARER_AUTH`. Use one of an admin with the `connector:*` scopes:
+creating team connectors and OAuth configurations is admin-only, and an OAuth app's client-credentials
+token acts as a service account, which is never an admin.
 
 Each script loads `examples/.env`; variables already set in the environment take precedence.
 
