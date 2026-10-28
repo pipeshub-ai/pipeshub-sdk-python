@@ -1,7 +1,6 @@
 """Finish an OAuth sign-in with the code and state the provider redirected back with.
 
-Env: PIPESHUB_CLIENT_ID, PIPESHUB_CLIENT_SECRET, PIPESHUB_BASE_URL, PIPESHUB_OAUTH_CODE, PIPESHUB_OAUTH_STATE
-(optional PIPESHUB_TOKEN_URL).
+Env: PIPESHUB_BEARER_AUTH, PIPESHUB_BASE_URL, PIPESHUB_OAUTH_CODE, PIPESHUB_OAUTH_STATE.
 """
 
 import os
@@ -19,11 +18,7 @@ oauth_state = os.environ["PIPESHUB_OAUTH_STATE"]
 
 with Pipeshub(
     server_url=server_url,
-    security=models.Security(oauth2=models.SchemeOauth2(
-        client_id=os.environ["PIPESHUB_CLIENT_ID"],
-        client_secret=os.environ["PIPESHUB_CLIENT_SECRET"],
-        token_url=os.environ.get("PIPESHUB_TOKEN_URL") or f"{server_url}/oauth2/token",
-    )),
+    security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
 ) as pipeshub:
     res = pipeshub.connector_o_auth.handle_o_auth_callback(
         code=oauth_code,

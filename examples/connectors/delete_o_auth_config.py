@@ -1,7 +1,6 @@
 """Delete an OAuth app configuration (admin only).
 
-Env: PIPESHUB_CLIENT_ID, PIPESHUB_CLIENT_SECRET, PIPESHUB_BASE_URL, PIPESHUB_CONNECTOR_TYPE, PIPESHUB_OAUTH_CONFIG_ID
-(optional PIPESHUB_TOKEN_URL).
+Env: PIPESHUB_BEARER_AUTH, PIPESHUB_BASE_URL, PIPESHUB_CONNECTOR_TYPE, PIPESHUB_OAUTH_CONFIG_ID.
 """
 
 import os
@@ -19,11 +18,7 @@ config_id = os.environ["PIPESHUB_OAUTH_CONFIG_ID"]
 
 with Pipeshub(
     server_url=server_url,
-    security=models.Security(oauth2=models.SchemeOauth2(
-        client_id=os.environ["PIPESHUB_CLIENT_ID"],
-        client_secret=os.environ["PIPESHUB_CLIENT_SECRET"],
-        token_url=os.environ.get("PIPESHUB_TOKEN_URL") or f"{server_url}/oauth2/token",
-    )),
+    security=models.Security(bearer_auth=os.environ["PIPESHUB_BEARER_AUTH"]),
 ) as pipeshub:
     res = pipeshub.o_auth_configuration.delete_o_auth_config(connector_type=connector_type, config_id=config_id)
     print(res)
