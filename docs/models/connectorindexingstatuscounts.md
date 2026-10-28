@@ -17,4 +17,6 @@ Number of records in each indexing status.
 | `empty`                    | *Optional[int]*            | :heavy_minus_sign:         | N/A                        |
 | `enable_multimodal_models` | *Optional[int]*            | :heavy_minus_sign:         | N/A                        |
 | `queued`                   | *Optional[int]*            | :heavy_minus_sign:         | N/A                        |
+| `skipped`                  | *Optional[int]*            | :heavy_minus_sign:         | N/A                        |
+| `password_protected`       | *Optional[int]*            | :heavy_minus_sign:         | N/A                        |
 | `__pydantic_extra__`       | Dict[str, *int*]           | :heavy_minus_sign:         | N/A                        |

@@ -44,14 +44,23 @@ class Agents(BaseSDK):
 
         The Python backend also understands `isDeleted`, but this gateway route
         does not forward it, so it is not part of the public API contract here.
+        Any other query parameter is ignored, not refused.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param page: 1-based page number.
         :param limit: Maximum number of agents to return in the current page.
-        :param search: Case-insensitive search across agent name, description, and tags. Leading/trailing whitespace is trimmed; blank-after-trim values are rejected.
-        :param sort_by: Backend sort field. Leading/trailing whitespace is trimmed. Common value is `updatedAtTimestamp`.
+        :param search: Case-insensitive search across agent name, description, and tags.
+            Leading/trailing whitespace is trimmed; a blank value is refused with
+            `VALIDATION_ERROR`, and so is a printf-style format specifier (`%s`,
+            `%x`, ...). Markup (HTML tags, `javascript:`, event handlers) is
+            refused with `HTTP_BAD_REQUEST` by the sanitizer every route runs.
+
+        :param sort_by: Backend sort field. Leading/trailing whitespace is trimmed and a blank
+            value is refused. Any other value is accepted. Common value is
+            `updatedAtTimestamp`.
+
         :param sort_order: Sort direction.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -122,7 +131,10 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models_.AgentListResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -169,14 +181,23 @@ class Agents(BaseSDK):
 
         The Python backend also understands `isDeleted`, but this gateway route
         does not forward it, so it is not part of the public API contract here.
+        Any other query parameter is ignored, not refused.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param page: 1-based page number.
         :param limit: Maximum number of agents to return in the current page.
-        :param search: Case-insensitive search across agent name, description, and tags. Leading/trailing whitespace is trimmed; blank-after-trim values are rejected.
-        :param sort_by: Backend sort field. Leading/trailing whitespace is trimmed. Common value is `updatedAtTimestamp`.
+        :param search: Case-insensitive search across agent name, description, and tags.
+            Leading/trailing whitespace is trimmed; a blank value is refused with
+            `VALIDATION_ERROR`, and so is a printf-style format specifier (`%s`,
+            `%x`, ...). Markup (HTML tags, `javascript:`, event handlers) is
+            refused with `HTTP_BAD_REQUEST` by the sanitizer every route runs.
+
+        :param sort_by: Backend sort field. Leading/trailing whitespace is trimmed and a blank
+            value is refused. Any other value is accepted. Common value is
+            `updatedAtTimestamp`.
+
         :param sort_order: Sort direction.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -247,7 +268,10 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models_.AgentListResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -299,6 +323,12 @@ class Agents(BaseSDK):
                 Iterable[models_.AgentSkillAssignmentTypedDict],
             ]
         ] = None,
+        mcp_servers: Optional[
+            Union[
+                Iterable[models_.AgentMcpServerRef],
+                Iterable[models_.AgentMcpServerRefTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
@@ -338,17 +368,19 @@ class Agents(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param name: Agent display name
+        :param name: Agent display name. Surrounding whitespace is trimmed; a blank name is
+            refused with `400` (`VALIDATION_ERROR`, \"Name is required\").
+
         :param description: What the agent does
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
         :param models: Agent model configuration entries. Optional — an agent created without
             any models (an empty array or an omitted field) uses the organization's
-            default LLM at chat time. When at least one model entry IS provided, the
-            gateway requires at least one object entry with `isReasoning: true`.
-            String-only arrays are schema-valid but rejected at runtime with HTTP 400
-            unless the array is empty.
+            default LLM at chat time. A non-empty list must hold at least one object
+            entry with `isReasoning: true`; otherwise the gateway answers `400`
+            (`VALIDATION_ERROR` on `models`, \"At least one reasoning model is
+            required\").
 
         :param tags:
         :param share_with_org: Share agent with the organization
@@ -359,12 +391,19 @@ class Agents(BaseSDK):
             is refused rather than ignored, so a request cannot quietly create
             an agent that searches as its creator. Omit it and the agent
             searches as its creator.
+            Whitespace around it is removed first; 1-128 characters.
 
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
+        :param mcp_servers: MCP server instances attached to the agent. Two entries with the same
+            `typeId` are refused with `400` (`VALIDATION_ERROR` on
+            `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+            The instance is not looked up when the agent is saved.
+
         :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
-            with at least a `provider` field, or `null`.
+            with at least a `provider` field, or `null`. The provider string and
+            `provider` are trimmed; an empty or blank value is refused with `400`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
@@ -411,6 +450,9 @@ class Agents(BaseSDK):
             ),
             skills=utils.get_pydantic_model(
                 skills, Optional[List[models_.AgentSkillAssignment]]
+            ),
+            mcp_servers=utils.get_pydantic_model(
+                mcp_servers, Optional[List[models_.AgentMcpServerRef]]
             ),
             web_search=utils.get_pydantic_model(
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
@@ -466,9 +508,16 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models_.AgentCreateResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -517,6 +566,12 @@ class Agents(BaseSDK):
                 Iterable[models_.AgentSkillAssignmentTypedDict],
             ]
         ] = None,
+        mcp_servers: Optional[
+            Union[
+                Iterable[models_.AgentMcpServerRef],
+                Iterable[models_.AgentMcpServerRefTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
@@ -556,17 +611,19 @@ class Agents(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param name: Agent display name
+        :param name: Agent display name. Surrounding whitespace is trimmed; a blank name is
+            refused with `400` (`VALIDATION_ERROR`, \"Name is required\").
+
         :param description: What the agent does
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
         :param models: Agent model configuration entries. Optional — an agent created without
             any models (an empty array or an omitted field) uses the organization's
-            default LLM at chat time. When at least one model entry IS provided, the
-            gateway requires at least one object entry with `isReasoning: true`.
-            String-only arrays are schema-valid but rejected at runtime with HTTP 400
-            unless the array is empty.
+            default LLM at chat time. A non-empty list must hold at least one object
+            entry with `isReasoning: true`; otherwise the gateway answers `400`
+            (`VALIDATION_ERROR` on `models`, \"At least one reasoning model is
+            required\").
 
         :param tags:
         :param share_with_org: Share agent with the organization
@@ -577,12 +634,19 @@ class Agents(BaseSDK):
             is refused rather than ignored, so a request cannot quietly create
             an agent that searches as its creator. Omit it and the agent
             searches as its creator.
+            Whitespace around it is removed first; 1-128 characters.
 
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Existing skills to assign to the agent
+        :param mcp_servers: MCP server instances attached to the agent. Two entries with the same
+            `typeId` are refused with `400` (`VALIDATION_ERROR` on
+            `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+            The instance is not looked up when the agent is saved.
+
         :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
-            with at least a `provider` field, or `null`.
+            with at least a `provider` field, or `null`. The provider string and
+            `provider` are trimmed; an empty or blank value is refused with `400`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
@@ -629,6 +693,9 @@ class Agents(BaseSDK):
             ),
             skills=utils.get_pydantic_model(
                 skills, Optional[List[models_.AgentSkillAssignment]]
+            ),
+            mcp_servers=utils.get_pydantic_model(
+                mcp_servers, Optional[List[models_.AgentMcpServerRef]]
             ),
             web_search=utils.get_pydantic_model(
                 web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
@@ -684,9 +751,16 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models_.AgentCreateResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -715,7 +789,11 @@ class Agents(BaseSDK):
         **Gateway not-found behavior:**
         Unknown `agentKey`, lookup after soft-delete, and other AI-backend failures
         that return 404 from the Python query service are surfaced by the Node
-        gateway as **HTTP 404** with an `ErrorResponse` body.
+        gateway as **HTTP 404** with an `ErrorResponse` body. An agent the caller
+        has no access to (another user's agent that is not shared) is also a
+        `404`, not a `403`.
+
+        The route reads no query parameter; any that is sent is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -823,7 +901,11 @@ class Agents(BaseSDK):
         **Gateway not-found behavior:**
         Unknown `agentKey`, lookup after soft-delete, and other AI-backend failures
         that return 404 from the Python query service are surfaced by the Node
-        gateway as **HTTP 404** with an `ErrorResponse` body.
+        gateway as **HTTP 404** with an `ErrorResponse` body. An agent the caller
+        has no access to (another user's agent that is not shared) is also a
+        `404`, not a `403`.
+
+        The route reads no query parameter; any that is sent is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -952,6 +1034,12 @@ class Agents(BaseSDK):
                 Iterable[models_.AgentSkillAssignmentTypedDict],
             ]
         ] = None,
+        mcp_servers: Optional[
+            Union[
+                Iterable[models_.AgentMcpServerRef],
+                Iterable[models_.AgentMcpServerRefTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
@@ -977,7 +1065,9 @@ class Agents(BaseSDK):
         The Node gateway validates the request body via Zod middleware before
         forwarding to the Python agent service. The `agentKey` path param and
         the request body are both validated. Query parameters are ignored by
-        the controller.
+        the controller, and body fields the validator does not know are dropped
+        rather than refused. The body may be omitted: an empty update succeeds
+        and changes nothing.
 
         **Update semantics**
 
@@ -1003,16 +1093,18 @@ class Agents(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key: Unique agent identifier
-        :param name: Agent display name
+        :param name: Agent display name. Surrounding whitespace is trimmed; a blank name is
+            refused with `400` (`VALIDATION_ERROR`).
+
         :param description: What the agent does
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
         :param models: Agent model configuration entries. Optional. An empty array clears the
             agent's models so it falls back to the organization's default LLM.
-            When a non-empty array is present, the Zod middleware requires at
-            least one object entry with `isReasoning: true`. String-only arrays
-            are schema-valid but rejected at runtime with HTTP 400 unless empty.
+            A non-empty list must hold at least one object entry with
+            `isReasoning: true`; otherwise the gateway answers `400`
+            (`VALIDATION_ERROR` on `models`).
 
         :param tags:
         :param share_with_org: Share agent with the organization
@@ -1023,14 +1115,20 @@ class Agents(BaseSDK):
             request may convert an agent and bind it. Null is accepted on any
             agent and clears the binding, going back to searching as the
             agent's creator.
+            Whitespace around it is removed first; 1-128 characters.
 
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Complete replacement set of skills assigned to the agent. Send
             an empty array to clear all skill assignments.
 
+        :param mcp_servers: MCP server instances attached to the agent. Two entries with the same
+            `typeId` are refused with `400` (`VALIDATION_ERROR` on
+            `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+
         :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
-            with at least a `provider` field, or `null`.
+            with at least a `provider` field, or `null`. The provider string and
+            `provider` are trimmed; an empty or blank value is refused with `400`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
@@ -1080,6 +1178,9 @@ class Agents(BaseSDK):
                 skills=utils.get_pydantic_model(
                     skills, Optional[List[models_.AgentSkillAssignment]]
                 ),
+                mcp_servers=utils.get_pydantic_model(
+                    mcp_servers, Optional[List[models_.AgentMcpServerRef]]
+                ),
                 web_search=utils.get_pydantic_model(
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
@@ -1097,7 +1198,7 @@ class Agents(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -1105,7 +1206,11 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models_.AgentUpdateRequest
+                request.body if request is not None else None,
+                False,
+                True,
+                "json",
+                Optional[models_.AgentUpdateRequest],
             ),
             allow_empty_value=None,
             allowed_fields=["bearer_auth", "oauth2"],
@@ -1198,6 +1303,12 @@ class Agents(BaseSDK):
                 Iterable[models_.AgentSkillAssignmentTypedDict],
             ]
         ] = None,
+        mcp_servers: Optional[
+            Union[
+                Iterable[models_.AgentMcpServerRef],
+                Iterable[models_.AgentMcpServerRefTypedDict],
+            ]
+        ] = None,
         web_search: OptionalNullable[
             Union[
                 models_.AgentCreateWebSearchUnion,
@@ -1223,7 +1334,9 @@ class Agents(BaseSDK):
         The Node gateway validates the request body via Zod middleware before
         forwarding to the Python agent service. The `agentKey` path param and
         the request body are both validated. Query parameters are ignored by
-        the controller.
+        the controller, and body fields the validator does not know are dropped
+        rather than refused. The body may be omitted: an empty update succeeds
+        and changes nothing.
 
         **Update semantics**
 
@@ -1249,16 +1362,18 @@ class Agents(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key: Unique agent identifier
-        :param name: Agent display name
+        :param name: Agent display name. Surrounding whitespace is trimmed; a blank name is
+            refused with `400` (`VALIDATION_ERROR`).
+
         :param description: What the agent does
         :param start_message: Initial greeting shown when conversation starts
         :param system_prompt: System instructions for the agent
         :param instructions: Additional agent execution instructions
         :param models: Agent model configuration entries. Optional. An empty array clears the
             agent's models so it falls back to the organization's default LLM.
-            When a non-empty array is present, the Zod middleware requires at
-            least one object entry with `isReasoning: true`. String-only arrays
-            are schema-valid but rejected at runtime with HTTP 400 unless empty.
+            A non-empty list must hold at least one object entry with
+            `isReasoning: true`; otherwise the gateway answers `400`
+            (`VALIDATION_ERROR` on `models`).
 
         :param tags:
         :param share_with_org: Share agent with the organization
@@ -1269,14 +1384,20 @@ class Agents(BaseSDK):
             request may convert an agent and bind it. Null is accepted on any
             agent and clears the binding, going back to searching as the
             agent's creator.
+            Whitespace around it is removed first; 1-128 characters.
 
         :param toolsets: Toolsets attached to the agent (instance-aware)
         :param knowledge: Knowledge sources connected to the agent
         :param skills: Complete replacement set of skills assigned to the agent. Send
             an empty array to clear all skill assignments.
 
+        :param mcp_servers: MCP server instances attached to the agent. Two entries with the same
+            `typeId` are refused with `400` (`VALIDATION_ERROR` on
+            `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+
         :param web_search: Web-search attachment for an agent. Accepts a provider string, an object
-            with at least a `provider` field, or `null`.
+            with at least a `provider` field, or `null`. The provider string and
+            `provider` are trimmed; an empty or blank value is refused with `400`.
 
         :param default_reasoning_effort: Agent-level reasoning effort used when a chat request omits its own.
         :param api_toolset_tools: API toolset operations the agent may call, each `<toolsetId>:<operation>`
@@ -1326,6 +1447,9 @@ class Agents(BaseSDK):
                 skills=utils.get_pydantic_model(
                     skills, Optional[List[models_.AgentSkillAssignment]]
                 ),
+                mcp_servers=utils.get_pydantic_model(
+                    mcp_servers, Optional[List[models_.AgentMcpServerRef]]
+                ),
                 web_search=utils.get_pydantic_model(
                     web_search, OptionalNullable[models_.AgentCreateWebSearchUnion]
                 ),
@@ -1343,7 +1467,7 @@ class Agents(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -1351,7 +1475,11 @@ class Agents(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models_.AgentUpdateRequest
+                request.body if request is not None else None,
+                False,
+                True,
+                "json",
+                Optional[models_.AgentUpdateRequest],
             ),
             allow_empty_value=None,
             allowed_fields=["bearer_auth", "oauth2"],
@@ -1432,8 +1560,11 @@ class Agents(BaseSDK):
         All conversations with this agent will become inaccessible.
 
         **Gateway not-found behavior:**
-        Unknown `agentKey`, deleting an already-deleted agent, and `GET /agents/{agentKey}`
+        Unknown `agentKey`, deleting an already-deleted agent, deleting another
+        user's agent that is not shared with the caller, and `GET /agents/{agentKey}`
         after delete return **HTTP 404** with an `ErrorResponse` body.
+
+        The route reads neither a query nor a body; anything sent is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1504,7 +1635,9 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models_.AgentDeleteResponse, http_res)
-        if utils.match_response(http_res, ["401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -1548,8 +1681,11 @@ class Agents(BaseSDK):
         All conversations with this agent will become inaccessible.
 
         **Gateway not-found behavior:**
-        Unknown `agentKey`, deleting an already-deleted agent, and `GET /agents/{agentKey}`
+        Unknown `agentKey`, deleting an already-deleted agent, deleting another
+        user's agent that is not shared with the caller, and `GET /agents/{agentKey}`
         after delete return **HTTP 404** with an `ErrorResponse` body.
+
+        The route reads neither a query nor a body; anything sent is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1620,7 +1756,9 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models_.AgentDeleteResponse, http_res)
-        if utils.match_response(http_res, ["401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -1658,8 +1796,13 @@ class Agents(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param agent_page:
-        :param agent_limit:
+        :param agent_page: 1-based page over agent groups. Values below 1 are read as 1 and a
+            non-numeric value as the default; neither is refused.
+
+        :param agent_limit: Agent groups per page. Values are clamped to 1..100 and a non-numeric
+            value is read as the default; neither is refused. Each group carries at
+            most 5 conversations.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1723,11 +1866,18 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.AgentArchivedGroupsResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1759,8 +1909,13 @@ class Agents(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param agent_page:
-        :param agent_limit:
+        :param agent_page: 1-based page over agent groups. Values below 1 are read as 1 and a
+            non-numeric value as the default; neither is refused.
+
+        :param agent_limit: Agent groups per page. Values are clamped to 1..100 and a non-numeric
+            value is read as the default; neither is refused. Each group carries at
+            most 5 conversations.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1824,11 +1979,18 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.AgentArchivedGroupsResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1847,11 +2009,11 @@ class Agents(BaseSDK):
         agent_key: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        sort_by: Optional[models_.ListAgentConversationArchivesSortBy] = None,
-        sort_order: Optional[models_.ListAgentConversationArchivesSortOrder] = None,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
         search: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1859,18 +2021,46 @@ class Agents(BaseSDK):
     ) -> models_.AgentArchivedConversationListResponse:
         r"""List archived conversations for an agent
 
-        Paginated list of archived conversations for the given agent key.
+        Paginated list of the caller's archived conversations for the given agent
+        key. The `agentKey` is matched against the stored conversations only; the
+        agent itself is not looked up.
+
+        The query is strict: a parameter not listed here is refused with `400`
+        (`VALIDATION_ERROR` on `query`, \"These fields aren't accepted here\").
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key:
-        :param page:
-        :param limit:
-        :param sort_by:
-        :param sort_order:
-        :param search:
-        :param start_date:
-        :param end_date:
+        :param page: 1-based page number. A value below 1 or one that is not a number is
+            read as `1`; neither is refused.
+
+        :param limit: Page size. A value outside 1..100 or one that is not a number is read
+            as `20`; neither is refused.
+
+        :param sort_by: Sort field. Supported values are `createdAt`, `lastActivityAt` and
+            `title`; any other value is accepted and ignored (the list is then
+            sorted by `lastActivityAt`).
+
+        :param sort_order: Sort direction, `asc` or `desc`; any other value is accepted and
+            ignored (descending order).
+
+        :param search: Case-insensitive search over the conversation title and message
+            content. A printf-style format specifier (`%s`, `%x`, ...) is refused
+            with `VALIDATION_ERROR`; markup (HTML tags, `javascript:`, event
+            handlers) is refused with `HTTP_BAD_REQUEST` by the sanitizer every
+            route runs.
+
+        :param start_date: Inclusive lower bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026` or `2026/05/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
+        :param end_date: Inclusive upper bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026` or `2026/05/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1945,10 +2135,13 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentArchivedConversationListResponse, http_res
             )
-        if utils.match_response(http_res, "400", "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1967,11 +2160,11 @@ class Agents(BaseSDK):
         agent_key: str,
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
-        sort_by: Optional[models_.ListAgentConversationArchivesSortBy] = None,
-        sort_order: Optional[models_.ListAgentConversationArchivesSortOrder] = None,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
         search: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1979,18 +2172,46 @@ class Agents(BaseSDK):
     ) -> models_.AgentArchivedConversationListResponse:
         r"""List archived conversations for an agent
 
-        Paginated list of archived conversations for the given agent key.
+        Paginated list of the caller's archived conversations for the given agent
+        key. The `agentKey` is matched against the stored conversations only; the
+        agent itself is not looked up.
+
+        The query is strict: a parameter not listed here is refused with `400`
+        (`VALIDATION_ERROR` on `query`, \"These fields aren't accepted here\").
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key:
-        :param page:
-        :param limit:
-        :param sort_by:
-        :param sort_order:
-        :param search:
-        :param start_date:
-        :param end_date:
+        :param page: 1-based page number. A value below 1 or one that is not a number is
+            read as `1`; neither is refused.
+
+        :param limit: Page size. A value outside 1..100 or one that is not a number is read
+            as `20`; neither is refused.
+
+        :param sort_by: Sort field. Supported values are `createdAt`, `lastActivityAt` and
+            `title`; any other value is accepted and ignored (the list is then
+            sorted by `lastActivityAt`).
+
+        :param sort_order: Sort direction, `asc` or `desc`; any other value is accepted and
+            ignored (descending order).
+
+        :param search: Case-insensitive search over the conversation title and message
+            content. A printf-style format specifier (`%s`, `%x`, ...) is refused
+            with `VALIDATION_ERROR`; markup (HTML tags, `javascript:`, event
+            handlers) is refused with `HTTP_BAD_REQUEST` by the sanitizer every
+            route runs.
+
+        :param start_date: Inclusive lower bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026` or `2026/05/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
+        :param end_date: Inclusive upper bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026` or `2026/05/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2065,10 +2286,13 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentArchivedConversationListResponse, http_res
             )
-        if utils.match_response(http_res, "400", "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2097,9 +2321,9 @@ class Agents(BaseSDK):
     ) -> models_.ChatAttachmentUploadResponse:
         r"""Upload agent chat attachments
 
-        Multipart upload of PDF, JPEG, or PNG files for agent chat. Same limits as assistant
-        chat (`POST /conversations/attachments/upload`): up to 10 files, 5 MiB each. Proxies to
-        the AI backend. Optional `conversationId` associates uploads with an existing agent thread.
+        Multipart upload of chat attachment files (the MIME types listed on `files`) for
+        agent chat: up to 10 files, 5 MiB each. Proxies to the AI backend. Optional
+        `conversationId` associates uploads with an existing agent thread.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2184,16 +2408,31 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.ChatAttachmentUploadResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.UploadAgentConversationChatAttachmentsUnprocessableEntityErrorData,
+                http_res,
+            )
+            raise errors.UploadAgentConversationChatAttachmentsUnprocessableEntityError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2217,9 +2456,9 @@ class Agents(BaseSDK):
     ) -> models_.ChatAttachmentUploadResponse:
         r"""Upload agent chat attachments
 
-        Multipart upload of PDF, JPEG, or PNG files for agent chat. Same limits as assistant
-        chat (`POST /conversations/attachments/upload`): up to 10 files, 5 MiB each. Proxies to
-        the AI backend. Optional `conversationId` associates uploads with an existing agent thread.
+        Multipart upload of chat attachment files (the MIME types listed on `files`) for
+        agent chat: up to 10 files, 5 MiB each. Proxies to the AI backend. Optional
+        `conversationId` associates uploads with an existing agent thread.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2304,16 +2543,31 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.ChatAttachmentUploadResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "422", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.UploadAgentConversationChatAttachmentsUnprocessableEntityErrorData,
+                http_res,
+            )
+            raise errors.UploadAgentConversationChatAttachmentsUnprocessableEntityError(
+                response_data, http_res
+            )
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2413,15 +2667,13 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "204", "*"):
             return
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.DeleteAgentConversationChatAttachmentBadRequestErrorData,
-                http_res,
-            )
-            raise errors.DeleteAgentConversationChatAttachmentBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["404", "4XX"], "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2528,15 +2780,13 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "204", "*"):
             return
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.DeleteAgentConversationChatAttachmentBadRequestErrorData,
-                http_res,
-            )
-            raise errors.DeleteAgentConversationChatAttachmentBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["404", "4XX"], "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2590,6 +2840,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentStreamCreateConversationRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2633,12 +2886,17 @@ class Agents(BaseSDK):
             least viewer access to. Same fallback/merge semantics as
             `POST /conversations/create`. Ignored on follow-up turns — the
             session row is the source of truth once the conversation exists.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
-            default model.
+            default model. A key that names no configured model is not refused:
+            the turn runs on the organization's default model and the unknown
+            key is still stored in the conversation's `modelInfo`.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -2677,6 +2935,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2724,6 +2985,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -2778,6 +3040,7 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -2787,7 +3050,21 @@ class Agents(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2842,6 +3119,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentStreamCreateConversationRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2885,12 +3165,17 @@ class Agents(BaseSDK):
             least viewer access to. Same fallback/merge semantics as
             `POST /conversations/create`. Ignored on follow-up turns — the
             session row is the source of truth once the conversation exists.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
-            default model.
+            default model. A key that names no configured model is not refused:
+            the turn runs on the organization's default model and the unknown
+            key is still stored in the conversation's `modelInfo`.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -2929,6 +3214,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2976,6 +3264,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -3030,6 +3319,7 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -3039,7 +3329,21 @@ class Agents(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3090,6 +3394,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentAddMessageStreamRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3128,7 +3435,8 @@ class Agents(BaseSDK):
             record id returned from the agent attachment upload endpoint.
 
         :param model_key: AI model configuration id override for this turn. Omit to use the
-            agent's default model.
+            agent's default model. A key that names no configured model is not
+            refused: the turn runs on the organization's default model.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -3167,6 +3475,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3212,6 +3523,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -3262,6 +3574,7 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -3271,7 +3584,19 @@ class Agents(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3322,6 +3647,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentAddMessageStreamRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3360,7 +3688,8 @@ class Agents(BaseSDK):
             record id returned from the agent attachment upload endpoint.
 
         :param model_key: AI model configuration id override for this turn. Omit to use the
-            agent's default model.
+            agent's default model. A key that names no configured model is not
+            refused: the turn runs on the organization's default model.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -3399,6 +3728,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3444,6 +3776,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -3494,6 +3827,7 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -3503,7 +3837,19 @@ class Agents(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3538,6 +3884,9 @@ class Agents(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentRegenerateRequestReasoningEffort
+        ] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[Iterable[str]] = None,
@@ -3647,9 +3996,11 @@ class Agents(BaseSDK):
             the app sends them (`User selections:` followed by one
             `N. \"question\" → answer` line each). When present, the turn is
             re-run with these answers instead of the saved ones, and they are
-            saved in their place. Rejected with 400 when the reply being
-            regenerated did not follow a question card, or when the request
-            also edits the question (`query` or `attachments`).
+            saved in their place. Over 8000 characters, or text not starting with
+            `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+            that did not follow a question card, or a request that also edits
+            the question (`query` or `attachments`), is refused after the stream
+            opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -3657,6 +4008,9 @@ class Agents(BaseSDK):
 
         :param model_name: Provider model name (e.g. the underlying LLM identifier).
         :param model_friendly_name: Friendly display name of the selected model.
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
+
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
 
@@ -3725,6 +4079,7 @@ class Agents(BaseSDK):
                 model_name=model_name,
                 model_friendly_name=model_friendly_name,
                 chat_mode=chat_mode,
+                reasoning_effort=reasoning_effort,
                 timezone=timezone,
                 current_time=current_time,
                 tools=utils.unmarshal(tools, Optional[List[str]]),
@@ -3786,6 +4141,7 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -3795,7 +4151,19 @@ class Agents(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3830,6 +4198,9 @@ class Agents(BaseSDK):
         model_key: Optional[str] = None,
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentRegenerateRequestReasoningEffort
+        ] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[Iterable[str]] = None,
@@ -3939,9 +4310,11 @@ class Agents(BaseSDK):
             the app sends them (`User selections:` followed by one
             `N. \"question\" → answer` line each). When present, the turn is
             re-run with these answers instead of the saved ones, and they are
-            saved in their place. Rejected with 400 when the reply being
-            regenerated did not follow a question card, or when the request
-            also edits the question (`query` or `attachments`).
+            saved in their place. Over 8000 characters, or text not starting with
+            `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+            that did not follow a question card, or a request that also edits
+            the question (`query` or `attachments`), is refused after the stream
+            opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -3949,6 +4322,9 @@ class Agents(BaseSDK):
 
         :param model_name: Provider model name (e.g. the underlying LLM identifier).
         :param model_friendly_name: Friendly display name of the selected model.
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
+
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
 
@@ -4017,6 +4393,7 @@ class Agents(BaseSDK):
                 model_name=model_name,
                 model_friendly_name=model_friendly_name,
                 chat_mode=chat_mode,
+                reasoning_effort=reasoning_effort,
                 timezone=timezone,
                 current_time=current_time,
                 tools=utils.unmarshal(tools, Optional[List[str]]),
@@ -4078,6 +4455,7 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -4087,7 +4465,19 @@ class Agents(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4192,9 +4582,18 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models_.ForkConversationResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4296,9 +4695,18 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models_.ForkConversationResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4331,8 +4739,16 @@ class Agents(BaseSDK):
         Same synchronous JSON ack contract as the assistant
         `POST /conversations/{conversationId}/cancel` — both forward to the
         same backend cancellation endpoint, since the run registry is keyed
-        by `runId` alone. `{ cancelled: false }` covers a `runId` that
-        already finished or was never registered.
+        by `runId` alone.
+
+        `cancelled` reports whether a stop request was issued, not whether a
+        run was actually stopped. With the default shared (key-value backed)
+        run registry, a `runId` that the answering worker does not hold is
+        published for whichever worker owns it, and the answer is
+        `{ cancelled: true }` even when the run already finished or was
+        never registered. `{ cancelled: false }` is returned for such a
+        `runId` only when the registry is in-process, or when the stop
+        request could not be published.
 
         `runId` must belong to a run started on THIS `conversationId` — a
         `runId` that exists but was registered under a different
@@ -4344,7 +4760,9 @@ class Agents(BaseSDK):
 
         :param agent_key: Stable key identifying the agent that owns this conversation.
         :param conversation_id: ID of the agent conversation to cancel a run for.
-        :param run_id: The `runId` sent when the stream was started.
+        :param run_id: The `runId` sent when the stream was started. Anything but a
+            UUID string is refused with `VALIDATION_ERROR`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4418,11 +4836,20 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.CancelAgentConversationStreamResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4455,8 +4882,16 @@ class Agents(BaseSDK):
         Same synchronous JSON ack contract as the assistant
         `POST /conversations/{conversationId}/cancel` — both forward to the
         same backend cancellation endpoint, since the run registry is keyed
-        by `runId` alone. `{ cancelled: false }` covers a `runId` that
-        already finished or was never registered.
+        by `runId` alone.
+
+        `cancelled` reports whether a stop request was issued, not whether a
+        run was actually stopped. With the default shared (key-value backed)
+        run registry, a `runId` that the answering worker does not hold is
+        published for whichever worker owns it, and the answer is
+        `{ cancelled: true }` even when the run already finished or was
+        never registered. `{ cancelled: false }` is returned for such a
+        `runId` only when the registry is in-process, or when the stop
+        request could not be published.
 
         `runId` must belong to a run started on THIS `conversationId` — a
         `runId` that exists but was registered under a different
@@ -4468,7 +4903,9 @@ class Agents(BaseSDK):
 
         :param agent_key: Stable key identifying the agent that owns this conversation.
         :param conversation_id: ID of the agent conversation to cancel a run for.
-        :param run_id: The `runId` sent when the stream was started.
+        :param run_id: The `runId` sent when the stream was started. Anything but a
+            UUID string is refused with `VALIDATION_ERROR`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4542,11 +4979,20 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.CancelAgentConversationStreamResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4673,16 +5119,25 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.MessageFeedbackUpdateResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4804,16 +5259,25 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.MessageFeedbackUpdateResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4856,6 +5320,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentAddMessageRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4913,7 +5380,8 @@ class Agents(BaseSDK):
             route.
 
         :param model_key: AI model configuration id override for this turn. Omit to use the
-            agent's default model.
+            agent's default model. A key that names no configured model is not
+            refused: the turn runs on the organization's default model.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -4952,6 +5420,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -4997,6 +5468,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -5049,13 +5521,15 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return models_.AddAgentConversationMessageResponse(
-                result=unmarshal_json_response(models_.AddMessageResponse, http_res),
+                result=unmarshal_json_response(
+                    models_.AgentAddMessageResponse, http_res
+                ),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, ["400", "404"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, "424", "application/json"):
+        if utils.match_response(http_res, ["404", "424"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["413", "422", "429"], "*"):
@@ -5063,10 +5537,10 @@ class Agents(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5114,6 +5588,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentAddMessageRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -5171,7 +5648,8 @@ class Agents(BaseSDK):
             route.
 
         :param model_key: AI model configuration id override for this turn. Omit to use the
-            agent's default model.
+            agent's default model. A key that names no configured model is not
+            refused: the turn runs on the organization's default model.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -5210,6 +5688,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -5255,6 +5736,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -5307,13 +5789,15 @@ class Agents(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return models_.AddAgentConversationMessageResponse(
-                result=unmarshal_json_response(models_.AddMessageResponse, http_res),
+                result=unmarshal_json_response(
+                    models_.AgentAddMessageResponse, http_res
+                ),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, ["400", "404"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, "424", "application/json"):
+        if utils.match_response(http_res, ["404", "424"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["413", "422", "429"], "*"):
@@ -5321,10 +5805,10 @@ class Agents(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5349,7 +5833,9 @@ class Agents(BaseSDK):
     ) -> models_.AgentConversationArchiveResponse:
         r"""Archive an agent conversation
 
-        Marks the conversation as archived for the authenticated owner.
+        Marks the conversation as archived for the authenticated owner. The route
+        reads no query parameter and no body; anything sent is ignored.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -5423,7 +5909,12 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationArchiveResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -5451,7 +5942,9 @@ class Agents(BaseSDK):
     ) -> models_.AgentConversationArchiveResponse:
         r"""Archive an agent conversation
 
-        Marks the conversation as archived for the authenticated owner.
+        Marks the conversation as archived for the authenticated owner. The route
+        reads no query parameter and no body; anything sent is ignored.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -5525,7 +6018,12 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationArchiveResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -5553,7 +6051,9 @@ class Agents(BaseSDK):
     ) -> models_.AgentConversationUnarchiveResponse:
         r"""Unarchive an agent conversation
 
-        Restores an archived agent conversation to the active list.
+        Restores an archived agent conversation to the active list. The route
+        reads no query parameter and no body; anything sent is ignored.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -5627,7 +6127,12 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationUnarchiveResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -5655,7 +6160,9 @@ class Agents(BaseSDK):
     ) -> models_.AgentConversationUnarchiveResponse:
         r"""Unarchive an agent conversation
 
-        Restores an archived agent conversation to the active list.
+        Restores an archived agent conversation to the active list. The route
+        reads no query parameter and no body; anything sent is ignored.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -5729,7 +6236,12 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationUnarchiveResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -5763,17 +6275,19 @@ class Agents(BaseSDK):
         The controller looks up the conversation by `_id`, `orgId`, `userId`,
         `agentKey`, and `isDeleted: false`.
 
-        The request body uses the shared title validator (`1..200` chars), and
-        the controller trims the incoming title before saving it. A whitespace-only
-        title can therefore still return HTTP 400 even if the raw string is
-        non-empty.
+        The request body uses the shared title validator (`1..200` chars) and the
+        title is trimmed before it is saved; a whitespace-only title is refused
+        with `400` (`VALIDATION_ERROR`). Unknown body fields are dropped and query
+        parameters are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key:
         :param conversation_id:
-        :param title: New title for the conversation
+        :param title: New title for the conversation. Surrounding whitespace is trimmed; a
+            blank title is refused.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -5852,7 +6366,12 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationTitleUpdateResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -5886,17 +6405,19 @@ class Agents(BaseSDK):
         The controller looks up the conversation by `_id`, `orgId`, `userId`,
         `agentKey`, and `isDeleted: false`.
 
-        The request body uses the shared title validator (`1..200` chars), and
-        the controller trims the incoming title before saving it. A whitespace-only
-        title can therefore still return HTTP 400 even if the raw string is
-        non-empty.
+        The request body uses the shared title validator (`1..200` chars) and the
+        title is trimmed before it is saved; a whitespace-only title is refused
+        with `400` (`VALIDATION_ERROR`). Unknown body fields are dropped and query
+        parameters are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param agent_key:
         :param conversation_id:
-        :param title: New title for the conversation
+        :param title: New title for the conversation. Surrounding whitespace is trimmed; a
+            blank title is refused.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -5975,7 +6496,12 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationTitleUpdateResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -6094,7 +6620,7 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationDeleteResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -6216,7 +6742,7 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationDeleteResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -6243,9 +6769,9 @@ class Agents(BaseSDK):
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
         sort_by: Optional[models_.GetAgentConversationByIDSortBy] = "createdAt",
-        sort_order: Optional[models_.GetAgentConversationByIDSortOrder] = "desc",
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        sort_order: Optional[str] = "desc",
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
         message_type: Optional[models_.GetAgentConversationByIDMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6273,10 +6799,20 @@ class Agents(BaseSDK):
         :param page: Page number for message pagination (1 = most recent batch)
         :param limit: Number of messages per page
         :param sort_by: Field to sort messages by
-        :param sort_order: Sort direction
-        :param start_date: Filter messages created on or after this date
-        :param end_date: Filter messages created on or before this date
-        :param message_type: Filter messages by type
+        :param sort_order: Sort direction. `asc` sorts ascending; any other value, including
+            an unrecognised one, is read as `desc` and is not refused.
+
+        :param start_date: Filter messages created on or after this date, as an ISO 8601 date
+            or date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2020` or `2999/01/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
+        :param end_date: Filter messages created on or before this date, as an ISO 8601 date
+            or date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2020` or `2999/01/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
+        :param message_type: Filter messages by type. An empty value is read as not sent.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -6347,11 +6883,20 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.AgentConversationDetailResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -6372,9 +6917,9 @@ class Agents(BaseSDK):
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
         sort_by: Optional[models_.GetAgentConversationByIDSortBy] = "createdAt",
-        sort_order: Optional[models_.GetAgentConversationByIDSortOrder] = "desc",
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        sort_order: Optional[str] = "desc",
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
         message_type: Optional[models_.GetAgentConversationByIDMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -6402,10 +6947,20 @@ class Agents(BaseSDK):
         :param page: Page number for message pagination (1 = most recent batch)
         :param limit: Number of messages per page
         :param sort_by: Field to sort messages by
-        :param sort_order: Sort direction
-        :param start_date: Filter messages created on or after this date
-        :param end_date: Filter messages created on or before this date
-        :param message_type: Filter messages by type
+        :param sort_order: Sort direction. `asc` sorts ascending; any other value, including
+            an unrecognised one, is read as `desc` and is not refused.
+
+        :param start_date: Filter messages created on or after this date, as an ISO 8601 date
+            or date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2020` or `2999/01/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
+        :param end_date: Filter messages created on or before this date, as an ISO 8601 date
+            or date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2020` or `2999/01/01`); one it
+            cannot parse returns HTTP 400. An empty value is read as not sent.
+
+        :param message_type: Filter messages by type. An empty value is read as not sent.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -6476,11 +7031,20 @@ class Agents(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models_.AgentConversationDetailResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -6537,14 +7101,20 @@ class Agents(BaseSDK):
             descending order.
 
         :param search: Case-insensitive search term applied to conversation `title` and
-            `messages.content`. Maximum length is 1000 characters. HTML/XSS
-            payloads and format specifiers are rejected.
+            `messages.content`. Maximum length is 1000 characters. A printf-style
+            format specifier (`%s`, `%x`, ...) is refused with `VALIDATION_ERROR`;
+            markup (HTML tags, `javascript:`, event handlers) is refused with
+            `HTTP_BAD_REQUEST` by the sanitizer every route runs.
 
-        :param start_date: Inclusive lower bound on `createdAt`. The handler accepts any
-            JavaScript-parseable date string; invalid values return HTTP 400.
+        :param start_date: Inclusive lower bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026`); one it cannot parse returns
+            HTTP 400.
 
-        :param end_date: Inclusive upper bound on `createdAt`. The handler accepts any
-            JavaScript-parseable date string; invalid values return HTTP 400.
+        :param end_date: Inclusive upper bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026`); one it cannot parse returns
+            HTTP 400.
 
         :param status: Optional status filter applied to the `sharedWithMeConversations`
             branch of the response. The main `conversations` list ignores this
@@ -6556,7 +7126,7 @@ class Agents(BaseSDK):
 
         :param project_id: Restrict results to a single project. Pass a project's `id`, or
             the literal string `unassigned` to list agent conversations with
-            no `projectId`.
+            no `projectId`. Anything else is refused with HTTP 400.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -6635,7 +7205,10 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationListResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -6695,14 +7268,20 @@ class Agents(BaseSDK):
             descending order.
 
         :param search: Case-insensitive search term applied to conversation `title` and
-            `messages.content`. Maximum length is 1000 characters. HTML/XSS
-            payloads and format specifiers are rejected.
+            `messages.content`. Maximum length is 1000 characters. A printf-style
+            format specifier (`%s`, `%x`, ...) is refused with `VALIDATION_ERROR`;
+            markup (HTML tags, `javascript:`, event handlers) is refused with
+            `HTTP_BAD_REQUEST` by the sanitizer every route runs.
 
-        :param start_date: Inclusive lower bound on `createdAt`. The handler accepts any
-            JavaScript-parseable date string; invalid values return HTTP 400.
+        :param start_date: Inclusive lower bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026`); one it cannot parse returns
+            HTTP 400.
 
-        :param end_date: Inclusive upper bound on `createdAt`. The handler accepts any
-            JavaScript-parseable date string; invalid values return HTTP 400.
+        :param end_date: Inclusive upper bound on `createdAt`, as an ISO 8601 date or
+            date-time. The validator accepts any string JavaScript `Date` can
+            parse (so also forms like `May 1 2026`); one it cannot parse returns
+            HTTP 400.
 
         :param status: Optional status filter applied to the `sharedWithMeConversations`
             branch of the response. The main `conversations` list ignores this
@@ -6714,7 +7293,7 @@ class Agents(BaseSDK):
 
         :param project_id: Restrict results to a single project. Pass a project's `id`, or
             the literal string `unassigned` to list agent conversations with
-            no `projectId`.
+            no `projectId`. Anything else is refused with HTTP 400.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -6793,7 +7372,10 @@ class Agents(BaseSDK):
             return unmarshal_json_response(
                 models_.AgentConversationListResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -6848,6 +7430,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentCreateConversationRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -6904,6 +7489,9 @@ class Agents(BaseSDK):
             least viewer access to. Same fallback/merge semantics as
             `POST /conversations/create`. Ignored on follow-up turns — the
             session row is the source of truth once the conversation exists.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation.
@@ -6913,7 +7501,9 @@ class Agents(BaseSDK):
             route.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
-            default model.
+            default model. A key that names no configured model is not refused:
+            the turn runs on the organization's default model and the unknown
+            key is still stored in the conversation's `modelInfo`.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -6952,6 +7542,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -6999,6 +7592,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -7060,10 +7654,12 @@ class Agents(BaseSDK):
                 ),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, "400", "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "409"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, "424", "application/json"):
+        if utils.match_response(http_res, ["404", "424"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["413", "422", "429"], "*"):
@@ -7071,10 +7667,10 @@ class Agents(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -7126,6 +7722,9 @@ class Agents(BaseSDK):
             Union[models_.ToolApprovalAnswer, models_.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models_.AgentCreateConversationRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -7182,6 +7781,9 @@ class Agents(BaseSDK):
             least viewer access to. Same fallback/merge semantics as
             `POST /conversations/create`. Ignored on follow-up turns — the
             session row is the source of truth once the conversation exists.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation.
@@ -7191,7 +7793,9 @@ class Agents(BaseSDK):
             route.
 
         :param model_key: AI model configuration id for this turn. Omit to use the agent's
-            default model.
+            default model. A key that names no configured model is not refused:
+            the turn runs on the organization's default model and the unknown
+            key is still stored in the conversation's `modelInfo`.
 
         :param model_name: Provider model name (the underlying LLM identifier).
         :param model_friendly_name: Friendly UI label for the selected model.
@@ -7230,6 +7834,9 @@ class Agents(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /agents/{agentKey}/conversations/{conversationId}/cancel
             {runId}` while the stream is still generating.
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -7277,6 +7884,7 @@ class Agents(BaseSDK):
                     tool_approval, Optional[models_.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -7338,10 +7946,12 @@ class Agents(BaseSDK):
                 ),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, "400", "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "409"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, "424", "application/json"):
+        if utils.match_response(http_res, ["404", "424"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["413", "422", "429"], "*"):
@@ -7349,10 +7959,10 @@ class Agents(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

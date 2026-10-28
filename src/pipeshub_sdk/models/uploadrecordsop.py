@@ -12,7 +12,7 @@ from pipeshub_sdk.utils import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import IO, List, Optional, Union
+from typing import IO, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -56,17 +56,58 @@ class UploadRecordsFile(BaseModel):
         return m
 
 
+class FilesMetadatumTypedDict(TypedDict):
+    file_path: str
+    last_modified: float
+
+
+class FilesMetadatum(BaseModel):
+    file_path: str
+
+    last_modified: float
+
+
+IsVersioned = Literal[
+    "true",
+    "false",
+    "1",
+    "0",
+    "",
+]
+r"""Enable version tracking. `true`/`1` and `false`/`0`/empty are read as
+booleans; any other text is answered `500` (the validator throws a plain
+error).
+
+"""
+
+
 class UploadRecordsRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
     files: List[UploadRecordsFileTypedDict]
     r"""Files to upload (max 1000)"""
-    files_metadata: NotRequired[str]
-    r"""JSON array with file_path and last_modified for each file"""
-    is_versioned: NotRequired[bool]
-    r"""Enable version tracking"""
+    files_metadata: NotRequired[List[FilesMetadatumTypedDict]]
+    r"""JSON text: an array with one entry per file, in the order of the `files`
+    parts, each `{file_path, last_modified}` with `last_modified` in epoch
+    milliseconds (a number, not a date string). A file without an entry is
+    named after its part and timed at the upload. Text that is not JSON, or an
+    array whose length differs from the number of files, is refused with `400`
+    (`HTTP_BAD_REQUEST`); an entry without a string `file_path` or a numeric
+    `last_modified` is refused with `400` (`VALIDATION_ERROR`).
+
+    """
+    is_versioned: NotRequired[IsVersioned]
+    r"""Enable version tracking. `true`/`1` and `false`/`0`/empty are read as
+    booleans; any other text is answered `500` (the validator throws a plain
+    error).
+
+    """
+    record_name: NotRequired[str]
+    r"""Validated, then ignored (records are named after their files)."""
+    origin: NotRequired[str]
+    r"""Validated, then ignored (records get origin `UPLOAD`)."""
     record_type: NotRequired[str]
-    r"""Type of records to create"""
+    r"""Validated, then ignored (records get type `FILE`)."""
 
 
 class UploadRecordsRequestBody(BaseModel):
@@ -78,24 +119,49 @@ class UploadRecordsRequestBody(BaseModel):
     ]
     r"""Files to upload (max 1000)"""
 
-    files_metadata: Annotated[Optional[str], FieldMetadata(multipart=True)] = None
-    r"""JSON array with file_path and last_modified for each file"""
+    files_metadata: Annotated[
+        Optional[List[FilesMetadatum]],
+        FieldMetadata(multipart=MultipartFormMetadata(json=True)),
+    ] = None
+    r"""JSON text: an array with one entry per file, in the order of the `files`
+    parts, each `{file_path, last_modified}` with `last_modified` in epoch
+    milliseconds (a number, not a date string). A file without an entry is
+    named after its part and timed at the upload. Text that is not JSON, or an
+    array whose length differs from the number of files, is refused with `400`
+    (`HTTP_BAD_REQUEST`); an entry without a string `file_path` or a numeric
+    `last_modified` is refused with `400` (`VALIDATION_ERROR`).
+
+    """
 
     is_versioned: Annotated[
-        Optional[bool],
+        Optional[IsVersioned],
         pydantic.Field(alias="isVersioned"),
         FieldMetadata(multipart=True),
-    ] = True
-    r"""Enable version tracking"""
+    ] = "true"
+    r"""Enable version tracking. `true`/`1` and `false`/`0`/empty are read as
+    booleans; any other text is answered `500` (the validator throws a plain
+    error).
+
+    """
+
+    record_name: Annotated[
+        Optional[str], pydantic.Field(alias="recordName"), FieldMetadata(multipart=True)
+    ] = None
+    r"""Validated, then ignored (records are named after their files)."""
+
+    origin: Annotated[Optional[str], FieldMetadata(multipart=True)] = None
+    r"""Validated, then ignored (records get origin `UPLOAD`)."""
 
     record_type: Annotated[
         Optional[str], pydantic.Field(alias="recordType"), FieldMetadata(multipart=True)
     ] = "FILE"
-    r"""Type of records to create"""
+    r"""Validated, then ignored (records get type `FILE`)."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["files_metadata", "isVersioned", "recordType"])
+        optional_fields = set(
+            ["files_metadata", "isVersioned", "recordName", "origin", "recordType"]
+        )
         serialized = handler(self)
         m = {}
 
@@ -112,11 +178,14 @@ class UploadRecordsRequestBody(BaseModel):
 
 class UploadRecordsRequestTypedDict(TypedDict):
     kb_id: str
-    r"""Knowledge base ID"""
+    r"""Knowledge base ID (UUID)"""
     body: UploadRecordsRequestBodyTypedDict
     r"""Request payload"""
     folder_id: NotRequired[str]
-    r"""Target folder ID. Omit to upload to the KB root."""
+    r"""Target folder ID. Omit to upload to the KB root. A folder that is not in this
+    knowledge base is answered `404`.
+
+    """
 
 
 class UploadRecordsRequest(BaseModel):
@@ -125,7 +194,7 @@ class UploadRecordsRequest(BaseModel):
         pydantic.Field(alias="kbId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Knowledge base ID"""
+    r"""Knowledge base ID (UUID)"""
 
     body: Annotated[
         UploadRecordsRequestBody,
@@ -138,7 +207,10 @@ class UploadRecordsRequest(BaseModel):
         pydantic.Field(alias="folderId"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Target folder ID. Omit to upload to the KB root."""
+    r"""Target folder ID. Omit to upload to the KB root. A folder that is not in this
+    knowledge base is answered `404`.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

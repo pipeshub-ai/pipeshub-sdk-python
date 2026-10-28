@@ -35,7 +35,26 @@ class GetConnectorRegistryRequestTypedDict(TypedDict):
     limit: NotRequired[int]
     r"""Items per page"""
     search: NotRequired[str]
-    r"""Search term for connector names"""
+    r"""Case-insensitive search across name, type, app group, description,
+    auth types and categories. Every whitespace-separated word must match.
+
+    """
+    is_authenticated: NotRequired[bool]
+    r"""Validated (must be <code>true</code> or <code>false</code>) but
+    ignored by this endpoint: it filters nothing. The parameter exists
+    because the query validator is shared with <code>GET /connectors</code>.
+
+    """
+    is_active: NotRequired[bool]
+    r"""Validated (must be <code>true</code> or <code>false</code>) but
+    ignored by this endpoint: it filters nothing.
+
+    """
+    connector_type: NotRequired[str]
+    r"""Validated (must not be empty or blank: the value is trimmed before
+    it is checked) but ignored by this endpoint: it filters nothing.
+
+    """
 
 
 class GetConnectorRegistryRequest(BaseModel):
@@ -61,11 +80,55 @@ class GetConnectorRegistryRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Search term for connector names"""
+    r"""Case-insensitive search across name, type, app group, description,
+    auth types and categories. Every whitespace-separated word must match.
+
+    """
+
+    is_authenticated: Annotated[
+        Optional[bool],
+        pydantic.Field(alias="isAuthenticated"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated (must be <code>true</code> or <code>false</code>) but
+    ignored by this endpoint: it filters nothing. The parameter exists
+    because the query validator is shared with <code>GET /connectors</code>.
+
+    """
+
+    is_active: Annotated[
+        Optional[bool],
+        pydantic.Field(alias="isActive"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated (must be <code>true</code> or <code>false</code>) but
+    ignored by this endpoint: it filters nothing.
+
+    """
+
+    connector_type: Annotated[
+        Optional[str],
+        pydantic.Field(alias="connectorType"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated (must not be empty or blank: the value is trimmed before
+    it is checked) but ignored by this endpoint: it filters nothing.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["scope", "page", "limit", "search"])
+        optional_fields = set(
+            [
+                "scope",
+                "page",
+                "limit",
+                "search",
+                "isAuthenticated",
+                "isActive",
+                "connectorType",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

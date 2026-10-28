@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 from .agentupdaterequest import AgentUpdateRequest, AgentUpdateRequestTypedDict
-from pipeshub_sdk.types import BaseModel
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class UpdateAgentRequestTypedDict(TypedDict):
     agent_key: str
     r"""Unique agent identifier"""
-    body: AgentUpdateRequestTypedDict
+    body: NotRequired[AgentUpdateRequestTypedDict]
     r"""Partial agent configuration fields to update"""
 
 
@@ -24,7 +26,23 @@ class UpdateAgentRequest(BaseModel):
     r"""Unique agent identifier"""
 
     body: Annotated[
-        AgentUpdateRequest,
+        Optional[AgentUpdateRequest],
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
-    ]
+    ] = None
     r"""Partial agent configuration fields to update"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["body"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

@@ -13,6 +13,7 @@ from .messagefeedback import MessageFeedback, MessageFeedbackTypedDict
 from .messagepart import MessagePart, MessagePartTypedDict
 from .messagereasoningturn import MessageReasoningTurn, MessageReasoningTurnTypedDict
 from .messagetoolcall import MessageToolCall, MessageToolCallTypedDict
+from .redactedsource import RedactedSource, RedactedSourceTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -25,7 +26,7 @@ from pipeshub_sdk.types import (
 import pydantic
 from pydantic import model_serializer
 from typing import Dict, List, Literal, Optional, Union
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 
 AgentConversationDetailMessageMessageType = Union[
@@ -49,6 +50,18 @@ AgentConversationDetailMessageContentFormat = Union[
     ],
     UnrecognizedStr,
 ]
+
+
+AgentConversationDetailMessageCitationUnionTypedDict = TypeAliasType(
+    "AgentConversationDetailMessageCitationUnionTypedDict",
+    Union[AgentConversationDetailMessageCitationTypedDict, RedactedSourceTypedDict],
+)
+
+
+AgentConversationDetailMessageCitationUnion = TypeAliasType(
+    "AgentConversationDetailMessageCitationUnion",
+    Union[AgentConversationDetailMessageCitation, RedactedSource],
+)
 
 
 Confidence = Union[
@@ -132,6 +145,20 @@ class AgentConversationDetailMessageReferenceDatum(BaseModel):
         return m
 
 
+AgentConversationDetailMessageReferenceDatumUnionTypedDict = TypeAliasType(
+    "AgentConversationDetailMessageReferenceDatumUnionTypedDict",
+    Union[
+        RedactedSourceTypedDict, AgentConversationDetailMessageReferenceDatumTypedDict
+    ],
+)
+
+
+AgentConversationDetailMessageReferenceDatumUnion = TypeAliasType(
+    "AgentConversationDetailMessageReferenceDatumUnion",
+    Union[RedactedSource, AgentConversationDetailMessageReferenceDatum],
+)
+
+
 class AgentConversationDetailMessageMetadataTypedDict(TypedDict):
     processing_time_ms: NotRequired[float]
     model_version: NotRequired[str]
@@ -177,7 +204,7 @@ class AgentConversationDetailMessageTypedDict(TypedDict):
     message_type: NotRequired[AgentConversationDetailMessageMessageType]
     content: NotRequired[str]
     content_format: NotRequired[AgentConversationDetailMessageContentFormat]
-    citations: NotRequired[List[AgentConversationDetailMessageCitationTypedDict]]
+    citations: NotRequired[List[AgentConversationDetailMessageCitationUnionTypedDict]]
     confidence: NotRequired[Nullable[Confidence]]
     r"""AI confidence in the answer. Present only on `bot_response` messages,
     and only when the model emitted a trailing confidence block.
@@ -188,7 +215,7 @@ class AgentConversationDetailMessageTypedDict(TypedDict):
     follow_up_questions: NotRequired[List[FollowUpQuestionTypedDict]]
     feedback: NotRequired[List[MessageFeedbackTypedDict]]
     reference_data: NotRequired[
-        List[AgentConversationDetailMessageReferenceDatumTypedDict]
+        List[AgentConversationDetailMessageReferenceDatumUnionTypedDict]
     ]
     r"""Reference identifiers surfaced from tool responses, used to scope
     follow-up queries.
@@ -239,7 +266,7 @@ class AgentConversationDetailMessage(BaseModel):
         pydantic.Field(alias="contentFormat"),
     ] = None
 
-    citations: Optional[List[AgentConversationDetailMessageCitation]] = None
+    citations: Optional[List[AgentConversationDetailMessageCitationUnion]] = None
 
     confidence: OptionalNullable[Confidence] = UNSET
     r"""AI confidence in the answer. Present only on `bot_response` messages,
@@ -256,7 +283,7 @@ class AgentConversationDetailMessage(BaseModel):
     feedback: Optional[List[MessageFeedback]] = None
 
     reference_data: Annotated[
-        Optional[List[AgentConversationDetailMessageReferenceDatum]],
+        Optional[List[AgentConversationDetailMessageReferenceDatumUnion]],
         pydantic.Field(alias="referenceData"),
     ] = None
     r"""Reference identifiers surfaced from tool responses, used to scope

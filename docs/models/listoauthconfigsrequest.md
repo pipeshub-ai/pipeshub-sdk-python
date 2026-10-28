@@ -3,8 +3,8 @@
 
 ## Fields
 
-| Field              | Type               | Required           | Description        |
-| ------------------ | ------------------ | ------------------ | ------------------ |
-| `page`             | *Optional[int]*    | :heavy_minus_sign: | N/A                |
-| `limit`            | *Optional[int]*    | :heavy_minus_sign: | N/A                |
-| `search`           | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| Field                                                                                                  | Type                                                                                                   | Required                                                                                               | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `page`                                                                                                 | *Optional[int]*                                                                                        | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `limit`                                                                                                | *Optional[int]*                                                                                        | :heavy_minus_sign:                                                                                     | N/A                                                                                                    |
+| `search`                                                                                               | *Optional[str]*                                                                                        | :heavy_minus_sign:                                                                                     | Case-insensitive substring matched against the name, connector type, group, description and categories |

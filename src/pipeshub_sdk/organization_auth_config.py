@@ -27,7 +27,10 @@ class OrganizationAuthConfig(BaseSDK):
         **Response Structure:**
 
         Returns an array of authentication steps, each containing:
-        - `order`: Step number (1-3)
+        - `order`: The step's position, 1, 2 or 3. Steps are returned in ascending order of the
+        `order` they were saved with and renumbered from 1. A method removed in 1.0 is left out
+        (`azureAd` reads as `microsoft`), a step left with no method is dropped, and when a
+        removed method was left out `password` is added to the first step
         - `allowedMethods`: Array of methods allowed for that step
 
         **Example Response:**
@@ -41,7 +44,8 @@ class OrganizationAuthConfig(BaseSDK):
         }
         ```
 
-        **Admin Access Required:** Only organization admins can view auth configuration.
+        **Admin Access Required:** Only organization admins can view auth configuration, with
+        a session access token. The query string is not read.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -106,9 +110,7 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthConfig, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "403", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -142,7 +144,10 @@ class OrganizationAuthConfig(BaseSDK):
         **Response Structure:**
 
         Returns an array of authentication steps, each containing:
-        - `order`: Step number (1-3)
+        - `order`: The step's position, 1, 2 or 3. Steps are returned in ascending order of the
+        `order` they were saved with and renumbered from 1. A method removed in 1.0 is left out
+        (`azureAd` reads as `microsoft`), a step left with no method is dropped, and when a
+        removed method was left out `password` is added to the first step
         - `allowedMethods`: Array of methods allowed for that step
 
         **Example Response:**
@@ -156,7 +161,8 @@ class OrganizationAuthConfig(BaseSDK):
         }
         ```
 
-        **Admin Access Required:** Only organization admins can view auth configuration.
+        **Admin Access Required:** Only organization admins can view auth configuration, with
+        a session access token. The query string is not read.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -221,9 +227,7 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthConfig, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "403", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -260,11 +264,19 @@ class OrganizationAuthConfig(BaseSDK):
 
         **Validation Rules:**
         - Minimum 1 step, maximum 3 steps
-        - Each step must have a unique order (1, 2, or 3)
+        - Each step must have a unique `order`. `order` is only checked to be a number and is
+        stored as sent; sign-in runs the steps in ascending `order`
         - No duplicate methods within the same step
         - No method can appear in multiple steps
         - Each step must have at least one allowed method
         - `samlSso` and `oauth` were removed in 1.0 and are refused; use `microsoft` in place of `azureAd`
+
+        The two rules that compare steps with each other (unique `order`, a method in only one
+        step) are not expressed in the request schema below; the API refuses a request that
+        breaks them with `400 VALIDATION_ERROR` naming `body.authMethod`.
+
+        Unknown fields, at any level of the body, and any query string are dropped by the
+        validator, not refused.
 
         **Available Methods:**
         - `password`: Email/password authentication
@@ -298,7 +310,7 @@ class OrganizationAuthConfig(BaseSDK):
 
         If set, this operation will use `bearer_auth` from the global security.
 
-        :param auth_method: Authentication steps to set for the organization (1-3 steps)
+        :param auth_method: Authentication steps to set for the organization (1-3 steps).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -367,9 +379,7 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateAuthMethodResponse, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "403", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -406,11 +416,19 @@ class OrganizationAuthConfig(BaseSDK):
 
         **Validation Rules:**
         - Minimum 1 step, maximum 3 steps
-        - Each step must have a unique order (1, 2, or 3)
+        - Each step must have a unique `order`. `order` is only checked to be a number and is
+        stored as sent; sign-in runs the steps in ascending `order`
         - No duplicate methods within the same step
         - No method can appear in multiple steps
         - Each step must have at least one allowed method
         - `samlSso` and `oauth` were removed in 1.0 and are refused; use `microsoft` in place of `azureAd`
+
+        The two rules that compare steps with each other (unique `order`, a method in only one
+        step) are not expressed in the request schema below; the API refuses a request that
+        breaks them with `400 VALIDATION_ERROR` naming `body.authMethod`.
+
+        Unknown fields, at any level of the body, and any query string are dropped by the
+        validator, not refused.
 
         **Available Methods:**
         - `password`: Email/password authentication
@@ -444,7 +462,7 @@ class OrganizationAuthConfig(BaseSDK):
 
         If set, this operation will use `bearer_auth` from the global security.
 
-        :param auth_method: Authentication steps to set for the organization (1-3 steps)
+        :param auth_method: Authentication steps to set for the organization (1-3 steps).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -513,9 +531,7 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateAuthMethodResponse, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "403", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -549,6 +565,12 @@ class OrganizationAuthConfig(BaseSDK):
         r"""Set up auth configuration
 
         Set up or initialize the organization's authentication configuration.
+
+        First-run only: when the deployment already has a sign-in configuration the answer is
+        `200` with `Org config already done`, and the request body is not read at all (a missing
+        body, missing or mistyped fields and unknown fields are all accepted). The route has no
+        validator; the body fields below are the ones read when the organization is created.
+        The query string is not read.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -628,9 +650,7 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, ["200", "201"], "application/json"):
             return unmarshal_json_response(models.OrgAuthConfigSetupResponse, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "403", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -664,6 +684,12 @@ class OrganizationAuthConfig(BaseSDK):
         r"""Set up auth configuration
 
         Set up or initialize the organization's authentication configuration.
+
+        First-run only: when the deployment already has a sign-in configuration the answer is
+        `200` with `Org config already done`, and the request body is not read at all (a missing
+        body, missing or mistyped fields and unknown fields are all accepted). The route has no
+        validator; the body fields below are the ones read when the organization is created.
+        The query string is not read.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -743,9 +769,7 @@ class OrganizationAuthConfig(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, ["200", "201"], "application/json"):
             return unmarshal_json_response(models.OrgAuthConfigSetupResponse, http_res)
-        if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
-        ):
+        if utils.match_response(http_res, ["400", "403", "404"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):

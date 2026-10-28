@@ -3,47 +3,85 @@
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
-from pydantic import model_serializer
-from typing import Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from pydantic import ConfigDict, model_serializer
+from typing import Dict, List, Optional, Union
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
+
+
+ConfigTypedDict = TypeAliasType("ConfigTypedDict", Union[str, bool, float, List[str]])
+r"""Value of any other auth field the connector type declares, keyed by the field's `name`"""
+
+
+Config = TypeAliasType("Config", Union[str, bool, float, List[str]])
+r"""Value of any other auth field the connector type declares, keyed by the field's `name`"""
 
 
 class CreateOAuthConfigRequestConfigTypedDict(TypedDict):
-    r"""OAuth application credentials"""
+    r"""OAuth application credentials, keyed by the `name` of each entry in the connector type's
+    `authFields` (see `GET /oauth/registry/{connectorType}`), so the keys differ from one
+    connector type to the next. Must not be empty; neither the keys nor their values are
+    validated when the configuration is created, so a value of another type (a number,
+    `null`, a nested object, an array of other items) is stored as sent, also for
+    `clientId` and `clientSecret`.
 
-    client_id: str
+    """
+
+    client_id: NotRequired[str]
     r"""OAuth client ID from your OAuth application"""
-    client_secret: str
+    client_secret: NotRequired[str]
     r"""OAuth client secret; never in the create response, and returned by GET only to admins (masked when HIDE_SECRET_CONFIG is on)"""
     tenant_id: NotRequired[str]
     r"""Azure tenant ID (required only for Microsoft connectors)"""
 
 
 class CreateOAuthConfigRequestConfig(BaseModel):
-    r"""OAuth application credentials"""
+    r"""OAuth application credentials, keyed by the `name` of each entry in the connector type's
+    `authFields` (see `GET /oauth/registry/{connectorType}`), so the keys differ from one
+    connector type to the next. Must not be empty; neither the keys nor their values are
+    validated when the configuration is created, so a value of another type (a number,
+    `null`, a nested object, an array of other items) is stored as sent, also for
+    `clientId` and `clientSecret`.
 
-    client_id: Annotated[str, pydantic.Field(alias="clientId")]
+    """
+
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Config] = pydantic.Field(init=False)
+
+    client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
     r"""OAuth client ID from your OAuth application"""
 
-    client_secret: Annotated[str, pydantic.Field(alias="clientSecret")]
+    client_secret: Annotated[Optional[str], pydantic.Field(alias="clientSecret")] = None
     r"""OAuth client secret; never in the create response, and returned by GET only to admins (masked when HIDE_SECRET_CONFIG is on)"""
 
     tenant_id: Annotated[Optional[str], pydantic.Field(alias="tenantId")] = None
     r"""Azure tenant ID (required only for Microsoft connectors)"""
 
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["tenantId"])
+        optional_fields = set(["clientId", "clientSecret", "tenantId"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
 
         return m
 
@@ -52,24 +90,38 @@ class CreateOAuthConfigRequestTypedDict(TypedDict):
     r"""Request to create OAuth configuration (admin only). Stores credentials that users select when setting up connectors."""
 
     oauth_instance_name: str
-    r"""Display name for this OAuth configuration (e.g., 'Production Google OAuth')"""
+    r"""Display name for this OAuth configuration (e.g., 'Production Google OAuth'). Must be unique for the connector type within the organization. Leading and trailing whitespace is removed before validation, so a name of only whitespace is refused as empty."""
     config: CreateOAuthConfigRequestConfigTypedDict
-    r"""OAuth application credentials"""
+    r"""OAuth application credentials, keyed by the `name` of each entry in the connector type's
+    `authFields` (see `GET /oauth/registry/{connectorType}`), so the keys differ from one
+    connector type to the next. Must not be empty; neither the keys nor their values are
+    validated when the configuration is created, so a value of another type (a number,
+    `null`, a nested object, an array of other items) is stored as sent, also for
+    `clientId` and `clientSecret`.
+
+    """
     base_url: NotRequired[str]
-    r"""PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted, the frontend public endpoint is used. Not the provider's URL; a self-hosted provider's address goes in config."""
+    r"""PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted or empty, the frontend public endpoint is used. The value is not checked to be a URL: whatever text is sent is used as the prefix. Not the provider's URL; a self-hosted provider's address goes in config."""
 
 
 class CreateOAuthConfigRequest(BaseModel):
     r"""Request to create OAuth configuration (admin only). Stores credentials that users select when setting up connectors."""
 
     oauth_instance_name: Annotated[str, pydantic.Field(alias="oauthInstanceName")]
-    r"""Display name for this OAuth configuration (e.g., 'Production Google OAuth')"""
+    r"""Display name for this OAuth configuration (e.g., 'Production Google OAuth'). Must be unique for the connector type within the organization. Leading and trailing whitespace is removed before validation, so a name of only whitespace is refused as empty."""
 
     config: CreateOAuthConfigRequestConfig
-    r"""OAuth application credentials"""
+    r"""OAuth application credentials, keyed by the `name` of each entry in the connector type's
+    `authFields` (see `GET /oauth/registry/{connectorType}`), so the keys differ from one
+    connector type to the next. Must not be empty; neither the keys nor their values are
+    validated when the configuration is created, so a value of another type (a number,
+    `null`, a nested object, an array of other items) is stored as sent, also for
+    `clientId` and `clientSecret`.
+
+    """
 
     base_url: Annotated[Optional[str], pydantic.Field(alias="baseUrl")] = None
-    r"""PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted, the frontend public endpoint is used. Not the provider's URL; a self-hosted provider's address goes in config."""
+    r"""PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted or empty, the frontend public endpoint is used. The value is not checked to be a URL: whatever text is sent is used as the prefix. Not the provider's URL; a self-hosted provider's address goes in config."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

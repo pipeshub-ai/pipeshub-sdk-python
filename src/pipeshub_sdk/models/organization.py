@@ -57,6 +57,10 @@ class OrganizationTypedDict(TypedDict):
     permanent_address: NotRequired[AddressTypedDict]
     is_deleted: NotRequired[bool]
     r"""Soft delete flag"""
+    signup_channel: NotRequired[str]
+    r"""Where the signup came from: the `ref` tag it was made with, or `direct`. Absent on organizations created before it was recorded."""
+    signup_referrer_domain: NotRequired[str]
+    r"""For a `direct` signup, the referring site's domain, when there was one."""
 
 
 class Organization(BaseModel):
@@ -102,9 +106,27 @@ class Organization(BaseModel):
     is_deleted: Annotated[Optional[bool], pydantic.Field(alias="isDeleted")] = False
     r"""Soft delete flag"""
 
+    signup_channel: Annotated[Optional[str], pydantic.Field(alias="signupChannel")] = (
+        None
+    )
+    r"""Where the signup came from: the `ref` tag it was made with, or `direct`. Absent on organizations created before it was recorded."""
+
+    signup_referrer_domain: Annotated[
+        Optional[str], pydantic.Field(alias="signupReferrerDomain")
+    ] = None
+    r"""For a `direct` signup, the referring site's domain, when there was one."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["shortName", "permanentAddress", "isDeleted"])
+        optional_fields = set(
+            [
+                "shortName",
+                "permanentAddress",
+                "isDeleted",
+                "signupChannel",
+                "signupReferrerDomain",
+            ]
+        )
         serialized = handler(self)
         m = {}
 

@@ -42,37 +42,89 @@ GetConversationByIDQueryParamSortOrder = Literal[
 r"""Sort direction"""
 
 
+GetConversationByIDSharedEnum = Literal[
+    "true",
+    "false",
+    "1",
+    "0",
+]
+r"""Filters on the conversation's `isShared`; a conversation that
+does not match is answered `404`. Read case-insensitively;
+any other value is refused with `400`.
+
+"""
+
+
 GetConversationByIDQueryParamMessageType = Literal[
     "user_query",
     "bot_response",
     "error",
     "feedback",
     "system",
+    "tool_call",
 ]
-r"""Filter messages by type"""
+r"""Checked against the listed values (`400` otherwise) but not
+applied: every message type is returned.
+
+"""
 
 
 class GetConversationByIDRequestTypedDict(TypedDict):
     conversation_id: str
     r"""Unique conversation identifier"""
     page: NotRequired[int]
-    r"""Page number for message pagination"""
+    r"""Page number for message pagination. Read with `parseInt`, so a fraction such
+    as `1.5` is tolerated and truncated (page 1).
+
+    """
     limit: NotRequired[int]
-    r"""Number of messages per page"""
+    r"""Number of messages per page. Read with `parseInt`, so a fraction such as `5.5`
+    is tolerated and truncated (5).
+
+    """
     sort_by: NotRequired[GetConversationByIDQueryParamSortBy]
     r"""Field to sort messages by"""
     sort_order: NotRequired[GetConversationByIDQueryParamSortOrder]
     r"""Sort direction"""
     search: NotRequired[str]
-    r"""Case-insensitive search across conversation title and message content"""
-    start_date: NotRequired[datetime]
-    r"""Filter messages created on or after this date (ISO 8601)"""
-    end_date: NotRequired[datetime]
-    r"""Filter messages created on or before this date (ISO 8601)"""
-    shared: NotRequired[bool]
-    r"""Filter by shared status of the conversation"""
+    r"""Case-insensitive match against the conversation's title and its
+    messages' content. Applies to the conversation, not its messages:
+    when nothing matches the answer is `404`; when something matches
+    every message is returned.
+
+    """
+    start_date: NotRequired[str]
+    r"""Applies to the conversation, not its messages: when the
+    conversation was created before this instant the answer is `404`.
+    Any value JavaScript's `Date` parses is accepted (an ISO 8601
+    date or date-time is the documented form); a value it cannot
+    parse is refused with `400`.
+
+    """
+    end_date: NotRequired[str]
+    r"""Applies to the conversation, not its messages: when the
+    conversation was created after this instant the answer is `404`.
+    Parsed like `startDate`.
+
+    """
+    shared: NotRequired[GetConversationByIDSharedEnum]
+    r"""Filters on the conversation's `isShared`; a conversation that
+    does not match is answered `404`. Read case-insensitively;
+    any other value is refused with `400`.
+
+    """
+    project_id: NotRequired[str]
+    r"""`unassigned` matches only a conversation linked to no project; a
+    24-character ObjectId matches only a conversation linked to that
+    project. A conversation that does not match is answered `404`.
+    Any other value is ignored.
+
+    """
     message_type: NotRequired[GetConversationByIDQueryParamMessageType]
-    r"""Filter messages by type"""
+    r"""Checked against the listed values (`400` otherwise) but not
+    applied: every message type is returned.
+
+    """
 
 
 class GetConversationByIDRequest(BaseModel):
@@ -87,13 +139,19 @@ class GetConversationByIDRequest(BaseModel):
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 1
-    r"""Page number for message pagination"""
+    r"""Page number for message pagination. Read with `parseInt`, so a fraction such
+    as `1.5` is tolerated and truncated (page 1).
+
+    """
 
     limit: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 20
-    r"""Number of messages per page"""
+    r"""Number of messages per page. Read with `parseInt`, so a fraction such as `5.5`
+    is tolerated and truncated (5).
+
+    """
 
     sort_by: Annotated[
         Optional[GetConversationByIDQueryParamSortBy],
@@ -113,34 +171,68 @@ class GetConversationByIDRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Case-insensitive search across conversation title and message content"""
+    r"""Case-insensitive match against the conversation's title and its
+    messages' content. Applies to the conversation, not its messages:
+    when nothing matches the answer is `404`; when something matches
+    every message is returned.
+
+    """
 
     start_date: Annotated[
-        Optional[datetime],
+        Optional[str],
         pydantic.Field(alias="startDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter messages created on or after this date (ISO 8601)"""
+    r"""Applies to the conversation, not its messages: when the
+    conversation was created before this instant the answer is `404`.
+    Any value JavaScript's `Date` parses is accepted (an ISO 8601
+    date or date-time is the documented form); a value it cannot
+    parse is refused with `400`.
+
+    """
 
     end_date: Annotated[
-        Optional[datetime],
+        Optional[str],
         pydantic.Field(alias="endDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter messages created on or before this date (ISO 8601)"""
+    r"""Applies to the conversation, not its messages: when the
+    conversation was created after this instant the answer is `404`.
+    Parsed like `startDate`.
+
+    """
 
     shared: Annotated[
-        Optional[bool],
+        Optional[GetConversationByIDSharedEnum],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter by shared status of the conversation"""
+    r"""Filters on the conversation's `isShared`; a conversation that
+    does not match is answered `404`. Read case-insensitively;
+    any other value is refused with `400`.
+
+    """
+
+    project_id: Annotated[
+        Optional[str],
+        pydantic.Field(alias="projectId"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""`unassigned` matches only a conversation linked to no project; a
+    24-character ObjectId matches only a conversation linked to that
+    project. A conversation that does not match is answered `404`.
+    Any other value is ignored.
+
+    """
 
     message_type: Annotated[
         Optional[GetConversationByIDQueryParamMessageType],
         pydantic.Field(alias="messageType"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter messages by type"""
+    r"""Checked against the listed values (`400` otherwise) but not
+    applied: every message type is returned.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -154,6 +246,7 @@ class GetConversationByIDRequest(BaseModel):
                 "startDate",
                 "endDate",
                 "shared",
+                "projectId",
                 "messageType",
             ]
         )
@@ -183,6 +276,11 @@ GetConversationByIDSharedWithAccessLevel = Union[
 class GetConversationByIDSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
     access_level: NotRequired[GetConversationByIDSharedWithAccessLevel]
+    id: NotRequired[str]
+    r"""Id of the share entry. The session schema asks for none,
+    but Mongoose ignores that option and stores one.
+
+    """
 
 
 class GetConversationByIDSharedWith(BaseModel):
@@ -193,9 +291,15 @@ class GetConversationByIDSharedWith(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = None
 
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Id of the share entry. The session schema asks for none,
+    but Mongoose ignores that option and stores one.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["userId", "accessLevel", "_id"])
         serialized = handler(self)
         m = {}
 
@@ -220,6 +324,16 @@ GetConversationByIDStatus = Union[
     ],
     UnrecognizedStr,
 ]
+
+
+GetConversationByIDProjectVisibility = Union[
+    Literal[
+        "private",
+        "project",
+    ],
+    UnrecognizedStr,
+]
+r"""Who in the project sees the conversation. Absent when never set."""
 
 
 MessageMessageType2 = Union[
@@ -707,6 +821,10 @@ class GetConversationByIDConversationTypedDict(TypedDict):
     status: NotRequired[GetConversationByIDStatus]
     fail_reason: NotRequired[str]
     r"""Populated only when `status` is `Failed`"""
+    project_id: NotRequired[str]
+    r"""Project the conversation is linked to. Absent when it is in none."""
+    project_visibility: NotRequired[GetConversationByIDProjectVisibility]
+    r"""Who in the project sees the conversation. Absent when never set."""
     messages: NotRequired[List[GetConversationByIDMessageTypedDict]]
     r"""Page of messages, sliced by `pagination` and ordered by `sortingMessages`"""
     model_info: NotRequired[ConversationModelInfoTypedDict]
@@ -749,6 +867,15 @@ class GetConversationByIDConversation(BaseModel):
     fail_reason: Annotated[Optional[str], pydantic.Field(alias="failReason")] = None
     r"""Populated only when `status` is `Failed`"""
 
+    project_id: Annotated[Optional[str], pydantic.Field(alias="projectId")] = None
+    r"""Project the conversation is linked to. Absent when it is in none."""
+
+    project_visibility: Annotated[
+        Optional[GetConversationByIDProjectVisibility],
+        pydantic.Field(alias="projectVisibility"),
+    ] = None
+    r"""Who in the project sees the conversation. Absent when never set."""
+
     messages: Optional[List[GetConversationByIDMessage]] = None
     r"""Page of messages, sliced by `pagination` and ordered by `sortingMessages`"""
 
@@ -786,6 +913,8 @@ class GetConversationByIDConversation(BaseModel):
                 "sharedWith",
                 "status",
                 "failReason",
+                "projectId",
+                "projectVisibility",
                 "messages",
                 "modelInfo",
                 "pagination",
@@ -838,14 +967,14 @@ class GetConversationByIDApplied(BaseModel):
         return m
 
 
-class GetConversationByIDSharedTypedDict(TypedDict):
+class GetConversationByIDSharedResponseTypedDict(TypedDict):
     values: NotRequired[List[str]]
     description: NotRequired[str]
     current: NotRequired[Nullable[str]]
     applied: NotRequired[bool]
 
 
-class GetConversationByIDShared(BaseModel):
+class GetConversationByIDSharedResponse(BaseModel):
     values: Optional[List[str]] = None
 
     description: Optional[str] = None
@@ -1511,7 +1640,7 @@ class GetConversationByIDSortingMessages(BaseModel):
 
 
 class GetConversationByIDAvailableTypedDict(TypedDict):
-    shared: NotRequired[GetConversationByIDSharedTypedDict]
+    shared: NotRequired[GetConversationByIDSharedResponseTypedDict]
     tags: NotRequired[GetConversationByIDTagsTypedDict]
     r"""Advertised in the `available` catalog but not currently applied as a filter by the server."""
     min_messages: NotRequired[GetConversationByIDMinMessagesTypedDict]
@@ -1527,7 +1656,7 @@ class GetConversationByIDAvailableTypedDict(TypedDict):
 
 
 class GetConversationByIDAvailable(BaseModel):
-    shared: Optional[GetConversationByIDShared] = None
+    shared: Optional[GetConversationByIDSharedResponse] = None
 
     tags: Optional[GetConversationByIDTags] = None
     r"""Advertised in the `available` catalog but not currently applied as a filter by the server."""

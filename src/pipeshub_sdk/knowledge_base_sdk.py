@@ -41,9 +41,17 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Naming Rules:**
 
-        - Name must be 1-255 characters
-        - Special characters and HTML tags are sanitized
+        - Name must be 1-255 characters and hold at least one character that is not whitespace
+        - Whitespace around the name is removed before it is stored
+        - A name that contains an HTML tag, a `javascript:` URL or an inline event handler
+        (`onclick=` and the like) is refused with `400`; nothing is stripped out of it
         - Names don't need to be unique within organization
+
+        **Request body:**
+
+        Only `kbName` is read. Any other field is dropped before the handler runs, so a
+        knowledge base cannot be created hidden, or with another role or organization,
+        through this endpoint.
 
         **Creator Permissions:**
 
@@ -52,7 +60,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param kb_name: Name of the knowledge base
+        :param kb_name: Name of the knowledge base. Leading and trailing whitespace is removed
+            first, so a name made only of whitespace is refused as empty.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -169,9 +179,17 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Naming Rules:**
 
-        - Name must be 1-255 characters
-        - Special characters and HTML tags are sanitized
+        - Name must be 1-255 characters and hold at least one character that is not whitespace
+        - Whitespace around the name is removed before it is stored
+        - A name that contains an HTML tag, a `javascript:` URL or an inline event handler
+        (`onclick=` and the like) is refused with `400`; nothing is stripped out of it
         - Names don't need to be unique within organization
+
+        **Request body:**
+
+        Only `kbName` is read. Any other field is dropped before the handler runs, so a
+        knowledge base cannot be created hidden, or with another role or organization,
+        through this endpoint.
 
         **Creator Permissions:**
 
@@ -180,7 +198,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param kb_name: Name of the knowledge base
+        :param kb_name: Name of the knowledge base. Leading and trailing whitespace is removed
+            first, so a name made only of whitespace is refused as empty.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -294,7 +314,7 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Filtering:**
 
-        - **search:** Full-text search on KB names (max 1000 chars)
+        - **search:** Full-text search on KB names (max 1000 chars). A longer value is answered `500`, not `400`.
         - **permissions:** Filter by user's role (comma-separated: OWNER, WRITER, READER)
 
         **Sorting Options:**
@@ -310,20 +330,34 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Query parameters:**
 
-        Only `page`, `limit`, `search`, `permissions`, `sortBy`, and `sortOrder` are allowed; unknown query keys are rejected.
+        Only `page`, `limit`, `search`, `permissions`, `sortBy`, and `sortOrder` are allowed; any other
+        query key is rejected with `400` (`VALIDATION_ERROR`: \"These fields aren't accepted here: <key>.\").
+        A parameter sent more than once is rejected the same way. `page`, `limit`, `search`,
+        `permissions` and `sortBy` sent with an empty value are read as not sent; an empty
+        `sortOrder` is rejected.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param page: Page number (1-indexed). Omitted values default to 1.
-        :param limit: Results per page (max 100). Omitted values default to 20.
-        :param search: Search KB names (max 1000 chars). Rejected if it contains HTML/script tags,
-            event handlers, `javascript:`, or format specifiers (validated in Zod + controller).
+        :param page: Page number (1-indexed). Omitted or empty values default to 1. A page past the last
+            one returns an empty list. The value is read with JavaScript `parseInt`, so text after
+            leading digits is ignored (`1abc` is page 1); send a plain integer.
 
-        :param permissions: Comma-separated permission roles to filter by. Each token must be one of:
-            OWNER, WRITER, READER.
+        :param limit: Results per page (max 100). Omitted or empty values default to 20. Read with
+            JavaScript `parseInt` like `page`.
 
-        :param sort_by: Field to sort by.
+        :param search: Search KB names (max 1000 chars after trimming). Rejected with `400` if it contains
+            HTML/script tags, event handlers or `javascript:` (`HTTP_BAD_REQUEST`), or a
+            printf-style format specifier (`VALIDATION_ERROR`). The format-specifier check
+            also catches ordinary text such as `50% discount` (`%`, a space, then a letter
+            like `d`). A value longer than 1000 characters is answered `500`.
+
+        :param permissions: Comma-separated permission roles to filter by. Each token must be exactly one of
+            OWNER, WRITER, READER: upper case, with no space around the commas. Empty tokens
+            (`OWNER,,WRITER,`) are dropped, but a value with no role at all (`,`) is rejected.
+            An empty value is read as not sent.
+
+        :param sort_by: Field to sort by. An empty value is read as the default.
         :param sort_order: Sort direction.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -442,7 +476,7 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Filtering:**
 
-        - **search:** Full-text search on KB names (max 1000 chars)
+        - **search:** Full-text search on KB names (max 1000 chars). A longer value is answered `500`, not `400`.
         - **permissions:** Filter by user's role (comma-separated: OWNER, WRITER, READER)
 
         **Sorting Options:**
@@ -458,20 +492,34 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Query parameters:**
 
-        Only `page`, `limit`, `search`, `permissions`, `sortBy`, and `sortOrder` are allowed; unknown query keys are rejected.
+        Only `page`, `limit`, `search`, `permissions`, `sortBy`, and `sortOrder` are allowed; any other
+        query key is rejected with `400` (`VALIDATION_ERROR`: \"These fields aren't accepted here: <key>.\").
+        A parameter sent more than once is rejected the same way. `page`, `limit`, `search`,
+        `permissions` and `sortBy` sent with an empty value are read as not sent; an empty
+        `sortOrder` is rejected.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param page: Page number (1-indexed). Omitted values default to 1.
-        :param limit: Results per page (max 100). Omitted values default to 20.
-        :param search: Search KB names (max 1000 chars). Rejected if it contains HTML/script tags,
-            event handlers, `javascript:`, or format specifiers (validated in Zod + controller).
+        :param page: Page number (1-indexed). Omitted or empty values default to 1. A page past the last
+            one returns an empty list. The value is read with JavaScript `parseInt`, so text after
+            leading digits is ignored (`1abc` is page 1); send a plain integer.
 
-        :param permissions: Comma-separated permission roles to filter by. Each token must be one of:
-            OWNER, WRITER, READER.
+        :param limit: Results per page (max 100). Omitted or empty values default to 20. Read with
+            JavaScript `parseInt` like `page`.
 
-        :param sort_by: Field to sort by.
+        :param search: Search KB names (max 1000 chars after trimming). Rejected with `400` if it contains
+            HTML/script tags, event handlers or `javascript:` (`HTTP_BAD_REQUEST`), or a
+            printf-style format specifier (`VALIDATION_ERROR`). The format-specifier check
+            also catches ordinary text such as `50% discount` (`%`, a space, then a letter
+            like `d`). A value longer than 1000 characters is answered `500`.
+
+        :param permissions: Comma-separated permission roles to filter by. Each token must be exactly one of
+            OWNER, WRITER, READER: upper case, with no space around the commas. Empty tokens
+            (`OWNER,,WRITER,`) are dropped, but a value with no role at all (`,`) is rejected.
+            An empty value is read as not sent.
+
+        :param sort_by: Field to sort by. An empty value is read as the default.
         :param sort_order: Sort direction.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -581,16 +629,23 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Overview:**
 
-        Returns complete KB metadata including name, timestamps, root-level folders, and the requesting user's role.
+        Returns complete KB metadata including name, timestamps, every folder (nested ones
+        included, without their parent), and the requesting user's role.
 
         **Access Control:**
 
-        User must have at least READER permission to view KB details.
+        User must have at least READER permission to view KB details. A knowledge base the
+        caller holds no role on is answered `404` with the same message as an unknown id, so
+        its existence is not revealed.
+
+        **Request:** only the `kbId` path parameter is read; any query string or body is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param kb_id: Knowledge base ID (non-empty string)
+        :param kb_id: Knowledge base ID (non-empty string). It is not checked to be a UUID: any other
+            value is looked up and answered `404`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -656,7 +711,9 @@ class KnowledgeBaseSDK(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetKnowledgeBaseByID, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -690,16 +747,23 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Overview:**
 
-        Returns complete KB metadata including name, timestamps, root-level folders, and the requesting user's role.
+        Returns complete KB metadata including name, timestamps, every folder (nested ones
+        included, without their parent), and the requesting user's role.
 
         **Access Control:**
 
-        User must have at least READER permission to view KB details.
+        User must have at least READER permission to view KB details. A knowledge base the
+        caller holds no role on is answered `404` with the same message as an unknown id, so
+        its existence is not revealed.
+
+        **Request:** only the `kbId` path parameter is read; any query string or body is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param kb_id: Knowledge base ID (non-empty string)
+        :param kb_id: Knowledge base ID (non-empty string). It is not checked to be a UUID: any other
+            value is looked up and answered `404`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -765,7 +829,9 @@ class KnowledgeBaseSDK(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetKnowledgeBaseByID, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -788,7 +854,7 @@ class KnowledgeBaseSDK(BaseSDK):
         self,
         *,
         kb_id: str,
-        kb_name: Optional[str] = None,
+        kb_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -805,14 +871,22 @@ class KnowledgeBaseSDK(BaseSDK):
         **Validation:**
 
         - `kbId` path parameter must be a valid UUID (`updateKBSchema`)
-        - When provided, `kbName` must be 1–255 characters
-        - XSS and format-specifier checks are applied to `kbName` in the gateway controller
+        - `kbName` is trimmed first, then must be 1–255 characters
+        - A `kbName` holding an HTML tag, a `javascript:` URL or an inline event handler is
+        refused with `400` before authentication; one holding a printf-style format
+        specifier (`%s`, `%n`, `%x`, `%p`, with flags and width such as `%08x`) is refused
+        with `400` by the gateway controller. A plain `%` (`50% off`) is accepted.
+        - `kbName` is the only field read. Other body fields and any query parameter are
+        ignored, so a body without `kbName` (an empty object, no body, or only unknown
+        fields) is refused by the connector service with `400` `No fields to update`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID (UUID)
-        :param kb_name: New name for the knowledge base
+        :param kb_name: New name for the knowledge base. Whitespace around it is removed first, so
+            a name made only of whitespace is refused as empty.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -889,7 +963,7 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateKnowledgeBaseByID, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -913,7 +987,7 @@ class KnowledgeBaseSDK(BaseSDK):
         self,
         *,
         kb_id: str,
-        kb_name: Optional[str] = None,
+        kb_name: str,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -930,14 +1004,22 @@ class KnowledgeBaseSDK(BaseSDK):
         **Validation:**
 
         - `kbId` path parameter must be a valid UUID (`updateKBSchema`)
-        - When provided, `kbName` must be 1–255 characters
-        - XSS and format-specifier checks are applied to `kbName` in the gateway controller
+        - `kbName` is trimmed first, then must be 1–255 characters
+        - A `kbName` holding an HTML tag, a `javascript:` URL or an inline event handler is
+        refused with `400` before authentication; one holding a printf-style format
+        specifier (`%s`, `%n`, `%x`, `%p`, with flags and width such as `%08x`) is refused
+        with `400` by the gateway controller. A plain `%` (`50% off`) is accepted.
+        - `kbName` is the only field read. Other body fields and any query parameter are
+        ignored, so a body without `kbName` (an empty object, no body, or only unknown
+        fields) is refused by the connector service with `400` `No fields to update`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID (UUID)
-        :param kb_name: New name for the knowledge base
+        :param kb_name: New name for the knowledge base. Whitespace around it is removed first, so
+            a name made only of whitespace is refused as empty.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1014,7 +1096,7 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateKnowledgeBaseByID, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -1060,6 +1142,8 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Warning:** This action is irreversible. Consider exporting data before deletion.
 
+        **Request:** only the `kbId` path parameter is read; any query string or body is ignored.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1129,7 +1213,9 @@ class KnowledgeBaseSDK(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteKnowledgeBaseByID, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -1173,6 +1259,8 @@ class KnowledgeBaseSDK(BaseSDK):
         - Associated storage files
 
         **Warning:** This action is irreversible. Consider exporting data before deletion.
+
+        **Request:** only the `kbId` path parameter is read; any query string or body is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1243,7 +1331,9 @@ class KnowledgeBaseSDK(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteKnowledgeBaseByID, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -1267,6 +1357,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_id: str,
         convert_to: Optional[str] = None,
+        version: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1280,15 +1371,24 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Returns complete record metadata including name, type, indexing status, storage information, and version history.
 
-        **File conversion:**
+        **Query parameters:**
 
-        Use the optional `convertTo` parameter to request file format conversion (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
+        `convertTo` and `version` are checked by the request validator but not used by this
+        endpoint: the response is the same JSON metadata whatever they hold. They take effect
+        on `GET /knowledgeBase/stream/record/{recordId}`, which shares the validator. Any other
+        query parameter is ignored.
+
+        **Not found:**
+
+        A record that does not exist, one the caller has no access to and one that is in the
+        trash all answer `404` with the same message, so a record's existence is not revealed.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
-        :param convert_to: Optional format to convert the file to (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
+        :param convert_to: Accepted as any single string and not used by this endpoint (no conversion happens here). Sending it more than once is rejected with `400`.
+        :param version: Registry version number of an artifact record: digits only. Checked and then not used by this endpoint; a value that is not all digits (empty, negative or decimal included) is rejected with `400`.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1307,6 +1407,7 @@ class KnowledgeBaseSDK(BaseSDK):
         request = models.GetRecordByIDRequest(
             record_id=record_id,
             convert_to=convert_to,
+            version=version,
         )
 
         req = self._build_request(
@@ -1381,6 +1482,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_id: str,
         convert_to: Optional[str] = None,
+        version: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1394,15 +1496,24 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Returns complete record metadata including name, type, indexing status, storage information, and version history.
 
-        **File conversion:**
+        **Query parameters:**
 
-        Use the optional `convertTo` parameter to request file format conversion (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
+        `convertTo` and `version` are checked by the request validator but not used by this
+        endpoint: the response is the same JSON metadata whatever they hold. They take effect
+        on `GET /knowledgeBase/stream/record/{recordId}`, which shares the validator. Any other
+        query parameter is ignored.
+
+        **Not found:**
+
+        A record that does not exist, one the caller has no access to and one that is in the
+        trash all answer `404` with the same message, so a record's existence is not revealed.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
-        :param convert_to: Optional format to convert the file to (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF.
+        :param convert_to: Accepted as any single string and not used by this endpoint (no conversion happens here). Sending it more than once is rejected with `400`.
+        :param version: Registry version number of an artifact record: digits only. Checked and then not used by this endpoint; a value that is not all digits (empty, negative or decimal included) is rejected with `400`.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1421,6 +1532,7 @@ class KnowledgeBaseSDK(BaseSDK):
         request = models.GetRecordByIDRequest(
             record_id=record_id,
             convert_to=convert_to,
+            version=version,
         )
 
         req = self._build_request_async(
@@ -1490,19 +1602,22 @@ class KnowledgeBaseSDK(BaseSDK):
 
         raise errors.PipeshubDefaultError("Unexpected response received", http_res)
 
-    def update_record(
+    def update_record_multipart(
         self,
         *,
         record_id: str,
         record_name: Optional[str] = None,
         file: Optional[
-            Union[models.UpdateRecordFile, models.UpdateRecordFileTypedDict]
+            Union[
+                models.UpdateRecordMultipartFile,
+                models.UpdateRecordMultipartFileTypedDict,
+            ]
         ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateRecordResponse:
+    ) -> models.UpdateRecordResponseSchema:
         r"""Update record
 
         Update a record's name and/or file content.
@@ -1513,17 +1628,39 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Required permission:**
 
-        WRITER or higher
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role is answered `404`.
+
+        **Renaming:**
+
+        Send `recordName` as a multipart field or in a JSON body. There is no length limit.
+        A request with no body, an empty JSON object or an empty `recordName` changes nothing
+        and still answers `200`. In a JSON body the name is trimmed first (so a blank name is
+        read as empty and changes nothing); in a multipart form it is not, and a blank name
+        is refused with `400`. Fields other than `recordName` and `file` are ignored.
 
         **Updating file content:**
 
-        Include a new file in the request to replace the existing content. The file extension must match the original.
+        Include a new file in a multipart request to replace the existing content. The file
+        extension must match the original: a file with another extension is answered `500`,
+        not `400`. When a file is sent, `recordName` is ignored and the record is named after
+        the file (without its extension).
 
         **Side effects:**
 
         - Updates `updatedAtTimestamp`
-        - Increments version if file content changed
-        - Triggers re-indexing for content changes
+        - A new file is stored as the next version of the record's storage document and the
+        record is queued for indexing again. The record's own `version` and `sizeInBytes`
+        are not updated by this call.
+
+        **Known gaps:**
+
+        - Renaming a record that is in the trash is not refused: the answer is `200` with the
+        success message, but nothing changes, and `record` is the trashed record (`isDeleted: true`,
+        with `deletedAtTimestamp`, `deleteBatchId` and `deleteSource`).
+        - `fileBuffer` is an internal field filled by the upload parser. A JSON body that
+        supplies an object under that name (`buffer`, `originalname`, `mimetype`, `size`,
+        `lastModified`) is treated as an uploaded file and stored as the new version.
 
         **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
 
@@ -1531,8 +1668,10 @@ class KnowledgeBaseSDK(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
-        :param record_name: New name for the record
-        :param file: Replacement file content
+        :param record_name: New name for the record. Ignored when `file` is sent. Must not contain
+            HTML, an inline event handler or a printf-style format specifier.
+
+        :param file: Replacement file content; at most one file, with the stored file's extension.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1548,11 +1687,13 @@ class KnowledgeBaseSDK(BaseSDK):
         else:
             base_url = self._get_url(base_url, url_variables)
 
-        request = models.UpdateRecordRequest(
+        request = models.UpdateRecordMultipartRequest(
             record_id=record_id,
-            body=models.UpdateRecordRequestBody(
+            body=models.UpdateRecordMultipartRequestBody(
                 record_name=record_name,
-                file=utils.get_pydantic_model(file, Optional[models.UpdateRecordFile]),
+                file=utils.get_pydantic_model(
+                    file, Optional[models.UpdateRecordMultipartFile]
+                ),
             ),
         )
 
@@ -1574,6 +1715,332 @@ class KnowledgeBaseSDK(BaseSDK):
                 False,
                 True,
                 "multipart",
+                Optional[models.UpdateRecordMultipartRequestBody],
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateRecord_multipart",
+                oauth2_scopes=["kb:write", "kb:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.UpdateRecordResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def update_record_multipart_async(
+        self,
+        *,
+        record_id: str,
+        record_name: Optional[str] = None,
+        file: Optional[
+            Union[
+                models.UpdateRecordMultipartFile,
+                models.UpdateRecordMultipartFileTypedDict,
+            ]
+        ] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.UpdateRecordResponseSchema:
+        r"""Update record
+
+        Update a record's name and/or file content.
+
+        **Overview:**
+
+        Allows updating the display name and optionally replacing the file content. Triggers re-indexing when content changes.
+
+        **Required permission:**
+
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role is answered `404`.
+
+        **Renaming:**
+
+        Send `recordName` as a multipart field or in a JSON body. There is no length limit.
+        A request with no body, an empty JSON object or an empty `recordName` changes nothing
+        and still answers `200`. In a JSON body the name is trimmed first (so a blank name is
+        read as empty and changes nothing); in a multipart form it is not, and a blank name
+        is refused with `400`. Fields other than `recordName` and `file` are ignored.
+
+        **Updating file content:**
+
+        Include a new file in a multipart request to replace the existing content. The file
+        extension must match the original: a file with another extension is answered `500`,
+        not `400`. When a file is sent, `recordName` is ignored and the record is named after
+        the file (without its extension).
+
+        **Side effects:**
+
+        - Updates `updatedAtTimestamp`
+        - A new file is stored as the next version of the record's storage document and the
+        record is queued for indexing again. The record's own `version` and `sizeInBytes`
+        are not updated by this call.
+
+        **Known gaps:**
+
+        - Renaming a record that is in the trash is not refused: the answer is `200` with the
+        success message, but nothing changes, and `record` is the trashed record (`isDeleted: true`,
+        with `deletedAtTimestamp`, `deleteBatchId` and `deleteSource`).
+        - `fileBuffer` is an internal field filled by the upload parser. A JSON body that
+        supplies an object under that name (`buffer`, `originalname`, `mimetype`, `size`,
+        `lastModified`) is treated as an uploaded file and stored as the new version.
+
+        **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_id: Record ID
+        :param record_name: New name for the record. Ignored when `file` is sent. Must not contain
+            HTML, an inline event handler or a printf-style format specifier.
+
+        :param file: Replacement file content; at most one file, with the stored file's extension.
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UpdateRecordMultipartRequest(
+            record_id=record_id,
+            body=models.UpdateRecordMultipartRequestBody(
+                record_name=record_name,
+                file=utils.get_pydantic_model(
+                    file, Optional[models.UpdateRecordMultipartFile]
+                ),
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/knowledgeBase/record/{recordId}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body if request is not None else None,
+                False,
+                True,
+                "multipart",
+                Optional[models.UpdateRecordMultipartRequestBody],
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateRecord_multipart",
+                oauth2_scopes=["kb:write", "kb:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.UpdateRecordResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def update_record(
+        self,
+        *,
+        record_id: str,
+        record_name: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.UpdateRecordResponseSchema:
+        r"""Update record
+
+        Update a record's name and/or file content.
+
+        **Overview:**
+
+        Allows updating the display name and optionally replacing the file content. Triggers re-indexing when content changes.
+
+        **Required permission:**
+
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role is answered `404`.
+
+        **Renaming:**
+
+        Send `recordName` as a multipart field or in a JSON body. There is no length limit.
+        A request with no body, an empty JSON object or an empty `recordName` changes nothing
+        and still answers `200`. In a JSON body the name is trimmed first (so a blank name is
+        read as empty and changes nothing); in a multipart form it is not, and a blank name
+        is refused with `400`. Fields other than `recordName` and `file` are ignored.
+
+        **Updating file content:**
+
+        Include a new file in a multipart request to replace the existing content. The file
+        extension must match the original: a file with another extension is answered `500`,
+        not `400`. When a file is sent, `recordName` is ignored and the record is named after
+        the file (without its extension).
+
+        **Side effects:**
+
+        - Updates `updatedAtTimestamp`
+        - A new file is stored as the next version of the record's storage document and the
+        record is queued for indexing again. The record's own `version` and `sizeInBytes`
+        are not updated by this call.
+
+        **Known gaps:**
+
+        - Renaming a record that is in the trash is not refused: the answer is `200` with the
+        success message, but nothing changes, and `record` is the trashed record (`isDeleted: true`,
+        with `deletedAtTimestamp`, `deleteBatchId` and `deleteSource`).
+        - `fileBuffer` is an internal field filled by the upload parser. A JSON body that
+        supplies an object under that name (`buffer`, `originalname`, `mimetype`, `size`,
+        `lastModified`) is treated as an uploaded file and stored as the new version.
+
+        **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_id: Record ID
+        :param record_name: New name for the record (rename only; a file needs the multipart form).
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UpdateRecordRequest(
+            record_id=record_id,
+            body=models.UpdateRecordRequestBody(
+                record_name=record_name,
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/knowledgeBase/record/{recordId}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body if request is not None else None,
+                False,
+                True,
+                "json",
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
@@ -1608,9 +2075,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateRecordResponse, http_res)
+            return unmarshal_json_response(models.UpdateRecordResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -1635,14 +2102,11 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_id: str,
         record_name: Optional[str] = None,
-        file: Optional[
-            Union[models.UpdateRecordFile, models.UpdateRecordFileTypedDict]
-        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.UpdateRecordResponse:
+    ) -> models.UpdateRecordResponseSchema:
         r"""Update record
 
         Update a record's name and/or file content.
@@ -1653,17 +2117,39 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Required permission:**
 
-        WRITER or higher
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role is answered `404`.
+
+        **Renaming:**
+
+        Send `recordName` as a multipart field or in a JSON body. There is no length limit.
+        A request with no body, an empty JSON object or an empty `recordName` changes nothing
+        and still answers `200`. In a JSON body the name is trimmed first (so a blank name is
+        read as empty and changes nothing); in a multipart form it is not, and a blank name
+        is refused with `400`. Fields other than `recordName` and `file` are ignored.
 
         **Updating file content:**
 
-        Include a new file in the request to replace the existing content. The file extension must match the original.
+        Include a new file in a multipart request to replace the existing content. The file
+        extension must match the original: a file with another extension is answered `500`,
+        not `400`. When a file is sent, `recordName` is ignored and the record is named after
+        the file (without its extension).
 
         **Side effects:**
 
         - Updates `updatedAtTimestamp`
-        - Increments version if file content changed
-        - Triggers re-indexing for content changes
+        - A new file is stored as the next version of the record's storage document and the
+        record is queued for indexing again. The record's own `version` and `sizeInBytes`
+        are not updated by this call.
+
+        **Known gaps:**
+
+        - Renaming a record that is in the trash is not refused: the answer is `200` with the
+        success message, but nothing changes, and `record` is the trashed record (`isDeleted: true`,
+        with `deletedAtTimestamp`, `deleteBatchId` and `deleteSource`).
+        - `fileBuffer` is an internal field filled by the upload parser. A JSON body that
+        supplies an object under that name (`buffer`, `originalname`, `mimetype`, `size`,
+        `lastModified`) is treated as an uploaded file and stored as the new version.
 
         **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
 
@@ -1671,8 +2157,7 @@ class KnowledgeBaseSDK(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
-        :param record_name: New name for the record
-        :param file: Replacement file content
+        :param record_name: New name for the record (rename only; a file needs the multipart form).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1692,7 +2177,6 @@ class KnowledgeBaseSDK(BaseSDK):
             record_id=record_id,
             body=models.UpdateRecordRequestBody(
                 record_name=record_name,
-                file=utils.get_pydantic_model(file, Optional[models.UpdateRecordFile]),
             ),
         )
 
@@ -1713,7 +2197,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 request.body if request is not None else None,
                 False,
                 True,
-                "multipart",
+                "json",
                 Optional[models.UpdateRecordRequestBody],
             ),
             allow_empty_value=None,
@@ -1748,9 +2232,323 @@ class KnowledgeBaseSDK(BaseSDK):
 
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.UpdateRecordResponse, http_res)
+            return unmarshal_json_response(models.UpdateRecordResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def update_record_form(
+        self,
+        *,
+        record_id: str,
+        record_name: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.UpdateRecordResponseSchema:
+        r"""Update record
+
+        Update a record's name and/or file content.
+
+        **Overview:**
+
+        Allows updating the display name and optionally replacing the file content. Triggers re-indexing when content changes.
+
+        **Required permission:**
+
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role is answered `404`.
+
+        **Renaming:**
+
+        Send `recordName` as a multipart field or in a JSON body. There is no length limit.
+        A request with no body, an empty JSON object or an empty `recordName` changes nothing
+        and still answers `200`. In a JSON body the name is trimmed first (so a blank name is
+        read as empty and changes nothing); in a multipart form it is not, and a blank name
+        is refused with `400`. Fields other than `recordName` and `file` are ignored.
+
+        **Updating file content:**
+
+        Include a new file in a multipart request to replace the existing content. The file
+        extension must match the original: a file with another extension is answered `500`,
+        not `400`. When a file is sent, `recordName` is ignored and the record is named after
+        the file (without its extension).
+
+        **Side effects:**
+
+        - Updates `updatedAtTimestamp`
+        - A new file is stored as the next version of the record's storage document and the
+        record is queued for indexing again. The record's own `version` and `sizeInBytes`
+        are not updated by this call.
+
+        **Known gaps:**
+
+        - Renaming a record that is in the trash is not refused: the answer is `200` with the
+        success message, but nothing changes, and `record` is the trashed record (`isDeleted: true`,
+        with `deletedAtTimestamp`, `deleteBatchId` and `deleteSource`).
+        - `fileBuffer` is an internal field filled by the upload parser. A JSON body that
+        supplies an object under that name (`buffer`, `originalname`, `mimetype`, `size`,
+        `lastModified`) is treated as an uploaded file and stored as the new version.
+
+        **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_id: Record ID
+        :param record_name: New name for the record (rename only; a file needs the multipart form).
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UpdateRecordFormRequest(
+            record_id=record_id,
+            body=models.UpdateRecordFormRequestBody(
+                record_name=record_name,
+            ),
+        )
+
+        req = self._build_request(
+            method="PUT",
+            path="/knowledgeBase/record/{recordId}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body if request is not None else None,
+                False,
+                True,
+                "form",
+                Optional[models.UpdateRecordFormRequestBody],
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateRecord_form",
+                oauth2_scopes=["kb:write", "kb:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.UpdateRecordResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def update_record_form_async(
+        self,
+        *,
+        record_id: str,
+        record_name: Optional[str] = None,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.UpdateRecordResponseSchema:
+        r"""Update record
+
+        Update a record's name and/or file content.
+
+        **Overview:**
+
+        Allows updating the display name and optionally replacing the file content. Triggers re-indexing when content changes.
+
+        **Required permission:**
+
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role is answered `404`.
+
+        **Renaming:**
+
+        Send `recordName` as a multipart field or in a JSON body. There is no length limit.
+        A request with no body, an empty JSON object or an empty `recordName` changes nothing
+        and still answers `200`. In a JSON body the name is trimmed first (so a blank name is
+        read as empty and changes nothing); in a multipart form it is not, and a blank name
+        is refused with `400`. Fields other than `recordName` and `file` are ignored.
+
+        **Updating file content:**
+
+        Include a new file in a multipart request to replace the existing content. The file
+        extension must match the original: a file with another extension is answered `500`,
+        not `400`. When a file is sent, `recordName` is ignored and the record is named after
+        the file (without its extension).
+
+        **Side effects:**
+
+        - Updates `updatedAtTimestamp`
+        - A new file is stored as the next version of the record's storage document and the
+        record is queued for indexing again. The record's own `version` and `sizeInBytes`
+        are not updated by this call.
+
+        **Known gaps:**
+
+        - Renaming a record that is in the trash is not refused: the answer is `200` with the
+        success message, but nothing changes, and `record` is the trashed record (`isDeleted: true`,
+        with `deletedAtTimestamp`, `deleteBatchId` and `deleteSource`).
+        - `fileBuffer` is an internal field filled by the upload parser. A JSON body that
+        supplies an object under that name (`buffer`, `originalname`, `mimetype`, `size`,
+        `lastModified`) is treated as an uploaded file and stored as the new version.
+
+        **OAuth scopes:** `kb:write`, plus `kb:read`: replacing the file first reads the record and its knowledge base with the caller's token.
+
+
+        If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
+
+        :param record_id: Record ID
+        :param record_name: New name for the record (rename only; a file needs the multipart form).
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+
+        request = models.UpdateRecordFormRequest(
+            record_id=record_id,
+            body=models.UpdateRecordFormRequestBody(
+                record_name=record_name,
+            ),
+        )
+
+        req = self._build_request_async(
+            method="PUT",
+            path="/knowledgeBase/record/{recordId}",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=request,
+            request_body_required=False,
+            request_has_path_params=True,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            get_serialized_body=lambda: utils.serialize_request_body(
+                request.body if request is not None else None,
+                False,
+                True,
+                "form",
+                Optional[models.UpdateRecordFormRequestBody],
+            ),
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth", "oauth2"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="updateRecord_form",
+                oauth2_scopes=["kb:write", "kb:read"],
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["Knowledge Base"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.UpdateRecordResponseSchema, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -1785,7 +2583,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Required permission:**
 
-        WRITER or higher
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role, an unknown id and a record that is already in the trash are all answered `404`.
+        The query string and any request body are ignored.
 
         **What gets deleted:**
 
@@ -1799,6 +2599,9 @@ class KnowledgeBaseSDK(BaseSDK):
         purge. The response then carries `softDeleted: true` and the `batchId`, and the
         record can be brought back with `POST /knowledgeBase/record/{recordId}/restore`.
         With the setting off, the delete is immediate and cannot be undone.
+        A folder sent to the trash this way goes alone: the records inside it stay live and
+        readable. `DELETE /knowledgeBase/{kbId}/folder/{folderId}` trashes a folder with its
+        contents.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1870,7 +2673,7 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteRecordResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -1905,7 +2708,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Required permission:**
 
-        WRITER or higher
+        WRITER or higher on the record's knowledge base. A READER is answered `403`; a caller
+        with no role, an unknown id and a record that is already in the trash are all answered `404`.
+        The query string and any request body are ignored.
 
         **What gets deleted:**
 
@@ -1919,6 +2724,9 @@ class KnowledgeBaseSDK(BaseSDK):
         purge. The response then carries `softDeleted: true` and the `batchId`, and the
         record can be brought back with `POST /knowledgeBase/record/{recordId}/restore`.
         With the setting off, the delete is immediate and cannot be undone.
+        A folder sent to the trash this way goes alone: the records inside it stay live and
+        readable. `DELETE /knowledgeBase/{kbId}/folder/{folderId}` trashes a folder with its
+        contents.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -1990,7 +2798,7 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteRecordResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -2041,6 +2849,7 @@ class KnowledgeBaseSDK(BaseSDK):
         queues it on its own after about an hour.
 
         A record that is not in the trash answers 200 with nothing restored.
+        The query string and any request body are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2112,7 +2921,7 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RestoreRecordResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["401", "403", "404", "409"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -2163,6 +2972,7 @@ class KnowledgeBaseSDK(BaseSDK):
         queues it on its own after about an hour.
 
         A record that is not in the trash answers 200 with nothing restored.
+        The query string and any request body are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2234,7 +3044,7 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RestoreRecordResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["401", "403", "404", "409"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
@@ -2269,12 +3079,14 @@ class KnowledgeBaseSDK(BaseSDK):
         `POST /knowledgeBase/record/{recordId}/restore` restores it, with everything
         deleted along with it; ids from one delete are restored once. Every id gets its
         own outcome in `results`, so one refusal does not hold the others back, and the
-        answer is 200 whatever the outcomes.
+        answer is 200 whatever the outcomes: with the trash turned off in Labs every id is
+        refused with `code: 403` inside a 200. An id listed twice is answered once. Body
+        fields other than `recordIds` are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param record_ids:
+        :param record_ids: Record ids to restore. An id listed more than once is restored, and answered, once.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2345,7 +3157,9 @@ class KnowledgeBaseSDK(BaseSDK):
             return unmarshal_json_response(
                 models.RestoreRecordsResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "409"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -2379,12 +3193,14 @@ class KnowledgeBaseSDK(BaseSDK):
         `POST /knowledgeBase/record/{recordId}/restore` restores it, with everything
         deleted along with it; ids from one delete are restored once. Every id gets its
         own outcome in `results`, so one refusal does not hold the others back, and the
-        answer is 200 whatever the outcomes.
+        answer is 200 whatever the outcomes: with the trash turned off in Labs every id is
+        refused with `code: 403` inside a 200. An id listed twice is answered once. Body
+        fields other than `recordIds` are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param record_ids:
+        :param record_ids: Record ids to restore. An id listed more than once is restored, and answered, once.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2455,7 +3271,9 @@ class KnowledgeBaseSDK(BaseSDK):
             return unmarshal_json_response(
                 models.RestoreRecordsResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "409"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -2491,7 +3309,11 @@ class KnowledgeBaseSDK(BaseSDK):
         newest first. Each item is what one delete removed, as a restore brings it back
         whole: a folder deleted with its contents is one item, and so is a multi-select
         delete (`rootCount` items selected, some named in `otherRootNames`). `itemCount`
-        says how many records it holds.
+        says how many records it holds, the folder included.
+
+        A folder deleted with `DELETE /knowledgeBase/{kbId}/folder/{folderId}` takes its
+        contents along. A folder deleted with `DELETE /knowledgeBase/record/{recordId}`
+        goes to the trash alone (`itemCount` 1): the records inside it stay live.
         Restore an item with `POST /knowledgeBase/record/{recordId}/restore`, using its `id`.
 
         Needs \"Move Deleted Records to the Trash\" on in Labs.
@@ -2507,6 +3329,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         An item whose folder is also in the trash (`parentInTrash`) can only be
         restored after that folder.
+
+        **Request:** query parameters other than `page` and `limit` are ignored. A page past
+        the last one is answered `200` with no items.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2619,7 +3444,11 @@ class KnowledgeBaseSDK(BaseSDK):
         newest first. Each item is what one delete removed, as a restore brings it back
         whole: a folder deleted with its contents is one item, and so is a multi-select
         delete (`rootCount` items selected, some named in `otherRootNames`). `itemCount`
-        says how many records it holds.
+        says how many records it holds, the folder included.
+
+        A folder deleted with `DELETE /knowledgeBase/{kbId}/folder/{folderId}` takes its
+        contents along. A folder deleted with `DELETE /knowledgeBase/record/{recordId}`
+        goes to the trash alone (`itemCount` 1): the records inside it stay live.
         Restore an item with `POST /knowledgeBase/record/{recordId}/restore`, using its `id`.
 
         Needs \"Move Deleted Records to the Trash\" on in Labs.
@@ -2635,6 +3464,9 @@ class KnowledgeBaseSDK(BaseSDK):
 
         An item whose folder is also in the trash (`parentInTrash`) can only be
         restored after that folder.
+
+        **Request:** query parameters other than `page` and `limit` are ignored. A page past
+        the last one is answered `200` with no items.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -2747,7 +3579,10 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Overview:**
 
-        Returns the raw file content with appropriate `Content-Type` and `Content-Disposition` headers for download or inline viewing.
+        Returns the stored file's bytes with the file's own `Content-Type` (for an uploaded
+        file, the MIME type it was uploaded with, followed by `; charset=utf-8`, for example
+        `text/plain; charset=utf-8` or `application/json; charset=utf-8`). No
+        `Content-Disposition` header is sent for uploaded files.
 
         **Use cases:**
 
@@ -2757,15 +3592,32 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Format conversion:**
 
-        Use the `convertTo` parameter to convert between formats (e.g. DOCX to PDF).
+        `convertTo=application/pdf` asks for a PDF rendering of documents that can be
+        converted. Any other value, and the conversion request for a plain-text file, is
+        ignored: the original file is returned.
+
+        **Access:** the caller needs access to the record (any role on its knowledge base).
+        Without it, and for a record in the trash, the answer is `403`. An unknown record, or
+        an id that is not a record (a knowledge base id), is `404`. A folder has no content:
+        the answer is `502`.
+
+        **Errors** that come from the connector service are relayed with its status as
+        `{\"error\": \"<message>\"}` (`StreamRecordErrorResponse`); errors raised by the gateway
+        itself (`400`, `401`, scope `403`, malformed body `500`) use `ErrorResponse`.
+
+        **Request:** unknown query parameters are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
-        :param convert_to: Target format for conversion
+        :param convert_to: Target format for conversion. Only `application/pdf` has an effect, and only for
+            documents that can be converted. Sending it more than once is refused with `400`.
+
         :param version: Registry version to pin ARTIFACT record content to. Omit to stream
-            the latest version. Ignored for non-artifact records.
+            the latest version. Ignored for non-artifact records. Must be written as digits
+            only; anything else (`-1`, `1.5`, an empty value) or sending it more than once is
+            refused with `400`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2858,6 +3710,16 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "500", "application/json"):
             http_res_text = utils.stream_to_text(http_res)
             response_data = unmarshal_json_response(
+                errors.StreamRecordBufferInternalServerErrorUnion,
+                http_res,
+                http_res_text,
+            )
+            raise errors.StreamRecordBufferInternalServerError(
+                response_data, http_res, http_res_text
+            )
+        if utils.match_response(http_res, "502", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
                 errors.StreamRecordErrorResponseData, http_res, http_res_text
             )
             raise errors.StreamRecordErrorResponse(
@@ -2896,7 +3758,10 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Overview:**
 
-        Returns the raw file content with appropriate `Content-Type` and `Content-Disposition` headers for download or inline viewing.
+        Returns the stored file's bytes with the file's own `Content-Type` (for an uploaded
+        file, the MIME type it was uploaded with, followed by `; charset=utf-8`, for example
+        `text/plain; charset=utf-8` or `application/json; charset=utf-8`). No
+        `Content-Disposition` header is sent for uploaded files.
 
         **Use cases:**
 
@@ -2906,15 +3771,32 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Format conversion:**
 
-        Use the `convertTo` parameter to convert between formats (e.g. DOCX to PDF).
+        `convertTo=application/pdf` asks for a PDF rendering of documents that can be
+        converted. Any other value, and the conversion request for a plain-text file, is
+        ignored: the original file is returned.
+
+        **Access:** the caller needs access to the record (any role on its knowledge base).
+        Without it, and for a record in the trash, the answer is `403`. An unknown record, or
+        an id that is not a record (a knowledge base id), is `404`. A folder has no content:
+        the answer is `502`.
+
+        **Errors** that come from the connector service are relayed with its status as
+        `{\"error\": \"<message>\"}` (`StreamRecordErrorResponse`); errors raised by the gateway
+        itself (`400`, `401`, scope `403`, malformed body `500`) use `ErrorResponse`.
+
+        **Request:** unknown query parameters are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id: Record ID
-        :param convert_to: Target format for conversion
+        :param convert_to: Target format for conversion. Only `application/pdf` has an effect, and only for
+            documents that can be converted. Sending it more than once is refused with `400`.
+
         :param version: Registry version to pin ARTIFACT record content to. Omit to stream
-            the latest version. Ignored for non-artifact records.
+            the latest version. Ignored for non-artifact records. Must be written as digits
+            only; anything else (`-1`, `1.5`, an empty value) or sending it more than once is
+            refused with `400`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3007,6 +3889,16 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "500", "application/json"):
             http_res_text = await utils.stream_to_text_async(http_res)
             response_data = unmarshal_json_response(
+                errors.StreamRecordBufferInternalServerErrorUnion,
+                http_res,
+                http_res_text,
+            )
+            raise errors.StreamRecordBufferInternalServerError(
+                response_data, http_res, http_res_text
+            )
+        if utils.match_response(http_res, "502", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
                 errors.StreamRecordErrorResponseData, http_res, http_res_text
             )
             raise errors.StreamRecordErrorResponse(
@@ -3050,15 +3942,27 @@ class KnowledgeBaseSDK(BaseSDK):
         **Folder features:**
 
         - Organize records hierarchically
-        - Support nested subfolders (unlimited depth)
+        - Support nested subfolders, up to 20 levels deep
         - Inherit parent KB permissions
 
         **Naming rules:**
 
-        - 1–255 characters
-        - XSS protection applied
+        - Whitespace around the name is removed first; then 1–255 characters
+        - A name holding an HTML tag, a `javascript:` URL or an inline event handler is
+        refused with `400` before authentication; one holding a printf-style format
+        specifier (`%s`, `%x`, `%n`, `%p`) is refused with `400` by the gateway controller
         - Spaces and special characters allowed
-        - Duplicate names rejected within the same parent (`409`)
+        - A name already used by a folder in the same parent is refused with `409`, ignoring
+        case (`Reports` and `rEPORTS` clash). A file of the same name, or a folder of the
+        same name under another parent, does not clash.
+
+        **Request:** only `folderName` and the `folderId` query parameter are read; other body
+        fields and query parameters are ignored, except a `folderId`, `parentId` or
+        `parent_id` in the body and a `parentId` or `parent_id` query parameter, which are
+        refused with `400`.
+
+        **Access:** a caller with no role on the knowledge base gets `404`
+        (`Knowledge base <kbId> not found`), a `READER` gets `403`.
 
         **Response:** Returns `id` and `name` for the created folder.
 
@@ -3066,8 +3970,13 @@ class KnowledgeBaseSDK(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
-        :param folder_name: Name of the folder
-        :param folder_id: Parent folder ID. Omit to create at the knowledge base root.
+        :param folder_name: Name of the folder. Whitespace around it is removed first, so a name made
+            only of whitespace is refused as empty.
+            It cannot contain `/` or `\`, which folder paths use as separators.
+
+        :param folder_id: Parent folder ID. Omit to create at the knowledge base root. An id that is not a
+            folder of this knowledge base (unknown, or a file) is answered `404`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3183,15 +4092,27 @@ class KnowledgeBaseSDK(BaseSDK):
         **Folder features:**
 
         - Organize records hierarchically
-        - Support nested subfolders (unlimited depth)
+        - Support nested subfolders, up to 20 levels deep
         - Inherit parent KB permissions
 
         **Naming rules:**
 
-        - 1–255 characters
-        - XSS protection applied
+        - Whitespace around the name is removed first; then 1–255 characters
+        - A name holding an HTML tag, a `javascript:` URL or an inline event handler is
+        refused with `400` before authentication; one holding a printf-style format
+        specifier (`%s`, `%x`, `%n`, `%p`) is refused with `400` by the gateway controller
         - Spaces and special characters allowed
-        - Duplicate names rejected within the same parent (`409`)
+        - A name already used by a folder in the same parent is refused with `409`, ignoring
+        case (`Reports` and `rEPORTS` clash). A file of the same name, or a folder of the
+        same name under another parent, does not clash.
+
+        **Request:** only `folderName` and the `folderId` query parameter are read; other body
+        fields and query parameters are ignored, except a `folderId`, `parentId` or
+        `parent_id` in the body and a `parentId` or `parent_id` query parameter, which are
+        refused with `400`.
+
+        **Access:** a caller with no role on the knowledge base gets `404`
+        (`Knowledge base <kbId> not found`), a `READER` gets `403`.
 
         **Response:** Returns `id` and `name` for the created folder.
 
@@ -3199,8 +4120,13 @@ class KnowledgeBaseSDK(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
-        :param folder_name: Name of the folder
-        :param folder_id: Parent folder ID. Omit to create at the knowledge base root.
+        :param folder_name: Name of the folder. Whitespace around it is removed first, so a name made
+            only of whitespace is refused as empty.
+            It cannot contain `/` or `\`, which folder paths use as separators.
+
+        :param folder_id: Parent folder ID. Omit to create at the knowledge base root. An id that is not a
+            folder of this knowledge base (unknown, or a file) is answered `404`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3298,8 +4224,9 @@ class KnowledgeBaseSDK(BaseSDK):
         self,
         *,
         kb_id: str,
-        folder_id: str,
+        folder_id_path_parameter: str,
         folder_name: str,
+        folder_id_query_parameter: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3307,22 +4234,37 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.FolderCreateResponseSchema:
         r"""Create subfolder
 
-        Create a nested subfolder inside an existing parent folder.
+        Create a nested subfolder inside an existing parent folder, named by the `folderId`
+        path parameter. It runs the same validator and handler as
+        `POST /knowledgeBase/{kbId}/folder`. A `folderId` query parameter is still read: one
+        that names a different folder than the path is refused with `400`.
 
         **Required permission:** WRITER or higher
 
         **Folder features:**
 
         - Organize records hierarchically
-        - Support nested subfolders (unlimited depth)
+        - Support nested subfolders, up to 20 levels deep
         - Inherit parent KB permissions
 
         **Naming rules:**
 
-        - 1–255 characters
-        - XSS protection applied
+        - Whitespace around the name is removed first; then 1–255 characters
+        - A name holding an HTML tag, a `javascript:` URL or an inline event handler is
+        refused with `400` before authentication; one holding a printf-style format
+        specifier (`%s`, `%x`, `%n`, `%p`) is refused with `400` by the gateway controller
         - Spaces and special characters allowed
-        - Duplicate names rejected within the same parent (`409`)
+        - A name already used by a folder in the same parent is refused with `409`, ignoring
+        case (`Reports` and `rEPORTS` clash). A file of the same name, or a folder of the
+        same name under another parent, does not clash.
+
+        **Request:** only `folderName` and the `folderId` query parameter are read; other body
+        fields and query parameters are ignored, except a `folderId`, `parentId` or
+        `parent_id` in the body and a `parentId` or `parent_id` query parameter, which are
+        refused with `400`.
+
+        **Access:** a caller with no role on the knowledge base gets `404`
+        (`Knowledge base <kbId> not found`), a `READER` gets `403`.
 
         **Response:** Returns `id` and `name` for the created folder.
 
@@ -3330,8 +4272,16 @@ class KnowledgeBaseSDK(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
-        :param folder_id: Parent folder ID
-        :param folder_name: Name of the folder
+        :param folder_id_path_parameter: Parent folder ID. An id that is not a folder of this knowledge base (unknown, or a
+            file) is answered `404`.
+
+        :param folder_name: Name of the folder. Whitespace around it is removed first, so a name made
+            only of whitespace is refused as empty.
+            It cannot contain `/` or `\`, which folder paths use as separators.
+
+        :param folder_id_query_parameter: Optional. When sent, it must equal the `folderId` path parameter (`Conflicting
+            folderId in path and query parameters`).
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3349,7 +4299,8 @@ class KnowledgeBaseSDK(BaseSDK):
 
         request = models.CreateSubfolderRequest(
             kb_id=kb_id,
-            folder_id=folder_id,
+            folder_id_path_parameter=folder_id_path_parameter,
+            folder_id_query_parameter=folder_id_query_parameter,
             body=models.CreateSubfolderRequestBody(
                 folder_name=folder_name,
             ),
@@ -3429,8 +4380,9 @@ class KnowledgeBaseSDK(BaseSDK):
         self,
         *,
         kb_id: str,
-        folder_id: str,
+        folder_id_path_parameter: str,
         folder_name: str,
+        folder_id_query_parameter: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3438,22 +4390,37 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.FolderCreateResponseSchema:
         r"""Create subfolder
 
-        Create a nested subfolder inside an existing parent folder.
+        Create a nested subfolder inside an existing parent folder, named by the `folderId`
+        path parameter. It runs the same validator and handler as
+        `POST /knowledgeBase/{kbId}/folder`. A `folderId` query parameter is still read: one
+        that names a different folder than the path is refused with `400`.
 
         **Required permission:** WRITER or higher
 
         **Folder features:**
 
         - Organize records hierarchically
-        - Support nested subfolders (unlimited depth)
+        - Support nested subfolders, up to 20 levels deep
         - Inherit parent KB permissions
 
         **Naming rules:**
 
-        - 1–255 characters
-        - XSS protection applied
+        - Whitespace around the name is removed first; then 1–255 characters
+        - A name holding an HTML tag, a `javascript:` URL or an inline event handler is
+        refused with `400` before authentication; one holding a printf-style format
+        specifier (`%s`, `%x`, `%n`, `%p`) is refused with `400` by the gateway controller
         - Spaces and special characters allowed
-        - Duplicate names rejected within the same parent (`409`)
+        - A name already used by a folder in the same parent is refused with `409`, ignoring
+        case (`Reports` and `rEPORTS` clash). A file of the same name, or a folder of the
+        same name under another parent, does not clash.
+
+        **Request:** only `folderName` and the `folderId` query parameter are read; other body
+        fields and query parameters are ignored, except a `folderId`, `parentId` or
+        `parent_id` in the body and a `parentId` or `parent_id` query parameter, which are
+        refused with `400`.
+
+        **Access:** a caller with no role on the knowledge base gets `404`
+        (`Knowledge base <kbId> not found`), a `READER` gets `403`.
 
         **Response:** Returns `id` and `name` for the created folder.
 
@@ -3461,8 +4428,16 @@ class KnowledgeBaseSDK(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base ID
-        :param folder_id: Parent folder ID
-        :param folder_name: Name of the folder
+        :param folder_id_path_parameter: Parent folder ID. An id that is not a folder of this knowledge base (unknown, or a
+            file) is answered `404`.
+
+        :param folder_name: Name of the folder. Whitespace around it is removed first, so a name made
+            only of whitespace is refused as empty.
+            It cannot contain `/` or `\`, which folder paths use as separators.
+
+        :param folder_id_query_parameter: Optional. When sent, it must equal the `folderId` path parameter (`Conflicting
+            folderId in path and query parameters`).
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3480,7 +4455,8 @@ class KnowledgeBaseSDK(BaseSDK):
 
         request = models.CreateSubfolderRequest(
             kb_id=kb_id,
-            folder_id=folder_id,
+            folder_id_path_parameter=folder_id_path_parameter,
+            folder_id_query_parameter=folder_id_query_parameter,
             body=models.CreateSubfolderRequestBody(
                 folder_name=folder_name,
             ),
@@ -3569,16 +4545,30 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.FolderUpdateResponseSchema:
         r"""Update folder
 
-        Rename a folder.
+        Rename a folder, at the root or nested.
 
-        **Required permission:** WRITER or higher
+        **Required permission:** WRITER or higher. A `READER` gets `403`; a caller with no
+        role on the knowledge base gets `404` (`Knowledge base not found`).
+
+        **Naming rules:** the same as for creating a folder. Whitespace around the name is
+        removed first; HTML is refused with `400` before authentication and a printf-style
+        format specifier with `400` by the gateway controller. A name already used by another
+        folder in the same parent is refused with `409`, ignoring case; renaming a folder to
+        its own name, or to the name of a file, is allowed.
+
+        **Request:** `kbId` and `folderId` are only checked to be non-empty (an id that is not
+        a UUID is looked up and answered `404`). Only `folderName` is read; other body fields
+        and any query parameter are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id:
-        :param folder_name:
+        :param folder_name: New name of the folder. Whitespace around it is removed first, so a name
+            made only of whitespace is refused as empty.
+            It cannot contain `/` or `\`, which folder paths use as separators.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3685,16 +4675,30 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.FolderUpdateResponseSchema:
         r"""Update folder
 
-        Rename a folder.
+        Rename a folder, at the root or nested.
 
-        **Required permission:** WRITER or higher
+        **Required permission:** WRITER or higher. A `READER` gets `403`; a caller with no
+        role on the knowledge base gets `404` (`Knowledge base not found`).
+
+        **Naming rules:** the same as for creating a folder. Whitespace around the name is
+        removed first; HTML is refused with `400` before authentication and a printf-style
+        format specifier with `400` by the gateway controller. A name already used by another
+        folder in the same parent is refused with `409`, ignoring case; renaming a folder to
+        its own name, or to the name of a file, is allowed.
+
+        **Request:** `kbId` and `folderId` are only checked to be non-empty (an id that is not
+        a UUID is looked up and answered `404`). Only `folderName` is read; other body fields
+        and any query parameter are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id:
         :param folder_id:
-        :param folder_name:
+        :param folder_name: New name of the folder. Whitespace around it is removed first, so a name
+            made only of whitespace is refused as empty.
+            It cannot contain `/` or `\`, which folder paths use as separators.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3802,13 +4806,19 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Delete a folder and all its contents.
 
-        **Required permission:** WRITER or higher
+        **Required permission:** WRITER or higher. A `READER` gets `403`; a caller with no
+        role on the knowledge base gets `404`.
 
         **Cascade delete:**
 
-        All subfolders and records within will be permanently deleted.
+        All subfolders and records within are deleted for good, unless \"Move Deleted Records
+        to the Trash\" (Labs flag `ENABLE_SOFT_DELETE`) is on: then they all go to the trash and
+        can be brought back with `POST /knowledgeBase/record/{folderId}/restore`. The response
+        is the same in both cases. Known gap: while in the trash, the folder is still listed
+        in `folders` by `GET /knowledgeBase/{kbId}`, although its records answer `404`.
 
-        **Warning:** This action is irreversible.
+        **Request:** `kbId` and `folderId` are only checked to be non-empty; any query string
+        or body is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -3882,8 +4892,11 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.FolderDeleteResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -3913,13 +4926,19 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Delete a folder and all its contents.
 
-        **Required permission:** WRITER or higher
+        **Required permission:** WRITER or higher. A `READER` gets `403`; a caller with no
+        role on the knowledge base gets `404`.
 
         **Cascade delete:**
 
-        All subfolders and records within will be permanently deleted.
+        All subfolders and records within are deleted for good, unless \"Move Deleted Records
+        to the Trash\" (Labs flag `ENABLE_SOFT_DELETE`) is on: then they all go to the trash and
+        can be brought back with `POST /knowledgeBase/record/{folderId}/restore`. The response
+        is the same in both cases. Known gap: while in the trash, the folder is still listed
+        in `folders` by `GET /knowledgeBase/{kbId}`, although its records answer `404`.
 
-        **Warning:** This action is irreversible.
+        **Request:** `kbId` and `folderId` are only checked to be non-empty; any query string
+        or body is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -3993,8 +5012,11 @@ class KnowledgeBaseSDK(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.FolderDeleteResponseSchema, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -4019,8 +5041,15 @@ class KnowledgeBaseSDK(BaseSDK):
             Iterable[models.UploadRecordsFileTypedDict],
         ],
         folder_id: Optional[str] = None,
-        files_metadata: Optional[str] = None,
-        is_versioned: Optional[bool] = True,
+        files_metadata: Optional[
+            Union[
+                Iterable[models.FilesMetadatum],
+                Iterable[models.FilesMetadatumTypedDict],
+            ]
+        ] = None,
+        is_versioned: Optional[models.IsVersioned] = "true",
+        record_name: Optional[str] = None,
+        origin: Optional[str] = None,
         record_type: Optional[str] = "FILE",
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4049,6 +5078,30 @@ class KnowledgeBaseSDK(BaseSDK):
         **File Metadata**
 
         Use `files_metadata` to provide additional info like file paths and last modified timestamps.
+        A path with folders (`docs/2026/a.txt`) creates those folders, as a folder upload does.
+
+        **Rejected files**
+
+        A file whose extension is not supported, or that is larger than the size limit, does
+        not fail the request: it is reported as a `file:failed` event (`reason`
+        `UNSUPPORTED_TYPE` or `EXCEEDS_SIZE_LIMIT`, `stage: upload`) and the other files go on.
+        A file whose name is already used in the same place fails the same way with `reason`
+        `DUPLICATE_NAME` and `stage: index`. The request still answers `200` when every file
+        failed. There is no `413`.
+
+        **Ignored fields**
+
+        `recordName`, `recordType` and `origin` are validated (non-empty, and `recordName` is
+        checked for HTML and format specifiers) but do not affect the records: each record is
+        named after its file, with origin `UPLOAD` and type `FILE`. Other fields and unknown
+        query parameters are ignored; `rejectedFiles` and `fileBuffers` are set by the gateway
+        itself, so a value sent for them is replaced.
+
+        **Access**
+
+        `OWNER` and `WRITER` may upload. A `READER` gets `403`; a caller with no role on the
+        knowledge base gets `404`. Only a multipart body is read: a JSON body has no files and
+        is refused with `400`.
 
         **Versioning**
 
@@ -4066,12 +5119,26 @@ class KnowledgeBaseSDK(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param kb_id: Knowledge base ID
+        :param kb_id: Knowledge base ID (UUID)
         :param files: Files to upload (max 1000)
-        :param folder_id: Target folder ID. Omit to upload to the KB root.
-        :param files_metadata: JSON array with file_path and last_modified for each file
-        :param is_versioned: Enable version tracking
-        :param record_type: Type of records to create
+        :param folder_id: Target folder ID. Omit to upload to the KB root. A folder that is not in this
+            knowledge base is answered `404`.
+
+        :param files_metadata: JSON text: an array with one entry per file, in the order of the `files`
+            parts, each `{file_path, last_modified}` with `last_modified` in epoch
+            milliseconds (a number, not a date string). A file without an entry is
+            named after its part and timed at the upload. Text that is not JSON, or an
+            array whose length differs from the number of files, is refused with `400`
+            (`HTTP_BAD_REQUEST`); an entry without a string `file_path` or a numeric
+            `last_modified` is refused with `400` (`VALIDATION_ERROR`).
+
+        :param is_versioned: Enable version tracking. `true`/`1` and `false`/`0`/empty are read as
+            booleans; any other text is answered `500` (the validator throws a plain
+            error).
+
+        :param record_name: Validated, then ignored (records are named after their files).
+        :param origin: Validated, then ignored (records get origin `UPLOAD`).
+        :param record_type: Validated, then ignored (records get type `FILE`).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4092,8 +5159,12 @@ class KnowledgeBaseSDK(BaseSDK):
             folder_id=folder_id,
             body=models.UploadRecordsRequestBody(
                 files=utils.get_pydantic_model(files, List[models.UploadRecordsFile]),
-                files_metadata=files_metadata,
+                files_metadata=utils.get_pydantic_model(
+                    files_metadata, Optional[List[models.FilesMetadatum]]
+                ),
                 is_versioned=is_versioned,
+                record_name=record_name,
+                origin=origin,
                 record_type=record_type,
             ),
         )
@@ -4156,9 +5227,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 data_required=False,
             )
         if utils.match_response(
-            http_res,
-            ["400", "401", "403", "404", "409", "413", "429"],
-            "application/json",
+            http_res, ["400", "401", "403", "404", "409", "429"], "application/json"
         ):
             http_res_text = utils.stream_to_text(http_res)
             response_data = unmarshal_json_response(
@@ -4196,8 +5265,15 @@ class KnowledgeBaseSDK(BaseSDK):
             Iterable[models.UploadRecordsFileTypedDict],
         ],
         folder_id: Optional[str] = None,
-        files_metadata: Optional[str] = None,
-        is_versioned: Optional[bool] = True,
+        files_metadata: Optional[
+            Union[
+                Iterable[models.FilesMetadatum],
+                Iterable[models.FilesMetadatumTypedDict],
+            ]
+        ] = None,
+        is_versioned: Optional[models.IsVersioned] = "true",
+        record_name: Optional[str] = None,
+        origin: Optional[str] = None,
         record_type: Optional[str] = "FILE",
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -4226,6 +5302,30 @@ class KnowledgeBaseSDK(BaseSDK):
         **File Metadata**
 
         Use `files_metadata` to provide additional info like file paths and last modified timestamps.
+        A path with folders (`docs/2026/a.txt`) creates those folders, as a folder upload does.
+
+        **Rejected files**
+
+        A file whose extension is not supported, or that is larger than the size limit, does
+        not fail the request: it is reported as a `file:failed` event (`reason`
+        `UNSUPPORTED_TYPE` or `EXCEEDS_SIZE_LIMIT`, `stage: upload`) and the other files go on.
+        A file whose name is already used in the same place fails the same way with `reason`
+        `DUPLICATE_NAME` and `stage: index`. The request still answers `200` when every file
+        failed. There is no `413`.
+
+        **Ignored fields**
+
+        `recordName`, `recordType` and `origin` are validated (non-empty, and `recordName` is
+        checked for HTML and format specifiers) but do not affect the records: each record is
+        named after its file, with origin `UPLOAD` and type `FILE`. Other fields and unknown
+        query parameters are ignored; `rejectedFiles` and `fileBuffers` are set by the gateway
+        itself, so a value sent for them is replaced.
+
+        **Access**
+
+        `OWNER` and `WRITER` may upload. A `READER` gets `403`; a caller with no role on the
+        knowledge base gets `404`. Only a multipart body is read: a JSON body has no files and
+        is refused with `400`.
 
         **Versioning**
 
@@ -4243,12 +5343,26 @@ class KnowledgeBaseSDK(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param kb_id: Knowledge base ID
+        :param kb_id: Knowledge base ID (UUID)
         :param files: Files to upload (max 1000)
-        :param folder_id: Target folder ID. Omit to upload to the KB root.
-        :param files_metadata: JSON array with file_path and last_modified for each file
-        :param is_versioned: Enable version tracking
-        :param record_type: Type of records to create
+        :param folder_id: Target folder ID. Omit to upload to the KB root. A folder that is not in this
+            knowledge base is answered `404`.
+
+        :param files_metadata: JSON text: an array with one entry per file, in the order of the `files`
+            parts, each `{file_path, last_modified}` with `last_modified` in epoch
+            milliseconds (a number, not a date string). A file without an entry is
+            named after its part and timed at the upload. Text that is not JSON, or an
+            array whose length differs from the number of files, is refused with `400`
+            (`HTTP_BAD_REQUEST`); an entry without a string `file_path` or a numeric
+            `last_modified` is refused with `400` (`VALIDATION_ERROR`).
+
+        :param is_versioned: Enable version tracking. `true`/`1` and `false`/`0`/empty are read as
+            booleans; any other text is answered `500` (the validator throws a plain
+            error).
+
+        :param record_name: Validated, then ignored (records are named after their files).
+        :param origin: Validated, then ignored (records get origin `UPLOAD`).
+        :param record_type: Validated, then ignored (records get type `FILE`).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -4269,8 +5383,12 @@ class KnowledgeBaseSDK(BaseSDK):
             folder_id=folder_id,
             body=models.UploadRecordsRequestBody(
                 files=utils.get_pydantic_model(files, List[models.UploadRecordsFile]),
-                files_metadata=files_metadata,
+                files_metadata=utils.get_pydantic_model(
+                    files_metadata, Optional[List[models.FilesMetadatum]]
+                ),
                 is_versioned=is_versioned,
+                record_name=record_name,
+                origin=origin,
                 record_type=record_type,
             ),
         )
@@ -4333,9 +5451,7 @@ class KnowledgeBaseSDK(BaseSDK):
                 data_required=False,
             )
         if utils.match_response(
-            http_res,
-            ["400", "401", "403", "404", "409", "413", "429"],
-            "application/json",
+            http_res, ["400", "401", "403", "404", "409", "429"], "application/json"
         ):
             http_res_text = await utils.stream_to_text_async(http_res)
             response_data = unmarshal_json_response(
@@ -4378,6 +5494,14 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Use case:** Call this before uploads to validate file sizes on the client
         side and display appropriate limits to users.
+
+        `maxFilesPerRequest` is a fixed 1000. `maxFileSizeBytes` is the organization's
+        `fileUploadMaxSizeBytes` platform setting, read on every call (30 MB when the
+        setting cannot be read). Any signed-in member gets the same values; no knowledge
+        base role is needed.
+
+        **Request:** there is no validator and nothing from the request is read; any query
+        string is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -4442,7 +5566,10 @@ class KnowledgeBaseSDK(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UploadLimitsResponseSchema, http_res)
-        if utils.match_response(http_res, "401", "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -4472,6 +5599,14 @@ class KnowledgeBaseSDK(BaseSDK):
 
         **Use case:** Call this before uploads to validate file sizes on the client
         side and display appropriate limits to users.
+
+        `maxFilesPerRequest` is a fixed 1000. `maxFileSizeBytes` is the organization's
+        `fileUploadMaxSizeBytes` platform setting, read on every call (30 MB when the
+        setting cannot be read). Any signed-in member gets the same values; no knowledge
+        base role is needed.
+
+        **Request:** there is no validator and nothing from the request is read; any query
+        string is ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -4536,7 +5671,10 @@ class KnowledgeBaseSDK(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UploadLimitsResponseSchema, http_res)
-        if utils.match_response(http_res, "401", "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -4557,8 +5695,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_id: str,
         depth: Optional[int] = 0,
-        force: Optional[bool] = False,
-        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4579,16 +5716,22 @@ class KnowledgeBaseSDK(BaseSDK):
         **Status filters:**
 
         Optional `statusFilters` array limits reindex to records in matching indexing states
-        (e.g. `FAILED`, `AUTO_INDEX_OFF`).
+        (e.g. `FAILED`, `AUTO_INDEX_OFF`, `PASSWORD_PROTECTED`). Any string is accepted.
+
+        **Access:** any role on the record's knowledge base may reindex it, `READER` included.
+        For a connector record, read access to the record is enough. A record of a disabled
+        connector is refused with `409`, a record in the trash with `400`.
+
+        **Request:** only `depth` and `statusFilters` are read; other body fields (`force`
+        included) and any query parameter are ignored. The body is optional.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id:
         :param depth: Child traversal depth (`0` = record only; higher values include
-            descendants; `100` is used by clients for folder-like reindex).
+            descendants; `-1` = all of them; `100` is used by clients for folder-like reindex).
 
-        :param force: Force reindex even when the connector considers the record unchanged.
         :param status_filters: When set, only records whose indexing status matches one of these
             values are reindexed (applies to the record and its descendants per `depth`).
 
@@ -4611,10 +5754,7 @@ class KnowledgeBaseSDK(BaseSDK):
             record_id=record_id,
             body=models.ReindexRecordRequestBody(
                 depth=depth,
-                force=force,
-                status_filters=utils.unmarshal(
-                    status_filters, Optional[List[models.IndexingStatusFilter]]
-                ),
+                status_filters=utils.unmarshal(status_filters, Optional[List[str]]),
             ),
         )
 
@@ -4697,8 +5837,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_id: str,
         depth: Optional[int] = 0,
-        force: Optional[bool] = False,
-        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4719,16 +5858,22 @@ class KnowledgeBaseSDK(BaseSDK):
         **Status filters:**
 
         Optional `statusFilters` array limits reindex to records in matching indexing states
-        (e.g. `FAILED`, `AUTO_INDEX_OFF`).
+        (e.g. `FAILED`, `AUTO_INDEX_OFF`, `PASSWORD_PROTECTED`). Any string is accepted.
+
+        **Access:** any role on the record's knowledge base may reindex it, `READER` included.
+        For a connector record, read access to the record is enough. A record of a disabled
+        connector is refused with `409`, a record in the trash with `400`.
+
+        **Request:** only `depth` and `statusFilters` are read; other body fields (`force`
+        included) and any query parameter are ignored. The body is optional.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param record_id:
         :param depth: Child traversal depth (`0` = record only; higher values include
-            descendants; `100` is used by clients for folder-like reindex).
+            descendants; `-1` = all of them; `100` is used by clients for folder-like reindex).
 
-        :param force: Force reindex even when the connector considers the record unchanged.
         :param status_filters: When set, only records whose indexing status matches one of these
             values are reindexed (applies to the record and its descendants per `depth`).
 
@@ -4751,10 +5896,7 @@ class KnowledgeBaseSDK(BaseSDK):
             record_id=record_id,
             body=models.ReindexRecordRequestBody(
                 depth=depth,
-                force=force,
-                status_filters=utils.unmarshal(
-                    status_filters, Optional[List[models.IndexingStatusFilter]]
-                ),
+                status_filters=utils.unmarshal(status_filters, Optional[List[str]]),
             ),
         )
 
@@ -4837,8 +5979,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_group_id: str,
         depth: Optional[int] = 0,
-        force: Optional[bool] = False,
-        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4846,22 +5987,34 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.ReIndexRecordGroupResponseSchema:
         r"""Reindex record group
 
-        Trigger reindexing for all records in a folder or knowledge base.
+        Trigger reindexing for all records in a record group.
 
         **Overview:**
 
-        Batch reindex operation for entire containers. The `recordGroupId` can be a folder ID or KB ID.
+        Batch reindex operation for a connector's container (a drive, a space, a channel, a
+        crawled site). Record groups are written by connector syncs only: a knowledge base id
+        or a knowledge base folder id is not a record group and is answered `404` (reindex
+        those with `POST /knowledgeBase/reindex/record/{recordId}` and a depth).
 
         **Status filters:**
 
-        Optional `statusFilters` limit which child records are queued (e.g. failed-only or manual-indexing).
+        Optional `statusFilters` limit which child records are queued (e.g. failed-only or
+        manual-indexing). Any string is accepted.
+
+        **Access:** the caller needs access to the record group (an organization-wide
+        connector gives it to every member; a personal one only to its owner); without it the
+        answer is `403`. A record group of a disabled connector is refused with `409`.
+
+        **Request:** only `depth` and `statusFilters` are read; other body fields (`force`
+        included) and any query parameter are ignored. The body is optional.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param record_group_id: Folder ID or KB ID
-        :param depth: Depth of records under the record group to include.
-        :param force: Force reindex for all matched records in the group.
+        :param record_group_id: Record group ID (from a connector sync; not a knowledge base or folder id)
+        :param depth: Depth of records under the record group to include. `-1` (everything) is applied,
+            and answered, as `100`.
+
         :param status_filters: When set, only records matching these indexing statuses are reindexed.
 
         :param retries: Override the default retry configuration for this method
@@ -4883,10 +6036,7 @@ class KnowledgeBaseSDK(BaseSDK):
             record_group_id=record_group_id,
             body=models.ReindexRecordGroupRequestBody(
                 depth=depth,
-                force=force,
-                status_filters=utils.unmarshal(
-                    status_filters, Optional[List[models.IndexingStatusFilter]]
-                ),
+                status_filters=utils.unmarshal(status_filters, Optional[List[str]]),
             ),
         )
 
@@ -4971,8 +6121,7 @@ class KnowledgeBaseSDK(BaseSDK):
         *,
         record_group_id: str,
         depth: Optional[int] = 0,
-        force: Optional[bool] = False,
-        status_filters: Optional[Iterable[models.IndexingStatusFilter]] = None,
+        status_filters: Optional[Iterable[str]] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -4980,22 +6129,34 @@ class KnowledgeBaseSDK(BaseSDK):
     ) -> models.ReIndexRecordGroupResponseSchema:
         r"""Reindex record group
 
-        Trigger reindexing for all records in a folder or knowledge base.
+        Trigger reindexing for all records in a record group.
 
         **Overview:**
 
-        Batch reindex operation for entire containers. The `recordGroupId` can be a folder ID or KB ID.
+        Batch reindex operation for a connector's container (a drive, a space, a channel, a
+        crawled site). Record groups are written by connector syncs only: a knowledge base id
+        or a knowledge base folder id is not a record group and is answered `404` (reindex
+        those with `POST /knowledgeBase/reindex/record/{recordId}` and a depth).
 
         **Status filters:**
 
-        Optional `statusFilters` limit which child records are queued (e.g. failed-only or manual-indexing).
+        Optional `statusFilters` limit which child records are queued (e.g. failed-only or
+        manual-indexing). Any string is accepted.
+
+        **Access:** the caller needs access to the record group (an organization-wide
+        connector gives it to every member; a personal one only to its owner); without it the
+        answer is `403`. A record group of a disabled connector is refused with `409`.
+
+        **Request:** only `depth` and `statusFilters` are read; other body fields (`force`
+        included) and any query parameter are ignored. The body is optional.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param record_group_id: Folder ID or KB ID
-        :param depth: Depth of records under the record group to include.
-        :param force: Force reindex for all matched records in the group.
+        :param record_group_id: Record group ID (from a connector sync; not a knowledge base or folder id)
+        :param depth: Depth of records under the record group to include. `-1` (everything) is applied,
+            and answered, as `100`.
+
         :param status_filters: When set, only records matching these indexing statuses are reindexed.
 
         :param retries: Override the default retry configuration for this method
@@ -5017,10 +6178,7 @@ class KnowledgeBaseSDK(BaseSDK):
             record_group_id=record_group_id,
             body=models.ReindexRecordGroupRequestBody(
                 depth=depth,
-                force=force,
-                status_filters=utils.unmarshal(
-                    status_filters, Optional[List[models.IndexingStatusFilter]]
-                ),
+                status_filters=utils.unmarshal(status_filters, Optional[List[str]]),
             ),
         )
 
@@ -5115,15 +6273,23 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Move a file or folder record to a different location within the same knowledge base.
 
-        Set `newParentId` to a folder ID to move the record into that folder, or `null` to move it to the knowledge base root.
+        Set `newParentId` to a folder ID to move the record into that folder, or `null` (or an
+        empty string) to move it to the knowledge base root. A folder moves with everything in
+        it. Moving a record to where it already is answers `200` with the same body.
 
-        **Required Permission:** OWNER or WRITER
+        **Required Permission:** OWNER or WRITER. A `READER` gets `403`; a caller with no role
+        on the knowledge base gets `404` (`Knowledge base not found`).
+
+        **Request:** only `newParentId` is read; other body fields and any query parameter
+        are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base UUID
-        :param record_id: Record identifier (file or folder)
+        :param record_id: Record identifier (file or folder). A record that is not in this knowledge base
+            (unknown, or in another one) is answered `404`.
+
         :param new_parent_id: Target folder ID, or null to move the record to the knowledge base root
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -5239,15 +6405,23 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Move a file or folder record to a different location within the same knowledge base.
 
-        Set `newParentId` to a folder ID to move the record into that folder, or `null` to move it to the knowledge base root.
+        Set `newParentId` to a folder ID to move the record into that folder, or `null` (or an
+        empty string) to move it to the knowledge base root. A folder moves with everything in
+        it. Moving a record to where it already is answers `200` with the same body.
 
-        **Required Permission:** OWNER or WRITER
+        **Required Permission:** OWNER or WRITER. A `READER` gets `403`; a caller with no role
+        on the knowledge base gets `404` (`Knowledge base not found`).
+
+        **Request:** only `newParentId` is read; other body fields and any query parameter
+        are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param kb_id: Knowledge base UUID
-        :param record_id: Record identifier (file or folder)
+        :param record_id: Record identifier (file or folder). A record that is not in this knowledge base
+            (unknown, or in another one) is answered `404`.
+
         :param new_parent_id: Target folder ID, or null to move the record to the knowledge base root
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -5441,13 +6615,23 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
         must be present; regular JWT bearer tokens pass through without scope
-        enforcement.
+        enforcement. Only nodes the caller can access are listed.
+
+        **Request checking**
+
+        This route has no request validator of its own; the query is passed on and
+        checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200, or either sent more than once) is answered
+        `422`; a refused filter value is answered `400`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
+            `yes`/`no`, `on`/`off` and `1`/`0` are read as booleans too; anything
+            else is answered `422`.
 
         :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
             Prefer `cursor`: a page number is reached by reading the pages before it.
@@ -5463,22 +6647,25 @@ class KnowledgeBaseSDK(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across the entire
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across the entire
             node tree regardless of the current browse level.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -5488,8 +6675,8 @@ class KnowledgeBaseSDK(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -5497,17 +6684,19 @@ class KnowledgeBaseSDK(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
             `lte:...`). Timestamps must be in the range 0 to 9999999999999 and
-            `gte` must be less than or equal to `lte` when both are present.
+            `gte` must be less than or equal to `lte` when both are present;
+            a bound that is not a whole number, is out of range, or an inverted
+            range is answered `400`. A value with no `gte:`/`lte:` part is ignored.
 
         :param updated_at: Updated-date range filter. Same format and constraints as `createdAt`.
 
@@ -5524,7 +6713,8 @@ class KnowledgeBaseSDK(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -5614,25 +6804,9 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
@@ -5641,12 +6815,8 @@ class KnowledgeBaseSDK(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
@@ -5760,13 +6930,23 @@ class KnowledgeBaseSDK(BaseSDK):
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
         must be present; regular JWT bearer tokens pass through without scope
-        enforcement.
+        enforcement. Only nodes the caller can access are listed.
+
+        **Request checking**
+
+        This route has no request validator of its own; the query is passed on and
+        checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200, or either sent more than once) is answered
+        `422`; a refused filter value is answered `400`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
+            `yes`/`no`, `on`/`off` and `1`/`0` are read as booleans too; anything
+            else is answered `422`.
 
         :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
             Prefer `cursor`: a page number is reached by reading the pages before it.
@@ -5782,22 +6962,25 @@ class KnowledgeBaseSDK(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across the entire
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across the entire
             node tree regardless of the current browse level.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -5807,8 +6990,8 @@ class KnowledgeBaseSDK(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -5816,17 +6999,19 @@ class KnowledgeBaseSDK(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
             `lte:...`). Timestamps must be in the range 0 to 9999999999999 and
-            `gte` must be less than or equal to `lte` when both are present.
+            `gte` must be less than or equal to `lte` when both are present;
+            a bound that is not a whole number, is out of range, or an inverted
+            range is answered `400`. A value with no `gte:`/`lte:` part is ignored.
 
         :param updated_at: Updated-date range filter. Same format and constraints as `createdAt`.
 
@@ -5843,7 +7028,8 @@ class KnowledgeBaseSDK(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -5933,25 +7119,9 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
@@ -5960,12 +7130,8 @@ class KnowledgeBaseSDK(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
@@ -6055,18 +7221,33 @@ class KnowledgeBaseSDK(BaseSDK):
         must be present; regular JWT bearer tokens pass through without scope
         enforcement.
 
+        A parent the caller may not see, one in the trash, and one that does not
+        exist are all answered `404` with the same body, so the route does not reveal
+        whether the node exists.
+
+        **Request checking**
+
+        This route has no request validator of its own; the path values and the query
+        are checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200) is answered `422`; other refusals,
+        `page` above 50 and an unusable `cursor` included, are `400`.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param parent_type: Type of the parent node whose children to retrieve.
 
-            Must be one of: `app`, `recordGroup`, `folder`, `record`.
-            Any other value returns a 400 error.
+            Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+            Any other value returns a 400 error, and so does a type that does not
+            match what `parentId` is (for example `folder` with a knowledge base id).
 
         :param parent_id: Identifier of the parent node. Must be a valid UUID
             (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-            Any value that does not match this format returns a 400 error.
+            Any value that does not match this format returns a 400 error. The format
+            check ignores letter case but ids are stored in lower case, so an
+            upper-case UUID passes the check and is answered 404.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -6083,22 +7264,25 @@ class KnowledgeBaseSDK(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across all
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across all
             descendants of the parent node.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -6108,8 +7292,8 @@ class KnowledgeBaseSDK(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -6117,12 +7301,12 @@ class KnowledgeBaseSDK(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
@@ -6144,7 +7328,8 @@ class KnowledgeBaseSDK(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -6236,32 +7421,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesForbiddenError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "404", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
@@ -6270,12 +7434,8 @@ class KnowledgeBaseSDK(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res
@@ -6365,18 +7525,33 @@ class KnowledgeBaseSDK(BaseSDK):
         must be present; regular JWT bearer tokens pass through without scope
         enforcement.
 
+        A parent the caller may not see, one in the trash, and one that does not
+        exist are all answered `404` with the same body, so the route does not reveal
+        whether the node exists.
+
+        **Request checking**
+
+        This route has no request validator of its own; the path values and the query
+        are checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200) is answered `422`; other refusals,
+        `page` above 50 and an unusable `cursor` included, are `400`.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param parent_type: Type of the parent node whose children to retrieve.
 
-            Must be one of: `app`, `recordGroup`, `folder`, `record`.
-            Any other value returns a 400 error.
+            Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+            Any other value returns a 400 error, and so does a type that does not
+            match what `parentId` is (for example `folder` with a knowledge base id).
 
         :param parent_id: Identifier of the parent node. Must be a valid UUID
             (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-            Any value that does not match this format returns a 400 error.
+            Any value that does not match this format returns a 400 error. The format
+            check ignores letter case but ids are stored in lower case, so an
+            upper-case UUID passes the check and is answered 404.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -6393,22 +7568,25 @@ class KnowledgeBaseSDK(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across all
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across all
             descendants of the parent node.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -6418,8 +7596,8 @@ class KnowledgeBaseSDK(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -6427,12 +7605,12 @@ class KnowledgeBaseSDK(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
@@ -6454,7 +7632,8 @@ class KnowledgeBaseSDK(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -6546,32 +7725,11 @@ class KnowledgeBaseSDK(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesForbiddenError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "404", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
@@ -6580,12 +7738,8 @@ class KnowledgeBaseSDK(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res

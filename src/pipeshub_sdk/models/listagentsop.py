@@ -21,9 +21,19 @@ class ListAgentsRequestTypedDict(TypedDict):
     limit: NotRequired[int]
     r"""Maximum number of agents to return in the current page."""
     search: NotRequired[str]
-    r"""Case-insensitive search across agent name, description, and tags. Leading/trailing whitespace is trimmed; blank-after-trim values are rejected."""
+    r"""Case-insensitive search across agent name, description, and tags.
+    Leading/trailing whitespace is trimmed; a blank value is refused with
+    `VALIDATION_ERROR`, and so is a printf-style format specifier (`%s`,
+    `%x`, ...). Markup (HTML tags, `javascript:`, event handlers) is
+    refused with `HTTP_BAD_REQUEST` by the sanitizer every route runs.
+
+    """
     sort_by: NotRequired[str]
-    r"""Backend sort field. Leading/trailing whitespace is trimmed. Common value is `updatedAtTimestamp`."""
+    r"""Backend sort field. Leading/trailing whitespace is trimmed and a blank
+    value is refused. Any other value is accepted. Common value is
+    `updatedAtTimestamp`.
+
+    """
     sort_order: NotRequired[ListAgentsSortOrder]
     r"""Sort direction."""
 
@@ -45,13 +55,23 @@ class ListAgentsRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Case-insensitive search across agent name, description, and tags. Leading/trailing whitespace is trimmed; blank-after-trim values are rejected."""
+    r"""Case-insensitive search across agent name, description, and tags.
+    Leading/trailing whitespace is trimmed; a blank value is refused with
+    `VALIDATION_ERROR`, and so is a printf-style format specifier (`%s`,
+    `%x`, ...). Markup (HTML tags, `javascript:`, event handlers) is
+    refused with `HTTP_BAD_REQUEST` by the sanitizer every route runs.
+
+    """
 
     sort_by: Annotated[
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "updatedAtTimestamp"
-    r"""Backend sort field. Leading/trailing whitespace is trimmed. Common value is `updatedAtTimestamp`."""
+    r"""Backend sort field. Leading/trailing whitespace is trimmed and a blank
+    value is refused. Any other value is accepted. Common value is
+    `updatedAtTimestamp`.
+
+    """
 
     sort_order: Annotated[
         Optional[ListAgentsSortOrder],

@@ -2,11 +2,52 @@
 
 from __future__ import annotations
 from .appliedfilternode import AppliedFilterNode, AppliedFilterNodeTypedDict
+from .redactedsource import RedactedSource, RedactedSourceTypedDict
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import List, Optional, Union
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
+
+
+AppTypedDict = TypeAliasType(
+    "AppTypedDict", Union[RedactedSourceTypedDict, AppliedFilterNodeTypedDict]
+)
+
+
+App = TypeAliasType("App", Union[RedactedSource, AppliedFilterNode])
+
+
+KbTypedDict = TypeAliasType(
+    "KbTypedDict", Union[RedactedSourceTypedDict, AppliedFilterNodeTypedDict]
+)
+
+
+Kb = TypeAliasType("Kb", Union[RedactedSource, AppliedFilterNode])
+
+
+RecordGroupTypedDict = TypeAliasType(
+    "RecordGroupTypedDict", Union[RedactedSourceTypedDict, AppliedFilterNodeTypedDict]
+)
+
+
+RecordGroup = TypeAliasType("RecordGroup", Union[RedactedSource, AppliedFilterNode])
+
+
+RecordTypedDict = TypeAliasType(
+    "RecordTypedDict", Union[RedactedSourceTypedDict, AppliedFilterNodeTypedDict]
+)
+
+
+Record = TypeAliasType("Record", Union[RedactedSource, AppliedFilterNode])
+
+
+RecordsExactTypedDict = TypeAliasType(
+    "RecordsExactTypedDict", Union[RedactedSourceTypedDict, AppliedFilterNodeTypedDict]
+)
+
+
+RecordsExact = TypeAliasType("RecordsExact", Union[RedactedSource, AppliedFilterNode])
 
 
 class AppliedFiltersTypedDict(TypedDict):
@@ -16,15 +57,15 @@ class AppliedFiltersTypedDict(TypedDict):
 
     """
 
-    apps: NotRequired[List[AppliedFilterNodeTypedDict]]
+    apps: NotRequired[List[AppTypedDict]]
     r"""Applied app/connector filter nodes"""
-    kb: NotRequired[List[AppliedFilterNodeTypedDict]]
+    kb: NotRequired[List[KbTypedDict]]
     r"""Applied knowledge-base filter nodes"""
-    record_groups: NotRequired[List[AppliedFilterNodeTypedDict]]
+    record_groups: NotRequired[List[RecordGroupTypedDict]]
     r"""Applied record-group filter nodes"""
-    records: NotRequired[List[AppliedFilterNodeTypedDict]]
+    records: NotRequired[List[RecordTypedDict]]
     r"""Applied folder and record filter nodes (each with everything under it)"""
-    records_exact: NotRequired[List[AppliedFilterNodeTypedDict]]
+    records_exact: NotRequired[List[RecordsExactTypedDict]]
     r"""Applied record filter nodes selected alone"""
 
 
@@ -35,22 +76,22 @@ class AppliedFilters(BaseModel):
 
     """
 
-    apps: Optional[List[AppliedFilterNode]] = None
+    apps: Optional[List[App]] = None
     r"""Applied app/connector filter nodes"""
 
-    kb: Optional[List[AppliedFilterNode]] = None
+    kb: Optional[List[Kb]] = None
     r"""Applied knowledge-base filter nodes"""
 
     record_groups: Annotated[
-        Optional[List[AppliedFilterNode]], pydantic.Field(alias="recordGroups")
+        Optional[List[RecordGroup]], pydantic.Field(alias="recordGroups")
     ] = None
     r"""Applied record-group filter nodes"""
 
-    records: Optional[List[AppliedFilterNode]] = None
+    records: Optional[List[Record]] = None
     r"""Applied folder and record filter nodes (each with everything under it)"""
 
     records_exact: Annotated[
-        Optional[List[AppliedFilterNode]], pydantic.Field(alias="recordsExact")
+        Optional[List[RecordsExact]], pydantic.Field(alias="recordsExact")
     ] = None
     r"""Applied record filter nodes selected alone"""
 

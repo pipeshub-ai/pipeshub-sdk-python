@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 from .retrievechunk import RetrieveChunk, RetrieveChunkTypedDict
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import (
+    BaseModel,
+    Nullable,
+    OptionalNullable,
+    UNSET,
+    UNSET_SENTINEL,
+)
 import pydantic
 from pydantic import model_serializer
 from typing import List, Optional
@@ -14,8 +20,9 @@ class RetrieveResponseTypedDict(TypedDict):
     incomplete: bool
     r"""True when part of the search could not run (for example a source timed out)."""
     request_id: NotRequired[str]
-    message: NotRequired[str]
-    r"""Why `chunks` is empty, when it is."""
+    r"""The request's id, as in the `x-request-id` response header."""
+    message: NotRequired[Nullable[str]]
+    r"""Why `chunks` is empty, when it is; `null` when the search gave no reason. Absent when `chunks` is not empty."""
 
 
 class RetrieveResponse(BaseModel):
@@ -25,22 +32,32 @@ class RetrieveResponse(BaseModel):
     r"""True when part of the search could not run (for example a source timed out)."""
 
     request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""The request's id, as in the `x-request-id` response header."""
 
-    message: Optional[str] = None
-    r"""Why `chunks` is empty, when it is."""
+    message: OptionalNullable[str] = UNSET
+    r"""Why `chunks` is empty, when it is; `null` when the search gave no reason. Absent when `chunks` is not empty."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(["requestId", "message"])
+        nullable_fields = set(["message"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                if val is not None or k not in optional_fields:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
                     m[k] = val
 
         return m

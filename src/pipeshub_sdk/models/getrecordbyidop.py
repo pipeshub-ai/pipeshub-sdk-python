@@ -13,7 +13,9 @@ class GetRecordByIDRequestTypedDict(TypedDict):
     record_id: str
     r"""Record ID"""
     convert_to: NotRequired[str]
-    r"""Optional format to convert the file to (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF."""
+    r"""Accepted as any single string and not used by this endpoint (no conversion happens here). Sending it more than once is rejected with `400`."""
+    version: NotRequired[str]
+    r"""Registry version number of an artifact record: digits only. Checked and then not used by this endpoint; a value that is not all digits (empty, negative or decimal included) is rejected with `400`."""
 
 
 class GetRecordByIDRequest(BaseModel):
@@ -29,11 +31,17 @@ class GetRecordByIDRequest(BaseModel):
         pydantic.Field(alias="convertTo"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Optional format to convert the file to (e.g., PDF to text). Supported conversions include PPT to PDF and PPTX to PDF."""
+    r"""Accepted as any single string and not used by this endpoint (no conversion happens here). Sending it more than once is rejected with `400`."""
+
+    version: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Registry version number of an artifact record: digits only. Checked and then not used by this endpoint; a value that is not all digits (empty, negative or decimal included) is rejected with `400`."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["convertTo"])
+        optional_fields = set(["convertTo", "version"])
         serialized = handler(self)
         m = {}
 

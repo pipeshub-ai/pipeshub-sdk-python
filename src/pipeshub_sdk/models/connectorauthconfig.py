@@ -15,6 +15,13 @@ class ConnectorAuthConfigTypedDict(TypedDict):
     r"""A saved OAuth app (GET /oauth/{connectorType})"""
     oauth_instance_name: NotRequired[str]
     r"""Name for the OAuth app saved from inline credentials"""
+    connector_scope: NotRequired[str]
+    r"""Scope of the instance, as the frontend sends it; the server fills it in when absent"""
+    auth_type: NotRequired[str]
+    r"""On `PUT /connectors/{connectorId}/config` only: must equal the
+    instance's `authType`, which cannot be changed (`400` otherwise).
+
+    """
 
 
 class ConnectorAuthConfig(BaseModel):
@@ -35,6 +42,17 @@ class ConnectorAuthConfig(BaseModel):
     ] = None
     r"""Name for the OAuth app saved from inline credentials"""
 
+    connector_scope: Annotated[
+        Optional[str], pydantic.Field(alias="connectorScope")
+    ] = None
+    r"""Scope of the instance, as the frontend sends it; the server fills it in when absent"""
+
+    auth_type: Annotated[Optional[str], pydantic.Field(alias="authType")] = None
+    r"""On `PUT /connectors/{connectorId}/config` only: must equal the
+    instance's `authType`, which cannot be changed (`400` otherwise).
+
+    """
+
     @property
     def additional_properties(self):
         return self.__pydantic_extra__
@@ -45,7 +63,9 @@ class ConnectorAuthConfig(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["oauthConfigId", "oauthInstanceName"])
+        optional_fields = set(
+            ["oauthConfigId", "oauthInstanceName", "connectorScope", "authType"]
+        )
         serialized = handler(self)
         m = {}
 

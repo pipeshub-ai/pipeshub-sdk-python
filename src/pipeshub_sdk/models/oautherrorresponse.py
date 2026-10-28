@@ -5,7 +5,7 @@ from pipeshub_sdk.types import UnrecognizedStr
 from typing import Literal, Union
 
 
-ErrorEnum = Union[
+OAuthErrorResponseError = Union[
     Literal[
         "invalid_request",
         "invalid_client",
@@ -16,6 +16,9 @@ ErrorEnum = Union[
         "invalid_scope",
         "access_denied",
         "server_error",
+        "authorization_pending",
+        "slow_down",
+        "expired_token",
     ],
     UnrecognizedStr,
 ]

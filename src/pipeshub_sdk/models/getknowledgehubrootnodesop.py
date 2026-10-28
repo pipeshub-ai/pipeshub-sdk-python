@@ -21,7 +21,7 @@ GetKnowledgeHubRootNodesSortBy = Literal[
     "type",
 ]
 r"""Field to sort results by. Omitted → default `updatedAt`.
-Unknown value → silently falls back to `name`.
+Any other value is answered `400` (\"Invalid sort_by: ...\").
 
 """
 
@@ -30,8 +30,8 @@ GetKnowledgeHubRootNodesSortOrder = Literal[
     "asc",
     "desc",
 ]
-r"""Sort direction. Omitted → default `desc`.
-Unknown value → silently falls back to `asc`.
+r"""Sort direction. Omitted → default `desc`. Read case-insensitively;
+any other value is answered `400` (\"Invalid sort_order: ...\").
 
 """
 
@@ -40,6 +40,8 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
     only_containers: NotRequired[bool]
     r"""When `true`, only nodes that have children are returned (useful for
     building sidebar / tree navigation). Leaf nodes are excluded.
+    `yes`/`no`, `on`/`off` and `1`/`0` are read as booleans too; anything
+    else is answered `422`.
 
     """
     page: NotRequired[int]
@@ -63,30 +65,33 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
     """
     sort_by: NotRequired[GetKnowledgeHubRootNodesSortBy]
     r"""Field to sort results by. Omitted → default `updatedAt`.
-    Unknown value → silently falls back to `name`.
+    Any other value is answered `400` (\"Invalid sort_by: ...\").
 
     """
     sort_order: NotRequired[GetKnowledgeHubRootNodesSortOrder]
-    r"""Sort direction. Omitted → default `desc`.
-    Unknown value → silently falls back to `asc`.
+    r"""Sort direction. Omitted → default `desc`. Read case-insensitively;
+    any other value is answered `400` (\"Invalid sort_order: ...\").
 
     """
     q: NotRequired[str]
     r"""Full-text search query. Must be between 2 and 500 characters
-    (inclusive). When provided, the endpoint searches across the entire
+    (inclusive) after surrounding whitespace is removed, otherwise `400`.
+    When provided, the endpoint searches across the entire
     node tree regardless of the current browse level.
+    A repeated `q` is joined with commas into one query, and a `q` sent as an object
+    (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
     """
     node_types: NotRequired[str]
-    r"""Comma-separated list of node types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of node types to include. An unknown value is
+    answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `folder`, `app`, `recordGroup`, `record`
 
     """
     record_types: NotRequired[str]
-    r"""Comma-separated list of record types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of record types to include. An unknown value is
+    answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
     `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -98,8 +103,8 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
 
     """
     origins: NotRequired[str]
-    r"""Comma-separated list of origin types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of origin types to include. An unknown value is
+    answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
     Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -111,19 +116,21 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
 
     """
     indexing_status: NotRequired[str]
-    r"""Comma-separated list of indexing statuses to include. Invalid values
-    are silently ignored. Maximum 100 items.
+    r"""Comma-separated list of indexing statuses to include. An unknown value
+    is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
     Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
     `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
     """
     created_at: NotRequired[str]
     r"""Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
     Both bounds are optional (you may send just `gte:...` or just
     `lte:...`). Timestamps must be in the range 0 to 9999999999999 and
-    `gte` must be less than or equal to `lte` when both are present.
+    `gte` must be less than or equal to `lte` when both are present;
+    a bound that is not a whole number, is out of range, or an inverted
+    range is answered `400`. A value with no `gte:`/`lte:` part is ignored.
 
     """
     updated_at: NotRequired[str]
@@ -148,7 +155,8 @@ class GetKnowledgeHubRootNodesRequestTypedDict(TypedDict):
     """
     include: NotRequired[str]
     r"""Comma-separated list of additional response sections to include.
-    Invalid values are silently ignored. Maximum 100 items.
+    An unknown value is answered `400` (\"Invalid include value(s): ...\").
+    Maximum 100 items.
 
     Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -163,6 +171,8 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
     ] = False
     r"""When `true`, only nodes that have children are returned (useful for
     building sidebar / tree navigation). Leaf nodes are excluded.
+    `yes`/`no`, `on`/`off` and `1`/`0` are read as booleans too; anything
+    else is answered `422`.
 
     """
 
@@ -203,7 +213,7 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "updatedAt"
     r"""Field to sort results by. Omitted → default `updatedAt`.
-    Unknown value → silently falls back to `name`.
+    Any other value is answered `400` (\"Invalid sort_by: ...\").
 
     """
 
@@ -212,8 +222,8 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         pydantic.Field(alias="sortOrder"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "desc"
-    r"""Sort direction. Omitted → default `desc`.
-    Unknown value → silently falls back to `asc`.
+    r"""Sort direction. Omitted → default `desc`. Read case-insensitively;
+    any other value is answered `400` (\"Invalid sort_order: ...\").
 
     """
 
@@ -222,8 +232,11 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Full-text search query. Must be between 2 and 500 characters
-    (inclusive). When provided, the endpoint searches across the entire
+    (inclusive) after surrounding whitespace is removed, otherwise `400`.
+    When provided, the endpoint searches across the entire
     node tree regardless of the current browse level.
+    A repeated `q` is joined with commas into one query, and a `q` sent as an object
+    (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
     """
 
@@ -232,8 +245,8 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         pydantic.Field(alias="nodeTypes"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of node types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of node types to include. An unknown value is
+    answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `folder`, `app`, `recordGroup`, `record`
 
@@ -244,8 +257,8 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         pydantic.Field(alias="recordTypes"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of record types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of record types to include. An unknown value is
+    answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
     `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -261,8 +274,8 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of origin types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of origin types to include. An unknown value is
+    answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
     Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -284,12 +297,12 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         pydantic.Field(alias="indexingStatus"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of indexing statuses to include. Invalid values
-    are silently ignored. Maximum 100 items.
+    r"""Comma-separated list of indexing statuses to include. An unknown value
+    is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
     Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
     `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
     """
 
@@ -301,7 +314,9 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
     r"""Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
     Both bounds are optional (you may send just `gte:...` or just
     `lte:...`). Timestamps must be in the range 0 to 9999999999999 and
-    `gte` must be less than or equal to `lte` when both are present.
+    `gte` must be less than or equal to `lte` when both are present;
+    a bound that is not a whole number, is out of range, or an inverted
+    range is answered `400`. A value with no `gte:`/`lte:` part is ignored.
 
     """
 
@@ -343,7 +358,8 @@ class GetKnowledgeHubRootNodesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Comma-separated list of additional response sections to include.
-    Invalid values are silently ignored. Maximum 100 items.
+    An unknown value is answered `400` (\"Invalid include value(s): ...\").
+    Maximum 100 items.
 
     Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -419,22 +435,6 @@ class GetKnowledgeHubRootNodesServiceUnavailableError(BaseModel):
         return m
 
 
-GetKnowledgeHubRootNodesCodeHTTPInternalServerError = Literal[
-    "HTTP_INTERNAL_SERVER_ERROR",
-]
-
-
-class GetKnowledgeHubRootNodesErrorHTTPInternalServerErrorTypedDict(TypedDict):
-    code: GetKnowledgeHubRootNodesCodeHTTPInternalServerError
-    message: str
-
-
-class GetKnowledgeHubRootNodesErrorHTTPInternalServerError(BaseModel):
-    code: GetKnowledgeHubRootNodesCodeHTTPInternalServerError
-
-    message: str
-
-
 GetKnowledgeHubRootNodesUnprocessableEntityCode = Literal["HTTP_UNPROCESSABLE_ENTITY",]
 
 
@@ -466,48 +466,6 @@ class GetKnowledgeHubRootNodesUnprocessableEntityError(BaseModel):
                     m[k] = val
 
         return m
-
-
-GetKnowledgeHubRootNodesForbiddenCode = Literal["HTTP_FORBIDDEN",]
-
-
-class GetKnowledgeHubRootNodesErrorHTTPForbiddenTypedDict(TypedDict):
-    code: GetKnowledgeHubRootNodesForbiddenCode
-    message: str
-
-
-class GetKnowledgeHubRootNodesErrorHTTPForbidden(BaseModel):
-    code: GetKnowledgeHubRootNodesForbiddenCode
-
-    message: str
-
-
-GetKnowledgeHubRootNodesUnauthorizedCode = Literal["HTTP_UNAUTHORIZED",]
-
-
-class GetKnowledgeHubRootNodesErrorHTTPUnauthorizedTypedDict(TypedDict):
-    code: GetKnowledgeHubRootNodesUnauthorizedCode
-    message: str
-
-
-class GetKnowledgeHubRootNodesErrorHTTPUnauthorized(BaseModel):
-    code: GetKnowledgeHubRootNodesUnauthorizedCode
-
-    message: str
-
-
-GetKnowledgeHubRootNodesCodeHTTPBadRequest = Literal["HTTP_BAD_REQUEST",]
-
-
-class GetKnowledgeHubRootNodesErrorHTTPBadRequestTypedDict(TypedDict):
-    code: GetKnowledgeHubRootNodesCodeHTTPBadRequest
-    message: str
-
-
-class GetKnowledgeHubRootNodesErrorHTTPBadRequest(BaseModel):
-    code: GetKnowledgeHubRootNodesCodeHTTPBadRequest
-
-    message: str
 
 
 class GetKnowledgeHubRootNodesResponseTypedDict(TypedDict):

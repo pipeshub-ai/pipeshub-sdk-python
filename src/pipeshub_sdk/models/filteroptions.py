@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-from pydantic import model_serializer
-from typing import Optional
+import pydantic
+from pydantic import ConfigDict, model_serializer
+from typing import Any, Dict, Optional
 from typing_extensions import NotRequired, TypedDict
 
 
@@ -13,9 +14,22 @@ class FilterOptionsTypedDict(TypedDict):
 
 
 class FilterOptions(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
+
     value: Optional[str] = None
 
     label: Optional[str] = None
+
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -26,9 +40,12 @@ class FilterOptions(BaseModel):
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
 
         return m

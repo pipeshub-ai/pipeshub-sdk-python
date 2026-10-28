@@ -7,5 +7,4 @@ All tokens revoked
 
 | Field                           | Type                            | Required                        | Description                     | Example                         |
 | ------------------------------- | ------------------------------- | ------------------------------- | ------------------------------- | ------------------------------- |
-| `message`                       | *Optional[str]*                 | :heavy_minus_sign:              | N/A                             | All tokens revoked successfully |
-| `count`                         | *Optional[int]*                 | :heavy_minus_sign:              | Number of tokens revoked        |                                 |
+| `message`                       | *str*                           | :heavy_check_mark:              | N/A                             | All tokens revoked successfully |

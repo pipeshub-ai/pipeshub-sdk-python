@@ -143,7 +143,7 @@ class CitationFeedback(BaseModel):
         return m
 
 
-Source = Union[
+MessageFeedbackSource = Union[
     Literal[
         "user",
         "system",
@@ -287,7 +287,7 @@ class MessageFeedbackTypedDict(TypedDict):
     r"""Were the suggested follow-up questions helpful"""
     unused_follow_up_questions: NotRequired[List[str]]
     r"""Follow-up questions that were suggested but not used by the user"""
-    source: NotRequired[Source]
+    source: NotRequired[MessageFeedbackSource]
     r"""Origin of the feedback. Always present in responses (server applies the default `user`)."""
     feedback_provider: NotRequired[str]
     r"""User who submitted the feedback"""
@@ -334,7 +334,7 @@ class MessageFeedback(BaseModel):
     ] = None
     r"""Follow-up questions that were suggested but not used by the user"""
 
-    source: Optional[Source] = "user"
+    source: Optional[MessageFeedbackSource] = "user"
     r"""Origin of the feedback. Always present in responses (server applies the default `user`)."""
 
     feedback_provider: Annotated[

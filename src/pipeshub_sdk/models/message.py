@@ -14,6 +14,7 @@ from .populatedcitationreference import (
     PopulatedCitationReference,
     PopulatedCitationReferenceTypedDict,
 )
+from .redactedsource import RedactedSource, RedactedSourceTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -62,14 +63,19 @@ MessageContentFormat = Union[
 r"""Format of the content for rendering"""
 
 
-Citation1TypedDict = TypeAliasType(
-    "Citation1TypedDict",
-    Union[CitationReferenceTypedDict, PopulatedCitationReferenceTypedDict],
+MessageCitationTypedDict = TypeAliasType(
+    "MessageCitationTypedDict",
+    Union[
+        RedactedSourceTypedDict,
+        CitationReferenceTypedDict,
+        PopulatedCitationReferenceTypedDict,
+    ],
 )
 
 
-Citation1 = TypeAliasType(
-    "Citation1", Union[CitationReference, PopulatedCitationReference]
+MessageCitation = TypeAliasType(
+    "MessageCitation",
+    Union[RedactedSource, CitationReference, PopulatedCitationReference],
 )
 
 
@@ -183,6 +189,17 @@ class MessageReferenceDatum(BaseModel):
         return m
 
 
+MessageReferenceDatumUnionTypedDict = TypeAliasType(
+    "MessageReferenceDatumUnionTypedDict",
+    Union[RedactedSourceTypedDict, MessageReferenceDatumTypedDict],
+)
+
+
+MessageReferenceDatumUnion = TypeAliasType(
+    "MessageReferenceDatumUnion", Union[RedactedSource, MessageReferenceDatum]
+)
+
+
 class MessageTypedDict(TypedDict):
     r"""A single message within a conversation. Messages can be user queries,
     AI responses, system messages, or error notifications.
@@ -205,7 +222,7 @@ class MessageTypedDict(TypedDict):
     r"""The message text content"""
     content_format: NotRequired[MessageContentFormat]
     r"""Format of the content for rendering"""
-    citations: NotRequired[List[Citation1TypedDict]]
+    citations: NotRequired[List[MessageCitationTypedDict]]
     r"""References to source documents used in the response. Routes that
     return the saved conversation after a turn (create, add message)
     populate each item to `{ citationId, citationData }`.
@@ -231,7 +248,7 @@ class MessageTypedDict(TypedDict):
     machine-readable `filters` field used for retrieval scoping.
 
     """
-    reference_data: NotRequired[List[MessageReferenceDatumTypedDict]]
+    reference_data: NotRequired[List[MessageReferenceDatumUnionTypedDict]]
     r"""Reference identifiers extracted from tool responses, used to scope
     follow-up queries (for example Jira project keys or record IDs).
 
@@ -281,7 +298,7 @@ class Message(BaseModel):
     ] = "MARKDOWN"
     r"""Format of the content for rendering"""
 
-    citations: Optional[List[Citation1]] = None
+    citations: Optional[List[MessageCitation]] = None
     r"""References to source documents used in the response. Routes that
     return the saved conversation after a turn (create, add message)
     populate each item to `{ citationId, citationData }`.
@@ -321,7 +338,8 @@ class Message(BaseModel):
     """
 
     reference_data: Annotated[
-        Optional[List[MessageReferenceDatum]], pydantic.Field(alias="referenceData")
+        Optional[List[MessageReferenceDatumUnion]],
+        pydantic.Field(alias="referenceData"),
     ] = None
     r"""Reference identifiers extracted from tool responses, used to scope
     follow-up queries (for example Jira project keys or record IDs).

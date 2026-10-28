@@ -13,10 +13,15 @@ class StreamRecordBufferRequestTypedDict(TypedDict):
     record_id: str
     r"""Record ID"""
     convert_to: NotRequired[str]
-    r"""Target format for conversion"""
+    r"""Target format for conversion. Only `application/pdf` has an effect, and only for
+    documents that can be converted. Sending it more than once is refused with `400`.
+
+    """
     version: NotRequired[int]
     r"""Registry version to pin ARTIFACT record content to. Omit to stream
-    the latest version. Ignored for non-artifact records.
+    the latest version. Ignored for non-artifact records. Must be written as digits
+    only; anything else (`-1`, `1.5`, an empty value) or sending it more than once is
+    refused with `400`.
 
     """
 
@@ -34,14 +39,19 @@ class StreamRecordBufferRequest(BaseModel):
         pydantic.Field(alias="convertTo"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Target format for conversion"""
+    r"""Target format for conversion. Only `application/pdf` has an effect, and only for
+    documents that can be converted. Sending it more than once is refused with `400`.
+
+    """
 
     version: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Registry version to pin ARTIFACT record content to. Omit to stream
-    the latest version. Ignored for non-artifact records.
+    the latest version. Ignored for non-artifact records. Must be written as digits
+    only; anything else (`-1`, `1.5`, an empty value) or sending it more than once is
+    refused with `400`.
 
     """
 

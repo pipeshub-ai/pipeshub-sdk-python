@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel
-from typing_extensions import TypedDict
+from pipeshub_sdk.utils import FieldMetadata
+from typing_extensions import Annotated, TypedDict
 
 
 class ConversationTitleUpdateRequestTypedDict(TypedDict):
     title: str
-    r"""New title for the conversation"""
+    r"""New title for the conversation. Surrounding whitespace is trimmed; a
+    blank title is refused.
+
+    """
 
 
 class ConversationTitleUpdateRequest(BaseModel):
-    title: str
-    r"""New title for the conversation"""
+    title: Annotated[str, FieldMetadata(form=True)]
+    r"""New title for the conversation. Surrounding whitespace is trimmed; a
+    blank title is refused.
+
+    """

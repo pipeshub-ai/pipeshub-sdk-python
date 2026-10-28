@@ -1,6 +1,9 @@
 # GetConnectorFiltersResponse
 
-Filter options retrieved
+Filter options retrieved. A connector whose auth type has no dynamic filter options
+(for example <code>NONE</code> or <code>BASIC_AUTH</code>) and has saved settings gets an
+empty <code>filterOptions</code> object.
+
 
 
 ## Fields

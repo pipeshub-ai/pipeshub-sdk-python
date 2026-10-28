@@ -13,7 +13,7 @@ ListOAuthAppsStatus = Literal[
     "suspended",
     "revoked",
 ]
-r"""Filter by status"""
+r"""Filter by status. `revoked` always yields an empty page, because an app only becomes revoked by being deleted and deleted apps are never listed."""
 
 
 class ListOAuthAppsRequestTypedDict(TypedDict):
@@ -26,7 +26,7 @@ class ListOAuthAppsRequestTypedDict(TypedDict):
 
     """
     status: NotRequired[ListOAuthAppsStatus]
-    r"""Filter by status"""
+    r"""Filter by status. `revoked` always yields an empty page, because an app only becomes revoked by being deleted and deleted apps are never listed."""
     search: NotRequired[str]
     r"""Search by app name or description (case-insensitive)"""
 
@@ -52,7 +52,7 @@ class ListOAuthAppsRequest(BaseModel):
         Optional[ListOAuthAppsStatus],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter by status"""
+    r"""Filter by status. `revoked` always yields an empty page, because an app only becomes revoked by being deleted and deleted apps are never listed."""
 
     search: Annotated[
         Optional[str],

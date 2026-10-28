@@ -26,12 +26,15 @@ class RestoreRecordsResultItemSchemaTypedDict(TypedDict):
     record_id: str
     success: bool
     code: NotRequired[int]
+    r"""The status the single restore would have answered (200, 403, 404, 409)"""
     reason: NotRequired[str]
     r"""Why it was not restored, and what to do next"""
     message: NotRequired[str]
+    r"""Present on success"""
     batch_id: NotRequired[Nullable[str]]
-    r"""The delete batch that was restored"""
+    r"""The delete batch that was restored; `null` when the record was not in the trash"""
     restored_records: NotRequired[List[RestoredRecordSchemaTypedDict]]
+    r"""Present on success; empty when the record was not in the trash"""
     reindex_pending: NotRequired[bool]
     r"""Some restored files could not be queued for indexing"""
     reindex_pending_record_ids: NotRequired[List[str]]
@@ -66,18 +69,21 @@ class RestoreRecordsResultItemSchema(BaseModel):
     success: bool
 
     code: Optional[int] = None
+    r"""The status the single restore would have answered (200, 403, 404, 409)"""
 
     reason: Optional[str] = None
     r"""Why it was not restored, and what to do next"""
 
     message: Optional[str] = None
+    r"""Present on success"""
 
     batch_id: Annotated[OptionalNullable[str], pydantic.Field(alias="batchId")] = UNSET
-    r"""The delete batch that was restored"""
+    r"""The delete batch that was restored; `null` when the record was not in the trash"""
 
     restored_records: Annotated[
         Optional[List[RestoredRecordSchema]], pydantic.Field(alias="restoredRecords")
     ] = None
+    r"""Present on success; empty when the record was not in the trash"""
 
     reindex_pending: Annotated[
         Optional[bool], pydantic.Field(alias="reindexPending")

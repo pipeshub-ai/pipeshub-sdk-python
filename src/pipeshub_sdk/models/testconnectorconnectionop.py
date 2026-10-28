@@ -56,7 +56,10 @@ class TestConnectorConnectionRequestTypedDict(TypedDict):
     __test__ = False  # pyright: ignore[reportGeneralTypeIssues]
 
     connector_type: str
-    r"""Connector type identifier"""
+    r"""Connector type as listed by `GET /connectors/registry` (its `type`),
+    URL-encoded. The lookup is case-sensitive.
+
+    """
     body: TestConnectorConnectionRequestBodyTypedDict
 
 
@@ -68,7 +71,10 @@ class TestConnectorConnectionRequest(BaseModel):
         pydantic.Field(alias="connectorType"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Connector type identifier"""
+    r"""Connector type as listed by `GET /connectors/registry` (its `type`),
+    URL-encoded. The lookup is case-sensitive.
+
+    """
 
     body: Annotated[
         TestConnectorConnectionRequestBody,
@@ -82,6 +88,7 @@ class TestConnectorConnectionResponseTypedDict(TypedDict):
     __test__ = False  # pyright: ignore[reportGeneralTypeIssues]
 
     success: bool
+    r"""Whether the connector reached the source with these settings"""
     message: str
     r"""What happened, written for the user"""
 
@@ -92,6 +99,7 @@ class TestConnectorConnectionResponse(BaseModel):
     __test__ = False
 
     success: bool
+    r"""Whether the connector reached the source with these settings"""
 
     message: str
     r"""What happened, written for the user"""

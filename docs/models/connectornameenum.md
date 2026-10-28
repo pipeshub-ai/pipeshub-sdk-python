@@ -41,6 +41,7 @@ This is an open enum. Unrecognized values will not fail type checks.
 - `"CONFLUENCE DATA CENTER PERSONAL"`
 - `"JIRA"`
 - `"JIRA PERSONAL"`
+- `"JIRA CLOUD PERSONAL"`
 - `"JIRA DATA CENTER"`
 - `"JIRA DATA CENTER PERSONAL"`
 - `"BOX"`
@@ -75,3 +76,6 @@ This is an open enum. Unrecognized values will not fail type checks.
 - `"DATABASE_SANDBOX"`
 - `"IMAGE_GENERATION"`
 - `"ATTACHMENTS"`
+- `"DEMO"`
+- `"SMB"`
+- `"CIFS"`

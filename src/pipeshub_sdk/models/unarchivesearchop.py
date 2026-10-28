@@ -3,16 +3,53 @@
 from __future__ import annotations
 from datetime import datetime
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
-from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
+from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
 from pydantic import model_serializer
 from typing import Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+UnarchiveSearchShared = Literal[
+    "true",
+    "false",
+    "1",
+    "0",
+]
+r"""Additional `isShared` filter. `'true'` / `'1'` and `'false'` / `'0'`,
+case-insensitive; anything else is refused with `400`. The search is only unarchived
+if it matches, otherwise `404`.
+
+"""
+
+
 class UnarchiveSearchRequestTypedDict(TypedDict):
     search_id: str
     r"""Unique search identifier"""
+    search: NotRequired[str]
+    r"""Validated, then dropped: a stored search has no title to match, so the search is
+    unarchived whatever this says. More than 1000 characters, or HTML markup, is refused
+    with `400`.
+
+    """
+    shared: NotRequired[UnarchiveSearchShared]
+    r"""Additional `isShared` filter. `'true'` / `'1'` and `'false'` / `'0'`,
+    case-insensitive; anything else is refused with `400`. The search is only unarchived
+    if it matches, otherwise `404`.
+
+    """
+    start_date: NotRequired[str]
+    r"""ISO 8601 date or date-time lower bound for `createdAt`. The search is only unarchived
+    if it was created on or after it, otherwise `404`. A value JavaScript's `Date`
+    cannot parse is refused with `400`.
+
+    """
+    end_date: NotRequired[str]
+    r"""ISO 8601 date or date-time upper bound for `createdAt`. The search is only unarchived
+    if it was created on or before it, otherwise `404`. A value JavaScript's `Date`
+    cannot parse is refused with `400`.
+
+    """
 
 
 class UnarchiveSearchRequest(BaseModel):
@@ -22,6 +59,64 @@ class UnarchiveSearchRequest(BaseModel):
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
     r"""Unique search identifier"""
+
+    search: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated, then dropped: a stored search has no title to match, so the search is
+    unarchived whatever this says. More than 1000 characters, or HTML markup, is refused
+    with `400`.
+
+    """
+
+    shared: Annotated[
+        Optional[UnarchiveSearchShared],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Additional `isShared` filter. `'true'` / `'1'` and `'false'` / `'0'`,
+    case-insensitive; anything else is refused with `400`. The search is only unarchived
+    if it matches, otherwise `404`.
+
+    """
+
+    start_date: Annotated[
+        Optional[str],
+        pydantic.Field(alias="startDate"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""ISO 8601 date or date-time lower bound for `createdAt`. The search is only unarchived
+    if it was created on or after it, otherwise `404`. A value JavaScript's `Date`
+    cannot parse is refused with `400`.
+
+    """
+
+    end_date: Annotated[
+        Optional[str],
+        pydantic.Field(alias="endDate"),
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""ISO 8601 date or date-time upper bound for `createdAt`. The search is only unarchived
+    if it was created on or before it, otherwise `404`. A value JavaScript's `Date`
+    cannot parse is refused with `400`.
+
+    """
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["search", "shared", "startDate", "endDate"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 UnarchiveSearchStatus = Literal["unarchived",]

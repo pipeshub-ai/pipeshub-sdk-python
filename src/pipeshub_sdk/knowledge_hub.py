@@ -106,13 +106,23 @@ class KnowledgeHub(BaseSDK):
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
         must be present; regular JWT bearer tokens pass through without scope
-        enforcement.
+        enforcement. Only nodes the caller can access are listed.
+
+        **Request checking**
+
+        This route has no request validator of its own; the query is passed on and
+        checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200, or either sent more than once) is answered
+        `422`; a refused filter value is answered `400`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
+            `yes`/`no`, `on`/`off` and `1`/`0` are read as booleans too; anything
+            else is answered `422`.
 
         :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
             Prefer `cursor`: a page number is reached by reading the pages before it.
@@ -128,22 +138,25 @@ class KnowledgeHub(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across the entire
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across the entire
             node tree regardless of the current browse level.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -153,8 +166,8 @@ class KnowledgeHub(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -162,17 +175,19 @@ class KnowledgeHub(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
             `lte:...`). Timestamps must be in the range 0 to 9999999999999 and
-            `gte` must be less than or equal to `lte` when both are present.
+            `gte` must be less than or equal to `lte` when both are present;
+            a bound that is not a whole number, is out of range, or an inverted
+            range is answered `400`. A value with no `gte:`/`lte:` part is ignored.
 
         :param updated_at: Updated-date range filter. Same format and constraints as `createdAt`.
 
@@ -189,7 +204,8 @@ class KnowledgeHub(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -279,25 +295,9 @@ class KnowledgeHub(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
@@ -306,12 +306,8 @@ class KnowledgeHub(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
@@ -425,13 +421,23 @@ class KnowledgeHub(BaseSDK):
 
         Requires a valid bearer token. For OAuth tokens the `kb:read` scope
         must be present; regular JWT bearer tokens pass through without scope
-        enforcement.
+        enforcement. Only nodes the caller can access are listed.
+
+        **Request checking**
+
+        This route has no request validator of its own; the query is passed on and
+        checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200, or either sent more than once) is answered
+        `422`; a refused filter value is answered `400`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
+            `yes`/`no`, `on`/`off` and `1`/`0` are read as booleans too; anything
+            else is answered `422`.
 
         :param page: Page number (1-indexed, at most 50). Combined with `limit` to paginate results.
             Prefer `cursor`: a page number is reached by reading the pages before it.
@@ -447,22 +453,25 @@ class KnowledgeHub(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across the entire
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across the entire
             node tree regardless of the current browse level.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -472,8 +481,8 @@ class KnowledgeHub(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -481,17 +490,19 @@ class KnowledgeHub(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
             `lte:...`). Timestamps must be in the range 0 to 9999999999999 and
-            `gte` must be less than or equal to `lte` when both are present.
+            `gte` must be less than or equal to `lte` when both are present;
+            a bound that is not a whole number, is out of range, or an inverted
+            range is answered `400`. A value with no `gte:`/`lte:` part is ignored.
 
         :param updated_at: Updated-date range filter. Same format and constraints as `createdAt`.
 
@@ -508,7 +519,8 @@ class KnowledgeHub(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -598,25 +610,9 @@ class KnowledgeHub(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesUnprocessableEntityErrorData, http_res
@@ -625,12 +621,8 @@ class KnowledgeHub(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubRootNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubRootNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubRootNodesServiceUnavailableErrorData, http_res
@@ -720,18 +712,33 @@ class KnowledgeHub(BaseSDK):
         must be present; regular JWT bearer tokens pass through without scope
         enforcement.
 
+        A parent the caller may not see, one in the trash, and one that does not
+        exist are all answered `404` with the same body, so the route does not reveal
+        whether the node exists.
+
+        **Request checking**
+
+        This route has no request validator of its own; the path values and the query
+        are checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200) is answered `422`; other refusals,
+        `page` above 50 and an unusable `cursor` included, are `400`.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param parent_type: Type of the parent node whose children to retrieve.
 
-            Must be one of: `app`, `recordGroup`, `folder`, `record`.
-            Any other value returns a 400 error.
+            Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+            Any other value returns a 400 error, and so does a type that does not
+            match what `parentId` is (for example `folder` with a knowledge base id).
 
         :param parent_id: Identifier of the parent node. Must be a valid UUID
             (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-            Any value that does not match this format returns a 400 error.
+            Any value that does not match this format returns a 400 error. The format
+            check ignores letter case but ids are stored in lower case, so an
+            upper-case UUID passes the check and is answered 404.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -748,22 +755,25 @@ class KnowledgeHub(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across all
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across all
             descendants of the parent node.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -773,8 +783,8 @@ class KnowledgeHub(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -782,12 +792,12 @@ class KnowledgeHub(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
@@ -809,7 +819,8 @@ class KnowledgeHub(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -901,32 +912,11 @@ class KnowledgeHub(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesForbiddenError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "404", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
@@ -935,12 +925,8 @@ class KnowledgeHub(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res
@@ -1030,18 +1016,33 @@ class KnowledgeHub(BaseSDK):
         must be present; regular JWT bearer tokens pass through without scope
         enforcement.
 
+        A parent the caller may not see, one in the trash, and one that does not
+        exist are all answered `404` with the same body, so the route does not reveal
+        whether the node exists.
+
+        **Request checking**
+
+        This route has no request validator of its own; the path values and the query
+        are checked by the connector service. Query parameters not listed here are
+        ignored. A wrong type for `page`, `limit`, `onlyContainers` or `flattened`
+        (or `page` below 1 or `limit` outside 1-200) is answered `422`; other refusals,
+        `page` above 50 and an unusable `cursor` included, are `400`.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param parent_type: Type of the parent node whose children to retrieve.
 
-            Must be one of: `app`, `recordGroup`, `folder`, `record`.
-            Any other value returns a 400 error.
+            Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+            Any other value returns a 400 error, and so does a type that does not
+            match what `parentId` is (for example `folder` with a knowledge base id).
 
         :param parent_id: Identifier of the parent node. Must be a valid UUID
             (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-            Any value that does not match this format returns a 400 error.
+            Any value that does not match this format returns a 400 error. The format
+            check ignores letter case but ids are stored in lower case, so an
+            upper-case UUID passes the check and is answered 404.
 
         :param only_containers: When `true`, only nodes that have children are returned (useful for
             building sidebar / tree navigation). Leaf nodes are excluded.
@@ -1058,22 +1059,25 @@ class KnowledgeHub(BaseSDK):
         :param limit: Maximum number of items to return per page.
 
         :param sort_by: Field to sort results by. Omitted → default `updatedAt`.
-            Unknown value → silently falls back to `name`.
+            Any other value is answered `400` (\"Invalid sort_by: ...\").
 
-        :param sort_order: Sort direction. Omitted → default `desc`.
-            Unknown value → silently falls back to `asc`.
+        :param sort_order: Sort direction. Omitted → default `desc`. Read case-insensitively;
+            any other value is answered `400` (\"Invalid sort_order: ...\").
 
         :param q: Full-text search query. Must be between 2 and 500 characters
-            (inclusive). When provided, the endpoint searches across all
+            (inclusive) after surrounding whitespace is removed, otherwise `400`.
+            When provided, the endpoint searches across all
             descendants of the parent node.
+            A repeated `q` is joined with commas into one query, and a `q` sent as an object
+            (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
-        :param node_types: Comma-separated list of node types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param node_types: Comma-separated list of node types to include. An unknown value is
+            answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `folder`, `app`, `recordGroup`, `record`
 
-        :param record_types: Comma-separated list of record types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param record_types: Comma-separated list of record types to include. An unknown value is
+            answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
             Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
             `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -1083,8 +1087,8 @@ class KnowledgeHub(BaseSDK):
             `MEETING`, `PRODUCT`, `DEAL`, `CASE`, `TASK`, `ARTIFACT`,
             `CODE_FILE`, `SQL_TABLE`, `SQL_VIEW`, `OTHERS`
 
-        :param origins: Comma-separated list of origin types to include. Invalid values are
-            silently ignored. Maximum 100 items.
+        :param origins: Comma-separated list of origin types to include. An unknown value is
+            answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
             Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -1092,12 +1096,12 @@ class KnowledgeHub(BaseSDK):
             Maximum 100 items. No enum validation — any string is accepted, but
             non-existent IDs simply yield zero results.
 
-        :param indexing_status: Comma-separated list of indexing statuses to include. Invalid values
-            are silently ignored. Maximum 100 items.
+        :param indexing_status: Comma-separated list of indexing statuses to include. An unknown value
+            is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
             Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
             `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+            `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
         :param created_at: Created-date range filter. Format: `gte:<epochMs>,lte:<epochMs>`.
             Both bounds are optional (you may send just `gte:...` or just
@@ -1119,7 +1123,8 @@ class KnowledgeHub(BaseSDK):
             top-level nodes are returned.
 
         :param include: Comma-separated list of additional response sections to include.
-            Invalid values are silently ignored. Maximum 100 items.
+            An unknown value is answered `400` (\"Invalid include value(s): ...\").
+            Maximum 100 items.
 
             Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -1211,32 +1216,11 @@ class KnowledgeHub(BaseSDK):
                 ),
                 headers={},
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesBadRequestErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesUnauthorizedErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesForbiddenErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesForbiddenError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "404", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesNotFoundErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesNotFoundError(response_data, http_res)
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "422", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesUnprocessableEntityErrorData, http_res
@@ -1245,12 +1229,8 @@ class KnowledgeHub(BaseSDK):
                 response_data, http_res
             )
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetKnowledgeHubChildNodesInternalServerErrorData, http_res
-            )
-            raise errors.GetKnowledgeHubChildNodesInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "503", "application/json"):
             response_data = unmarshal_json_response(
                 errors.GetKnowledgeHubChildNodesServiceUnavailableErrorData, http_res

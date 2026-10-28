@@ -9,15 +9,18 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class AppliedFilterNodeTypedDict(TypedDict):
-    r"""A single filter node selected by the user (used for display/persistence of active filters)"""
+    r"""A single filter node selected by the user (used for display/persistence of active
+    filters). The gateway refuses a node that lacks any of the four fields.
 
-    id: NotRequired[str]
+    """
+
+    id: str
     r"""Unique identifier of the filter node"""
-    name: NotRequired[str]
+    name: str
     r"""Display name of the filter node"""
-    node_type: NotRequired[str]
+    node_type: str
     r"""Type of the node (e.g. app, recordGroup, folder, record)"""
-    connector: NotRequired[str]
+    connector: str
     r"""Connector identifier associated with this node"""
     extension: NotRequired[str]
     r"""File extension of a record node, for its icon"""
@@ -28,18 +31,21 @@ class AppliedFilterNodeTypedDict(TypedDict):
 
 
 class AppliedFilterNode(BaseModel):
-    r"""A single filter node selected by the user (used for display/persistence of active filters)"""
+    r"""A single filter node selected by the user (used for display/persistence of active
+    filters). The gateway refuses a node that lacks any of the four fields.
 
-    id: Optional[str] = None
+    """
+
+    id: str
     r"""Unique identifier of the filter node"""
 
-    name: Optional[str] = None
+    name: str
     r"""Display name of the filter node"""
 
-    node_type: Annotated[Optional[str], pydantic.Field(alias="nodeType")] = None
+    node_type: Annotated[str, pydantic.Field(alias="nodeType")]
     r"""Type of the node (e.g. app, recordGroup, folder, record)"""
 
-    connector: Optional[str] = None
+    connector: str
     r"""Connector identifier associated with this node"""
 
     extension: Optional[str] = None
@@ -53,17 +59,7 @@ class AppliedFilterNode(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            [
-                "id",
-                "name",
-                "nodeType",
-                "connector",
-                "extension",
-                "mimeType",
-                "mentioned",
-            ]
-        )
+        optional_fields = set(["extension", "mimeType", "mentioned"])
         serialized = handler(self)
         m = {}
 

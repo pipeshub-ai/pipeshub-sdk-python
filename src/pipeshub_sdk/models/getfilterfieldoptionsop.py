@@ -19,19 +19,29 @@ class GetFilterFieldOptionsRequestTypedDict(TypedDict):
     connector_id: str
     r"""Connector instance ID"""
     filter_key: str
-    r"""Filter field key"""
+    r"""Filter field key, the `name` of a field in the connector type's
+    `config.filters` (`GET /connectors/registry/{connectorType}/schema`).
+    An unsafe path segment is refused with `400` before the token is checked.
+
+    """
     page: NotRequired[int]
+    r"""Page number. An empty value is refused."""
     limit: NotRequired[int]
+    r"""Page size, 1 to 100. A value above 100 or an empty value is refused
+    by the gateway's validator (\"Limit must be between 1 and 100.\").
+
+    """
     search: NotRequired[str]
     r"""Search term for filtering options"""
     cursor: NotRequired[str]
-    r"""Cursor for cursor-based pagination"""
+    r"""Cursor for cursor-based pagination, passed on to connectors that page by cursor"""
     context_group_path: NotRequired[List[str]]
     r"""One or more GitLab group namespace paths (e.g. `myorg/team`).
     When provided for the `project_ids` filter key, the returned
     options are scoped to repositories that belong to those groups.
     Repeat the parameter for multiple groups:
-    `?contextGroupPath=groupA&contextGroupPath=groupB`
+    `?contextGroupPath=groupA&contextGroupPath=groupB`. Blank values
+    are dropped.
 
     """
     exclude_context_group_path: NotRequired[List[str]]
@@ -40,7 +50,8 @@ class GetFilterFieldOptionsRequestTypedDict(TypedDict):
     repositories that belong to those groups (used when the
     `group_ids` sync filter is `not_in`). Repeat the parameter for
     multiple groups:
-    `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`
+    `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`.
+    Blank values are dropped.
 
     """
 
@@ -58,17 +69,26 @@ class GetFilterFieldOptionsRequest(BaseModel):
         pydantic.Field(alias="filterKey"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Filter field key"""
+    r"""Filter field key, the `name` of a field in the connector type's
+    `config.filters` (`GET /connectors/registry/{connectorType}/schema`).
+    An unsafe path segment is refused with `400` before the token is checked.
+
+    """
 
     page: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 1
+    r"""Page number. An empty value is refused."""
 
     limit: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 20
+    r"""Page size, 1 to 100. A value above 100 or an empty value is refused
+    by the gateway's validator (\"Limit must be between 1 and 100.\").
+
+    """
 
     search: Annotated[
         Optional[str],
@@ -80,7 +100,7 @@ class GetFilterFieldOptionsRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Cursor for cursor-based pagination"""
+    r"""Cursor for cursor-based pagination, passed on to connectors that page by cursor"""
 
     context_group_path: Annotated[
         Optional[List[str]],
@@ -91,7 +111,8 @@ class GetFilterFieldOptionsRequest(BaseModel):
     When provided for the `project_ids` filter key, the returned
     options are scoped to repositories that belong to those groups.
     Repeat the parameter for multiple groups:
-    `?contextGroupPath=groupA&contextGroupPath=groupB`
+    `?contextGroupPath=groupA&contextGroupPath=groupB`. Blank values
+    are dropped.
 
     """
 
@@ -105,7 +126,8 @@ class GetFilterFieldOptionsRequest(BaseModel):
     repositories that belong to those groups (used when the
     `group_ids` sync filter is `not_in`). Repeat the parameter for
     multiple groups:
-    `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`
+    `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`.
+    Blank values are dropped.
 
     """
 
@@ -137,13 +159,17 @@ class GetFilterFieldOptionsRequest(BaseModel):
 
 class OptionTypedDict(TypedDict):
     id: NotRequired[str]
+    r"""Value to store in the filter selection"""
     label: NotRequired[str]
+    r"""Text shown for the option"""
 
 
 class Option(BaseModel):
     id: Optional[str] = None
+    r"""Value to store in the filter selection"""
 
     label: Optional[str] = None
+    r"""Text shown for the option"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -173,6 +199,7 @@ class GetFilterFieldOptionsResponseTypedDict(TypedDict):
     cursor: NotRequired[Nullable[str]]
     r"""Pass back to get the next page"""
     message: NotRequired[Nullable[str]]
+    r"""Informational message, only when the connector sets one"""
 
 
 class GetFilterFieldOptionsResponse(BaseModel):
@@ -192,6 +219,7 @@ class GetFilterFieldOptionsResponse(BaseModel):
     r"""Pass back to get the next page"""
 
     message: OptionalNullable[str] = UNSET
+    r"""Informational message, only when the connector sets one"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

@@ -40,6 +40,10 @@ class SemanticSearchHistoryItemTypedDict(TypedDict):
     org_id: str
     user_id: str
     citation_ids: List[str]
+    r"""Hit ids. For a search shared with the viewer the ids are not returned
+    (they cannot be checked against the viewer's access), so the array is empty.
+
+    """
     records: Dict[str, str]
     r"""Map of source-record id (or `_key`) to `JSON.stringify(<record>)`.
     Clients must `JSON.parse` each value to recover the underlying
@@ -88,6 +92,10 @@ class SemanticSearchHistoryItem(BaseModel):
     user_id: Annotated[str, pydantic.Field(alias="userId")]
 
     citation_ids: Annotated[List[str], pydantic.Field(alias="citationIds")]
+    r"""Hit ids. For a search shared with the viewer the ids are not returned
+    (they cannot be checked against the viewer's access), so the array is empty.
+
+    """
 
     records: Dict[str, str]
     r"""Map of source-record id (or `_key`) to `JSON.stringify(<record>)`.

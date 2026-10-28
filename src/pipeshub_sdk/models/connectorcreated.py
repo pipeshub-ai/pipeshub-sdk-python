@@ -10,9 +10,14 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ConnectorCreatedTypedDict(TypedDict):
+    r"""Summary of a connector instance that was just created"""
+
     connector_id: str
+    r"""ID of the new instance"""
     connector_type: str
+    r"""Connector type the instance was created from"""
     instance_name: str
+    r"""Instance name, trimmed"""
     scope: ConnectorScope
     r"""Scope determines visibility and access control for connectors:<br>
     <ul>
@@ -23,16 +28,24 @@ class ConnectorCreatedTypedDict(TypedDict):
     """
     created: NotRequired[bool]
     created_by: NotRequired[str]
+    r"""User ID who created the instance"""
     is_authenticated: NotRequired[bool]
+    r"""Always `false` on creation"""
     is_configured: NotRequired[bool]
+    r"""Whether initial configuration was saved with the request"""
 
 
 class ConnectorCreated(BaseModel):
+    r"""Summary of a connector instance that was just created"""
+
     connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
+    r"""ID of the new instance"""
 
     connector_type: Annotated[str, pydantic.Field(alias="connectorType")]
+    r"""Connector type the instance was created from"""
 
     instance_name: Annotated[str, pydantic.Field(alias="instanceName")]
+    r"""Instance name, trimmed"""
 
     scope: ConnectorScope
     r"""Scope determines visibility and access control for connectors:<br>
@@ -46,14 +59,17 @@ class ConnectorCreated(BaseModel):
     created: Optional[bool] = None
 
     created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
+    r"""User ID who created the instance"""
 
     is_authenticated: Annotated[
         Optional[bool], pydantic.Field(alias="isAuthenticated")
     ] = None
+    r"""Always `false` on creation"""
 
     is_configured: Annotated[Optional[bool], pydantic.Field(alias="isConfigured")] = (
         None
     )
+    r"""Whether initial configuration was saved with the request"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

@@ -11,25 +11,31 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class HandleOAuthCallbackRequestTypedDict(TypedDict):
     code: str
-    r"""Authorization code from provider"""
+    r"""Authorization code from provider. A missing, empty or blank value is
+    refused with `400`, even when the provider only sent `error`.
+
+    """
     state: str
-    r"""State parameter (contains connector ID)"""
+    r"""State parameter (contains connector ID). A missing, empty or blank value is refused with `400`."""
     error: NotRequired[str]
     r"""Error code if authorization failed"""
     base_url: NotRequired[str]
-    r"""Base URL for redirect"""
+    r"""Origin prefixed to the returned `redirectUrl`"""
 
 
 class HandleOAuthCallbackRequest(BaseModel):
     code: Annotated[
         str, FieldMetadata(query=QueryParamMetadata(style="form", explode=True))
     ]
-    r"""Authorization code from provider"""
+    r"""Authorization code from provider. A missing, empty or blank value is
+    refused with `400`, even when the provider only sent `error`.
+
+    """
 
     state: Annotated[
         str, FieldMetadata(query=QueryParamMetadata(style="form", explode=True))
     ]
-    r"""State parameter (contains connector ID)"""
+    r"""State parameter (contains connector ID). A missing, empty or blank value is refused with `400`."""
 
     error: Annotated[
         Optional[str],
@@ -42,7 +48,7 @@ class HandleOAuthCallbackRequest(BaseModel):
         pydantic.Field(alias="baseUrl"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Base URL for redirect"""
+    r"""Origin prefixed to the returned `redirectUrl`"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -65,23 +71,39 @@ class HandleOAuthCallbackResponseTypedDict(TypedDict):
     r"""Result of exchanging the code. `success` is false when the provider refused it."""
 
     success: bool
+    r"""Whether tokens were stored and the connector is authenticated"""
     redirect_url: NotRequired[str]
     r"""Where the web app would send the user next"""
     error: NotRequired[str]
+    r"""Only when `success` is `false`. The provider's own code when
+    it was passed in `error`, otherwise one of `invalid_state`,
+    `instance_not_found`, `config_not_found`,
+    `oauth_config_fetch_error`, `invalid_token` or `server_error`.
+
+    """
     error_message: NotRequired[str]
+    r"""Only when `error` is `server_error`. A readable reason for the failed token exchange."""
 
 
 class HandleOAuthCallbackResponse(BaseModel):
     r"""Result of exchanging the code. `success` is false when the provider refused it."""
 
     success: bool
+    r"""Whether tokens were stored and the connector is authenticated"""
 
     redirect_url: Annotated[Optional[str], pydantic.Field(alias="redirectUrl")] = None
     r"""Where the web app would send the user next"""
 
     error: Optional[str] = None
+    r"""Only when `success` is `false`. The provider's own code when
+    it was passed in `error`, otherwise one of `invalid_state`,
+    `instance_not_found`, `config_not_found`,
+    `oauth_config_fetch_error`, `invalid_token` or `server_error`.
+
+    """
 
     error_message: Annotated[Optional[str], pydantic.Field(alias="errorMessage")] = None
+    r"""Only when `error` is `server_error`. A readable reason for the failed token exchange."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

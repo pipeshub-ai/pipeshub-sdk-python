@@ -12,14 +12,14 @@ class UpdateAuthMethodRequestTypedDict(TypedDict):
     r"""Request payload"""
 
     auth_method: List[AuthStepTypedDict]
-    r"""Authentication steps to set for the organization (1-3 steps)"""
+    r"""Authentication steps to set for the organization (1-3 steps)."""
 
 
 class UpdateAuthMethodRequest(BaseModel):
     r"""Request payload"""
 
     auth_method: Annotated[List[AuthStep], pydantic.Field(alias="authMethod")]
-    r"""Authentication steps to set for the organization (1-3 steps)"""
+    r"""Authentication steps to set for the organization (1-3 steps)."""
 
 
 try:

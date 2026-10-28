@@ -1,9 +1,5 @@
 # ConversationMessageStreamRequestChatMode
 
-Optional execution mode for non-stream consumers of this shared
-request schema.
-
-
 ## Example Usage
 
 ```python

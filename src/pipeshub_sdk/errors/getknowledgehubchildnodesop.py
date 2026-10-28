@@ -37,35 +37,18 @@ class GetKnowledgeHubChildNodesServiceUnavailableError(PipeshubError):
         object.__setattr__(self, "data", data)
 
 
-class GetKnowledgeHubChildNodesInternalServerErrorData(BaseModel):
-    error: models_getknowledgehubchildnodesop.GetKnowledgeHubChildNodesErrorHTTPInternalServerError
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubChildNodesInternalServerError(PipeshubError):
-    r"""An unexpected error occurred on the server."""
-
-    data: GetKnowledgeHubChildNodesInternalServerErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubChildNodesInternalServerErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
 class GetKnowledgeHubChildNodesUnprocessableEntityErrorData(BaseModel):
     error: models_getknowledgehubchildnodesop.GetKnowledgeHubChildNodesUnprocessableEntityError
 
 
 @dataclass(unsafe_hash=True)
 class GetKnowledgeHubChildNodesUnprocessableEntityError(PipeshubError):
-    r"""A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the
+    r"""Either of:
+    - A typed query parameter could not be read: `page` or `limit` is not an
+    integer or is out of range (`page` below 1, `limit` outside 1-200), or
+    `onlyContainers` or `flattened` is not a boolean. `error.message` is the
+    connector service's own validation text.
+    - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the
     database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder
     (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),
     which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as
@@ -79,119 +62,6 @@ class GetKnowledgeHubChildNodesUnprocessableEntityError(PipeshubError):
     def __init__(
         self,
         data: GetKnowledgeHubChildNodesUnprocessableEntityErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubChildNodesNotFoundErrorData(BaseModel):
-    error: models_getknowledgehubchildnodesop.GetKnowledgeHubChildNodesNotFoundError
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubChildNodesNotFoundError(PipeshubError):
-    r"""Parent node not found.
-
-    The `parentId` does not correspond to an existing node of the
-    specified `parentType`, or the node has been deleted.
-
-    """
-
-    data: GetKnowledgeHubChildNodesNotFoundErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubChildNodesNotFoundErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubChildNodesForbiddenErrorData(BaseModel):
-    error: (
-        models_getknowledgehubchildnodesop.GetKnowledgeHubChildNodesErrorHTTPForbidden
-    )
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubChildNodesForbiddenError(PipeshubError):
-    r"""Insufficient OAuth scope.
-
-    Only applies to OAuth tokens. The token did not carry the `kb:read`
-    scope required by this endpoint. Regular (non-OAuth) JWT bearer
-    tokens are not subject to scope enforcement and will not receive
-    this error.
-
-    """
-
-    data: GetKnowledgeHubChildNodesForbiddenErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubChildNodesForbiddenErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubChildNodesUnauthorizedErrorData(BaseModel):
-    error: models_getknowledgehubchildnodesop.GetKnowledgeHubChildNodesErrorHTTPUnauthorized
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubChildNodesUnauthorizedError(PipeshubError):
-    r"""Missing or invalid authentication token.
-
-    The bearer token was absent, expired, malformed, or could not be
-    verified by the auth middleware.
-
-    """
-
-    data: GetKnowledgeHubChildNodesUnauthorizedErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubChildNodesUnauthorizedErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubChildNodesBadRequestErrorData(BaseModel):
-    error: (
-        models_getknowledgehubchildnodesop.GetKnowledgeHubChildNodesErrorHTTPBadRequest
-    )
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubChildNodesBadRequestError(PipeshubError):
-    r"""Invalid request parameters or path values. The backend's validation
-    message is returned verbatim in `error.message`. See the examples
-    below for the common triggers.
-
-    """
-
-    data: GetKnowledgeHubChildNodesBadRequestErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubChildNodesBadRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

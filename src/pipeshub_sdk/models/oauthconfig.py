@@ -63,14 +63,16 @@ class OAuthConfigTypedDict(TypedDict):
     oauth_instance_name: NotRequired[str]
     connector_type: NotRequired[str]
     icon_path: NotRequired[str]
+    r"""Icon of the connector type, copied from the OAuth registry when the configuration was created"""
     app_group: NotRequired[str]
+    r"""Application group of the connector type (empty when the type is not in the OAuth registry)"""
     app_description: NotRequired[str]
+    r"""Description of the connector type's OAuth application"""
     app_categories: NotRequired[List[str]]
+    r"""Categories of the connector type"""
     config: NotRequired[OAuthConfigConfigTypedDict]
     r"""OAuth app credentials; keys follow the connector type's OAuth fields"""
     user_id: NotRequired[str]
-    org_id: NotRequired[str]
-    created_by: NotRequired[str]
     updated_by: NotRequired[str]
     created_at_timestamp: NotRequired[int]
     r"""Epoch milliseconds"""
@@ -98,25 +100,25 @@ class OAuthConfig(BaseModel):
     )
 
     icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
+    r"""Icon of the connector type, copied from the OAuth registry when the configuration was created"""
 
     app_group: Annotated[Optional[str], pydantic.Field(alias="appGroup")] = None
+    r"""Application group of the connector type (empty when the type is not in the OAuth registry)"""
 
     app_description: Annotated[
         Optional[str], pydantic.Field(alias="appDescription")
     ] = None
+    r"""Description of the connector type's OAuth application"""
 
     app_categories: Annotated[
         Optional[List[str]], pydantic.Field(alias="appCategories")
     ] = None
+    r"""Categories of the connector type"""
 
     config: Optional[OAuthConfigConfig] = None
     r"""OAuth app credentials; keys follow the connector type's OAuth fields"""
 
     user_id: Annotated[Optional[str], pydantic.Field(alias="userId")] = None
-
-    org_id: Annotated[Optional[str], pydantic.Field(alias="orgId")] = None
-
-    created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
 
     updated_by: Annotated[Optional[str], pydantic.Field(alias="updatedBy")] = None
 
@@ -152,8 +154,6 @@ class OAuthConfig(BaseModel):
                 "appCategories",
                 "config",
                 "userId",
-                "orgId",
-                "createdBy",
                 "updatedBy",
                 "createdAtTimestamp",
                 "updatedAtTimestamp",

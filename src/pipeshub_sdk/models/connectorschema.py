@@ -32,6 +32,20 @@ from typing import Any, Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+PermissionModel = Union[
+    Literal[
+        "RECORD_LEVEL",
+        "APP_LEVEL",
+    ],
+    UnrecognizedStr,
+]
+r"""How records of this connector get their per-user visibility:
+`RECORD_LEVEL` (per-record permissions from the source) or
+`APP_LEVEL` (everyone who can reach the connector sees every record).
+
+"""
+
+
 class OauthConfigsTypedDict(TypedDict):
     authorize_url: NotRequired[str]
     token_url: NotRequired[str]
@@ -66,13 +80,17 @@ class OauthConfigs(BaseModel):
 
 
 class ConnectorSchemaAuthTypedDict(TypedDict):
+    r"""Authentication form"""
+
     supported_auth_types: NotRequired[List[ConnectorAuthType]]
     schemas: NotRequired[Dict[str, ConnectorAuthSchemaForTypeTypedDict]]
     r"""Auth form per auth type, keyed by ConnectorAuthType"""
     values: NotRequired[Dict[str, Any]]
+    r"""Default values, keyed by field name"""
     custom_fields: NotRequired[List[Any]]
     custom_values: NotRequired[Dict[str, Any]]
     conditional_display: NotRequired[Dict[str, Any]]
+    r"""Rules that show a field only when another field has a given value, keyed by the field they apply to"""
     authorize_url: NotRequired[str]
     r"""Instance reads only"""
     token_url: NotRequired[str]
@@ -82,6 +100,8 @@ class ConnectorSchemaAuthTypedDict(TypedDict):
 
 
 class ConnectorSchemaAuth(BaseModel):
+    r"""Authentication form"""
+
     supported_auth_types: Annotated[
         Optional[List[ConnectorAuthType]], pydantic.Field(alias="supportedAuthTypes")
     ] = None
@@ -90,6 +110,7 @@ class ConnectorSchemaAuth(BaseModel):
     r"""Auth form per auth type, keyed by ConnectorAuthType"""
 
     values: Optional[Dict[str, Any]] = None
+    r"""Default values, keyed by field name"""
 
     custom_fields: Annotated[
         Optional[List[Any]], pydantic.Field(alias="customFields")
@@ -102,6 +123,7 @@ class ConnectorSchemaAuth(BaseModel):
     conditional_display: Annotated[
         Optional[Dict[str, Any]], pydantic.Field(alias="conditionalDisplay")
     ] = None
+    r"""Rules that show a field only when another field has a given value, keyed by the field they apply to"""
 
     authorize_url: Annotated[Optional[str], pydantic.Field(alias="authorizeUrl")] = None
     r"""Instance reads only"""
@@ -161,6 +183,7 @@ ConnectorSchemaSelectedStrategy = Union[
     ],
     UnrecognizedStr,
 ]
+r"""Strategy preselected in the form"""
 
 
 class ConnectorSchemaWebhookConfigTypedDict(TypedDict):
@@ -297,8 +320,11 @@ class RealtimeConfig(BaseModel):
 
 
 class ConnectorSchemaSyncTypedDict(TypedDict):
+    r"""Sync options"""
+
     supported_strategies: NotRequired[List[SupportedStrategy]]
     selected_strategy: NotRequired[ConnectorSchemaSelectedStrategy]
+    r"""Strategy preselected in the form"""
     webhook_config: NotRequired[ConnectorSchemaWebhookConfigTypedDict]
     scheduled_config: NotRequired[ConnectorSchemaScheduledConfigTypedDict]
     realtime_config: NotRequired[RealtimeConfigTypedDict]
@@ -308,6 +334,8 @@ class ConnectorSchemaSyncTypedDict(TypedDict):
 
 
 class ConnectorSchemaSync(BaseModel):
+    r"""Sync options"""
+
     supported_strategies: Annotated[
         Optional[List[SupportedStrategy]], pydantic.Field(alias="supportedStrategies")
     ] = None
@@ -316,6 +344,7 @@ class ConnectorSchemaSync(BaseModel):
         Optional[ConnectorSchemaSelectedStrategy],
         pydantic.Field(alias="selectedStrategy"),
     ] = None
+    r"""Strategy preselected in the form"""
 
     webhook_config: Annotated[
         Optional[ConnectorSchemaWebhookConfig], pydantic.Field(alias="webhookConfig")
@@ -369,11 +398,15 @@ class ConnectorSchemaSync(BaseModel):
 
 
 class ConnectorSchemaFiltersTypedDict(TypedDict):
+    r"""Filters the connector offers"""
+
     sync: NotRequired[ConnectorFilterSectionTypedDict]
     indexing: NotRequired[ConnectorFilterSectionTypedDict]
 
 
 class ConnectorSchemaFilters(BaseModel):
+    r"""Filters the connector offers"""
+
     sync: Optional[ConnectorFilterSection] = None
 
     indexing: Optional[ConnectorFilterSection] = None
@@ -403,15 +436,24 @@ class ConnectorSchemaTypedDict(TypedDict):
     supports_sync: NotRequired[bool]
     supports_agent: NotRequired[bool]
     hide_connector: NotRequired[bool]
-    permission_model: NotRequired[str]
+    r"""Whether the type is hidden from the registry listing"""
+    permission_model: NotRequired[PermissionModel]
+    r"""How records of this connector get their per-user visibility:
+    `RECORD_LEVEL` (per-record permissions from the source) or
+    `APP_LEVEL` (everyone who can reach the connector sees every record).
+
+    """
     is_admin_access_required: NotRequired[bool]
     personal_connector_type: NotRequired[Nullable[str]]
     supports_connection_check: NotRequired[bool]
     r"""Whether POST /connectors/registry/{connectorType}/test-connection works for this type"""
     documentation_links: NotRequired[List[ConnectorDocumentationLinkTypedDict]]
     auth: NotRequired[ConnectorSchemaAuthTypedDict]
+    r"""Authentication form"""
     sync: NotRequired[ConnectorSchemaSyncTypedDict]
+    r"""Sync options"""
     filters: NotRequired[ConnectorSchemaFiltersTypedDict]
+    r"""Filters the connector offers"""
 
 
 class ConnectorSchema(BaseModel):
@@ -434,10 +476,16 @@ class ConnectorSchema(BaseModel):
     hide_connector: Annotated[Optional[bool], pydantic.Field(alias="hideConnector")] = (
         None
     )
+    r"""Whether the type is hidden from the registry listing"""
 
     permission_model: Annotated[
-        Optional[str], pydantic.Field(alias="permissionModel")
+        Optional[PermissionModel], pydantic.Field(alias="permissionModel")
     ] = None
+    r"""How records of this connector get their per-user visibility:
+    `RECORD_LEVEL` (per-record permissions from the source) or
+    `APP_LEVEL` (everyone who can reach the connector sees every record).
+
+    """
 
     is_admin_access_required: Annotated[
         Optional[bool], pydantic.Field(alias="isAdminAccessRequired")
@@ -458,10 +506,13 @@ class ConnectorSchema(BaseModel):
     ] = None
 
     auth: Optional[ConnectorSchemaAuth] = None
+    r"""Authentication form"""
 
     sync: Optional[ConnectorSchemaSync] = None
+    r"""Sync options"""
 
     filters: Optional[ConnectorSchemaFilters] = None
+    r"""Filters the connector offers"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

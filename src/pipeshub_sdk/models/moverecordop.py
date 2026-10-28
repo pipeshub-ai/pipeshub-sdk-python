@@ -15,7 +15,10 @@ class MoveRecordRequestTypedDict(TypedDict):
     kb_id: str
     r"""Knowledge base UUID"""
     record_id: str
-    r"""Record identifier (file or folder)"""
+    r"""Record identifier (file or folder). A record that is not in this knowledge base
+    (unknown, or in another one) is answered `404`.
+
+    """
     body: KnowledgeBaseMoveRecordRequestBodyTypedDict
     r"""Target location for the record"""
 
@@ -33,7 +36,10 @@ class MoveRecordRequest(BaseModel):
         pydantic.Field(alias="recordId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Record identifier (file or folder)"""
+    r"""Record identifier (file or folder). A record that is not in this knowledge base
+    (unknown, or in another one) is answered `404`.
+
+    """
 
     body: Annotated[
         KnowledgeBaseMoveRecordRequestBody,

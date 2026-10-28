@@ -38,6 +38,8 @@ with the `openid` scope.
 **Authentication:**
 Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
 
+The route takes no parameters; query parameters are ignored.
+
 
 ### Example Usage
 
@@ -68,10 +70,14 @@ with Pipeshub(
 
 ### Response
 
-**[models.OAuthUserInfoResponse](../../models/oauthuserinforesponse.md)**
+**[models.OauthUserInfoResponseResponse](../../models/oauthuserinforesponseresponse.md)**
 
 ### Errors
 
-| Error Type                  | Status Code                 | Content Type                |
-| --------------------------- | --------------------------- | --------------------------- |
-| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
+| Error Type                   | Status Code                  | Content Type                 |
+| ---------------------------- | ---------------------------- | ---------------------------- |
+| errors.ErrorResponse         | 400                          | application/json             |
+| errors.OAuthBearerTokenError | 401, 403                     | application/json             |
+| errors.OAuthBearerTokenError | 500                          | application/json             |
+| errors.ErrorResponse         | 500                          | application/json             |
+| errors.PipeshubDefaultError  | 4XX, 5XX                     | \*/\*                        |

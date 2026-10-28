@@ -16,6 +16,19 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 AgentRegenerateRequestChatMode = Literal["quick",]
 
 
+AgentRegenerateRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""Reasoning effort for this turn, for models that support it. Stored on
+the conversation's model info and forwarded to the AI backend.
+
+"""
+
+
 AgentRegenerateRequestProtocol = Literal["agui",]
 r"""AG-UI is the only supported wire protocol. When present must be
 `\"agui\"`. Omitting the field is equivalent — the server always
@@ -86,9 +99,11 @@ class AgentRegenerateRequestTypedDict(TypedDict):
     the app sends them (`User selections:` followed by one
     `N. \"question\" → answer` line each). When present, the turn is
     re-run with these answers instead of the saved ones, and they are
-    saved in their place. Rejected with 400 when the reply being
-    regenerated did not follow a question card, or when the request
-    also edits the question (`query` or `attachments`).
+    saved in their place. Over 8000 characters, or text not starting with
+    `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+    that did not follow a question card, or a request that also edits
+    the question (`query` or `attachments`), is refused after the stream
+    opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
     """
     model_key: NotRequired[str]
@@ -101,6 +116,11 @@ class AgentRegenerateRequestTypedDict(TypedDict):
     r"""Provider model name (e.g. the underlying LLM identifier)."""
     model_friendly_name: NotRequired[str]
     r"""Friendly display name of the selected model."""
+    reasoning_effort: NotRequired[AgentRegenerateRequestReasoningEffort]
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
     timezone: NotRequired[str]
     r"""IANA timezone identifier from the client. Used to provide
     time-aware context to the AI during regeneration.
@@ -222,9 +242,11 @@ class AgentRegenerateRequest(BaseModel):
     the app sends them (`User selections:` followed by one
     `N. \"question\" → answer` line each). When present, the turn is
     re-run with these answers instead of the saved ones, and they are
-    saved in their place. Rejected with 400 when the reply being
-    regenerated did not follow a question card, or when the request
-    also edits the question (`query` or `attachments`).
+    saved in their place. Over 8000 characters, or text not starting with
+    `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+    that did not follow a question card, or a request that also edits
+    the question (`query` or `attachments`), is refused after the stream
+    opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
     """
 
@@ -242,6 +264,15 @@ class AgentRegenerateRequest(BaseModel):
         Optional[str], pydantic.Field(alias="modelFriendlyName")
     ] = None
     r"""Friendly display name of the selected model."""
+
+    reasoning_effort: Annotated[
+        Optional[AgentRegenerateRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
 
     timezone: Optional[str] = None
     r"""IANA timezone identifier from the client. Used to provide
@@ -319,6 +350,7 @@ class AgentRegenerateRequest(BaseModel):
                 "modelKey",
                 "modelName",
                 "modelFriendlyName",
+                "reasoningEffort",
                 "timezone",
                 "currentTime",
                 "tools",

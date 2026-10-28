@@ -1,0 +1,13 @@
+# ActionItem
+
+
+## Fields
+
+| Field                                                                            | Type                                                                             | Required                                                                         | Description                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `code`                                                                           | *str*                                                                            | :heavy_check_mark:                                                               | Identifies the item for the connector, e.g. certificate_sign_in                  |
+| `severity`                                                                       | [models.Severity](../models/severity.md)                                         | :heavy_check_mark:                                                               | N/A                                                                              |
+| `title`                                                                          | *str*                                                                            | :heavy_check_mark:                                                               | N/A                                                                              |
+| `message`                                                                        | *str*                                                                            | :heavy_check_mark:                                                               | N/A                                                                              |
+| `action`                                                                         | [OptionalNullable[models.Action]](../models/action.md)                           | :heavy_minus_sign:                                                               | Where in the connector panel it is done; authenticate opens the Authenticate tab |
+| `docs_url`                                                                       | *OptionalNullable[str]*                                                          | :heavy_minus_sign:                                                               | The setup steps for it, on the docs site                                         |

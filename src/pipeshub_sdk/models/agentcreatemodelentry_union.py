@@ -10,6 +10,7 @@ from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
 
 class AgentCreateModelEntryTypedDict(TypedDict):
     model_key: str
+    r"""Surrounding whitespace is trimmed; a blank key is refused with `400`."""
     model_name: NotRequired[str]
     provider: NotRequired[str]
     is_reasoning: NotRequired[bool]
@@ -17,6 +18,7 @@ class AgentCreateModelEntryTypedDict(TypedDict):
 
 class AgentCreateModelEntry(BaseModel):
     model_key: Annotated[str, pydantic.Field(alias="modelKey")]
+    r"""Surrounding whitespace is trimmed; a blank key is refused with `400`."""
 
     model_name: Annotated[Optional[str], pydantic.Field(alias="modelName")] = None
 

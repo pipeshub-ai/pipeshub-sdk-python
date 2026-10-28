@@ -7,14 +7,20 @@ from typing_extensions import TypedDict
 
 
 class SaveConnectorFiltersRequestTypedDict(TypedDict):
-    r"""Request to save filter selections for a connector"""
+    r"""Request to save filter selections for a connector. Fields other than
+    `filters` are dropped without an error.
+
+    """
 
     filters: Dict[str, Any]
     r"""Filter values to save (structure depends on connector's filter schema). Must not be empty."""
 
 
 class SaveConnectorFiltersRequest(BaseModel):
-    r"""Request to save filter selections for a connector"""
+    r"""Request to save filter selections for a connector. Fields other than
+    `filters` are dropped without an error.
+
+    """
 
     filters: Dict[str, Any]
     r"""Filter values to save (structure depends on connector's filter schema). Must not be empty."""

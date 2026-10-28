@@ -18,9 +18,16 @@ AddMessageRequestChatMode = Literal[
     "agent",
     "internal_search",
     "web_search",
+    "deep",
+    "quick",
+    "verification",
+    "auto",
 ]
 r"""Optional execution mode for non-stream consumers of this shared
-request schema.
+request schema. `deep`, `quick`, `verification` and `auto` are
+legacy values: still accepted, they run as `internal_search`.
+The streaming routes accept only `agent`, `internal_search` and
+`web_search`. `agent:<mode>` is refused.
 
 """
 
@@ -42,8 +49,24 @@ AddMessageRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+AddMessageRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""How hard a reasoning model should think for this turn. Saved in
+the conversation's `modelInfo`.
+
+"""
+
+
 class AddMessageRequestTypedDict(TypedDict):
-    r"""Request body for adding a message to an existing conversation"""
+    r"""Request body for adding a message to an existing conversation.
+    Fields not listed here are dropped by the gateway's validator, not refused.
+
+    """
 
     query: str
     r"""The follow-up question or message content. Held to the same
@@ -98,7 +121,10 @@ class AddMessageRequestTypedDict(TypedDict):
     r"""Friendly display name of the model"""
     chat_mode: NotRequired[AddMessageRequestChatMode]
     r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
+    request schema. `deep`, `quick`, `verification` and `auto` are
+    legacy values: still accepted, they run as `internal_search`.
+    The streaming routes accept only `agent`, `internal_search` and
+    `web_search`. `agent:<mode>` is refused.
 
     """
     timezone: NotRequired[str]
@@ -151,10 +177,18 @@ class AddMessageRequestTypedDict(TypedDict):
     stream is still generating.
 
     """
+    reasoning_effort: NotRequired[AddMessageRequestReasoningEffort]
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
 
 
 class AddMessageRequest(BaseModel):
-    r"""Request body for adding a message to an existing conversation"""
+    r"""Request body for adding a message to an existing conversation.
+    Fields not listed here are dropped by the gateway's validator, not refused.
+
+    """
 
     query: str
     r"""The follow-up question or message content. Held to the same
@@ -222,7 +256,10 @@ class AddMessageRequest(BaseModel):
         Optional[AddMessageRequestChatMode], pydantic.Field(alias="chatMode")
     ] = None
     r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
+    request schema. `deep`, `quick`, `verification` and `auto` are
+    legacy values: still accepted, they run as `internal_search`.
+    The streaming routes accept only `agent`, `internal_search` and
+    `web_search`. `agent:<mode>` is refused.
 
     """
 
@@ -296,6 +333,15 @@ class AddMessageRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[AddMessageRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -316,6 +362,7 @@ class AddMessageRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

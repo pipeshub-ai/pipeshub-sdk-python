@@ -30,9 +30,14 @@ class ListConnectorInstancesRequestTypedDict(TypedDict):
 
     """
     page: NotRequired[int]
+    r"""Page number, 1-based"""
     limit: NotRequired[int]
+    r"""Items per page"""
     search: NotRequired[str]
-    r"""Full-text search across instance name, type, and app group"""
+    r"""Full-text search across instance name, type, and app group. The term
+    is not echoed back in <code>pagination</code>.
+
+    """
     is_authenticated: NotRequired[bool]
     r"""Filter by authentication status.
     <code>true</code> returns only authenticated instances;
@@ -49,7 +54,8 @@ class ListConnectorInstancesRequestTypedDict(TypedDict):
     """
     connector_type: NotRequired[str]
     r"""Filter by exact connector type string (e.g. <code>Confluence</code>,
-    <code>GoogleDrive</code>). Case-sensitive.
+    <code>GoogleDrive</code>). Case-sensitive. An empty or blank value
+    is refused with `400` (the value is trimmed before it is checked).
 
     """
 
@@ -67,17 +73,22 @@ class ListConnectorInstancesRequest(BaseModel):
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 1
+    r"""Page number, 1-based"""
 
     limit: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 20
+    r"""Items per page"""
 
     search: Annotated[
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Full-text search across instance name, type, and app group"""
+    r"""Full-text search across instance name, type, and app group. The term
+    is not echoed back in <code>pagination</code>.
+
+    """
 
     is_authenticated: Annotated[
         Optional[bool],
@@ -109,7 +120,8 @@ class ListConnectorInstancesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Filter by exact connector type string (e.g. <code>Confluence</code>,
-    <code>GoogleDrive</code>). Case-sensitive.
+    <code>GoogleDrive</code>). Case-sensitive. An empty or blank value
+    is refused with `400` (the value is trimmed before it is checked).
 
     """
 

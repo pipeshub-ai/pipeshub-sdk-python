@@ -11,6 +11,11 @@ from typing_extensions import Annotated, TypedDict
 
 class GetConnectorFiltersRequestTypedDict(TypedDict):
     connector_id: str
+    r"""Connector instance ID: 1-64 letters, digits, `_` or `-`
+    (`400 VALIDATION_ERROR` otherwise). An ID that decodes to an unsafe
+    path segment is refused with `400` before the token is checked.
+
+    """
 
 
 class GetConnectorFiltersRequest(BaseModel):
@@ -19,10 +24,19 @@ class GetConnectorFiltersRequest(BaseModel):
         pydantic.Field(alias="connectorId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+    r"""Connector instance ID: 1-64 letters, digits, `_` or `-`
+    (`400 VALIDATION_ERROR` otherwise). An ID that decodes to an unsafe
+    path segment is refused with `400` before the token is checked.
+
+    """
 
 
 class GetConnectorFiltersResponseTypedDict(TypedDict):
-    r"""Filter options retrieved"""
+    r"""Filter options retrieved. A connector whose auth type has no dynamic filter options
+    (for example <code>NONE</code> or <code>BASIC_AUTH</code>) and has saved settings gets an
+    empty <code>filterOptions</code> object.
+
+    """
 
     success: bool
     filter_options: Dict[str, List[FilterOptionsTypedDict]]
@@ -35,7 +49,11 @@ class GetConnectorFiltersResponseTypedDict(TypedDict):
 
 
 class GetConnectorFiltersResponse(BaseModel):
-    r"""Filter options retrieved"""
+    r"""Filter options retrieved. A connector whose auth type has no dynamic filter options
+    (for example <code>NONE</code> or <code>BASIC_AUTH</code>) and has saved settings gets an
+    empty <code>filterOptions</code> object.
+
+    """
 
     success: bool
 

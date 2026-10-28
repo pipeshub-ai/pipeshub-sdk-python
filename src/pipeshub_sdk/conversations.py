@@ -51,6 +51,9 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models.CreateConversationRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -86,10 +89,11 @@ class Conversations(BaseSDK):
 
         **Modes**
 
-        `chatMode: agent` (or `agent:<mode>`) runs the universal agent and
-        honours `tools` / `agentCapabilities`; `internal_search` and
-        `web_search` run the search assistant and ignore `tools`. Omitted,
-        it defaults to internal search.
+        `chatMode: agent` runs the universal agent and honours `tools` /
+        `agentCapabilities`; `internal_search` and `web_search` run the
+        search assistant and ignore `tools`. The legacy values `deep`,
+        `quick`, `verification` and `auto` are accepted and run as internal
+        search. Omitted, it defaults to internal search.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -136,6 +140,9 @@ class Conversations(BaseSDK):
             `filters`/`attachments`, they are merged in as a fallback (the
             request always wins). Ignored on follow-up turns — only
             meaningful when creating a conversation.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation:
@@ -147,11 +154,17 @@ class Conversations(BaseSDK):
             Available models depend on organization settings. When neither
             `modelKey` nor `modelName` is sent, the organization's default
             model answers and is saved in the conversation's `modelInfo`.
+            A key that matches no configured model is not refused: the
+            default model answers, and the unknown key is still saved in
+            `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
+            request schema. `deep`, `quick`, `verification` and `auto` are
+            legacy values: still accepted, they run as `internal_search`.
+            The streaming routes accept only `agent`, `internal_search` and
+            `web_search`. `agent:<mode>` is refused.
             `agent` uses the universal agent loop, while `internal_search`
             and `web_search` use their corresponding assistant search paths.
 
@@ -191,6 +204,9 @@ class Conversations(BaseSDK):
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating. Optional — a caller that never sends
             one just can't cooperatively cancel the run.
+
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -236,6 +252,7 @@ class Conversations(BaseSDK):
                 tool_approval, Optional[models.ToolApprovalAnswer]
             ),
             run_id=run_id,
+            reasoning_effort=reasoning_effort,
         )
 
         req = self._build_request(
@@ -292,7 +309,9 @@ class Conversations(BaseSDK):
                 ),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, "400", "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "424", "application/json"):
@@ -303,10 +322,10 @@ class Conversations(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -357,6 +376,9 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models.CreateConversationRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -392,10 +414,11 @@ class Conversations(BaseSDK):
 
         **Modes**
 
-        `chatMode: agent` (or `agent:<mode>`) runs the universal agent and
-        honours `tools` / `agentCapabilities`; `internal_search` and
-        `web_search` run the search assistant and ignore `tools`. Omitted,
-        it defaults to internal search.
+        `chatMode: agent` runs the universal agent and honours `tools` /
+        `agentCapabilities`; `internal_search` and `web_search` run the
+        search assistant and ignore `tools`. The legacy values `deep`,
+        `quick`, `verification` and `auto` are accepted and run as internal
+        search. Omitted, it defaults to internal search.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -442,6 +465,9 @@ class Conversations(BaseSDK):
             `filters`/`attachments`, they are merged in as a fallback (the
             request always wins). Ignored on follow-up turns — only
             meaningful when creating a conversation.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation:
@@ -453,11 +479,17 @@ class Conversations(BaseSDK):
             Available models depend on organization settings. When neither
             `modelKey` nor `modelName` is sent, the organization's default
             model answers and is saved in the conversation's `modelInfo`.
+            A key that matches no configured model is not refused: the
+            default model answers, and the unknown key is still saved in
+            `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
+            request schema. `deep`, `quick`, `verification` and `auto` are
+            legacy values: still accepted, they run as `internal_search`.
+            The streaming routes accept only `agent`, `internal_search` and
+            `web_search`. `agent:<mode>` is refused.
             `agent` uses the universal agent loop, while `internal_search`
             and `web_search` use their corresponding assistant search paths.
 
@@ -497,6 +529,9 @@ class Conversations(BaseSDK):
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating. Optional — a caller that never sends
             one just can't cooperatively cancel the run.
+
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -542,6 +577,7 @@ class Conversations(BaseSDK):
                 tool_approval, Optional[models.ToolApprovalAnswer]
             ),
             run_id=run_id,
+            reasoning_effort=reasoning_effort,
         )
 
         req = self._build_request_async(
@@ -598,7 +634,9 @@ class Conversations(BaseSDK):
                 ),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, "400", "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "424", "application/json"):
@@ -609,10 +647,10 @@ class Conversations(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -663,6 +701,9 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models.ConversationStreamRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -711,11 +752,7 @@ class Conversations(BaseSDK):
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
-        :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
-            `agent` uses the universal agent loop, while `internal_search`
-            and `web_search` use their corresponding assistant search paths.
-
+        :param chat_mode:
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
@@ -755,6 +792,9 @@ class Conversations(BaseSDK):
             `filters`/`attachments`, they are merged in as a fallback (the
             request always wins). Ignored on follow-up turns — only
             meaningful when creating a conversation.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation:
@@ -766,6 +806,9 @@ class Conversations(BaseSDK):
             Available models depend on organization settings. When neither
             `modelKey` nor `modelName` is sent, the organization's default
             model answers and is saved in the conversation's `modelInfo`.
+            A key that matches no configured model is not refused: the
+            default model answers, and the unknown key is still saved in
+            `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
@@ -805,6 +848,9 @@ class Conversations(BaseSDK):
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating. Optional — a caller that never sends
             one just can't cooperatively cancel the run.
+
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -850,6 +896,7 @@ class Conversations(BaseSDK):
                 tool_approval, Optional[models.ToolApprovalAnswer]
             ),
             run_id=run_id,
+            reasoning_effort=reasoning_effort,
         )
 
         req = self._build_request(
@@ -899,6 +946,7 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -908,12 +956,26 @@ class Conversations(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -962,6 +1024,9 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models.ConversationStreamRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1010,11 +1075,7 @@ class Conversations(BaseSDK):
         :param query: The user's question or prompt to start the conversation.
             Supports natural language queries of any complexity.
 
-        :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
-            `agent` uses the universal agent loop, while `internal_search`
-            and `web_search` use their corresponding assistant search paths.
-
+        :param chat_mode:
         :param record_ids: Limit the AI's knowledge scope to specific records/documents.
             When provided, only these records will be searched for context.
 
@@ -1054,6 +1115,9 @@ class Conversations(BaseSDK):
             `filters`/`attachments`, they are merged in as a fallback (the
             request always wins). Ignored on follow-up turns — only
             meaningful when creating a conversation.
+            An OAuth token or PAT also needs `project:read`. An archived
+            project answers `409`; a project the caller cannot see, `404`,
+            before any stream opens.
 
         :param project_visibility: Only meaningful together with `projectId`. Overrides the
             project's default sharing behavior for this one conversation:
@@ -1065,6 +1129,9 @@ class Conversations(BaseSDK):
             Available models depend on organization settings. When neither
             `modelKey` nor `modelName` is sent, the organization's default
             model answers and is saved in the conversation's `modelInfo`.
+            A key that matches no configured model is not refused: the
+            default model answers, and the unknown key is still saved in
+            `modelInfo`.
 
         :param model_name: Display name of the AI model
         :param model_friendly_name: Friendly display name of the selected model
@@ -1104,6 +1171,9 @@ class Conversations(BaseSDK):
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating. Optional — a caller that never sends
             one just can't cooperatively cancel the run.
+
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1149,6 +1219,7 @@ class Conversations(BaseSDK):
                 tool_approval, Optional[models.ToolApprovalAnswer]
             ),
             run_id=run_id,
+            reasoning_effort=reasoning_effort,
         )
 
         req = self._build_request_async(
@@ -1198,6 +1269,7 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -1207,12 +1279,26 @@ class Conversations(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "403", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
+        ):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1227,15 +1313,15 @@ class Conversations(BaseSDK):
         self,
         *,
         source: Optional[models.QueryParamSource] = "owned",
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: Optional[float] = None,
+        limit: Optional[int] = 10,
         sort_by: Optional[models.GetAllConversationsQueryParamSortBy] = None,
         sort_order: Optional[models.GetAllConversationsQueryParamSortOrder] = None,
         conversation_id: Optional[str] = None,
         search: Optional[str] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-        shared: Optional[str] = None,
+        shared: Optional[models.GetAllConversationsSharedEnum] = None,
         project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1266,6 +1352,8 @@ class Conversations(BaseSDK):
         (`PATCH /conversations/{conversationId}/pin`) come first, in the same order,
         whatever `sortBy` is. `source=shared` is never pinned-first.
 
+        Query parameters not listed here are ignored, not refused.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1274,16 +1362,23 @@ class Conversations(BaseSDK):
             conversations shared with the caller; those rows carry `agentKey`.
             Defaults to `owned` when omitted.
 
-        :param page: Page number (1-based). Defaults to 1.
-        :param limit: Page size. Defaults to 20; capped by the server (max 100).
+        :param page: Page number (1-based). Defaults to 1. The validator accepts any number, so a
+            fraction such as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+        :param limit: Page size. Defaults to 10; values above 100, and fractions, are refused (`400 VALIDATION_ERROR`).
+
         :param sort_by: Sort field. Invalid values fall back to `lastActivityAt`.
         :param sort_order: Sort direction. Defaults to `desc` unless set to `asc`.
         :param conversation_id: When set, restricts results to that conversation ID (if visible under the chosen `source`).
         :param search: Case-insensitive match on title and message content (max 1000 characters).
-        :param start_date: Filter by `createdAt` ≥ this ISO date.
-        :param end_date: Filter by `createdAt` ≤ this ISO date.
-        :param shared: When set, filters by `isShared`. Accepts case-insensitive
-            `true`/`false`, or `1`/`0`.
+        :param start_date: Filter by `createdAt` ≥ this instant. Must be a full ISO 8601
+            date-time with `Z` or a numeric offset; a bare date is refused.
+
+        :param end_date: Filter by `createdAt` ≤ this instant. Must be a full ISO 8601
+            date-time with `Z` or a numeric offset; a bare date is refused.
+
+        :param shared: When set, filters by `isShared`. Accepts exactly `true`,
+            `false`, `1` or `0`.
 
         :param project_id: Restrict results to a single project. Pass a project's `id` to
             list conversations linked to that project (visible to the
@@ -1363,9 +1458,16 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetAllConversationsResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1382,15 +1484,15 @@ class Conversations(BaseSDK):
         self,
         *,
         source: Optional[models.QueryParamSource] = "owned",
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: Optional[float] = None,
+        limit: Optional[int] = 10,
         sort_by: Optional[models.GetAllConversationsQueryParamSortBy] = None,
         sort_order: Optional[models.GetAllConversationsQueryParamSortOrder] = None,
         conversation_id: Optional[str] = None,
         search: Optional[str] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-        shared: Optional[str] = None,
+        shared: Optional[models.GetAllConversationsSharedEnum] = None,
         project_id: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -1421,6 +1523,8 @@ class Conversations(BaseSDK):
         (`PATCH /conversations/{conversationId}/pin`) come first, in the same order,
         whatever `sortBy` is. `source=shared` is never pinned-first.
 
+        Query parameters not listed here are ignored, not refused.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1429,16 +1533,23 @@ class Conversations(BaseSDK):
             conversations shared with the caller; those rows carry `agentKey`.
             Defaults to `owned` when omitted.
 
-        :param page: Page number (1-based). Defaults to 1.
-        :param limit: Page size. Defaults to 20; capped by the server (max 100).
+        :param page: Page number (1-based). Defaults to 1. The validator accepts any number, so a
+            fraction such as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+        :param limit: Page size. Defaults to 10; values above 100, and fractions, are refused (`400 VALIDATION_ERROR`).
+
         :param sort_by: Sort field. Invalid values fall back to `lastActivityAt`.
         :param sort_order: Sort direction. Defaults to `desc` unless set to `asc`.
         :param conversation_id: When set, restricts results to that conversation ID (if visible under the chosen `source`).
         :param search: Case-insensitive match on title and message content (max 1000 characters).
-        :param start_date: Filter by `createdAt` ≥ this ISO date.
-        :param end_date: Filter by `createdAt` ≤ this ISO date.
-        :param shared: When set, filters by `isShared`. Accepts case-insensitive
-            `true`/`false`, or `1`/`0`.
+        :param start_date: Filter by `createdAt` ≥ this instant. Must be a full ISO 8601
+            date-time with `Z` or a numeric offset; a bare date is refused.
+
+        :param end_date: Filter by `createdAt` ≤ this instant. Must be a full ISO 8601
+            date-time with `Z` or a numeric offset; a bare date is refused.
+
+        :param shared: When set, filters by `isShared`. Accepts exactly `true`,
+            `false`, `1` or `0`.
 
         :param project_id: Restrict results to a single project. Pass a project's `id` to
             list conversations linked to that project (visible to the
@@ -1518,9 +1629,16 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetAllConversationsResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1536,8 +1654,8 @@ class Conversations(BaseSDK):
     def get_archived_conversations(
         self,
         *,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
+        page: Optional[float] = 1.0,
+        limit: Optional[float] = 20.0,
         sort_by: Optional[
             models.GetArchivedConversationsQueryParamSortBy
         ] = "lastActivityAt",
@@ -1545,7 +1663,7 @@ class Conversations(BaseSDK):
             models.GetArchivedConversationsQueryParamSortOrder
         ] = "desc",
         search: Optional[str] = None,
-        shared: Optional[bool] = None,
+        shared: Optional[models.GetArchivedConversationsSharedEnum] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         conversation_id: Optional[str] = None,
@@ -1562,13 +1680,18 @@ class Conversations(BaseSDK):
 
         Archived conversations are hidden from the main list but preserved for reference.
         This endpoint returns only conversations where `isArchived: true` and `archivedBy`
-        is set. Results include conversations the caller owns and those shared with them.
+        is set. Results include conversations the caller owns and those shared with them
+        (`isShared` and the caller listed in `sharedWith`). Deleted and agent
+        conversations are never listed. Each item carries its `messages`.
 
         **Filtering and sorting:**
 
         Results can be narrowed using `search`, `shared`, `startDate`, `endDate`, and
         `conversationId`. Sorting is controlled by `sortBy` and `sortOrder`. Pagination
         is controlled by `page` and `limit`.
+
+        Query parameters not listed here are dropped by the validator and
+        ignored, including `projectId`, which `GET /conversations` accepts.
 
         **Unarchiving:**
 
@@ -1578,14 +1701,28 @@ class Conversations(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param page: Page number (1-indexed)
-        :param limit: Items per page
+        :param page: Page number (1-indexed). The validator accepts any number, so a fraction such
+            as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+        :param limit: Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
         :param sort_by: Field to sort by
         :param sort_order: Sort direction
-        :param search: Case-insensitive substring match against title and message content (max 1000 chars)
-        :param shared: Filter by shared status
-        :param start_date: Include conversations created on or after this timestamp
-        :param end_date: Include conversations created on or before this timestamp
+        :param search: Case-insensitive substring match against title and message content
+            (max 1000 chars). A value holding markup is refused by the
+            controller with `400 HTTP_BAD_REQUEST`.
+
+        :param shared: When set, filters by `isShared`. Accepts exactly `true`, `false`,
+            `1` or `0`.
+
+        :param start_date: Include conversations created on or after this instant. Must be a
+            full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+            is refused.
+
+        :param end_date: Include conversations created on or before this instant. Must be a
+            full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+            is refused.
+
         :param conversation_id: Restrict results to a single conversation by identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1657,11 +1794,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.GetArchivedConversationsResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1677,8 +1821,8 @@ class Conversations(BaseSDK):
     async def get_archived_conversations_async(
         self,
         *,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
+        page: Optional[float] = 1.0,
+        limit: Optional[float] = 20.0,
         sort_by: Optional[
             models.GetArchivedConversationsQueryParamSortBy
         ] = "lastActivityAt",
@@ -1686,7 +1830,7 @@ class Conversations(BaseSDK):
             models.GetArchivedConversationsQueryParamSortOrder
         ] = "desc",
         search: Optional[str] = None,
-        shared: Optional[bool] = None,
+        shared: Optional[models.GetArchivedConversationsSharedEnum] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         conversation_id: Optional[str] = None,
@@ -1703,13 +1847,18 @@ class Conversations(BaseSDK):
 
         Archived conversations are hidden from the main list but preserved for reference.
         This endpoint returns only conversations where `isArchived: true` and `archivedBy`
-        is set. Results include conversations the caller owns and those shared with them.
+        is set. Results include conversations the caller owns and those shared with them
+        (`isShared` and the caller listed in `sharedWith`). Deleted and agent
+        conversations are never listed. Each item carries its `messages`.
 
         **Filtering and sorting:**
 
         Results can be narrowed using `search`, `shared`, `startDate`, `endDate`, and
         `conversationId`. Sorting is controlled by `sortBy` and `sortOrder`. Pagination
         is controlled by `page` and `limit`.
+
+        Query parameters not listed here are dropped by the validator and
+        ignored, including `projectId`, which `GET /conversations` accepts.
 
         **Unarchiving:**
 
@@ -1719,14 +1868,28 @@ class Conversations(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param page: Page number (1-indexed)
-        :param limit: Items per page
+        :param page: Page number (1-indexed). The validator accepts any number, so a fraction such
+            as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+        :param limit: Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
         :param sort_by: Field to sort by
         :param sort_order: Sort direction
-        :param search: Case-insensitive substring match against title and message content (max 1000 chars)
-        :param shared: Filter by shared status
-        :param start_date: Include conversations created on or after this timestamp
-        :param end_date: Include conversations created on or before this timestamp
+        :param search: Case-insensitive substring match against title and message content
+            (max 1000 chars). A value holding markup is refused by the
+            controller with `400 HTTP_BAD_REQUEST`.
+
+        :param shared: When set, filters by `isShared`. Accepts exactly `true`, `false`,
+            `1` or `0`.
+
+        :param start_date: Include conversations created on or after this instant. Must be a
+            full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+            is refused.
+
+        :param end_date: Include conversations created on or before this instant. Must be a
+            full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+            is refused.
+
         :param conversation_id: Restrict results to a single conversation by identifier
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1798,11 +1961,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.GetArchivedConversationsResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1819,8 +1989,8 @@ class Conversations(BaseSDK):
         self,
         *,
         search: str,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
+        page: Optional[float] = 1.0,
+        limit: Optional[float] = 20.0,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1838,8 +2008,13 @@ class Conversations(BaseSDK):
 
         **Search parameter:**
 
-        The `search` query parameter is required, must be a non-empty string, and is capped at
-        1000 characters. Requests that omit it or exceed the cap return `400`.
+        The `search` query parameter is required, must contain a non-space character, and is
+        capped at 1000 characters; it is trimmed before use. Requests that omit it, send only
+        spaces or exceed the cap return `400 VALIDATION_ERROR`. A value holding markup or a
+        printf-style format specifier (such as `%s`) is refused by the controller with
+        `400 HTTP_BAD_REQUEST`.
+
+        Query parameters not listed here are dropped by the validator and ignored.
 
         **Pagination:**
 
@@ -1856,8 +2031,11 @@ class Conversations(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param search: Search term to match against conversation titles and message content (max 1000 chars)
-        :param page: Page number (1-indexed)
-        :param limit: Items per page
+        :param page: Page number (1-indexed). The validator accepts any number, so a fraction such
+            as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+        :param limit: Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1922,11 +2100,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.SearchArchivedConversationsResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -1943,8 +2128,8 @@ class Conversations(BaseSDK):
         self,
         *,
         search: str,
-        page: Optional[int] = 1,
-        limit: Optional[int] = 20,
+        page: Optional[float] = 1.0,
+        limit: Optional[float] = 20.0,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1962,8 +2147,13 @@ class Conversations(BaseSDK):
 
         **Search parameter:**
 
-        The `search` query parameter is required, must be a non-empty string, and is capped at
-        1000 characters. Requests that omit it or exceed the cap return `400`.
+        The `search` query parameter is required, must contain a non-space character, and is
+        capped at 1000 characters; it is trimmed before use. Requests that omit it, send only
+        spaces or exceed the cap return `400 VALIDATION_ERROR`. A value holding markup or a
+        printf-style format specifier (such as `%s`) is refused by the controller with
+        `400 HTTP_BAD_REQUEST`.
+
+        Query parameters not listed here are dropped by the validator and ignored.
 
         **Pagination:**
 
@@ -1980,8 +2170,11 @@ class Conversations(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param search: Search term to match against conversation titles and message content (max 1000 chars)
-        :param page: Page number (1-indexed)
-        :param limit: Items per page
+        :param page: Page number (1-indexed). The validator accepts any number, so a fraction such
+            as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+        :param limit: Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2046,11 +2239,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.SearchArchivedConversationsResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2072,9 +2272,10 @@ class Conversations(BaseSDK):
         sort_by: Optional[models.GetConversationByIDQueryParamSortBy] = "createdAt",
         sort_order: Optional[models.GetConversationByIDQueryParamSortOrder] = "desc",
         search: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        shared: Optional[bool] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        shared: Optional[models.GetConversationByIDSharedEnum] = None,
+        project_id: Optional[str] = None,
         message_type: Optional[models.GetConversationByIDQueryParamMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2095,7 +2296,7 @@ class Conversations(BaseSDK):
         For conversations with many messages, use pagination parameters:
 
         - `page`: Page number (default: 1)
-        - `limit`: Messages per page (default: 10)
+        - `limit`: Messages per page (default: 20)
         - `sortBy`: Sort field (default: createdAt)
         - `sortOrder`: 'asc' or 'desc' (default: desc)
 
@@ -2103,19 +2304,47 @@ class Conversations(BaseSDK):
 
         Users can access conversations they own or that have been shared with them.
 
+        Query parameters not listed here are ignored, not refused.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
-        :param page: Page number for message pagination
-        :param limit: Number of messages per page
+        :param page: Page number for message pagination. Read with `parseInt`, so a fraction such
+            as `1.5` is tolerated and truncated (page 1).
+
+        :param limit: Number of messages per page. Read with `parseInt`, so a fraction such as `5.5`
+            is tolerated and truncated (5).
+
         :param sort_by: Field to sort messages by
         :param sort_order: Sort direction
-        :param search: Case-insensitive search across conversation title and message content
-        :param start_date: Filter messages created on or after this date (ISO 8601)
-        :param end_date: Filter messages created on or before this date (ISO 8601)
-        :param shared: Filter by shared status of the conversation
-        :param message_type: Filter messages by type
+        :param search: Case-insensitive match against the conversation's title and its
+            messages' content. Applies to the conversation, not its messages:
+            when nothing matches the answer is `404`; when something matches
+            every message is returned.
+
+        :param start_date: Applies to the conversation, not its messages: when the
+            conversation was created before this instant the answer is `404`.
+            Any value JavaScript's `Date` parses is accepted (an ISO 8601
+            date or date-time is the documented form); a value it cannot
+            parse is refused with `400`.
+
+        :param end_date: Applies to the conversation, not its messages: when the
+            conversation was created after this instant the answer is `404`.
+            Parsed like `startDate`.
+
+        :param shared: Filters on the conversation's `isShared`; a conversation that
+            does not match is answered `404`. Read case-insensitively;
+            any other value is refused with `400`.
+
+        :param project_id: `unassigned` matches only a conversation linked to no project; a
+            24-character ObjectId matches only a conversation linked to that
+            project. A conversation that does not match is answered `404`.
+            Any other value is ignored.
+
+        :param message_type: Checked against the listed values (`400` otherwise) but not
+            applied: every message type is returned.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2141,6 +2370,7 @@ class Conversations(BaseSDK):
             start_date=start_date,
             end_date=end_date,
             shared=shared,
+            project_id=project_id,
             message_type=message_type,
         )
 
@@ -2187,9 +2417,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetConversationByIDResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2211,9 +2450,10 @@ class Conversations(BaseSDK):
         sort_by: Optional[models.GetConversationByIDQueryParamSortBy] = "createdAt",
         sort_order: Optional[models.GetConversationByIDQueryParamSortOrder] = "desc",
         search: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        shared: Optional[bool] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        shared: Optional[models.GetConversationByIDSharedEnum] = None,
+        project_id: Optional[str] = None,
         message_type: Optional[models.GetConversationByIDQueryParamMessageType] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
@@ -2234,7 +2474,7 @@ class Conversations(BaseSDK):
         For conversations with many messages, use pagination parameters:
 
         - `page`: Page number (default: 1)
-        - `limit`: Messages per page (default: 10)
+        - `limit`: Messages per page (default: 20)
         - `sortBy`: Sort field (default: createdAt)
         - `sortOrder`: 'asc' or 'desc' (default: desc)
 
@@ -2242,19 +2482,47 @@ class Conversations(BaseSDK):
 
         Users can access conversations they own or that have been shared with them.
 
+        Query parameters not listed here are ignored, not refused.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
-        :param page: Page number for message pagination
-        :param limit: Number of messages per page
+        :param page: Page number for message pagination. Read with `parseInt`, so a fraction such
+            as `1.5` is tolerated and truncated (page 1).
+
+        :param limit: Number of messages per page. Read with `parseInt`, so a fraction such as `5.5`
+            is tolerated and truncated (5).
+
         :param sort_by: Field to sort messages by
         :param sort_order: Sort direction
-        :param search: Case-insensitive search across conversation title and message content
-        :param start_date: Filter messages created on or after this date (ISO 8601)
-        :param end_date: Filter messages created on or before this date (ISO 8601)
-        :param shared: Filter by shared status of the conversation
-        :param message_type: Filter messages by type
+        :param search: Case-insensitive match against the conversation's title and its
+            messages' content. Applies to the conversation, not its messages:
+            when nothing matches the answer is `404`; when something matches
+            every message is returned.
+
+        :param start_date: Applies to the conversation, not its messages: when the
+            conversation was created before this instant the answer is `404`.
+            Any value JavaScript's `Date` parses is accepted (an ISO 8601
+            date or date-time is the documented form); a value it cannot
+            parse is refused with `400`.
+
+        :param end_date: Applies to the conversation, not its messages: when the
+            conversation was created after this instant the answer is `404`.
+            Parsed like `startDate`.
+
+        :param shared: Filters on the conversation's `isShared`; a conversation that
+            does not match is answered `404`. Read case-insensitively;
+            any other value is refused with `400`.
+
+        :param project_id: `unassigned` matches only a conversation linked to no project; a
+            24-character ObjectId matches only a conversation linked to that
+            project. A conversation that does not match is answered `404`.
+            Any other value is ignored.
+
+        :param message_type: Checked against the listed values (`400` otherwise) but not
+            applied: every message type is returned.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -2280,6 +2548,7 @@ class Conversations(BaseSDK):
             start_date=start_date,
             end_date=end_date,
             shared=shared,
+            project_id=project_id,
             message_type=message_type,
         )
 
@@ -2326,9 +2595,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetConversationByIDResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2362,9 +2640,10 @@ class Conversations(BaseSDK):
 
         **Permissions:**
 
-        The conversation initiator can always delete. Users the conversation has
-        been shared with may delete it only when their `sharedWith.accessLevel`
-        is `write`.
+        Only the conversation's owner can delete it. The lookup also allows a
+        user the conversation is shared with at `write` access, but it
+        requires the caller to be the owner as well, so such a user is
+        answered `404`.
 
         **Artifacts:** before the conversation is marked deleted, every artifact
         the caller created in it is deleted for good (every version and stored
@@ -2438,16 +2717,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.DeleteConversationByIDResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2476,9 +2764,10 @@ class Conversations(BaseSDK):
 
         **Permissions:**
 
-        The conversation initiator can always delete. Users the conversation has
-        been shared with may delete it only when their `sharedWith.accessLevel`
-        is `write`.
+        Only the conversation's owner can delete it. The lookup also allows a
+        user the conversation is shared with at `write` access, but it
+        requires the caller to be the owner as well, so such a user is
+        answered `404`.
 
         **Artifacts:** before the conversation is marked deleted, every artifact
         the caller created in it is deleted for good (every version and stored
@@ -2552,16 +2841,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.DeleteConversationByIDResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2603,6 +2901,7 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[models.AddMessageRequestReasoningEffort] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2682,7 +2981,10 @@ class Conversations(BaseSDK):
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
+            request schema. `deep`, `quick`, `verification` and `auto` are
+            legacy values: still accepted, they run as `internal_search`.
+            The streaming routes accept only `agent`, `internal_search` and
+            `web_search`. `agent:<mode>` is refused.
 
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
@@ -2717,6 +3019,9 @@ class Conversations(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating.
+
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -2761,6 +3066,7 @@ class Conversations(BaseSDK):
                     tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -2816,7 +3122,9 @@ class Conversations(BaseSDK):
                 result=unmarshal_json_response(models.AddMessageResponse, http_res),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, ["400", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "424", "application/json"):
@@ -2827,10 +3135,10 @@ class Conversations(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -2877,6 +3185,7 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[models.AddMessageRequestReasoningEffort] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -2956,7 +3265,10 @@ class Conversations(BaseSDK):
         :param model_name: Display name of the model
         :param model_friendly_name: Friendly display name of the model
         :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
+            request schema. `deep`, `quick`, `verification` and `auto` are
+            legacy values: still accepted, they run as `internal_search`.
+            The streaming routes accept only `agent`, `internal_search` and
+            `web_search`. `agent:<mode>` is refused.
 
         :param timezone: IANA timezone identifier from the client (top-level field).
             Used to provide time-aware context to the AI.
@@ -2991,6 +3303,9 @@ class Conversations(BaseSDK):
         :param run_id: Client-generated identifier for this run. Send it here to enable
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating.
+
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -3035,6 +3350,7 @@ class Conversations(BaseSDK):
                     tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -3090,7 +3406,9 @@ class Conversations(BaseSDK):
                 result=unmarshal_json_response(models.AddMessageResponse, http_res),
                 headers=utils.get_response_headers(http_res.headers),
             )
-        if utils.match_response(http_res, ["400", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "424", "application/json"):
@@ -3101,10 +3419,10 @@ class Conversations(BaseSDK):
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, "500", "application/json"):
+        if utils.match_response(http_res, ["500", "503", "504"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3151,6 +3469,9 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models.ConversationMessageStreamRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3179,9 +3500,7 @@ class Conversations(BaseSDK):
         :param query: The follow-up question or message content. Held to the same
             100,000-character limit as the first message of a conversation.
 
-        :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
-
+        :param chat_mode:
         :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
             level (record groups, folders, records). The keys are a union. For **org assistant**
             chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
@@ -3252,6 +3571,9 @@ class Conversations(BaseSDK):
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating.
 
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3295,6 +3617,7 @@ class Conversations(BaseSDK):
                     tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -3349,6 +3672,7 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -3358,12 +3682,24 @@ class Conversations(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3408,6 +3744,9 @@ class Conversations(BaseSDK):
             Union[models.ToolApprovalAnswer, models.ToolApprovalAnswerTypedDict]
         ] = None,
         run_id: Optional[str] = None,
+        reasoning_effort: Optional[
+            models.ConversationMessageStreamRequestReasoningEffort
+        ] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -3436,9 +3775,7 @@ class Conversations(BaseSDK):
         :param query: The follow-up question or message content. Held to the same
             100,000-character limit as the first message of a conversation.
 
-        :param chat_mode: Optional execution mode for non-stream consumers of this shared
-            request schema.
-
+        :param chat_mode:
         :param filters: What retrieval is narrowed to for a turn: whole apps, and selections below app
             level (record groups, folders, records). The keys are a union. For **org assistant**
             chat streams, send explicit lists. For **agent** chat streams, send explicit id lists,
@@ -3509,6 +3846,9 @@ class Conversations(BaseSDK):
             `POST /conversations/{conversationId}/cancel {runId}` while the
             stream is still generating.
 
+        :param reasoning_effort: How hard a reasoning model should think for this turn. Saved in
+            the conversation's `modelInfo`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3552,6 +3892,7 @@ class Conversations(BaseSDK):
                     tool_approval, Optional[models.ToolApprovalAnswer]
                 ),
                 run_id=run_id,
+                reasoning_effort=reasoning_effort,
             ),
         )
 
@@ -3606,6 +3947,7 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -3615,12 +3957,24 @@ class Conversations(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3658,13 +4012,21 @@ class Conversations(BaseSDK):
         **Permissions:**
 
         The conversation must exist, belong to the calling user's organization,
-        be owned by the caller (matched on `userId`), and not be soft-deleted.
+        be owned by the caller (matched on `userId`), not be soft-deleted, and
+        not be an agent conversation. A user it is shared with, even at
+        `write` access, gets `404`.
+
+        Body fields other than `title` are dropped by the validator, not
+        refused.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
-        :param title: New conversation title
+        :param title: New conversation title. Surrounding whitespace is trimmed before
+            validation, so a title of only whitespace is refused with `400`
+            `VALIDATION_ERROR` (\"Title is required\").
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3737,16 +4099,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.UpdateConversationTitleResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3781,13 +4152,21 @@ class Conversations(BaseSDK):
         **Permissions:**
 
         The conversation must exist, belong to the calling user's organization,
-        be owned by the caller (matched on `userId`), and not be soft-deleted.
+        be owned by the caller (matched on `userId`), not be soft-deleted, and
+        not be an agent conversation. A user it is shared with, even at
+        `write` access, gets `404`.
+
+        Body fields other than `title` are dropped by the validator, not
+        refused.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param conversation_id: Unique conversation identifier
-        :param title: New conversation title
+        :param title: New conversation title. Surrounding whitespace is trimmed before
+            validation, so a title of only whitespace is refused with `400`
+            `VALIDATION_ERROR` (\"Title is required\").
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -3860,16 +4239,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.UpdateConversationTitleResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -3897,8 +4285,12 @@ class Conversations(BaseSDK):
 
         **Access:**
 
-        The caller must be the conversation's initiator, or be listed in `sharedWith`
-        with `accessLevel: write`. Already-archived conversations return `400`.
+        Only the conversation's owner can archive it: the lookup filters on
+        the caller's `userId`. It also has a branch for users the
+        conversation is shared with at `write` access, but that branch can
+        never match, so such users get `404` (a known defect). A missing,
+        deleted or agent conversation is `404` too.
+        Already-archived conversations return `400`.
 
         **Retrieval:**
 
@@ -3971,9 +4363,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ArchiveConversationResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4006,8 +4407,12 @@ class Conversations(BaseSDK):
 
         **Access:**
 
-        The caller must be the conversation's initiator, or be listed in `sharedWith`
-        with `accessLevel: write`. Already-archived conversations return `400`.
+        Only the conversation's owner can archive it: the lookup filters on
+        the caller's `userId`. It also has a branch for users the
+        conversation is shared with at `write` access, but that branch can
+        never match, so such users get `404` (a known defect). A missing,
+        deleted or agent conversation is `404` too.
+        Already-archived conversations return `400`.
 
         **Retrieval:**
 
@@ -4080,9 +4485,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ArchiveConversationResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4111,6 +4525,15 @@ class Conversations(BaseSDK):
         - Path params: `conversationId`
         - Query params: none
         - Body: none
+
+        **Access:**
+
+        Only the conversation's owner can unarchive it: the lookup filters on
+        the caller's `userId`. It also has a branch for users the
+        conversation is shared with at `write` access, but that branch can
+        never match, so such users get `404` (a known defect). A missing,
+        deleted or agent conversation is `404` too.
+        A conversation that is not archived returns `400`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -4178,16 +4601,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.UnarchiveConversationResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4211,6 +4643,15 @@ class Conversations(BaseSDK):
         - Path params: `conversationId`
         - Query params: none
         - Body: none
+
+        **Access:**
+
+        Only the conversation's owner can unarchive it: the lookup filters on
+        the caller's `userId`. It also has a branch for users the
+        conversation is shared with at `write` access, but that branch can
+        never match, so such users get `404` (a known defect). A missing,
+        deleted or agent conversation is `404` too.
+        A conversation that is not archived returns `400`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -4278,16 +4719,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.UnarchiveConversationResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4391,14 +4841,23 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ConversationPinResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4502,14 +4961,23 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ConversationPinResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4608,14 +5076,23 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ConversationPinResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4714,14 +5191,23 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ConversationPinResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -4747,6 +5233,7 @@ class Conversations(BaseSDK):
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        reasoning_effort: Optional[models.RegenerateRequestReasoningEffort] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[Iterable[str]] = None,
@@ -4853,9 +5340,11 @@ class Conversations(BaseSDK):
             the app sends them (`User selections:` followed by one
             `N. \"question\" → answer` line each). When present, the turn is
             re-run with these answers instead of the saved ones, and they are
-            saved in their place. Rejected with 400 when the reply being
-            regenerated did not follow a question card, or when the request
-            also edits the question (`query` or `attachments`).
+            saved in their place. Over 8000 characters, or text not starting with
+            `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+            that did not follow a question card, or a request that also edits
+            the question (`query` or `attachments`), is refused after the stream
+            opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -4865,6 +5354,9 @@ class Conversations(BaseSDK):
         :param model_friendly_name: Friendly display name of the selected model.
         :param chat_mode: Chat mode used for regeneration (for example `internal_search`,
             `web_search`, or the universal `agent` mode).
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
@@ -4933,6 +5425,7 @@ class Conversations(BaseSDK):
                 model_name=model_name,
                 model_friendly_name=model_friendly_name,
                 chat_mode=chat_mode,
+                reasoning_effort=reasoning_effort,
                 timezone=timezone,
                 current_time=current_time,
                 tools=utils.unmarshal(tools, Optional[List[str]]),
@@ -4998,6 +5491,7 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStream(
                 http_res,
@@ -5005,7 +5499,19 @@ class Conversations(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = utils.stream_to_text(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5039,6 +5545,7 @@ class Conversations(BaseSDK):
         model_name: Optional[str] = None,
         model_friendly_name: Optional[str] = None,
         chat_mode: Optional[str] = None,
+        reasoning_effort: Optional[models.RegenerateRequestReasoningEffort] = None,
         timezone: Optional[str] = None,
         current_time: Optional[datetime] = None,
         tools: Optional[Iterable[str]] = None,
@@ -5145,9 +5652,11 @@ class Conversations(BaseSDK):
             the app sends them (`User selections:` followed by one
             `N. \"question\" → answer` line each). When present, the turn is
             re-run with these answers instead of the saved ones, and they are
-            saved in their place. Rejected with 400 when the reply being
-            regenerated did not follow a question card, or when the request
-            also edits the question (`query` or `attachments`).
+            saved in their place. Over 8000 characters, or text not starting with
+            `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+            that did not follow a question card, or a request that also edits
+            the question (`query` or `attachments`), is refused after the stream
+            opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
         :param model_key: Identifier of the AI model configuration to use for regeneration.
             Typically a UUID returned by the model-management endpoints. When
@@ -5157,6 +5666,9 @@ class Conversations(BaseSDK):
         :param model_friendly_name: Friendly display name of the selected model.
         :param chat_mode: Chat mode used for regeneration (for example `internal_search`,
             `web_search`, or the universal `agent` mode).
+
+        :param reasoning_effort: Reasoning effort for this turn, for models that support it. Stored on
+            the conversation's model info and forwarded to the AI backend.
 
         :param timezone: IANA timezone identifier from the client. Used to provide
             time-aware context to the AI during regeneration.
@@ -5225,6 +5737,7 @@ class Conversations(BaseSDK):
                 model_name=model_name,
                 model_friendly_name=model_friendly_name,
                 chat_mode=chat_mode,
+                reasoning_effort=reasoning_effort,
                 timezone=timezone,
                 current_time=current_time,
                 tools=utils.unmarshal(tools, Optional[List[str]]),
@@ -5290,6 +5803,7 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "text/event-stream"):
             return eventstreaming.EventStreamAsync(
                 http_res,
@@ -5297,7 +5811,19 @@ class Conversations(BaseSDK):
                 client_ref=self,
                 data_required=False,
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "500", "application/json"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            response_data = unmarshal_json_response(
+                errors.ErrorResponseData, http_res, http_res_text
+            )
+            raise errors.ErrorResponse(response_data, http_res, http_res_text)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5404,9 +5930,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.ForkConversationResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5510,9 +6045,18 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "201", "application/json"):
             return unmarshal_json_response(models.ForkConversationResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5546,9 +6090,14 @@ class Conversations(BaseSDK):
         frame with a `stopped` status and whatever partial answer had
         already generated; nothing further is delivered here.
 
-        `{ cancelled: false }` — not an error — covers a `runId` that
-        already finished or was never registered; the caller only needs to
-        know the stream is not running anymore, not why.
+        A `runId` that already finished or was never registered is not an
+        error either, but it is answered `{ cancelled: true }`, not `false`:
+        the query service's KV-backed run registry publishes the cancel for
+        other workers and acknowledges it as cancelled (a known defect).
+        `{ cancelled: false }` is only returned when that publish fails.
+
+        Only the conversation's owner (matched on `userId`) can cancel; any
+        other caller, or a missing, deleted or agent conversation, is `404`.
 
         `runId` must belong to a run started on THIS `conversationId` — a
         `runId` that exists but was registered under a different
@@ -5632,11 +6181,20 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.CancelConversationStreamResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5670,9 +6228,14 @@ class Conversations(BaseSDK):
         frame with a `stopped` status and whatever partial answer had
         already generated; nothing further is delivered here.
 
-        `{ cancelled: false }` — not an error — covers a `runId` that
-        already finished or was never registered; the caller only needs to
-        know the stream is not running anymore, not why.
+        A `runId` that already finished or was never registered is not an
+        error either, but it is answered `{ cancelled: true }`, not `false`:
+        the query service's KV-backed run registry publishes the cancel for
+        other workers and acknowledges it as cancelled (a known defect).
+        `{ cancelled: false }` is only returned when that publish fails.
+
+        Only the conversation's owner (matched on `userId`) can cancel; any
+        other caller, or a missing, deleted or agent conversation, is `404`.
 
         `runId` must belong to a run started on THIS `conversationId` — a
         `runId` that exists but was registered under a different
@@ -5756,11 +6319,20 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.CancelConversationStreamResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5815,6 +6387,16 @@ class Conversations(BaseSDK):
         Feedback can only be submitted on `bot_response` messages — user
         queries and system messages are rejected with `400`.
 
+        **Who can submit**
+
+        The conversation's initiator, or any user it is shared with (at any
+        access level) while `isShared` is `true`. Agent conversations are
+        `404` here.
+
+        Body fields other than `isHelpful`, `categories` and `comments` are
+        dropped by the validator, not refused. `metrics` is always computed
+        by the server.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -5899,16 +6481,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.MessageFeedbackUpdateResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -5957,6 +6548,16 @@ class Conversations(BaseSDK):
 
         Feedback can only be submitted on `bot_response` messages — user
         queries and system messages are rejected with `400`.
+
+        **Who can submit**
+
+        The conversation's initiator, or any user it is shared with (at any
+        access level) while `isShared` is `true`. Agent conversations are
+        `404` here.
+
+        Body fields other than `isHelpful`, `categories` and `comments` are
+        dropped by the validator, not refused. `metrics` is always computed
+        by the server.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -6042,16 +6643,25 @@ class Conversations(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(
                 models.MessageFeedbackUpdateResponse, http_res
             )
-        if utils.match_response(http_res, ["400", "401", "404", "4XX"], "*"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
             )
-        if utils.match_response(http_res, ["500", "5XX"], "*"):
+        if utils.match_response(http_res, "5XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

@@ -20,11 +20,17 @@ class OAuthTokenResponseTypedDict(TypedDict):
     expires_in: NotRequired[int]
     r"""Access token lifetime in seconds"""
     refresh_token: NotRequired[str]
-    r"""Refresh token for obtaining new access tokens"""
+    r"""Refresh token for obtaining new access tokens. Issued only when the token acts as a user
+    (`authorization_code`, `refresh_token` and `device_code` grants) and the granted scopes
+    include `offline_access`; never for `client_credentials`.
+
+    """
     scope: NotRequired[str]
-    r"""Granted scopes (may differ from requested)"""
-    id_token: NotRequired[str]
-    r"""OpenID Connect ID token (JWT) if openid scope was requested"""
+    r"""Granted scopes, space-separated (may differ from requested). Empty for a
+    `client_credentials` token whose app holds only user-bound scopes (`openid`, `profile`,
+    `email`, `offline_access`), which are dropped from that grant.
+
+    """
     issued_token_type: NotRequired[str]
     r"""The type of the issued token (RFC 8693 Section 2.2.1). Returned by
     the token-exchange grant, where it is always
@@ -49,13 +55,18 @@ class OAuthTokenResponse(BaseModel):
     r"""Access token lifetime in seconds"""
 
     refresh_token: Optional[str] = None
-    r"""Refresh token for obtaining new access tokens"""
+    r"""Refresh token for obtaining new access tokens. Issued only when the token acts as a user
+    (`authorization_code`, `refresh_token` and `device_code` grants) and the granted scopes
+    include `offline_access`; never for `client_credentials`.
+
+    """
 
     scope: Optional[str] = None
-    r"""Granted scopes (may differ from requested)"""
+    r"""Granted scopes, space-separated (may differ from requested). Empty for a
+    `client_credentials` token whose app holds only user-bound scopes (`openid`, `profile`,
+    `email`, `offline_access`), which are dropped from that grant.
 
-    id_token: Optional[str] = None
-    r"""OpenID Connect ID token (JWT) if openid scope was requested"""
+    """
 
     issued_token_type: Optional[str] = None
     r"""The type of the issued token (RFC 8693 Section 2.2.1). Returned by
@@ -73,7 +84,6 @@ class OAuthTokenResponse(BaseModel):
                 "expires_in",
                 "refresh_token",
                 "scope",
-                "id_token",
                 "issued_token_type",
             ]
         )

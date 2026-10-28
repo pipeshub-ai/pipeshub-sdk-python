@@ -16,9 +16,15 @@ Retrieve all configured web search providers and current web search settings.
 OAuth tokens must include the `config:read` scope. Admin role is not required.
 
 **API keys:** for anyone who isn't an org admin, each provider's `configuration.apiKey`
-comes back as the placeholder `****************`. Admins get the stored key, unless the
+comes back as the placeholder `****************`, and so does `configuration.baseUrl`
+(admins always get the stored address). Admins get the stored key, unless the
 server hides secrets from everyone (`HIDE_SECRET_CONFIG=true`). When updating a provider,
 sending the placeholder back keeps the stored key.
+
+The built-in `duckduckgo` entry (never stored, empty `configuration`) is always listed
+first; it is the default when no stored provider is. With nothing stored, `message` is
+`No web search providers found` and the settings are the defaults. Of the query
+string only `reveal` is read.
 
 
 ### Example Usage
@@ -57,5 +63,6 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 401, 403                    | application/json            |
+| errors.ErrorResponse        | 400, 401, 403               | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |

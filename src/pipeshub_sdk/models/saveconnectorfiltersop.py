@@ -13,6 +13,11 @@ from typing_extensions import Annotated, TypedDict
 
 class SaveConnectorFiltersRequestRequestTypedDict(TypedDict):
     connector_id: str
+    r"""Connector instance ID. Unlike `GET` on this path, not checked for
+    shape: an ID that matches no instance is a `404`. An ID that decodes
+    to an unsafe path segment is refused with `400` before the token is checked.
+
+    """
     body: SaveConnectorFiltersRequestTypedDict
     r"""Request payload"""
 
@@ -23,6 +28,11 @@ class SaveConnectorFiltersRequestRequest(BaseModel):
         pydantic.Field(alias="connectorId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+    r"""Connector instance ID. Unlike `GET` on this path, not checked for
+    shape: an ID that matches no instance is a `404`. An ID that decodes
+    to an unsafe path segment is refused with `400` before the token is checked.
+
+    """
 
     body: Annotated[
         SaveConnectorFiltersRequest,

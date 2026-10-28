@@ -16,6 +16,7 @@ class ConnectorOAuth(BaseSDK):
         self,
         *,
         connector_id: str,
+        desktop: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -38,6 +39,10 @@ class ConnectorOAuth(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param connector_id: Connector instance ID
+        :param desktop: `true` when the sign-in starts in the desktop app: the `state` sent to the provider is
+            marked so the web callback page hands `code` and `state` to the app over a `pipeshub://`
+            link instead of finishing the sign-in in the browser. Any other value is ignored.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -55,6 +60,7 @@ class ConnectorOAuth(BaseSDK):
 
         request = models.GetOAuthAuthorizationURLRequest(
             connector_id=connector_id,
+            desktop=desktop,
         )
 
         req = self._build_request(
@@ -130,6 +136,7 @@ class ConnectorOAuth(BaseSDK):
         self,
         *,
         connector_id: str,
+        desktop: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -152,6 +159,10 @@ class ConnectorOAuth(BaseSDK):
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param connector_id: Connector instance ID
+        :param desktop: `true` when the sign-in starts in the desktop app: the `state` sent to the provider is
+            marked so the web callback page hands `code` and `state` to the app over a `pipeshub://`
+            link instead of finishing the sign-in in the browser. Any other value is ignored.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -169,6 +180,7 @@ class ConnectorOAuth(BaseSDK):
 
         request = models.GetOAuthAuthorizationURLRequest(
             connector_id=connector_id,
+            desktop=desktop,
         )
 
         req = self._build_request_async(
@@ -264,10 +276,12 @@ class ConnectorOAuth(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param code: Authorization code from provider
-        :param state: State parameter (contains connector ID)
+        :param code: Authorization code from provider. A missing, empty or blank value is
+            refused with `400`, even when the provider only sent `error`.
+
+        :param state: State parameter (contains connector ID). A missing, empty or blank value is refused with `400`.
         :param error: Error code if authorization failed
-        :param base_url: Base URL for redirect
+        :param base_url: Origin prefixed to the returned `redirectUrl`
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -339,6 +353,9 @@ class ConnectorOAuth(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -376,10 +393,12 @@ class ConnectorOAuth(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param code: Authorization code from provider
-        :param state: State parameter (contains connector ID)
+        :param code: Authorization code from provider. A missing, empty or blank value is
+            refused with `400`, even when the provider only sent `error`.
+
+        :param state: State parameter (contains connector ID). A missing, empty or blank value is refused with `400`.
         :param error: Error code if authorization failed
-        :param base_url: Base URL for redirect
+        :param base_url: Origin prefixed to the returned `redirectUrl`
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -449,6 +468,9 @@ class ConnectorOAuth(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.HandleOAuthCallbackResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):

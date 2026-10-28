@@ -21,10 +21,15 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class SearchArchivedConversationsRequestTypedDict(TypedDict):
     search: str
     r"""Search term to match against conversation titles and message content (max 1000 chars)"""
-    page: NotRequired[int]
-    r"""Page number (1-indexed)"""
-    limit: NotRequired[int]
-    r"""Items per page"""
+    page: NotRequired[float]
+    r"""Page number (1-indexed). The validator accepts any number, so a fraction such
+    as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+    """
+    limit: NotRequired[float]
+    r"""Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
+    """
 
 
 class SearchArchivedConversationsRequest(BaseModel):
@@ -34,16 +39,21 @@ class SearchArchivedConversationsRequest(BaseModel):
     r"""Search term to match against conversation titles and message content (max 1000 chars)"""
 
     page: Annotated[
-        Optional[int],
+        Optional[float],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
-    ] = 1
-    r"""Page number (1-indexed)"""
+    ] = 1.0
+    r"""Page number (1-indexed). The validator accepts any number, so a fraction such
+    as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+    """
 
     limit: Annotated[
-        Optional[int],
+        Optional[float],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
-    ] = 20
-    r"""Items per page"""
+    ] = 20.0
+    r"""Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -74,12 +84,27 @@ SearchArchivedConversationsStatus = Union[
 ]
 
 
+SearchArchivedConversationsReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""Reasoning effort requested when the conversation was created, when one was set."""
+
+
 class SearchArchivedConversationsModelInfoTypedDict(TypedDict):
     model_key: NotRequired[str]
     model_name: NotRequired[str]
     model_friendly_name: NotRequired[str]
     model_provider: NotRequired[str]
     chat_mode: NotRequired[str]
+    reasoning_effort: NotRequired[SearchArchivedConversationsReasoningEffort]
+    r"""Reasoning effort requested when the conversation was created, when one was set."""
 
 
 class SearchArchivedConversationsModelInfo(BaseModel):
@@ -97,10 +122,23 @@ class SearchArchivedConversationsModelInfo(BaseModel):
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
 
+    reasoning_effort: Annotated[
+        Optional[SearchArchivedConversationsReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort requested when the conversation was created, when one was set."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["modelKey", "modelName", "modelFriendlyName", "modelProvider", "chatMode"]
+            [
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "modelProvider",
+                "chatMode",
+                "reasoningEffort",
+            ]
         )
         serialized = handler(self)
         m = {}
@@ -128,6 +166,8 @@ SearchArchivedConversationsSharedWithAccessLevel = Union[
 class SearchArchivedConversationsSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
     access_level: NotRequired[SearchArchivedConversationsSharedWithAccessLevel]
+    id: NotRequired[str]
+    r"""Subdocument identifier auto-assigned by MongoDB."""
 
 
 class SearchArchivedConversationsSharedWith(BaseModel):
@@ -138,9 +178,12 @@ class SearchArchivedConversationsSharedWith(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = None
 
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Subdocument identifier auto-assigned by MongoDB."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["userId", "accessLevel", "_id"])
         serialized = handler(self)
         m = {}
 
@@ -156,6 +199,8 @@ class SearchArchivedConversationsSharedWith(BaseModel):
 
 
 class SearchArchivedConversationsConversationErrorTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Sub-document identifier auto-assigned by MongoDB."""
     message: NotRequired[str]
     error_type: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -165,6 +210,9 @@ class SearchArchivedConversationsConversationErrorTypedDict(TypedDict):
 
 
 class SearchArchivedConversationsConversationError(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Sub-document identifier auto-assigned by MongoDB."""
+
     message: Optional[str] = None
 
     error_type: Annotated[Optional[str], pydantic.Field(alias="errorType")] = None
@@ -180,7 +228,15 @@ class SearchArchivedConversationsConversationError(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["message", "errorType", "timestamp", "messageId", "stack", "metadata"]
+            [
+                "_id",
+                "message",
+                "errorType",
+                "timestamp",
+                "messageId",
+                "stack",
+                "metadata",
+            ]
         )
         serialized = handler(self)
         m = {}

@@ -11,6 +11,7 @@ from .agentcreatewebsearch_union import (
     AgentCreateWebSearchUnion,
     AgentCreateWebSearchUnionTypedDict,
 )
+from .agentmcpserverref import AgentMcpServerRef, AgentMcpServerRefTypedDict
 from .agentskillassignment import AgentSkillAssignment, AgentSkillAssignmentTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
@@ -36,8 +37,18 @@ r"""Agent-level reasoning effort used when a chat request omits its own."""
 
 
 class AgentCreateRequestTypedDict(TypedDict):
+    r"""Body of `POST /agents/create`. Fields the gateway validator does not know
+    (at the top level and inside `models[]`, `webSearch`, `knowledge[]`,
+    `toolsets[]` and `mcpServers[]`) are dropped before the request reaches the
+    AI backend; they are not refused.
+
+    """
+
     name: str
-    r"""Agent display name"""
+    r"""Agent display name. Surrounding whitespace is trimmed; a blank name is
+    refused with `400` (`VALIDATION_ERROR`, \"Name is required\").
+
+    """
     description: NotRequired[str]
     r"""What the agent does"""
     start_message: NotRequired[str]
@@ -49,10 +60,10 @@ class AgentCreateRequestTypedDict(TypedDict):
     models: NotRequired[List[AgentCreateModelEntryUnionTypedDict]]
     r"""Agent model configuration entries. Optional — an agent created without
     any models (an empty array or an omitted field) uses the organization's
-    default LLM at chat time. When at least one model entry IS provided, the
-    gateway requires at least one object entry with `isReasoning: true`.
-    String-only arrays are schema-valid but rejected at runtime with HTTP 400
-    unless the array is empty.
+    default LLM at chat time. A non-empty list must hold at least one object
+    entry with `isReasoning: true`; otherwise the gateway answers `400`
+    (`VALIDATION_ERROR` on `models`, \"At least one reasoning model is
+    required\").
 
     """
     tags: NotRequired[List[str]]
@@ -67,6 +78,7 @@ class AgentCreateRequestTypedDict(TypedDict):
     is refused rather than ignored, so a request cannot quietly create
     an agent that searches as its creator. Omit it and the agent
     searches as its creator.
+    Whitespace around it is removed first; 1-128 characters.
 
     """
     toolsets: NotRequired[List[AgentCreateToolsetTypedDict]]
@@ -75,9 +87,17 @@ class AgentCreateRequestTypedDict(TypedDict):
     r"""Knowledge sources connected to the agent"""
     skills: NotRequired[List[AgentSkillAssignmentTypedDict]]
     r"""Existing skills to assign to the agent"""
+    mcp_servers: NotRequired[List[AgentMcpServerRefTypedDict]]
+    r"""MCP server instances attached to the agent. Two entries with the same
+    `typeId` are refused with `400` (`VALIDATION_ERROR` on
+    `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+    The instance is not looked up when the agent is saved.
+
+    """
     web_search: NotRequired[Nullable[AgentCreateWebSearchUnionTypedDict]]
     r"""Web-search attachment for an agent. Accepts a provider string, an object
-    with at least a `provider` field, or `null`.
+    with at least a `provider` field, or `null`. The provider string and
+    `provider` are trimmed; an empty or blank value is refused with `400`.
 
     """
     default_reasoning_effort: NotRequired[
@@ -99,8 +119,18 @@ class AgentCreateRequestTypedDict(TypedDict):
 
 
 class AgentCreateRequest(BaseModel):
+    r"""Body of `POST /agents/create`. Fields the gateway validator does not know
+    (at the top level and inside `models[]`, `webSearch`, `knowledge[]`,
+    `toolsets[]` and `mcpServers[]`) are dropped before the request reaches the
+    AI backend; they are not refused.
+
+    """
+
     name: str
-    r"""Agent display name"""
+    r"""Agent display name. Surrounding whitespace is trimmed; a blank name is
+    refused with `400` (`VALIDATION_ERROR`, \"Name is required\").
+
+    """
 
     description: Optional[str] = None
     r"""What the agent does"""
@@ -117,10 +147,10 @@ class AgentCreateRequest(BaseModel):
     models: Optional[List[AgentCreateModelEntryUnion]] = None
     r"""Agent model configuration entries. Optional — an agent created without
     any models (an empty array or an omitted field) uses the organization's
-    default LLM at chat time. When at least one model entry IS provided, the
-    gateway requires at least one object entry with `isReasoning: true`.
-    String-only arrays are schema-valid but rejected at runtime with HTTP 400
-    unless the array is empty.
+    default LLM at chat time. A non-empty list must hold at least one object
+    entry with `isReasoning: true`; otherwise the gateway answers `400`
+    (`VALIDATION_ERROR` on `models`, \"At least one reasoning model is
+    required\").
 
     """
 
@@ -145,6 +175,7 @@ class AgentCreateRequest(BaseModel):
     is refused rather than ignored, so a request cannot quietly create
     an agent that searches as its creator. Omit it and the agent
     searches as its creator.
+    Whitespace around it is removed first; 1-128 characters.
 
     """
 
@@ -157,11 +188,22 @@ class AgentCreateRequest(BaseModel):
     skills: Optional[List[AgentSkillAssignment]] = None
     r"""Existing skills to assign to the agent"""
 
+    mcp_servers: Annotated[
+        Optional[List[AgentMcpServerRef]], pydantic.Field(alias="mcpServers")
+    ] = None
+    r"""MCP server instances attached to the agent. Two entries with the same
+    `typeId` are refused with `400` (`VALIDATION_ERROR` on
+    `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+    The instance is not looked up when the agent is saved.
+
+    """
+
     web_search: Annotated[
         OptionalNullable[AgentCreateWebSearchUnion], pydantic.Field(alias="webSearch")
     ] = UNSET
     r"""Web-search attachment for an agent. Accepts a provider string, an object
-    with at least a `provider` field, or `null`.
+    with at least a `provider` field, or `null`. The provider string and
+    `provider` are trimmed; an empty or blank value is refused with `400`.
 
     """
 
@@ -205,6 +247,7 @@ class AgentCreateRequest(BaseModel):
                 "toolsets",
                 "knowledge",
                 "skills",
+                "mcpServers",
                 "webSearch",
                 "defaultReasoningEffort",
                 "apiToolsetTools",

@@ -1,7 +1,8 @@
 # Forbidden
 
-Forbidden. Returned either when the OAuth token is missing the required
-`kb:read` scope or when the authenticated user does not have access to the record.
+Forbidden. Returned when the OAuth token is missing the required `kb:read` scope
+(`ErrorResponse`), or as `{"error": "You do not have permission to access this record"}`
+when the caller has no access to the record or the record is in the trash.
 
 
 

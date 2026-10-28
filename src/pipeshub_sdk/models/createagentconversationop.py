@@ -19,7 +19,11 @@ from typing_extensions import Annotated, TypedDict
 class CreateAgentConversationRequestTypedDict(TypedDict):
     agent_key: str
     body: AgentCreateConversationRequestTypedDict
-    r"""The first question, with optional scope, model, project and tool overrides."""
+    r"""The first question, with optional scope, model, project and tool overrides. A `query`
+    that holds markup or a printf-style format specifier is refused with `400`
+    `HTTP_BAD_REQUEST`, and so is one of only whitespace (\"Query is required\").
+
+    """
 
 
 class CreateAgentConversationRequest(BaseModel):
@@ -33,7 +37,11 @@ class CreateAgentConversationRequest(BaseModel):
         AgentCreateConversationRequest,
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
-    r"""The first question, with optional scope, model, project and tool overrides."""
+    r"""The first question, with optional scope, model, project and tool overrides. A `query`
+    that holds markup or a printf-style format specifier is refused with `400`
+    `HTTP_BAD_REQUEST`, and so is one of only whitespace (\"Query is required\").
+
+    """
 
 
 class CreateAgentConversationResponseResponseTypedDict(TypedDict):

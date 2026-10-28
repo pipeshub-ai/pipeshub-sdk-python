@@ -12,12 +12,15 @@ GrantType = Literal[
     "authorization_code",
     "client_credentials",
     "refresh_token",
+    "urn:ietf:params:oauth:grant-type:device_code",
     "urn:ietf:params:oauth:grant-type:token-exchange",
 ]
 r"""OAuth grant type:
 - `authorization_code`: Exchange auth code for tokens
 - `client_credentials`: Machine-to-machine auth
 - `refresh_token`: Get new access token using refresh token
+- `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device
+authorization (RFC 8628) started with `POST /oauth2/device_authorization`
 - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
 delegation (RFC 8693). Exchanges a service token for a
 short-lived token that acts as one named person. Enterprise
@@ -38,6 +41,8 @@ class OAuthTokenRequestTypedDict(TypedDict):
     - `authorization_code`: Exchange auth code for tokens
     - `client_credentials`: Machine-to-machine auth
     - `refresh_token`: Get new access token using refresh token
+    - `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device
+    authorization (RFC 8628) started with `POST /oauth2/device_authorization`
     - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
     delegation (RFC 8693). Exchanges a service token for a
     short-lived token that acts as one named person. Enterprise
@@ -49,8 +54,13 @@ class OAuthTokenRequestTypedDict(TypedDict):
     r"""Authorization code (required for authorization_code grant)"""
     redirect_uri: NotRequired[str]
     r"""Redirect URI (required for authorization_code grant)"""
+    device_code: NotRequired[str]
+    r"""The `device_code` from `POST /oauth2/device_authorization` (required for the device_code
+    grant; without it the answer is `400 invalid_grant`)
+
+    """
     client_id: NotRequired[str]
-    r"""Client ID (can also be sent via Basic auth header)"""
+    r"""Client ID (can also be sent via Basic auth header, which then takes precedence)"""
     client_secret: NotRequired[str]
     r"""Client secret (can also be sent via Basic auth header)"""
     refresh_token: NotRequired[str]
@@ -93,6 +103,8 @@ class OAuthTokenRequest(BaseModel):
     - `authorization_code`: Exchange auth code for tokens
     - `client_credentials`: Machine-to-machine auth
     - `refresh_token`: Get new access token using refresh token
+    - `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device
+    authorization (RFC 8628) started with `POST /oauth2/device_authorization`
     - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
     delegation (RFC 8693). Exchanges a service token for a
     short-lived token that acts as one named person. Enterprise
@@ -107,8 +119,14 @@ class OAuthTokenRequest(BaseModel):
     redirect_uri: Annotated[Optional[str], FieldMetadata(form=True)] = None
     r"""Redirect URI (required for authorization_code grant)"""
 
+    device_code: Annotated[Optional[str], FieldMetadata(form=True)] = None
+    r"""The `device_code` from `POST /oauth2/device_authorization` (required for the device_code
+    grant; without it the answer is `400 invalid_grant`)
+
+    """
+
     client_id: Annotated[Optional[str], FieldMetadata(form=True)] = None
-    r"""Client ID (can also be sent via Basic auth header)"""
+    r"""Client ID (can also be sent via Basic auth header, which then takes precedence)"""
 
     client_secret: Annotated[Optional[str], FieldMetadata(form=True)] = None
     r"""Client secret (can also be sent via Basic auth header)"""
@@ -152,6 +170,7 @@ class OAuthTokenRequest(BaseModel):
             [
                 "code",
                 "redirect_uri",
+                "device_code",
                 "client_id",
                 "client_secret",
                 "refresh_token",

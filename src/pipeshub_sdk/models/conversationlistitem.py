@@ -29,12 +29,27 @@ ConversationListItemStatus = Union[
 ]
 
 
+ConversationListItemReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""Reasoning effort requested when the conversation was created, when one was set."""
+
+
 class ConversationListItemModelInfoTypedDict(TypedDict):
     model_key: NotRequired[str]
     model_name: NotRequired[str]
     model_friendly_name: NotRequired[str]
     model_provider: NotRequired[str]
     chat_mode: NotRequired[str]
+    reasoning_effort: NotRequired[ConversationListItemReasoningEffort]
+    r"""Reasoning effort requested when the conversation was created, when one was set."""
 
 
 class ConversationListItemModelInfo(BaseModel):
@@ -52,10 +67,23 @@ class ConversationListItemModelInfo(BaseModel):
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
 
+    reasoning_effort: Annotated[
+        Optional[ConversationListItemReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort requested when the conversation was created, when one was set."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["modelKey", "modelName", "modelFriendlyName", "modelProvider", "chatMode"]
+            [
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "modelProvider",
+                "chatMode",
+                "reasoningEffort",
+            ]
         )
         serialized = handler(self)
         m = {}
@@ -83,6 +111,8 @@ ConversationListItemSharedWithAccessLevel = Union[
 class ConversationListItemSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
     access_level: NotRequired[ConversationListItemSharedWithAccessLevel]
+    id: NotRequired[str]
+    r"""Subdocument identifier auto-assigned by MongoDB."""
 
 
 class ConversationListItemSharedWith(BaseModel):
@@ -93,9 +123,12 @@ class ConversationListItemSharedWith(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = None
 
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Subdocument identifier auto-assigned by MongoDB."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["userId", "accessLevel", "_id"])
         serialized = handler(self)
         m = {}
 
@@ -111,6 +144,8 @@ class ConversationListItemSharedWith(BaseModel):
 
 
 class ConversationListItemConversationErrorTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Sub-document identifier auto-assigned by MongoDB."""
     message: NotRequired[str]
     error_type: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -120,6 +155,9 @@ class ConversationListItemConversationErrorTypedDict(TypedDict):
 
 
 class ConversationListItemConversationError(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Sub-document identifier auto-assigned by MongoDB."""
+
     message: Optional[str] = None
 
     error_type: Annotated[Optional[str], pydantic.Field(alias="errorType")] = None
@@ -135,7 +173,15 @@ class ConversationListItemConversationError(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["message", "errorType", "timestamp", "messageId", "stack", "metadata"]
+            [
+                "_id",
+                "message",
+                "errorType",
+                "timestamp",
+                "messageId",
+                "stack",
+                "metadata",
+            ]
         )
         serialized = handler(self)
         m = {}

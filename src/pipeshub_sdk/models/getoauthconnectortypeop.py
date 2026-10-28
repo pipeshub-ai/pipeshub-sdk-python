@@ -2,14 +2,23 @@
 
 from __future__ import annotations
 from .oauthregistryentry import OAuthRegistryEntry, OAuthRegistryEntryTypedDict
-from pipeshub_sdk.types import BaseModel
-from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, QueryParamMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class GetOAuthConnectorTypeRequestTypedDict(TypedDict):
     connector_type: str
+    r"""Registered name of the type, case-sensitive"""
+    page: NotRequired[int]
+    r"""Validated like the `page` of `GET /oauth/registry`, then ignored; the reply is the same with or without it."""
+    limit: NotRequired[int]
+    r"""Validated like the `limit` of `GET /oauth/registry`, then ignored."""
+    search: NotRequired[str]
+    r"""Validated as a single text value, then ignored."""
 
 
 class GetOAuthConnectorTypeRequest(BaseModel):
@@ -18,6 +27,41 @@ class GetOAuthConnectorTypeRequest(BaseModel):
         pydantic.Field(alias="connectorType"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+    r"""Registered name of the type, case-sensitive"""
+
+    page: Annotated[
+        Optional[int],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated like the `page` of `GET /oauth/registry`, then ignored; the reply is the same with or without it."""
+
+    limit: Annotated[
+        Optional[int],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated like the `limit` of `GET /oauth/registry`, then ignored."""
+
+    search: Annotated[
+        Optional[str],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""Validated as a single text value, then ignored."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["page", "limit", "search"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m
 
 
 class GetOAuthConnectorTypeResponseTypedDict(TypedDict):

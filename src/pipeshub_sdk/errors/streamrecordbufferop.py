@@ -10,19 +10,57 @@ from typing import Optional, Union
 from typing_extensions import TypeAliasType
 
 
+StreamRecordBufferInternalServerErrorUnion = TypeAliasType(
+    "StreamRecordBufferInternalServerErrorUnion",
+    Union[StreamRecordErrorResponseData, ErrorResponseData],
+)
+r"""Internal streaming failure, downstream conversion failure, or connector/backend
+error proxied by the gateway.
+
+
+A JSON body larger than 10 MB, or a form-encoded body larger than 100 KB or with more than 1000 fields, is answered `413` by the app-wide body parsers instead, also before authentication.
+
+"""
+
+
+@dataclass(unsafe_hash=True)
+class StreamRecordBufferInternalServerError(PipeshubError):
+    r"""Internal streaming failure, downstream conversion failure, or connector/backend
+    error proxied by the gateway.
+
+
+    A JSON body larger than 10 MB, or a form-encoded body larger than 100 KB or with more than 1000 fields, is answered `413` by the app-wide body parsers instead, also before authentication.
+
+    """
+
+    data: StreamRecordBufferInternalServerErrorUnion = field(hash=False)
+
+    def __init__(
+        self,
+        data: StreamRecordBufferInternalServerErrorUnion,
+        raw_response: httpx.Response,
+        body: Optional[str] = None,
+    ):
+        message = body or raw_response.text
+        super().__init__(message, raw_response, body)
+        object.__setattr__(self, "data", data)
+
+
 ForbiddenUnion = TypeAliasType(
     "ForbiddenUnion", Union[ErrorResponseData, StreamRecordErrorResponseData]
 )
-r"""Forbidden. Returned either when the OAuth token is missing the required
-`kb:read` scope or when the authenticated user does not have access to the record.
+r"""Forbidden. Returned when the OAuth token is missing the required `kb:read` scope
+(`ErrorResponse`), or as `{\"error\": \"You do not have permission to access this record\"}`
+when the caller has no access to the record or the record is in the trash.
 
 """
 
 
 @dataclass(unsafe_hash=True)
 class Forbidden(PipeshubError):
-    r"""Forbidden. Returned either when the OAuth token is missing the required
-    `kb:read` scope or when the authenticated user does not have access to the record.
+    r"""Forbidden. Returned when the OAuth token is missing the required `kb:read` scope
+    (`ErrorResponse`), or as `{\"error\": \"You do not have permission to access this record\"}`
+    when the caller has no access to the record or the record is in the trash.
 
     """
 

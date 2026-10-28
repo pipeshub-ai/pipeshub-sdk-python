@@ -25,10 +25,10 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.GetOAuthRegistryResponse:
         r"""List OAuth-capable connector types
 
-        Get all connector types that support OAuth authentication.<br><br>
-        <b>Admin Use:</b><br>
-        Admins use this to see which connector types need OAuth credentials
-        to be configured before users can authenticate.
+        List the connector and toolset types that support OAuth, from the OAuth registry.<br><br>
+        Each entry carries the provider URLs, the scopes requested, and the `authFields`
+        to collect when creating an OAuth configuration for that type.<br><br>
+        Any authenticated user can call this; it is not limited to admins.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -104,6 +104,9 @@ class OAuthConfiguration(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.GetOAuthRegistryResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -132,10 +135,10 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.GetOAuthRegistryResponse:
         r"""List OAuth-capable connector types
 
-        Get all connector types that support OAuth authentication.<br><br>
-        <b>Admin Use:</b><br>
-        Admins use this to see which connector types need OAuth credentials
-        to be configured before users can authenticate.
+        List the connector and toolset types that support OAuth, from the OAuth registry.<br><br>
+        Each entry carries the provider URLs, the scopes requested, and the `authFields`
+        to collect when creating an OAuth configuration for that type.<br><br>
+        Any authenticated user can call this; it is not limited to admins.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -213,6 +216,9 @@ class OAuthConfiguration(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -230,6 +236,9 @@ class OAuthConfiguration(BaseSDK):
         self,
         *,
         connector_type: str,
+        page: Optional[int] = None,
+        limit: Optional[int] = None,
+        search: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -237,11 +246,16 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.GetOAuthConnectorTypeResponse:
         r"""Get OAuth connector type details
 
-        Get details for a specific OAuth-capable connector type.
+        Get the OAuth registry entry of one connector or toolset type.<br><br>
+        `connectorType` is the registered name and is case-sensitive (e.g. `Confluence`).
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_type:
+        :param connector_type: Registered name of the type, case-sensitive
+        :param page: Validated like the `page` of `GET /oauth/registry`, then ignored; the reply is the same with or without it.
+        :param limit: Validated like the `limit` of `GET /oauth/registry`, then ignored.
+        :param search: Validated as a single text value, then ignored.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -259,6 +273,9 @@ class OAuthConfiguration(BaseSDK):
 
         request = models.GetOAuthConnectorTypeRequest(
             connector_type=connector_type,
+            page=page,
+            limit=limit,
+            search=search,
         )
 
         req = self._build_request(
@@ -309,7 +326,12 @@ class OAuthConfiguration(BaseSDK):
             return unmarshal_json_response(
                 models.GetOAuthConnectorTypeResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -329,6 +351,9 @@ class OAuthConfiguration(BaseSDK):
         self,
         *,
         connector_type: str,
+        page: Optional[int] = None,
+        limit: Optional[int] = None,
+        search: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -336,11 +361,16 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.GetOAuthConnectorTypeResponse:
         r"""Get OAuth connector type details
 
-        Get details for a specific OAuth-capable connector type.
+        Get the OAuth registry entry of one connector or toolset type.<br><br>
+        `connectorType` is the registered name and is case-sensitive (e.g. `Confluence`).
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_type:
+        :param connector_type: Registered name of the type, case-sensitive
+        :param page: Validated like the `page` of `GET /oauth/registry`, then ignored; the reply is the same with or without it.
+        :param limit: Validated like the `limit` of `GET /oauth/registry`, then ignored.
+        :param search: Validated as a single text value, then ignored.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -358,6 +388,9 @@ class OAuthConfiguration(BaseSDK):
 
         request = models.GetOAuthConnectorTypeRequest(
             connector_type=connector_type,
+            page=page,
+            limit=limit,
+            search=search,
         )
 
         req = self._build_request_async(
@@ -408,7 +441,12 @@ class OAuthConfiguration(BaseSDK):
             return unmarshal_json_response(
                 models.GetOAuthConnectorTypeResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -447,7 +485,7 @@ class OAuthConfiguration(BaseSDK):
 
         :param page:
         :param limit:
-        :param search:
+        :param search: Case-insensitive substring matched against the name, connector type, group, description and categories
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -516,6 +554,9 @@ class OAuthConfiguration(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ListOAuthConfigsResponse, http_res)
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -554,7 +595,7 @@ class OAuthConfiguration(BaseSDK):
 
         :param page:
         :param limit:
-        :param search:
+        :param search: Case-insensitive substring matched against the name, connector type, group, description and categories
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -625,6 +666,9 @@ class OAuthConfiguration(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -654,7 +698,14 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.ListOAuthConfigsByTypeResponse:
         r"""List OAuth configs for connector type
 
-        Get all OAuth configurations for a specific connector type.
+        List the organization's OAuth configurations for one connector type.<br><br>
+        <b>What comes back depends on the caller:</b><br>
+        <ul>
+        <li>An admin gets each stored record in full, including `config` with the client secret in clear text</li>
+        <li>Any other caller gets only the credential-free fields</li>
+        </ul>
+        A connector type with no configurations, or one that does not exist, yields an empty list.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -662,7 +713,7 @@ class OAuthConfiguration(BaseSDK):
         :param scope: Only OAuth apps usable for this connector scope
         :param page:
         :param limit:
-        :param search:
+        :param search: Space-separated terms; every term must appear in the name, connector type, group, description or categories
         :param reveal: Set to `true` to receive stored secrets instead of placeholders. Honoured only for an
             admin's own configuration where the deployment allows it (see `GET
             /configurationManager/secretReveal`); ignored for OAuth-app tokens and any other value.
@@ -744,6 +795,9 @@ class OAuthConfiguration(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -773,7 +827,14 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.ListOAuthConfigsByTypeResponse:
         r"""List OAuth configs for connector type
 
-        Get all OAuth configurations for a specific connector type.
+        List the organization's OAuth configurations for one connector type.<br><br>
+        <b>What comes back depends on the caller:</b><br>
+        <ul>
+        <li>An admin gets each stored record in full, including `config` with the client secret in clear text</li>
+        <li>Any other caller gets only the credential-free fields</li>
+        </ul>
+        A connector type with no configurations, or one that does not exist, yields an empty list.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -781,7 +842,7 @@ class OAuthConfiguration(BaseSDK):
         :param scope: Only OAuth apps usable for this connector scope
         :param page:
         :param limit:
-        :param search:
+        :param search: Space-separated terms; every term must appear in the name, connector type, group, description or categories
         :param reveal: Set to `true` to receive stored secrets instead of placeholders. Honoured only for an
             admin's own configuration where the deployment allows it (see `GET
             /configurationManager/secretReveal`); ignored for OAuth-app tokens and any other value.
@@ -861,6 +922,9 @@ class OAuthConfiguration(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -900,15 +964,30 @@ class OAuthConfiguration(BaseSDK):
         <b>Use Case:</b><br>
         Before users can create Google Drive connectors with OAuth,
         an admin must create an OAuth configuration with the Google
-        OAuth client ID and secret.
+        OAuth client ID and secret.<br><br>
+        The response carries the credential-free view of the new configuration; the
+        credentials are never echoed back. Success is reported as `200`, not `201`.<br><br>
+        <b>The connector type is not checked.</b> `connectorType` is not compared with the OAuth
+        registry, so a misspelled or wrongly-cased name (`confluence` for `Confluence`) does not
+        fail: the configuration is stored under that name with the default icon and an empty
+        group, description and category list. It is then returned by
+        `GET /oauth/{connectorType}` for that same name but never by `GET /oauth`, which only
+        walks the registered types.<br><br>
+        Body fields other than `oauthInstanceName`, `config` and `baseUrl` are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param connector_type:
-        :param oauth_instance_name: Display name for this OAuth configuration (e.g., 'Production Google OAuth')
-        :param config: OAuth application credentials
-        :param base_url: PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted, the frontend public endpoint is used. Not the provider's URL; a self-hosted provider's address goes in config.
+        :param oauth_instance_name: Display name for this OAuth configuration (e.g., 'Production Google OAuth'). Must be unique for the connector type within the organization. Leading and trailing whitespace is removed before validation, so a name of only whitespace is refused as empty.
+        :param config: OAuth application credentials, keyed by the `name` of each entry in the connector type's
+            `authFields` (see `GET /oauth/registry/{connectorType}`), so the keys differ from one
+            connector type to the next. Must not be empty; neither the keys nor their values are
+            validated when the configuration is created, so a value of another type (a number,
+            `null`, a nested object, an array of other items) is stored as sent, also for
+            `clientId` and `clientSecret`.
+
+        :param base_url: PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted or empty, the frontend public endpoint is used. The value is not checked to be a URL: whatever text is sent is used as the prefix. Not the provider's URL; a self-hosted provider's address goes in config.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1029,15 +1108,30 @@ class OAuthConfiguration(BaseSDK):
         <b>Use Case:</b><br>
         Before users can create Google Drive connectors with OAuth,
         an admin must create an OAuth configuration with the Google
-        OAuth client ID and secret.
+        OAuth client ID and secret.<br><br>
+        The response carries the credential-free view of the new configuration; the
+        credentials are never echoed back. Success is reported as `200`, not `201`.<br><br>
+        <b>The connector type is not checked.</b> `connectorType` is not compared with the OAuth
+        registry, so a misspelled or wrongly-cased name (`confluence` for `Confluence`) does not
+        fail: the configuration is stored under that name with the default icon and an empty
+        group, description and category list. It is then returned by
+        `GET /oauth/{connectorType}` for that same name but never by `GET /oauth`, which only
+        walks the registered types.<br><br>
+        Body fields other than `oauthInstanceName`, `config` and `baseUrl` are ignored.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param connector_type:
-        :param oauth_instance_name: Display name for this OAuth configuration (e.g., 'Production Google OAuth')
-        :param config: OAuth application credentials
-        :param base_url: PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted, the frontend public endpoint is used. Not the provider's URL; a self-hosted provider's address goes in config.
+        :param oauth_instance_name: Display name for this OAuth configuration (e.g., 'Production Google OAuth'). Must be unique for the connector type within the organization. Leading and trailing whitespace is removed before validation, so a name of only whitespace is refused as empty.
+        :param config: OAuth application credentials, keyed by the `name` of each entry in the connector type's
+            `authFields` (see `GET /oauth/registry/{connectorType}`), so the keys differ from one
+            connector type to the next. Must not be empty; neither the keys nor their values are
+            validated when the configuration is created, so a value of another type (a number,
+            `null`, a nested object, an array of other items) is stored as sent, also for
+            `clientId` and `clientSecret`.
+
+        :param base_url: PipesHub's public origin, prefixed to the connector's redirect path to build the stored redirectUri. When omitted or empty, the frontend public endpoint is used. The value is not checked to be a URL: whatever text is sent is used as the prefix. Not the provider's URL; a self-hosted provider's address goes in config.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1147,7 +1241,10 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.GetOAuthConfigResponse:
         r"""Get OAuth configuration
 
-        Get a specific OAuth configuration by ID.
+        Get a specific OAuth configuration by ID.<br><br>
+        An admin gets `config` with the stored credentials, client secret in clear text.
+        Any other caller gets the same object without `config`.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1229,6 +1326,9 @@ class OAuthConfiguration(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1255,7 +1355,10 @@ class OAuthConfiguration(BaseSDK):
     ) -> models.GetOAuthConfigResponse:
         r"""Get OAuth configuration
 
-        Get a specific OAuth configuration by ID.
+        Get a specific OAuth configuration by ID.<br><br>
+        An admin gets `config` with the stored credentials, client secret in clear text.
+        Any other caller gets the same object without `config`.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
@@ -1335,6 +1438,9 @@ class OAuthConfiguration(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -1678,7 +1784,12 @@ class OAuthConfiguration(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteOAuthConfigResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -1784,7 +1895,12 @@ class OAuthConfiguration(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteOAuthConfigResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):

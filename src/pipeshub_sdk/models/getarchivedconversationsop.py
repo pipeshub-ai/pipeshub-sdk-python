@@ -34,39 +34,76 @@ GetArchivedConversationsQueryParamSortOrder = Literal[
 r"""Sort direction"""
 
 
+GetArchivedConversationsSharedEnum = Literal[
+    "true",
+    "false",
+    "1",
+    "0",
+]
+r"""When set, filters by `isShared`. Accepts exactly `true`, `false`,
+`1` or `0`.
+
+"""
+
+
 class GetArchivedConversationsRequestTypedDict(TypedDict):
-    page: NotRequired[int]
-    r"""Page number (1-indexed)"""
-    limit: NotRequired[int]
-    r"""Items per page"""
+    page: NotRequired[float]
+    r"""Page number (1-indexed). The validator accepts any number, so a fraction such
+    as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+    """
+    limit: NotRequired[float]
+    r"""Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
+    """
     sort_by: NotRequired[GetArchivedConversationsQueryParamSortBy]
     r"""Field to sort by"""
     sort_order: NotRequired[GetArchivedConversationsQueryParamSortOrder]
     r"""Sort direction"""
     search: NotRequired[str]
-    r"""Case-insensitive substring match against title and message content (max 1000 chars)"""
-    shared: NotRequired[bool]
-    r"""Filter by shared status"""
+    r"""Case-insensitive substring match against title and message content
+    (max 1000 chars). A value holding markup is refused by the
+    controller with `400 HTTP_BAD_REQUEST`.
+
+    """
+    shared: NotRequired[GetArchivedConversationsSharedEnum]
+    r"""When set, filters by `isShared`. Accepts exactly `true`, `false`,
+    `1` or `0`.
+
+    """
     start_date: NotRequired[datetime]
-    r"""Include conversations created on or after this timestamp"""
+    r"""Include conversations created on or after this instant. Must be a
+    full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+    is refused.
+
+    """
     end_date: NotRequired[datetime]
-    r"""Include conversations created on or before this timestamp"""
+    r"""Include conversations created on or before this instant. Must be a
+    full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+    is refused.
+
+    """
     conversation_id: NotRequired[str]
     r"""Restrict results to a single conversation by identifier"""
 
 
 class GetArchivedConversationsRequest(BaseModel):
     page: Annotated[
-        Optional[int],
+        Optional[float],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
-    ] = 1
-    r"""Page number (1-indexed)"""
+    ] = 1.0
+    r"""Page number (1-indexed). The validator accepts any number, so a fraction such
+    as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+    """
 
     limit: Annotated[
-        Optional[int],
+        Optional[float],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
-    ] = 20
-    r"""Items per page"""
+    ] = 20.0
+    r"""Items per page. A fraction is not refused; it is truncated (`5.5` reads as 5).
+
+    """
 
     sort_by: Annotated[
         Optional[GetArchivedConversationsQueryParamSortBy],
@@ -86,27 +123,42 @@ class GetArchivedConversationsRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Case-insensitive substring match against title and message content (max 1000 chars)"""
+    r"""Case-insensitive substring match against title and message content
+    (max 1000 chars). A value holding markup is refused by the
+    controller with `400 HTTP_BAD_REQUEST`.
+
+    """
 
     shared: Annotated[
-        Optional[bool],
+        Optional[GetArchivedConversationsSharedEnum],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter by shared status"""
+    r"""When set, filters by `isShared`. Accepts exactly `true`, `false`,
+    `1` or `0`.
+
+    """
 
     start_date: Annotated[
         Optional[datetime],
         pydantic.Field(alias="startDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Include conversations created on or after this timestamp"""
+    r"""Include conversations created on or after this instant. Must be a
+    full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+    is refused.
+
+    """
 
     end_date: Annotated[
         Optional[datetime],
         pydantic.Field(alias="endDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Include conversations created on or before this timestamp"""
+    r"""Include conversations created on or before this instant. Must be a
+    full ISO 8601 date-time with `Z` or a numeric offset; a bare date
+    is refused.
+
+    """
 
     conversation_id: Annotated[
         Optional[str],
@@ -165,6 +217,19 @@ the last message keeps the partial answer
 """
 
 
+GetArchivedConversationsReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""Reasoning effort requested for the turn, when one was set."""
+
+
 class GetArchivedConversationsModelInfoTypedDict(TypedDict):
     r"""AI model configuration used"""
 
@@ -174,6 +239,8 @@ class GetArchivedConversationsModelInfoTypedDict(TypedDict):
     r"""Friendly display name of the selected model"""
     model_provider: NotRequired[str]
     chat_mode: NotRequired[str]
+    reasoning_effort: NotRequired[GetArchivedConversationsReasoningEffort]
+    r"""Reasoning effort requested for the turn, when one was set."""
 
 
 class GetArchivedConversationsModelInfo(BaseModel):
@@ -194,10 +261,23 @@ class GetArchivedConversationsModelInfo(BaseModel):
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
 
+    reasoning_effort: Annotated[
+        Optional[GetArchivedConversationsReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort requested for the turn, when one was set."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["modelKey", "modelName", "modelFriendlyName", "modelProvider", "chatMode"]
+            [
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "modelProvider",
+                "chatMode",
+                "reasoningEffort",
+            ]
         )
         serialized = handler(self)
         m = {}
@@ -225,6 +305,8 @@ GetArchivedConversationsSharedWithAccessLevel = Union[
 class GetArchivedConversationsSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
     access_level: NotRequired[GetArchivedConversationsSharedWithAccessLevel]
+    id: NotRequired[str]
+    r"""Subdocument identifier auto-assigned by MongoDB."""
 
 
 class GetArchivedConversationsSharedWith(BaseModel):
@@ -235,9 +317,12 @@ class GetArchivedConversationsSharedWith(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = None
 
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Subdocument identifier auto-assigned by MongoDB."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["userId", "accessLevel", "_id"])
         serialized = handler(self)
         m = {}
 
@@ -254,6 +339,8 @@ class GetArchivedConversationsSharedWith(BaseModel):
 
 class GetArchivedConversationsConversationErrorTypedDict(TypedDict):
     message: str
+    id: NotRequired[str]
+    r"""Sub-document identifier auto-assigned by MongoDB."""
     error_type: NotRequired[str]
     timestamp: NotRequired[datetime]
     message_id: NotRequired[str]
@@ -263,6 +350,9 @@ class GetArchivedConversationsConversationErrorTypedDict(TypedDict):
 
 class GetArchivedConversationsConversationError(BaseModel):
     message: str
+
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Sub-document identifier auto-assigned by MongoDB."""
 
     error_type: Annotated[Optional[str], pydantic.Field(alias="errorType")] = None
 
@@ -277,7 +367,7 @@ class GetArchivedConversationsConversationError(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["errorType", "timestamp", "messageId", "stack", "metadata"]
+            ["_id", "errorType", "timestamp", "messageId", "stack", "metadata"]
         )
         serialized = handler(self)
         m = {}
@@ -418,6 +508,8 @@ class GetArchivedConversationsConversationTypedDict(TypedDict):
     them with `GET /agents/{agentKey}/conversations/{conversationId}`.
 
     """
+    v: NotRequired[int]
+    r"""Mongoose document version key."""
     archived_at: NotRequired[datetime]
     r"""Timestamp when the conversation was archived"""
 
@@ -566,6 +658,9 @@ class GetArchivedConversationsConversation(BaseModel):
 
     """
 
+    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
+    r"""Mongoose document version key."""
+
     archived_at: Annotated[Optional[datetime], pydantic.Field(alias="archivedAt")] = (
         None
     )
@@ -602,6 +697,7 @@ class GetArchivedConversationsConversation(BaseModel):
                 "projectVisibility",
                 "sharedBy",
                 "agentKey",
+                "__v",
                 "archivedAt",
             ]
         )
@@ -712,7 +808,7 @@ class GetArchivedConversationsApplied(BaseModel):
         return m
 
 
-class GetArchivedConversationsSharedTypedDict(TypedDict):
+class GetArchivedConversationsSharedResponseTypedDict(TypedDict):
     values: NotRequired[List[str]]
     r"""Allowed values for the `shared` filter"""
     description: NotRequired[str]
@@ -722,7 +818,7 @@ class GetArchivedConversationsSharedTypedDict(TypedDict):
     r"""Whether this filter was applied on the request"""
 
 
-class GetArchivedConversationsShared(BaseModel):
+class GetArchivedConversationsSharedResponse(BaseModel):
     values: Optional[List[str]] = None
     r"""Allowed values for the `shared` filter"""
 
@@ -1436,7 +1532,7 @@ class GetArchivedConversationsSortingMessages(BaseModel):
 class GetArchivedConversationsAvailableTypedDict(TypedDict):
     r"""Describes filters supported by this endpoint and their current values"""
 
-    shared: NotRequired[GetArchivedConversationsSharedTypedDict]
+    shared: NotRequired[GetArchivedConversationsSharedResponseTypedDict]
     tags: NotRequired[GetArchivedConversationsTagsTypedDict]
     min_messages: NotRequired[GetArchivedConversationsMinMessagesTypedDict]
     search: NotRequired[GetArchivedConversationsSearchTypedDict]
@@ -1450,7 +1546,7 @@ class GetArchivedConversationsAvailableTypedDict(TypedDict):
 class GetArchivedConversationsAvailable(BaseModel):
     r"""Describes filters supported by this endpoint and their current values"""
 
-    shared: Optional[GetArchivedConversationsShared] = None
+    shared: Optional[GetArchivedConversationsSharedResponse] = None
 
     tags: Optional[GetArchivedConversationsTags] = None
 

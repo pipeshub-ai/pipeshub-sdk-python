@@ -16,6 +16,7 @@ class ConnectorStoredConfigAuthTypedDict(TypedDict):
     auth_type: NotRequired[ConnectorAuthType]
     r"""How a connector instance signs in to its source. Each connector type supports a subset; see `supportedAuthTypes` in the registry."""
     connector_type: NotRequired[str]
+    r"""Set by the server to the instance's connector type"""
     connector_scope: NotRequired[ConnectorScope]
     r"""Scope determines visibility and access control for connectors:<br>
     <ul>
@@ -28,6 +29,7 @@ class ConnectorStoredConfigAuthTypedDict(TypedDict):
     r"""The shared OAuth app the instance signs in with"""
     oauth_instance_name: NotRequired[str]
     redirect_uri: NotRequired[str]
+    r"""OAuth redirect URI the server built for this instance"""
 
 
 class ConnectorStoredConfigAuth(BaseModel):
@@ -46,6 +48,7 @@ class ConnectorStoredConfigAuth(BaseModel):
     connector_type: Annotated[Optional[str], pydantic.Field(alias="connectorType")] = (
         None
     )
+    r"""Set by the server to the instance's connector type"""
 
     connector_scope: Annotated[
         Optional[ConnectorScope], pydantic.Field(alias="connectorScope")
@@ -68,6 +71,7 @@ class ConnectorStoredConfigAuth(BaseModel):
     ] = None
 
     redirect_uri: Annotated[Optional[str], pydantic.Field(alias="redirectUri")] = None
+    r"""OAuth redirect URI the server built for this instance"""
 
     @property
     def additional_properties(self):
@@ -106,14 +110,128 @@ class ConnectorStoredConfigAuth(BaseModel):
         return m
 
 
+class ConnectorStoredConfigSyncTypedDict(TypedDict):
+    r"""Sync strategy plus connector-specific sync settings"""
+
+    selected_strategy: NotRequired[str]
+    r"""`MANUAL`, `SCHEDULED` or `WEBHOOK`"""
+    scheduled_config: NotRequired[Dict[str, Any]]
+    r"""Schedule used when `selectedStrategy` is `SCHEDULED`"""
+    custom_values: NotRequired[Dict[str, Any]]
+    r"""Values of the connector's own sync fields"""
+
+
+class ConnectorStoredConfigSync(BaseModel):
+    r"""Sync strategy plus connector-specific sync settings"""
+
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
+
+    selected_strategy: Annotated[
+        Optional[str], pydantic.Field(alias="selectedStrategy")
+    ] = None
+    r"""`MANUAL`, `SCHEDULED` or `WEBHOOK`"""
+
+    scheduled_config: Annotated[
+        Optional[Dict[str, Any]], pydantic.Field(alias="scheduledConfig")
+    ] = None
+    r"""Schedule used when `selectedStrategy` is `SCHEDULED`"""
+
+    custom_values: Annotated[
+        Optional[Dict[str, Any]], pydantic.Field(alias="customValues")
+    ] = None
+    r"""Values of the connector's own sync fields"""
+
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["selectedStrategy", "scheduledConfig", "customValues"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
+
+        return m
+
+
+class ConnectorStoredConfigFiltersTypedDict(TypedDict):
+    r"""Saved filter selections"""
+
+    sync: NotRequired[Dict[str, Any]]
+    r"""What to fetch from the source. Selections are under `values`, keyed by filter name."""
+    indexing: NotRequired[Dict[str, Any]]
+    r"""Which fetched records to index. Selections are under `values`, keyed by filter name."""
+
+
+class ConnectorStoredConfigFilters(BaseModel):
+    r"""Saved filter selections"""
+
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
+
+    sync: Optional[Dict[str, Any]] = None
+    r"""What to fetch from the source. Selections are under `values`, keyed by filter name."""
+
+    indexing: Optional[Dict[str, Any]] = None
+    r"""Which fetched records to index. Selections are under `values`, keyed by filter name."""
+
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["sync", "indexing"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
+
+        return m
+
+
 class ConnectorStoredConfigTypedDict(TypedDict):
     r"""A connector instance's saved settings. Secret auth fields come back masked; saving the mask back keeps the stored value. Provider OAuth tokens are never returned."""
 
     auth: NotRequired[ConnectorStoredConfigAuthTypedDict]
     r"""Auth fields for the instance's auth type, keyed by field name"""
-    sync: NotRequired[Dict[str, Any]]
+    sync: NotRequired[ConnectorStoredConfigSyncTypedDict]
     r"""Sync strategy plus connector-specific sync settings"""
-    filters: NotRequired[Dict[str, Any]]
+    filters: NotRequired[ConnectorStoredConfigFiltersTypedDict]
+    r"""Saved filter selections"""
 
 
 class ConnectorStoredConfig(BaseModel):
@@ -122,10 +240,11 @@ class ConnectorStoredConfig(BaseModel):
     auth: Optional[ConnectorStoredConfigAuth] = None
     r"""Auth fields for the instance's auth type, keyed by field name"""
 
-    sync: Optional[Dict[str, Any]] = None
+    sync: Optional[ConnectorStoredConfigSync] = None
     r"""Sync strategy plus connector-specific sync settings"""
 
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[ConnectorStoredConfigFilters] = None
+    r"""Saved filter selections"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
@@ -146,5 +265,9 @@ class ConnectorStoredConfig(BaseModel):
 
 try:
     ConnectorStoredConfigAuth.model_rebuild()
+except NameError:
+    pass
+try:
+    ConnectorStoredConfigSync.model_rebuild()
 except NameError:
     pass

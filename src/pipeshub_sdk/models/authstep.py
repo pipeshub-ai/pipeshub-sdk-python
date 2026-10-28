@@ -11,20 +11,30 @@ from typing_extensions import Annotated, TypedDict
 class AuthStepTypedDict(TypedDict):
     r"""A single step in multi-factor authentication flow"""
 
-    order: int
-    r"""Order of the authentication step (1-3, must be unique across steps)"""
+    order: float
+    r"""Label of the step; must be unique across steps. Only checked to be a number: `0`,
+    negative, fractional and values above 3 are accepted and stored as sent. Sign-in runs
+    the steps in ascending `order`, and `GET /orgAuthConfig/authMethods` returns them
+    renumbered 1, 2, 3 in that order.
+
+    """
     allowed_methods: List[AuthMethodTypedDict]
-    r"""List of allowed authentication methods for this step. User can choose any one method from this list."""
+    r"""List of allowed authentication methods for this step. User can choose any one method from this list. A method may appear only once in the whole policy."""
 
 
 class AuthStep(BaseModel):
     r"""A single step in multi-factor authentication flow"""
 
-    order: int
-    r"""Order of the authentication step (1-3, must be unique across steps)"""
+    order: float
+    r"""Label of the step; must be unique across steps. Only checked to be a number: `0`,
+    negative, fractional and values above 3 are accepted and stored as sent. Sign-in runs
+    the steps in ascending `order`, and `GET /orgAuthConfig/authMethods` returns them
+    renumbered 1, 2, 3 in that order.
+
+    """
 
     allowed_methods: Annotated[List[AuthMethod], pydantic.Field(alias="allowedMethods")]
-    r"""List of allowed authentication methods for this step. User can choose any one method from this list."""
+    r"""List of allowed authentication methods for this step. User can choose any one method from this list. A method may appear only once in the whole policy."""
 
 
 try:

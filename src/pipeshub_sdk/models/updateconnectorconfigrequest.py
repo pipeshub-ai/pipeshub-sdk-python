@@ -23,7 +23,10 @@ class UpdateConnectorConfigRequestTypedDict(TypedDict):
     r"""Sync strategy plus connector-specific sync settings, flat: send each field listed under `sync.customFields` in the registry schema by its `name`."""
     filters: NotRequired[ConnectorFiltersConfigTypedDict]
     base_url: NotRequired[str]
-    r"""Base URL for self-hosted instances"""
+    r"""Base URL for self-hosted instances. Any string is accepted; it is
+    not checked to be a URL.
+
+    """
 
 
 class UpdateConnectorConfigRequest(BaseModel):
@@ -38,7 +41,10 @@ class UpdateConnectorConfigRequest(BaseModel):
     filters: Optional[ConnectorFiltersConfig] = None
 
     base_url: Annotated[Optional[str], pydantic.Field(alias="baseUrl")] = None
-    r"""Base URL for self-hosted instances"""
+    r"""Base URL for self-hosted instances. Any string is accepted; it is
+    not checked to be a URL.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

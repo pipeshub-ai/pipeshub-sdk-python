@@ -13,7 +13,10 @@ from typing_extensions import Annotated, TypedDict
 
 class ResyncConnectorRequestTypedDict(TypedDict):
     connector_id: str
-    r"""Connector instance ID"""
+    r"""Connector instance ID. An ID that decodes to a path separator or
+    another unsafe segment is refused with `400` before the token is checked.
+
+    """
     body: ResyncConnectorRequestBodyTypedDict
     r"""Request body for resync connector"""
 
@@ -24,7 +27,10 @@ class ResyncConnectorRequest(BaseModel):
         pydantic.Field(alias="connectorId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Connector instance ID"""
+    r"""Connector instance ID. An ID that decodes to a path separator or
+    another unsafe segment is refused with `400` before the token is checked.
+
+    """
 
     body: Annotated[
         ResyncConnectorRequestBody,
@@ -37,12 +43,14 @@ class ResyncConnectorResyncConnectorResponseTypedDict(TypedDict):
     r"""Acknowledgement that the sync was queued."""
 
     success: bool
+    r"""Whether the resync event was published"""
 
 
 class ResyncConnectorResyncConnectorResponse(BaseModel):
     r"""Acknowledgement that the sync was queued."""
 
     success: bool
+    r"""Whether the resync event was published"""
 
 
 class ResyncConnectorResponseTypedDict(TypedDict):

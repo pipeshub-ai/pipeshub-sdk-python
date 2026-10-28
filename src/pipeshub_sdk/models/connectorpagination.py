@@ -17,13 +17,19 @@ class ConnectorPaginationTypedDict(TypedDict):
     page: int
     limit: int
     total_count: int
+    r"""Number of items matching the request across all pages"""
     total_pages: int
+    r"""Number of pages at the current `limit`"""
     has_prev: bool
+    r"""Whether a page exists before this one"""
     has_next: bool
+    r"""Whether a page exists after this one"""
     search: NotRequired[Nullable[str]]
     r"""The search term the list was filtered by"""
     prev_page: NotRequired[Nullable[int]]
+    r"""Previous page number, `null` on the first page"""
     next_page: NotRequired[Nullable[int]]
+    r"""Next page number, `null` on the last page"""
 
 
 class ConnectorPagination(BaseModel):
@@ -32,12 +38,16 @@ class ConnectorPagination(BaseModel):
     limit: int
 
     total_count: Annotated[int, pydantic.Field(alias="totalCount")]
+    r"""Number of items matching the request across all pages"""
 
     total_pages: Annotated[int, pydantic.Field(alias="totalPages")]
+    r"""Number of pages at the current `limit`"""
 
     has_prev: Annotated[bool, pydantic.Field(alias="hasPrev")]
+    r"""Whether a page exists before this one"""
 
     has_next: Annotated[bool, pydantic.Field(alias="hasNext")]
+    r"""Whether a page exists after this one"""
 
     search: OptionalNullable[str] = UNSET
     r"""The search term the list was filtered by"""
@@ -45,10 +55,12 @@ class ConnectorPagination(BaseModel):
     prev_page: Annotated[OptionalNullable[int], pydantic.Field(alias="prevPage")] = (
         UNSET
     )
+    r"""Previous page number, `null` on the first page"""
 
     next_page: Annotated[OptionalNullable[int], pydantic.Field(alias="nextPage")] = (
         UNSET
     )
+    r"""Next page number, `null` on the last page"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

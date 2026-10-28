@@ -21,6 +21,8 @@ class ConnectorIndexingStatusCountsTypedDict(TypedDict):
     empty: NotRequired[int]
     enable_multimodal_models: NotRequired[int]
     queued: NotRequired[int]
+    skipped: NotRequired[int]
+    password_protected: NotRequired[int]
 
 
 class ConnectorIndexingStatusCounts(BaseModel):
@@ -57,6 +59,12 @@ class ConnectorIndexingStatusCounts(BaseModel):
 
     queued: Annotated[Optional[int], pydantic.Field(alias="QUEUED")] = None
 
+    skipped: Annotated[Optional[int], pydantic.Field(alias="SKIPPED")] = None
+
+    password_protected: Annotated[
+        Optional[int], pydantic.Field(alias="PASSWORD_PROTECTED")
+    ] = None
+
     @property
     def additional_properties(self):
         return self.__pydantic_extra__
@@ -79,6 +87,8 @@ class ConnectorIndexingStatusCounts(BaseModel):
                 "EMPTY",
                 "ENABLE_MULTIMODAL_MODELS",
                 "QUEUED",
+                "SKIPPED",
+                "PASSWORD_PROTECTED",
             ]
         )
         serialized = handler(self)

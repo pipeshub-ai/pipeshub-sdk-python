@@ -11,6 +11,7 @@ from .agentcreatewebsearch_union import (
     AgentCreateWebSearchUnion,
     AgentCreateWebSearchUnionTypedDict,
 )
+from .agentmcpserverref import AgentMcpServerRef, AgentMcpServerRefTypedDict
 from .agentskillassignment import AgentSkillAssignment, AgentSkillAssignmentTypedDict
 from pipeshub_sdk.types import (
     BaseModel,
@@ -45,10 +46,16 @@ class AgentUpdateRequestTypedDict(TypedDict):
     provided, the gateway Zod middleware (mirroring the Python backend)
     requires at least one object entry with `isReasoning: true`.
 
+    Fields the gateway validator does not know are dropped before the
+    request reaches the AI backend; they are not refused.
+
     """
 
     name: NotRequired[str]
-    r"""Agent display name"""
+    r"""Agent display name. Surrounding whitespace is trimmed; a blank name is
+    refused with `400` (`VALIDATION_ERROR`).
+
+    """
     description: NotRequired[str]
     r"""What the agent does"""
     start_message: NotRequired[str]
@@ -60,9 +67,9 @@ class AgentUpdateRequestTypedDict(TypedDict):
     models: NotRequired[List[AgentCreateModelEntryUnionTypedDict]]
     r"""Agent model configuration entries. Optional. An empty array clears the
     agent's models so it falls back to the organization's default LLM.
-    When a non-empty array is present, the Zod middleware requires at
-    least one object entry with `isReasoning: true`. String-only arrays
-    are schema-valid but rejected at runtime with HTTP 400 unless empty.
+    A non-empty list must hold at least one object entry with
+    `isReasoning: true`; otherwise the gateway answers `400`
+    (`VALIDATION_ERROR` on `models`).
 
     """
     tags: NotRequired[List[str]]
@@ -77,6 +84,7 @@ class AgentUpdateRequestTypedDict(TypedDict):
     request may convert an agent and bind it. Null is accepted on any
     agent and clears the binding, going back to searching as the
     agent's creator.
+    Whitespace around it is removed first; 1-128 characters.
 
     """
     toolsets: NotRequired[List[AgentCreateToolsetTypedDict]]
@@ -88,9 +96,16 @@ class AgentUpdateRequestTypedDict(TypedDict):
     an empty array to clear all skill assignments.
 
     """
+    mcp_servers: NotRequired[List[AgentMcpServerRefTypedDict]]
+    r"""MCP server instances attached to the agent. Two entries with the same
+    `typeId` are refused with `400` (`VALIDATION_ERROR` on
+    `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+
+    """
     web_search: NotRequired[Nullable[AgentCreateWebSearchUnionTypedDict]]
     r"""Web-search attachment for an agent. Accepts a provider string, an object
-    with at least a `provider` field, or `null`.
+    with at least a `provider` field, or `null`. The provider string and
+    `provider` are trimmed; an empty or blank value is refused with `400`.
 
     """
     default_reasoning_effort: NotRequired[
@@ -121,10 +136,16 @@ class AgentUpdateRequest(BaseModel):
     provided, the gateway Zod middleware (mirroring the Python backend)
     requires at least one object entry with `isReasoning: true`.
 
+    Fields the gateway validator does not know are dropped before the
+    request reaches the AI backend; they are not refused.
+
     """
 
     name: Optional[str] = None
-    r"""Agent display name"""
+    r"""Agent display name. Surrounding whitespace is trimmed; a blank name is
+    refused with `400` (`VALIDATION_ERROR`).
+
+    """
 
     description: Optional[str] = None
     r"""What the agent does"""
@@ -141,9 +162,9 @@ class AgentUpdateRequest(BaseModel):
     models: Optional[List[AgentCreateModelEntryUnion]] = None
     r"""Agent model configuration entries. Optional. An empty array clears the
     agent's models so it falls back to the organization's default LLM.
-    When a non-empty array is present, the Zod middleware requires at
-    least one object entry with `isReasoning: true`. String-only arrays
-    are schema-valid but rejected at runtime with HTTP 400 unless empty.
+    A non-empty list must hold at least one object entry with
+    `isReasoning: true`; otherwise the gateway answers `400`
+    (`VALIDATION_ERROR` on `models`).
 
     """
 
@@ -168,6 +189,7 @@ class AgentUpdateRequest(BaseModel):
     request may convert an agent and bind it. Null is accepted on any
     agent and clears the binding, going back to searching as the
     agent's creator.
+    Whitespace around it is removed first; 1-128 characters.
 
     """
 
@@ -183,11 +205,21 @@ class AgentUpdateRequest(BaseModel):
 
     """
 
+    mcp_servers: Annotated[
+        Optional[List[AgentMcpServerRef]], pydantic.Field(alias="mcpServers")
+    ] = None
+    r"""MCP server instances attached to the agent. Two entries with the same
+    `typeId` are refused with `400` (`VALIDATION_ERROR` on
+    `mcpServers.<index>.typeId`); entries without a `typeId` are exempt.
+
+    """
+
     web_search: Annotated[
         OptionalNullable[AgentCreateWebSearchUnion], pydantic.Field(alias="webSearch")
     ] = UNSET
     r"""Web-search attachment for an agent. Accepts a provider string, an object
-    with at least a `provider` field, or `null`.
+    with at least a `provider` field, or `null`. The provider string and
+    `provider` are trimmed; an empty or blank value is refused with `400`.
 
     """
 
@@ -232,6 +264,7 @@ class AgentUpdateRequest(BaseModel):
                 "toolsets",
                 "knowledge",
                 "skills",
+                "mcpServers",
                 "webSearch",
                 "defaultReasoningEffort",
                 "apiToolsetTools",

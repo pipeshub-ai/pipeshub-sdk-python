@@ -22,8 +22,11 @@ UpdateOAuthAppRequestAllowedGrantType = Literal[
 
 
 class UpdateOAuthAppRequestKnowledgeLimitTypedDict(TypedDict):
-    r"""`null` lifts the limit. Any change, a lift included, revokes the
-    app's outstanding tokens, so users connect again.
+    r"""`null` lifts the limit. A change that takes anything away revokes
+    the app's outstanding tokens, so users connect again. A change
+    that only adds (a lift included) keeps them: each token, and each
+    refresh of it, stays at the limit its user agreed to, and the new
+    items reach a user once they connect again.
 
     """
 
@@ -36,8 +39,11 @@ class UpdateOAuthAppRequestKnowledgeLimitTypedDict(TypedDict):
 
 
 class UpdateOAuthAppRequestKnowledgeLimit(BaseModel):
-    r"""`null` lifts the limit. Any change, a lift included, revokes the
-    app's outstanding tokens, so users connect again.
+    r"""`null` lifts the limit. A change that takes anything away revokes
+    the app's outstanding tokens, so users connect again. A change
+    that only adds (a lift included) keeps them: each token, and each
+    refresh of it, stays at the limit its user agreed to, and the new
+    items reach a user once they connect again.
 
     """
 
@@ -85,18 +91,32 @@ class UpdateOAuthAppRequestTypedDict(TypedDict):
     redirect_uris: NotRequired[List[str]]
     r"""Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
     Preserved in the database even if `authorization_code` is removed from grant types.
+    Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+    `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+    `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+    The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+    Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+    `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+    allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+    with no host does not parse. The pattern approximates these rules.
 
     """
     allowed_grant_types: NotRequired[List[UpdateOAuthAppRequestAllowedGrantType]]
     allowed_scopes: NotRequired[List[str]]
     homepage_url: NotRequired[Nullable[str]]
+    r"""`null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
     privacy_policy_url: NotRequired[Nullable[str]]
+    r"""`null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
     terms_of_service_url: NotRequired[Nullable[str]]
+    r"""`null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
     access_token_lifetime: NotRequired[int]
     refresh_token_lifetime: NotRequired[int]
     knowledge_limit: NotRequired[Nullable[UpdateOAuthAppRequestKnowledgeLimitTypedDict]]
-    r"""`null` lifts the limit. Any change, a lift included, revokes the
-    app's outstanding tokens, so users connect again.
+    r"""`null` lifts the limit. A change that takes anything away revokes
+    the app's outstanding tokens, so users connect again. A change
+    that only adds (a lift included) keeps them: each token, and each
+    refresh of it, stays at the limit its user agreed to, and the new
+    items reach a user once they connect again.
 
     """
 
@@ -121,6 +141,14 @@ class UpdateOAuthAppRequest(BaseModel):
     ] = None
     r"""Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
     Preserved in the database even if `authorization_code` is removed from grant types.
+    Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+    `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+    `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+    The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+    Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+    `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+    allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+    with no host does not parse. The pattern approximates these rules.
 
     """
 
@@ -136,14 +164,17 @@ class UpdateOAuthAppRequest(BaseModel):
     homepage_url: Annotated[
         OptionalNullable[str], pydantic.Field(alias="homepageUrl")
     ] = UNSET
+    r"""`null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
 
     privacy_policy_url: Annotated[
         OptionalNullable[str], pydantic.Field(alias="privacyPolicyUrl")
     ] = UNSET
+    r"""`null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
 
     terms_of_service_url: Annotated[
         OptionalNullable[str], pydantic.Field(alias="termsOfServiceUrl")
     ] = UNSET
+    r"""`null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
 
     access_token_lifetime: Annotated[
         Optional[int], pydantic.Field(alias="accessTokenLifetime")
@@ -157,8 +188,11 @@ class UpdateOAuthAppRequest(BaseModel):
         OptionalNullable[UpdateOAuthAppRequestKnowledgeLimit],
         pydantic.Field(alias="knowledgeLimit"),
     ] = UNSET
-    r"""`null` lifts the limit. Any change, a lift included, revokes the
-    app's outstanding tokens, so users connect again.
+    r"""`null` lifts the limit. A change that takes anything away revokes
+    the app's outstanding tokens, so users connect again. A change
+    that only adds (a lift included) keeps them: each token, and each
+    refresh of it, stays at the limit its user agreed to, and the new
+    items reach a user once they connect again.
 
     """
 

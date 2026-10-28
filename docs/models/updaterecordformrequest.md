@@ -1,0 +1,9 @@
+# UpdateRecordFormRequest
+
+
+## Fields
+
+| Field                                                                                    | Type                                                                                     | Required                                                                                 | Description                                                                              |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `record_id`                                                                              | *str*                                                                                    | :heavy_check_mark:                                                                       | Record ID                                                                                |
+| `body`                                                                                   | [Optional[models.UpdateRecordFormRequestBody]](../models/updaterecordformrequestbody.md) | :heavy_minus_sign:                                                                       | Request payload. Optional: without one nothing changes.                                  |

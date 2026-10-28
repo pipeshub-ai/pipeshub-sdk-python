@@ -17,6 +17,7 @@ class Connector(BaseSDK):
         *,
         record_id: str,
         max_chars: Optional[int] = None,
+        extract: Optional[models.GetRecordContentExtract] = None,
         start_block: Optional[int] = None,
         query: Optional[str] = None,
         mode: Optional[models.GetRecordContentMode] = None,
@@ -85,6 +86,7 @@ class Connector(BaseSDK):
 
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
         :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
+        :param extract: With `query`, in record mode and without `startBlock`: return only the passages that answer `query`, as the model assigned to the `reader` role (else the default model) copies them out, instead of the record's text. The model is told to copy word for word, and `extract.unverifiedLines` counts the lines it did not. The response's `order` is `extract`, and its `extract` object names the model and the tokens it used. When the model cannot be reached, the usual read is returned with `extract.error` set.
         :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
         :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
         :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
@@ -107,6 +109,7 @@ class Connector(BaseSDK):
         request = models.GetRecordContentRequest(
             record_id=record_id,
             max_chars=max_chars,
+            extract=extract,
             start_block=start_block,
             query=query,
             mode=mode,
@@ -161,7 +164,9 @@ class Connector(BaseSDK):
             return unmarshal_json_response(
                 models.GetRecordContentResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "422"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "422"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -185,6 +190,7 @@ class Connector(BaseSDK):
         *,
         record_id: str,
         max_chars: Optional[int] = None,
+        extract: Optional[models.GetRecordContentExtract] = None,
         start_block: Optional[int] = None,
         query: Optional[str] = None,
         mode: Optional[models.GetRecordContentMode] = None,
@@ -253,6 +259,7 @@ class Connector(BaseSDK):
 
         :param record_id: Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`).
         :param max_chars: Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it.
+        :param extract: With `query`, in record mode and without `startBlock`: return only the passages that answer `query`, as the model assigned to the `reader` role (else the default model) copies them out, instead of the record's text. The model is told to copy word for word, and `extract.unverifiedLines` counts the lines it did not. The response's `order` is `extract`, and its `extract` object names the model and the tokens it used. When the model cannot be reached, the usual read is returned with `extract.error` set.
         :param start_block: Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start.
         :param query: What you are looking for in the record. When the record does not fit in `maxChars`, the blocks most relevant to it are shown first and the skipped ranges are marked.
         :param mode: `record` (default) reads this record. `thread` reads every record of the Slack thread this message belongs to, oldest first. A Slack record in no single thread reads as itself, then the threads its messages started (at most 10). A record that is not from Slack answers `422`.
@@ -275,6 +282,7 @@ class Connector(BaseSDK):
         request = models.GetRecordContentRequest(
             record_id=record_id,
             max_chars=max_chars,
+            extract=extract,
             start_block=start_block,
             query=query,
             mode=mode,
@@ -329,7 +337,9 @@ class Connector(BaseSDK):
             return unmarshal_json_response(
                 models.GetRecordContentResponseSchema, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "422"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404", "422"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
@@ -449,18 +459,26 @@ class Connector(BaseSDK):
         records inside the limit. `Web URL` is kept, though it can contain
         folder names.
 
+        **Connector and knowledge base nodes:** opening the `id` of a
+        connector instance the caller has no permission on in the graph (for
+        example one that has never synced, even for its creator) returns the
+        same empty view as a missing node. Opening a knowledge base at
+        `depth` 1 lists nothing; its records appear from `depth` 2.
+
+        An OAuth token holding `connector:read` instead of `kb:read` is accepted too.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param node_id: The node to open. Take it from an `id` in a previous navigate or lookup response. Omit it entirely for the flat listing of everything reachable — the usual starting point. A URL or an issue key such as `PA-1787` also works: it is resolved to its record automatically.
+        :param node_id: The node to open. Take it from an `id` in a previous navigate or lookup response. Omit it entirely for the flat listing of everything reachable — the usual starting point. A URL or an issue key such as `PA-1787` also works: it is resolved to its record automatically. The value is trimmed before it is checked, so a blank one is refused like an empty one.
         :param page: Page number, 1-indexed.
         :param limit: Children per page. The minimum is 50 — smaller values are rejected rather than silently raised.
         :param depth: Levels of descendants to return in one call. Above 1, `rows` is a flat list of all descendants down to that level rather than only direct children, and each row carries its own `level`.
-        :param node_types: Restrict children to these node types. Repeat the parameter for multiple types: `?nodeTypes=record&nodeTypes=folder`.
-        :param created_after: Filter children by source creation time. ISO 8601 `YYYY-MM-DD`, or a full datetime that MUST carry a timezone offset — a naive datetime is rejected rather than assumed to be UTC.
+        :param node_types: Restrict children to these node types. Repeat the parameter for multiple types: `?nodeTypes=record&nodeTypes=folder`. A single value is read as a list of one. The types that filter are `app`, `recordGroup`, `record` and `folder`; any other value is accepted and ignored, so it does not narrow the listing.
+        :param created_after: Filter children by source creation time. ISO 8601 `YYYY-MM-DD`, or a full datetime that MUST carry a timezone offset — a naive datetime is rejected rather than assumed to be UTC. Must not be in the future (5 minutes of clock skew are tolerated) and must not be after `createdBefore`. A `YYYY-MM-DD` day past the end of its month (`2024-02-31`) counts from the first day of the next month here, and as the month's last day in a `...Before` bound. A day above 31, a month above 12 or year 0 (`2024-02-32`) is refused with `400`.
         :param created_before: Filter children by source creation time. `YYYY-MM-DD` is inclusive of the whole day.
-        :param modified_after: Filter children by source modification time.
-        :param modified_before: Filter children by source modification time.
+        :param modified_after: Filter children by source modification time. Must not be after `modifiedBefore`.
+        :param modified_before: Filter children by source modification time. `YYYY-MM-DD` is inclusive of the whole day.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -519,7 +537,7 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="navigateKnowledgeGraph",
-                oauth2_scopes=["connector:read"],
+                oauth2_scopes=["kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -658,18 +676,26 @@ class Connector(BaseSDK):
         records inside the limit. `Web URL` is kept, though it can contain
         folder names.
 
+        **Connector and knowledge base nodes:** opening the `id` of a
+        connector instance the caller has no permission on in the graph (for
+        example one that has never synced, even for its creator) returns the
+        same empty view as a missing node. Opening a knowledge base at
+        `depth` 1 lists nothing; its records appear from `depth` 2.
+
+        An OAuth token holding `connector:read` instead of `kb:read` is accepted too.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param node_id: The node to open. Take it from an `id` in a previous navigate or lookup response. Omit it entirely for the flat listing of everything reachable — the usual starting point. A URL or an issue key such as `PA-1787` also works: it is resolved to its record automatically.
+        :param node_id: The node to open. Take it from an `id` in a previous navigate or lookup response. Omit it entirely for the flat listing of everything reachable — the usual starting point. A URL or an issue key such as `PA-1787` also works: it is resolved to its record automatically. The value is trimmed before it is checked, so a blank one is refused like an empty one.
         :param page: Page number, 1-indexed.
         :param limit: Children per page. The minimum is 50 — smaller values are rejected rather than silently raised.
         :param depth: Levels of descendants to return in one call. Above 1, `rows` is a flat list of all descendants down to that level rather than only direct children, and each row carries its own `level`.
-        :param node_types: Restrict children to these node types. Repeat the parameter for multiple types: `?nodeTypes=record&nodeTypes=folder`.
-        :param created_after: Filter children by source creation time. ISO 8601 `YYYY-MM-DD`, or a full datetime that MUST carry a timezone offset — a naive datetime is rejected rather than assumed to be UTC.
+        :param node_types: Restrict children to these node types. Repeat the parameter for multiple types: `?nodeTypes=record&nodeTypes=folder`. A single value is read as a list of one. The types that filter are `app`, `recordGroup`, `record` and `folder`; any other value is accepted and ignored, so it does not narrow the listing.
+        :param created_after: Filter children by source creation time. ISO 8601 `YYYY-MM-DD`, or a full datetime that MUST carry a timezone offset — a naive datetime is rejected rather than assumed to be UTC. Must not be in the future (5 minutes of clock skew are tolerated) and must not be after `createdBefore`. A `YYYY-MM-DD` day past the end of its month (`2024-02-31`) counts from the first day of the next month here, and as the month's last day in a `...Before` bound. A day above 31, a month above 12 or year 0 (`2024-02-32`) is refused with `400`.
         :param created_before: Filter children by source creation time. `YYYY-MM-DD` is inclusive of the whole day.
-        :param modified_after: Filter children by source modification time.
-        :param modified_before: Filter children by source modification time.
+        :param modified_after: Filter children by source modification time. Must not be after `modifiedBefore`.
+        :param modified_before: Filter children by source modification time. `YYYY-MM-DD` is inclusive of the whole day.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -728,7 +754,7 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="navigateKnowledgeGraph",
-                oauth2_scopes=["connector:read"],
+                oauth2_scopes=["kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -770,7 +796,7 @@ class Connector(BaseSDK):
         self,
         *,
         identifiers: Iterable[str],
-        connector_name: Optional[models.ConnectorNameEnum] = None,
+        connector_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -839,11 +865,13 @@ class Connector(BaseSDK):
         records inside the limit. `Web URL` is kept, though it can contain
         folder names.
 
+        An OAuth token holding `connector:read` instead of `kb:read` is accepted too.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param identifiers: The reference(s) to resolve: a URL, an issue key such as `PA-1787`, or a bare external system ID. Repeat the parameter to batch: `?identifiers=PA-1787&identifiers=PA-1788`. Maximum 10.
-        :param connector_name: Optional hint that prioritises resolution order, e.g. `JIRA`, `CONFLUENCE`, `DRIVE`, `SLACK`. Allowed values are the `ConnectorNameEnum` values. It cannot widen the search beyond the connectors the caller can already access. Useful on a retry when a lookup came back empty.
+        :param connector_name: Optional hint that prioritises resolution order, e.g. `JIRA`, `CONFLUENCE`, `DRIVE`, `SLACK` (the `ConnectorNameEnum` values). Any other non-empty string is accepted too and simply matches no connector, so it changes nothing. It cannot widen the search beyond the connectors the caller can already access. Useful on a retry when a lookup came back empty. An empty or blank value is refused with `400` (the value is trimmed before it is checked).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -895,7 +923,7 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="lookupRecordByIdentifier",
-                oauth2_scopes=["connector:read"],
+                oauth2_scopes=["kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),
@@ -935,7 +963,7 @@ class Connector(BaseSDK):
         self,
         *,
         identifiers: Iterable[str],
-        connector_name: Optional[models.ConnectorNameEnum] = None,
+        connector_name: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -1004,11 +1032,13 @@ class Connector(BaseSDK):
         records inside the limit. `Web URL` is kept, though it can contain
         folder names.
 
+        An OAuth token holding `connector:read` instead of `kb:read` is accepted too.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param identifiers: The reference(s) to resolve: a URL, an issue key such as `PA-1787`, or a bare external system ID. Repeat the parameter to batch: `?identifiers=PA-1787&identifiers=PA-1788`. Maximum 10.
-        :param connector_name: Optional hint that prioritises resolution order, e.g. `JIRA`, `CONFLUENCE`, `DRIVE`, `SLACK`. Allowed values are the `ConnectorNameEnum` values. It cannot widen the search beyond the connectors the caller can already access. Useful on a retry when a lookup came back empty.
+        :param connector_name: Optional hint that prioritises resolution order, e.g. `JIRA`, `CONFLUENCE`, `DRIVE`, `SLACK` (the `ConnectorNameEnum` values). Any other non-empty string is accepted too and simply matches no connector, so it changes nothing. It cannot widen the search beyond the connectors the caller can already access. Useful on a retry when a lookup came back empty. An empty or blank value is refused with `400` (the value is trimmed before it is checked).
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1060,7 +1090,7 @@ class Connector(BaseSDK):
                 config=self.sdk_configuration,
                 base_url=base_url or "",
                 operation_id="lookupRecordByIdentifier",
-                oauth2_scopes=["connector:read"],
+                oauth2_scopes=["kb:read"],
                 security_source=get_security_from_env(
                     self.sdk_configuration.security, models.Security
                 ),

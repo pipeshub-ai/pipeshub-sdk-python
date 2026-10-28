@@ -29,10 +29,108 @@ Order = Union[
     Literal[
         "in_order",
         "relevance",
+        "extract",
     ],
     UnrecognizedStr,
 ]
-r"""Budgeted record reads only. `relevance` when `query` chose which blocks to show; the blocks are then not contiguous."""
+r"""Budgeted record reads only. `relevance` when `query` chose which blocks to show; the blocks are then not contiguous. `extract` when `extract=true` was asked and the reader model answered: `content` is the passages it copied out (told to copy word for word; see `extract.unverifiedLines`), not a page of the record. An extract is one response, so `complete` is true and `nextStartBlock` null; whether the reader saw the whole record is `extract.sourceComplete`."""
+
+
+class ExtractTypedDict(TypedDict):
+    r"""Reads with `extract=true` only. With `order: extract`, the reader model's call. On a plain read returned because the reader could not answer, `error` alone."""
+
+    model: NotRequired[Nullable[str]]
+    r"""The model that read the record."""
+    provider: NotRequired[Nullable[str]]
+    nothing_relevant: NotRequired[bool]
+    r"""True when the reader found nothing that answers `query`; `content` is then `NOTHING RELEVANT`."""
+    truncated: NotRequired[bool]
+    r"""True when the reader's reply was cut to fit `maxChars` (or 12,000 characters, whichever is smaller)."""
+    unverified_lines: NotRequired[int]
+    r"""Lines of `content` with words not found in the text the reader was given, as written: a paraphrase, or a misreading. Check them with a plain read. Every fragment with a letter or digit is checked, and a match may not run into a longer word or number (`$1,250` is not found in `$1,250,000`, nor `$1,250.` in `$1,250.99`). A note the reader adds in square brackets beside a quote (where a passage sits) is not checked; a markdown link's label, and a line that is only a bracketed note, are. 0 means every quoted fragment was found, not that `content` is complete or that it quotes the right passage."""
+    source_chars: NotRequired[int]
+    r"""Characters of the record the reader was given."""
+    source_complete: NotRequired[bool]
+    r"""True when the reader was given the whole record. False when the record was longer than the reader's 120,000 characters, or had more than 5,000 blocks, and it was given part of it: the blocks most relevant to `query`, or the start of the record when the relevance search found nothing or failed."""
+    input_tokens: NotRequired[int]
+    output_tokens: NotRequired[int]
+    error: NotRequired[str]
+    r"""Why there is no extract (the failure's type, or `EmptyReply`); `content` is then the plain read at `maxChars`."""
+
+
+class Extract(BaseModel):
+    r"""Reads with `extract=true` only. With `order: extract`, the reader model's call. On a plain read returned because the reader could not answer, `error` alone."""
+
+    model: OptionalNullable[str] = UNSET
+    r"""The model that read the record."""
+
+    provider: OptionalNullable[str] = UNSET
+
+    nothing_relevant: Annotated[
+        Optional[bool], pydantic.Field(alias="nothingRelevant")
+    ] = None
+    r"""True when the reader found nothing that answers `query`; `content` is then `NOTHING RELEVANT`."""
+
+    truncated: Optional[bool] = None
+    r"""True when the reader's reply was cut to fit `maxChars` (or 12,000 characters, whichever is smaller)."""
+
+    unverified_lines: Annotated[
+        Optional[int], pydantic.Field(alias="unverifiedLines")
+    ] = None
+    r"""Lines of `content` with words not found in the text the reader was given, as written: a paraphrase, or a misreading. Check them with a plain read. Every fragment with a letter or digit is checked, and a match may not run into a longer word or number (`$1,250` is not found in `$1,250,000`, nor `$1,250.` in `$1,250.99`). A note the reader adds in square brackets beside a quote (where a passage sits) is not checked; a markdown link's label, and a line that is only a bracketed note, are. 0 means every quoted fragment was found, not that `content` is complete or that it quotes the right passage."""
+
+    source_chars: Annotated[Optional[int], pydantic.Field(alias="sourceChars")] = None
+    r"""Characters of the record the reader was given."""
+
+    source_complete: Annotated[
+        Optional[bool], pydantic.Field(alias="sourceComplete")
+    ] = None
+    r"""True when the reader was given the whole record. False when the record was longer than the reader's 120,000 characters, or had more than 5,000 blocks, and it was given part of it: the blocks most relevant to `query`, or the start of the record when the relevance search found nothing or failed."""
+
+    input_tokens: Annotated[Optional[int], pydantic.Field(alias="inputTokens")] = None
+
+    output_tokens: Annotated[Optional[int], pydantic.Field(alias="outputTokens")] = None
+
+    error: Optional[str] = None
+    r"""Why there is no extract (the failure's type, or `EmptyReply`); `content` is then the plain read at `maxChars`."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(
+            [
+                "model",
+                "provider",
+                "nothingRelevant",
+                "truncated",
+                "unverifiedLines",
+                "sourceChars",
+                "sourceComplete",
+                "inputTokens",
+                "outputTokens",
+                "error",
+            ]
+        )
+        nullable_fields = set(["model", "provider"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
 
 
 class GivenUpBlockTypedDict(TypedDict):
@@ -208,7 +306,9 @@ class GetRecordContentResponseSchemaTypedDict(TypedDict):
     record_id: NotRequired[str]
     r"""Budgeted record reads only. The record read."""
     order: NotRequired[Order]
-    r"""Budgeted record reads only. `relevance` when `query` chose which blocks to show; the blocks are then not contiguous."""
+    r"""Budgeted record reads only. `relevance` when `query` chose which blocks to show; the blocks are then not contiguous. `extract` when `extract=true` was asked and the reader model answered: `content` is the passages it copied out (told to copy word for word; see `extract.unverifiedLines`), not a page of the record. An extract is one response, so `complete` is true and `nextStartBlock` null; whether the reader saw the whole record is `extract.sourceComplete`."""
+    extract: NotRequired[ExtractTypedDict]
+    r"""Reads with `extract=true` only. With `order: extract`, the reader model's call. On a plain read returned because the reader could not answer, `error` alone."""
     start_block: NotRequired[int]
     r"""Budgeted reads only. Where this read started (in a thread read, within the record at `startRecord`)."""
     total_blocks: NotRequired[int]
@@ -292,7 +392,10 @@ class GetRecordContentResponseSchema(BaseModel):
     r"""Budgeted record reads only. The record read."""
 
     order: Optional[Order] = None
-    r"""Budgeted record reads only. `relevance` when `query` chose which blocks to show; the blocks are then not contiguous."""
+    r"""Budgeted record reads only. `relevance` when `query` chose which blocks to show; the blocks are then not contiguous. `extract` when `extract=true` was asked and the reader model answered: `content` is the passages it copied out (told to copy word for word; see `extract.unverifiedLines`), not a page of the record. An extract is one response, so `complete` is true and `nextStartBlock` null; whether the reader saw the whole record is `extract.sourceComplete`."""
+
+    extract: Optional[Extract] = None
+    r"""Reads with `extract=true` only. With `order: extract`, the reader model's call. On a plain read returned because the reader could not answer, `error` alone."""
 
     start_block: Annotated[Optional[int], pydantic.Field(alias="startBlock")] = None
     r"""Budgeted reads only. Where this read started (in a thread read, within the record at `startRecord`)."""
@@ -372,6 +475,7 @@ class GetRecordContentResponseSchema(BaseModel):
                 "mode",
                 "recordId",
                 "order",
+                "extract",
                 "startBlock",
                 "totalBlocks",
                 "shownBlocks",
@@ -416,6 +520,10 @@ class GetRecordContentResponseSchema(BaseModel):
         return m
 
 
+try:
+    Extract.model_rebuild()
+except NameError:
+    pass
 try:
     GivenUpBlock.model_rebuild()
 except NameError:

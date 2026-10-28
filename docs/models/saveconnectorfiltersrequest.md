@@ -1,6 +1,8 @@
 # SaveConnectorFiltersRequest
 
-Request to save filter selections for a connector
+Request to save filter selections for a connector. Fields other than
+`filters` are dropped without an error.
+
 
 
 ## Fields

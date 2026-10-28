@@ -32,12 +32,6 @@ ConversationStreamRequestChatMode = Literal[
     "internal_search",
     "web_search",
 ]
-r"""Optional execution mode for non-stream consumers of this shared
-request schema.
-`agent` uses the universal agent loop, while `internal_search`
-and `web_search` use their corresponding assistant search paths.
-
-"""
 
 
 ConversationStreamRequestProtocol = Literal["agui",]
@@ -57,9 +51,25 @@ ConversationStreamRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+ConversationStreamRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""How hard a reasoning model should think for this turn. Saved in
+the conversation's `modelInfo`.
+
+"""
+
+
 class ConversationStreamRequestTypedDict(TypedDict):
     r"""Request body for `POST /conversations/stream`. The public stream
-    requires an explicit universal execution mode.
+    requires an explicit universal execution mode; the legacy modes
+    the non-streaming route accepts are refused here. Unlike
+    `POST /conversations/create`, a `query` of only whitespace is not
+    refused: the turn runs and the conversation is titled with it.
 
     """
 
@@ -69,12 +79,6 @@ class ConversationStreamRequestTypedDict(TypedDict):
 
     """
     chat_mode: ConversationStreamRequestChatMode
-    r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
-    `agent` uses the universal agent loop, while `internal_search`
-    and `web_search` use their corresponding assistant search paths.
-
-    """
     record_ids: NotRequired[List[str]]
     r"""Limit the AI's knowledge scope to specific records/documents.
     When provided, only these records will be searched for context.
@@ -123,6 +127,9 @@ class ConversationStreamRequestTypedDict(TypedDict):
     `filters`/`attachments`, they are merged in as a fallback (the
     request always wins). Ignored on follow-up turns — only
     meaningful when creating a conversation.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
     project_visibility: NotRequired[ConversationStreamRequestProjectVisibility]
@@ -138,6 +145,9 @@ class ConversationStreamRequestTypedDict(TypedDict):
     Available models depend on organization settings. When neither
     `modelKey` nor `modelName` is sent, the organization's default
     model answers and is saved in the conversation's `modelInfo`.
+    A key that matches no configured model is not refused: the
+    default model answers, and the unknown key is still saved in
+    `modelInfo`.
 
     """
     model_name: NotRequired[str]
@@ -197,11 +207,19 @@ class ConversationStreamRequestTypedDict(TypedDict):
     one just can't cooperatively cancel the run.
 
     """
+    reasoning_effort: NotRequired[ConversationStreamRequestReasoningEffort]
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
 
 
 class ConversationStreamRequest(BaseModel):
     r"""Request body for `POST /conversations/stream`. The public stream
-    requires an explicit universal execution mode.
+    requires an explicit universal execution mode; the legacy modes
+    the non-streaming route accepts are refused here. Unlike
+    `POST /conversations/create`, a `query` of only whitespace is not
+    refused: the turn runs and the conversation is titled with it.
 
     """
 
@@ -214,12 +232,6 @@ class ConversationStreamRequest(BaseModel):
     chat_mode: Annotated[
         ConversationStreamRequestChatMode, pydantic.Field(alias="chatMode")
     ]
-    r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
-    `agent` uses the universal agent loop, while `internal_search`
-    and `web_search` use their corresponding assistant search paths.
-
-    """
 
     record_ids: Annotated[Optional[List[str]], pydantic.Field(alias="recordIds")] = None
     r"""Limit the AI's knowledge scope to specific records/documents.
@@ -275,6 +287,9 @@ class ConversationStreamRequest(BaseModel):
     `filters`/`attachments`, they are merged in as a fallback (the
     request always wins). Ignored on follow-up turns — only
     meaningful when creating a conversation.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
 
@@ -295,6 +310,9 @@ class ConversationStreamRequest(BaseModel):
     Available models depend on organization settings. When neither
     `modelKey` nor `modelName` is sent, the organization's default
     model answers and is saved in the conversation's `modelInfo`.
+    A key that matches no configured model is not refused: the
+    default model answers, and the unknown key is still saved in
+    `modelInfo`.
 
     """
 
@@ -379,6 +397,15 @@ class ConversationStreamRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[ConversationStreamRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -401,6 +428,7 @@ class ConversationStreamRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

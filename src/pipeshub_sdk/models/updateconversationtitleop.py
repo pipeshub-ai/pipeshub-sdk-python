@@ -22,14 +22,22 @@ class UpdateConversationTitleRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
     title: str
-    r"""New conversation title"""
+    r"""New conversation title. Surrounding whitespace is trimmed before
+    validation, so a title of only whitespace is refused with `400`
+    `VALIDATION_ERROR` (\"Title is required\").
+
+    """
 
 
 class UpdateConversationTitleRequestBody(BaseModel):
     r"""Request payload"""
 
     title: str
-    r"""New conversation title"""
+    r"""New conversation title. Surrounding whitespace is trimmed before
+    validation, so a title of only whitespace is refused with `400`
+    `VALIDATION_ERROR` (\"Title is required\").
+
+    """
 
 
 class UpdateConversationTitleRequestTypedDict(TypedDict):
@@ -86,6 +94,8 @@ UpdateConversationTitleAccessLevel = Union[
 class UpdateConversationTitleSharedWithTypedDict(TypedDict):
     user_id: str
     access_level: NotRequired[UpdateConversationTitleAccessLevel]
+    id: NotRequired[str]
+    r"""Subdocument identifier auto-assigned by MongoDB."""
 
 
 class UpdateConversationTitleSharedWith(BaseModel):
@@ -96,9 +106,12 @@ class UpdateConversationTitleSharedWith(BaseModel):
         pydantic.Field(alias="accessLevel"),
     ] = "read"
 
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Subdocument identifier auto-assigned by MongoDB."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["accessLevel"])
+        optional_fields = set(["accessLevel", "_id"])
         serialized = handler(self)
         m = {}
 

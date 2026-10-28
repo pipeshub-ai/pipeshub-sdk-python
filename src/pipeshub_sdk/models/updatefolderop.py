@@ -11,12 +11,22 @@ class UpdateFolderRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
     folder_name: str
+    r"""New name of the folder. Whitespace around it is removed first, so a name
+    made only of whitespace is refused as empty.
+    It cannot contain `/` or `\`, which folder paths use as separators.
+
+    """
 
 
 class UpdateFolderRequestBody(BaseModel):
     r"""Request payload"""
 
     folder_name: Annotated[str, pydantic.Field(alias="folderName")]
+    r"""New name of the folder. Whitespace around it is removed first, so a name
+    made only of whitespace is refused as empty.
+    It cannot contain `/` or `\`, which folder paths use as separators.
+
+    """
 
 
 class UpdateFolderRequestTypedDict(TypedDict):

@@ -18,7 +18,7 @@ class WebSearchProviderItemTypedDict(TypedDict):
     configuration: Dict[str, Any]
     r"""Provider-specific configuration as stored and returned by the gateway (open record).
     API providers include `apiKey` (masked for non-admins); searxng, firecrawl and crawl4ai
-    include `baseUrl`. Additional keys may be present.
+    include `baseUrl` (masked for non-admins too). Additional keys may be present.
 
     """
     is_default: bool
@@ -36,7 +36,7 @@ class WebSearchProviderItem(BaseModel):
     configuration: Dict[str, Any]
     r"""Provider-specific configuration as stored and returned by the gateway (open record).
     API providers include `apiKey` (masked for non-admins); searxng, firecrawl and crawl4ai
-    include `baseUrl`. Additional keys may be present.
+    include `baseUrl` (masked for non-admins too). Additional keys may be present.
 
     """
 

@@ -68,6 +68,13 @@ class SemanticSearchAiResponseTypedDict(TypedDict):
     `DATE_FILTER_SAFETY_NET` setting is `false` never sends this field.
 
     """
+    search_incomplete: NotRequired[str]
+    r"""Present only when part of the search index could not be searched, so the
+    results may miss documents: says how many parts failed, for example
+    `1 of 3 parts of the search index could not be searched, so this search may
+    have missed documents.`
+
+    """
 
 
 class SemanticSearchAiResponse(BaseModel):
@@ -131,6 +138,16 @@ class SemanticSearchAiResponse(BaseModel):
 
     """
 
+    search_incomplete: Annotated[
+        Optional[str], pydantic.Field(alias="searchIncomplete")
+    ] = None
+    r"""Present only when part of the search index could not be searched, so the
+    results may miss documents: says how many parts failed, for example
+    `1 of 3 parts of the search index could not be searched, so this search may
+    have missed documents.`
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -140,6 +157,7 @@ class SemanticSearchAiResponse(BaseModel):
                 "virtual_to_record_map",
                 "timeline",
                 "outsideDates",
+                "searchIncomplete",
             ]
         )
         serialized = handler(self)

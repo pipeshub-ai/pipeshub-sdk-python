@@ -1,5 +1,7 @@
 # ConnectorSchemaSelectedStrategy
 
+Strategy preselected in the form
+
 ## Example Usage
 
 ```python

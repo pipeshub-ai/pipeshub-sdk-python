@@ -1,7 +1,8 @@
 # DeleteSearchByIDShared
 
-Additional `isShared` filter (`'true'` / `'false'`). The row is
-only deleted if it also matches this value.
+Additional `isShared` filter. `'true'` / `'1'` and `'false'` / `'0'`,
+case-insensitive; anything else is refused with `400`. The row is only deleted if
+it matches.
 
 
 ## Example Usage
@@ -16,3 +17,5 @@ value: DeleteSearchByIDShared = "true"
 
 - `"true"`
 - `"false"`
+- `"1"`
+- `"0"`

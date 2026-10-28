@@ -1,5 +1,7 @@
 # PersistedSemanticSearchSharedWithEntryAccessLevel
 
+Access granted to that user.
+
 ## Example Usage
 
 ```python

@@ -2,15 +2,21 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+import pydantic
 from pydantic import model_serializer
 from typing import Any, Dict, Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class ApplicationJSONErrorResponseErrorTypedDict(TypedDict):
     code: str
     r"""Machine-readable code (e.g. `HTTP_UNAUTHORIZED`, `HTTP_FORBIDDEN`)."""
     message: str
+    request_id: NotRequired[str]
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
     metadata: NotRequired[Dict[str, Any]]
     r"""Optional; may appear in non-production for some errors."""
 
@@ -21,12 +27,18 @@ class ApplicationJSONErrorResponseError(BaseModel):
 
     message: str
 
+    request_id: Annotated[Optional[str], pydantic.Field(alias="requestId")] = None
+    r"""Identifier for this request, echoed so a bug report can quote it.
+    Absent when the request never reached the middleware that assigns one.
+
+    """
+
     metadata: Optional[Dict[str, Any]] = None
     r"""Optional; may appear in non-production for some errors."""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["metadata"])
+        optional_fields = set(["requestId", "metadata"])
         serialized = handler(self)
         m = {}
 
@@ -39,3 +51,9 @@ class ApplicationJSONErrorResponseError(BaseModel):
                     m[k] = val
 
         return m
+
+
+try:
+    ApplicationJSONErrorResponseError.model_rebuild()
+except NameError:
+    pass

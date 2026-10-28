@@ -19,6 +19,9 @@ class ConnectorRegistry(BaseSDK):
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
         search: Optional[str] = None,
+        is_authenticated: Optional[bool] = None,
+        is_active: Optional[bool] = None,
+        connector_type: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -48,7 +51,19 @@ class ConnectorRegistry(BaseSDK):
         :param scope: Which connector types to list. Defaults to `team`.
         :param page: Page number
         :param limit: Items per page
-        :param search: Search term for connector names
+        :param search: Case-insensitive search across name, type, app group, description,
+            auth types and categories. Every whitespace-separated word must match.
+
+        :param is_authenticated: Validated (must be <code>true</code> or <code>false</code>) but
+            ignored by this endpoint: it filters nothing. The parameter exists
+            because the query validator is shared with <code>GET /connectors</code>.
+
+        :param is_active: Validated (must be <code>true</code> or <code>false</code>) but
+            ignored by this endpoint: it filters nothing.
+
+        :param connector_type: Validated (must not be empty or blank: the value is trimmed before
+            it is checked) but ignored by this endpoint: it filters nothing.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -69,6 +84,9 @@ class ConnectorRegistry(BaseSDK):
             page=page,
             limit=limit,
             search=search,
+            is_authenticated=is_authenticated,
+            is_active=is_active,
+            connector_type=connector_type,
         )
 
         req = self._build_request(
@@ -124,6 +142,9 @@ class ConnectorRegistry(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -144,6 +165,9 @@ class ConnectorRegistry(BaseSDK):
         page: Optional[int] = 1,
         limit: Optional[int] = 20,
         search: Optional[str] = None,
+        is_authenticated: Optional[bool] = None,
+        is_active: Optional[bool] = None,
+        connector_type: Optional[str] = None,
         retries: OptionalNullable[utils.RetryConfig] = UNSET,
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
@@ -173,7 +197,19 @@ class ConnectorRegistry(BaseSDK):
         :param scope: Which connector types to list. Defaults to `team`.
         :param page: Page number
         :param limit: Items per page
-        :param search: Search term for connector names
+        :param search: Case-insensitive search across name, type, app group, description,
+            auth types and categories. Every whitespace-separated word must match.
+
+        :param is_authenticated: Validated (must be <code>true</code> or <code>false</code>) but
+            ignored by this endpoint: it filters nothing. The parameter exists
+            because the query validator is shared with <code>GET /connectors</code>.
+
+        :param is_active: Validated (must be <code>true</code> or <code>false</code>) but
+            ignored by this endpoint: it filters nothing.
+
+        :param connector_type: Validated (must not be empty or blank: the value is trimmed before
+            it is checked) but ignored by this endpoint: it filters nothing.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -194,6 +230,9 @@ class ConnectorRegistry(BaseSDK):
             page=page,
             limit=limit,
             search=search,
+            is_authenticated=is_authenticated,
+            is_active=is_active,
+            connector_type=connector_type,
         )
 
         req = self._build_request_async(
@@ -247,6 +286,9 @@ class ConnectorRegistry(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -361,6 +403,9 @@ class ConnectorRegistry(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -473,6 +518,9 @@ class ConnectorRegistry(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -515,7 +563,9 @@ class ConnectorRegistry(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_type: Connector type identifier
+        :param connector_type: Connector type as listed by `GET /connectors/registry` (its `type`),
+            URL-encoded. The lookup is case-sensitive.
+
         :param auth: Auth values, keyed by the fields of the connector's auth schema
         :param connector_id: Instance being edited; its saved auth values fill in fields left out.
             A secret sent as `••••••••` (the mask the config routes return) keeps the
@@ -599,10 +649,15 @@ class ConnectorRegistry(BaseSDK):
             return unmarshal_json_response(
                 models.TestConnectorConnectionResponse, http_res
             )
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -644,7 +699,9 @@ class ConnectorRegistry(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_type: Connector type identifier
+        :param connector_type: Connector type as listed by `GET /connectors/registry` (its `type`),
+            URL-encoded. The lookup is case-sensitive.
+
         :param auth: Auth values, keyed by the fields of the connector's auth schema
         :param connector_id: Instance being edited; its saved auth values fill in fields left out.
             A secret sent as `••••••••` (the mask the config routes return) keeps the
@@ -728,10 +785,15 @@ class ConnectorRegistry(BaseSDK):
             return unmarshal_json_response(
                 models.TestConnectorConnectionResponse, http_res
             )
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, ["400", "401", "403", "404", "4XX"], "*"):
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -826,10 +888,10 @@ class ConnectorRegistry(BaseSDK):
             return unmarshal_json_response(
                 models.GetConnectorEgressIpsResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, "503", "application/json"):
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -927,10 +989,10 @@ class ConnectorRegistry(BaseSDK):
             return unmarshal_json_response(
                 models.GetConnectorEgressIpsResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403"], "application/json"):
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
-        if utils.match_response(http_res, "503", "application/json"):
+        if utils.match_response(http_res, ["500", "503"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):

@@ -18,14 +18,22 @@ class CreateFolderRequestBodyTypedDict(TypedDict):
     r"""Request payload"""
 
     folder_name: str
-    r"""Name of the folder"""
+    r"""Name of the folder. Whitespace around it is removed first, so a name made
+    only of whitespace is refused as empty.
+    It cannot contain `/` or `\`, which folder paths use as separators.
+
+    """
 
 
 class CreateFolderRequestBody(BaseModel):
     r"""Request payload"""
 
     folder_name: Annotated[str, pydantic.Field(alias="folderName")]
-    r"""Name of the folder"""
+    r"""Name of the folder. Whitespace around it is removed first, so a name made
+    only of whitespace is refused as empty.
+    It cannot contain `/` or `\`, which folder paths use as separators.
+
+    """
 
 
 class CreateFolderRequestTypedDict(TypedDict):
@@ -34,7 +42,10 @@ class CreateFolderRequestTypedDict(TypedDict):
     body: CreateFolderRequestBodyTypedDict
     r"""Request payload"""
     folder_id: NotRequired[str]
-    r"""Parent folder ID. Omit to create at the knowledge base root."""
+    r"""Parent folder ID. Omit to create at the knowledge base root. An id that is not a
+    folder of this knowledge base (unknown, or a file) is answered `404`.
+
+    """
 
 
 class CreateFolderRequest(BaseModel):
@@ -56,7 +67,10 @@ class CreateFolderRequest(BaseModel):
         pydantic.Field(alias="folderId"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Parent folder ID. Omit to create at the knowledge base root."""
+    r"""Parent folder ID. Omit to create at the knowledge base root. An id that is not a
+    folder of this knowledge base (unknown, or a file) is answered `404`.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
