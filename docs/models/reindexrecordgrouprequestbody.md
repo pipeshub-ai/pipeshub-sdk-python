@@ -1,12 +1,14 @@
 # ReindexRecordGroupRequestBody
 
-Optional body for record-group (folder/KB container) reindex.
+Optional body for record-group reindex. Only `depth` and `statusFilters` are read;
+any other field is dropped by the validator before the handler runs (there is no
+`force` option: the handler always sends `force: false`).
+
 
 
 ## Fields
 
-| Field                                                                   | Type                                                                    | Required                                                                | Description                                                             |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `depth`                                                                 | *Optional[int]*                                                         | :heavy_minus_sign:                                                      | Depth of records under the record group to include.                     |
-| `force`                                                                 | *Optional[bool]*                                                        | :heavy_minus_sign:                                                      | Force reindex for all matched records in the group.                     |
-| `status_filters`                                                        | List[[models.IndexingStatusFilter](../models/indexingstatusfilter.md)]  | :heavy_minus_sign:                                                      | When set, only records matching these indexing statuses are reindexed.<br/> |
+| Field                                                                                                      | Type                                                                                                       | Required                                                                                                   | Description                                                                                                |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `depth`                                                                                                    | *Optional[int]*                                                                                            | :heavy_minus_sign:                                                                                         | Depth of records under the record group to include. `-1` (everything) is applied,<br/>and answered, as `100`.<br/> |
+| `status_filters`                                                                                           | List[*str*]                                                                                                | :heavy_minus_sign:                                                                                         | When set, only records matching these indexing statuses are reindexed.<br/>                                |

@@ -9,6 +9,13 @@ from typing import Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+GetRecordContentExtract = Literal[
+    "true",
+    "false",
+]
+r"""With `query`, in record mode and without `startBlock`: return only the passages that answer `query`, as the model assigned to the `reader` role (else the default model) copies them out, instead of the record's text. The model is told to copy word for word, and `extract.unverifiedLines` counts the lines it did not. The response's `order` is `extract`, and its `extract` object names the model and the tokens it used. When the model cannot be reached, the usual read is returned with `extract.error` set."""
+
+
 GetRecordContentMode = Literal[
     "record",
     "thread",
@@ -21,6 +28,8 @@ class GetRecordContentRequestTypedDict(TypedDict):
     r"""Record ID to fetch. Obtain it from a `pipeshub_search` result (`hits[*].recordId`) or a chat citation (`citations[*].recordId`)."""
     max_chars: NotRequired[int]
     r"""Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it."""
+    extract: NotRequired[GetRecordContentExtract]
+    r"""With `query`, in record mode and without `startBlock`: return only the passages that answer `query`, as the model assigned to the `reader` role (else the default model) copies them out, instead of the record's text. The model is told to copy word for word, and `extract.unverifiedLines` counts the lines it did not. The response's `order` is `extract`, and its `extract` object names the model and the tokens it used. When the model cannot be reached, the usual read is returned with `extract.error` set."""
     start_block: NotRequired[int]
     r"""Read in order from this block: the `nextStartBlock` of a previous read, or 0 for the top. Takes precedence over `query`. In thread mode it applies to the record at `startRecord`; later records are read from their start."""
     query: NotRequired[str]
@@ -45,6 +54,12 @@ class GetRecordContentRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Most characters of `content` to return. Asks for a budgeted read; 40000 when another budgeted-read parameter is given without it."""
+
+    extract: Annotated[
+        Optional[GetRecordContentExtract],
+        FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
+    ] = None
+    r"""With `query`, in record mode and without `startBlock`: return only the passages that answer `query`, as the model assigned to the `reader` role (else the default model) copies them out, instead of the record's text. The model is told to copy word for word, and `extract.unverifiedLines` counts the lines it did not. The response's `order` is `extract`, and its `extract` object names the model and the tokens it used. When the model cannot be reached, the usual read is returned with `extract.error` set."""
 
     start_block: Annotated[
         Optional[int],
@@ -75,7 +90,7 @@ class GetRecordContentRequest(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["maxChars", "startBlock", "query", "mode", "startRecord"]
+            ["maxChars", "extract", "startBlock", "query", "mode", "startRecord"]
         )
         serialized = handler(self)
         m = {}

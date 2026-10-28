@@ -37,35 +37,19 @@ class GetKnowledgeHubRootNodesServiceUnavailableError(PipeshubError):
         object.__setattr__(self, "data", data)
 
 
-class GetKnowledgeHubRootNodesInternalServerErrorData(BaseModel):
-    error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesErrorHTTPInternalServerError
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubRootNodesInternalServerError(PipeshubError):
-    r"""An unexpected error occurred on the server."""
-
-    data: GetKnowledgeHubRootNodesInternalServerErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubRootNodesInternalServerErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
 class GetKnowledgeHubRootNodesUnprocessableEntityErrorData(BaseModel):
     error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesUnprocessableEntityError
 
 
 @dataclass(unsafe_hash=True)
 class GetKnowledgeHubRootNodesUnprocessableEntityError(PipeshubError):
-    r"""A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the
+    r"""Either of:
+    - A typed query parameter could not be read: `page` or `limit` is not an
+    integer or is out of range (`page` below 1, `limit` outside 1-200),
+    `onlyContainers` or `flattened` is not a boolean, or `page`/`limit` was
+    sent more than once. `error.message` is the connector service's own
+    validation text.
+    - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the
     database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder
     (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),
     which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as
@@ -79,90 +63,6 @@ class GetKnowledgeHubRootNodesUnprocessableEntityError(PipeshubError):
     def __init__(
         self,
         data: GetKnowledgeHubRootNodesUnprocessableEntityErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubRootNodesForbiddenErrorData(BaseModel):
-    error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesErrorHTTPForbidden
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubRootNodesForbiddenError(PipeshubError):
-    r"""Insufficient OAuth scope.
-
-    Only applies to OAuth tokens. The token did not carry the `kb:read`
-    scope required by this endpoint. Regular (non-OAuth) JWT bearer
-    tokens are not subject to scope enforcement and will not receive
-    this error.
-
-    """
-
-    data: GetKnowledgeHubRootNodesForbiddenErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubRootNodesForbiddenErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubRootNodesUnauthorizedErrorData(BaseModel):
-    error: (
-        models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesErrorHTTPUnauthorized
-    )
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubRootNodesUnauthorizedError(PipeshubError):
-    r"""Missing or invalid authentication token.
-
-    The bearer token was absent, expired, malformed, or could not be
-    verified by the auth middleware.
-
-    """
-
-    data: GetKnowledgeHubRootNodesUnauthorizedErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubRootNodesUnauthorizedErrorData,
-        raw_response: httpx.Response,
-        body: Optional[str] = None,
-    ):
-        fallback = body or raw_response.text
-        message = str(data.error.message) or fallback
-        super().__init__(message, raw_response, body)
-        object.__setattr__(self, "data", data)
-
-
-class GetKnowledgeHubRootNodesBadRequestErrorData(BaseModel):
-    error: models_getknowledgehubrootnodesop.GetKnowledgeHubRootNodesErrorHTTPBadRequest
-
-
-@dataclass(unsafe_hash=True)
-class GetKnowledgeHubRootNodesBadRequestError(PipeshubError):
-    r"""Invalid request parameters. The backend's validation message is
-    returned verbatim in `error.message`. See the examples below for
-    the common triggers.
-
-    """
-
-    data: GetKnowledgeHubRootNodesBadRequestErrorData = field(hash=False)
-
-    def __init__(
-        self,
-        data: GetKnowledgeHubRootNodesBadRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

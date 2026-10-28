@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 from .updateoauthapprequest import UpdateOAuthAppRequest, UpdateOAuthAppRequestTypedDict
-from pipeshub_sdk.types import BaseModel
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
 import pydantic
-from typing_extensions import Annotated, TypedDict
+from pydantic import model_serializer
+from typing import Optional
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class UpdateOAuthAppRequestRequestTypedDict(TypedDict):
     app_id: str
     r"""OAuth app ID"""
-    body: UpdateOAuthAppRequestTypedDict
-    r"""Request payload"""
+    body: NotRequired[UpdateOAuthAppRequestTypedDict]
+    r"""Fields to change. A request with no body, or `{}`, is accepted and changes nothing (`200` with the app)."""
 
 
 class UpdateOAuthAppRequestRequest(BaseModel):
@@ -24,7 +26,23 @@ class UpdateOAuthAppRequestRequest(BaseModel):
     r"""OAuth app ID"""
 
     body: Annotated[
-        UpdateOAuthAppRequest,
+        Optional[UpdateOAuthAppRequest],
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
-    ]
-    r"""Request payload"""
+    ] = None
+    r"""Fields to change. A request with no body, or `{}`, is accepted and changes nothing (`200` with the app)."""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["body"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+
+            if val != UNSET_SENTINEL:
+                if val is not None or k not in optional_fields:
+                    m[k] = val
+
+        return m

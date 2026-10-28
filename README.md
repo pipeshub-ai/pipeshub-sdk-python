@@ -21,7 +21,20 @@ PipesHub is an enterprise-grade platform providing:
 ## Authentication
 Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
 
-**OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the application's **token identity** — the service account it is pointed at (`tokenIdentityUserId`), or its creator for an application registered before that was required and never bound, and sets the authenticated user accordingly. See the **OAuth Provider** tag for full behavior.
+**OAuth 2.0 Bearer tokens** from `POST /oauth2/token` use the same `Authorization: Bearer` header. For **`client_credentials`**, machine tokens may encode `userId === client_id` in the JWT; the **Node API gateway** resolves the application's **token identity** — the service account it is pointed at (`tokenIdentityUserId`), or its creator for an application registered before that was required and never bound, and sets the authenticated user accordingly. It reads the application record on every request, and a token minted for a different identity than the app's current one is refused with `401`. See the **OAuth Provider** tag for full behavior.
+
+## Behaviour common to every route
+App-level middleware runs before any router, so the following applies to every operation below, before authentication, unless an exception is named.
+
+**Markup filter.** A query value, or any string in a JSON or form-encoded body, that looks like markup is refused with `400 HTTP_BAD_REQUEST`. The message names where the value was, for example `HTML tags, scripts, and XSS content are not allowed in the field "name".` or `... in the query parameter "search".` (a field name that is not a plain identifier path reads `the request`), and says what counted: text in angle brackets such as `<id>` counts as an HTML tag, an encoded script tag counts, or script content such as `onclick=`, `javascript:` or `data:text/html` counts. A string over 100,000 characters is refused as too long to check instead: `The value of the field "name" is longer than 100,000 characters, which is too long to check for HTML tags and scripts. Please shorten it and try again.` It looks for an HTML tag, a script tag, `<iframe`, `<object`, `<embed` or `<svg` tag, a word starting with `on` followed by `=` (meant for inline event handlers such as `onerror=`, it also catches plain text such as `one=1`), a `javascript:` or `data:text/html` URL, an encoded script tag (`&lt;script`, `%3cscript`), and any string longer than 100,000 characters. A string the filter lets through is rewritten before the route sees it: the filter trims surrounding whitespace, drops a lone `<` together with everything after it (`a < b` arrives as `a`), and escapes `>` as `&gt;`. POST and PUT under `/agents/`, `/conversations/`, `/connectors` and `/api-toolsets`, and POST, PUT and PATCH under `/skills`, skip the filter. So does the question of a search: the `query` string of a JSON body sent to `POST /search` or `POST /retrieve` is neither checked nor rewritten, unless it is longer than 100,000 characters.
+
+**Body parsers.** `application/json` bodies (up to 10 MB, 5 MB on `/mcp`) and `application/x-www-form-urlencoded` bodies (up to 100 KB and 1000 fields) are parsed for every method. A JSON body that does not parse, or a body shorter or longer than its `Content-Length`, is answered `400 HTTP_BAD_REQUEST` (`The request body is not valid JSON.`, `The request body does not match its Content-Length.`), a body past these limits `413 HTTP_PAYLOAD_TOO_LARGE`, and an unsupported content encoding or character set `415 HTTP_UNSUPPORTED_MEDIA_TYPE`; a JSON body over 5 MB on `/mcp` gets its `413` as a JSON-RPC error (see `POST /mcp`). Form values arrive as text and the request validators do not convert them, so a number, a boolean or a free-form object sent form-encoded is refused (`400 VALIDATION_ERROR`) or read as a string. A list sent form-encoded is read as a list only when its key repeats, so a single value or an empty list cannot be sent. The form media type is therefore listed only on operations whose body is a flat object of text fields: every value a string (string enums included), with no lists or nested objects.
+
+**Request size.** On every route with a request validator, the body, query and path values are measured before the schema runs. An array over 10,000 items (`<path> can have at most 10000 items.`), an object over 10,000 keys (`<path> can have at most 10000 fields.`), more than 100,000 array items and object keys in the whole request (`The request holds too many items in total (the limit is 100000); the limit is reached at <path>.`) or nesting deeper than 64 levels (`<path> is nested more than 64 levels deep.`) is refused with `400 VALIDATION_ERROR` (detail code `TOO_BIG`, or `TOO_DEEP` for nesting; the path reads like `body.items`). The deployment can change the first three limits with `VALIDATION_MAX_ARRAY_LENGTH`, `VALIDATION_MAX_OBJECT_KEYS` and `VALIDATION_MAX_TOTAL_ITEMS`.
+
+**OAuth scopes.** On an operation whose `security` names `oauth2` scopes, an OAuth access token holding none of them gets `403 HTTP_FORBIDDEN` ("Insufficient scope. Required: ...") right after authentication. Session tokens are never scope-checked.
+
+**No such route.** A method and path that no route handles get Express's own `404` page, `text/html`, reading `Cannot <METHOD> <path>`. Such pairs are not listed as operations.
 
 ## Base URLs
 All endpoints use the `/api/v1` prefix unless otherwise noted.
@@ -35,11 +48,13 @@ On every `/api/v1` and `/mcp` endpoint, a query parameter whose name starts with
 <!-- $toc-max-depth=2 -->
 * [pipeshub-sdk](#pipeshub-sdk)
   * [Authentication](#authentication)
+  * [Behaviour common to every route](#behaviour-common-to-every-route)
   * [Base URLs](#base-urls)
   * [Query parameter names](#query-parameter-names)
   * [SDK Installation](#sdk-installation)
   * [IDE Support](#ide-support)
   * [SDK Example Usage](#sdk-example-usage)
+  * [Retrieval for RAG and agent frameworks](#retrieval-for-rag-and-agent-frameworks)
   * [Authentication](#authentication-1)
   * [Available Resources and Operations](#available-resources-and-operations)
   * [Server-sent event streaming](#server-sent-event-streaming)
@@ -352,7 +367,9 @@ with Pipeshub() as pipeshub:
 * [update_knowledge_base](docs/sdks/knowledgebasesdk/README.md#update_knowledge_base) - Update knowledge base
 * [delete_knowledge_base](docs/sdks/knowledgebasesdk/README.md#delete_knowledge_base) - Delete knowledge base
 * [get_record_by_id](docs/sdks/knowledgebasesdk/README.md#get_record_by_id) - Get record by ID
+* [update_record_multipart](docs/sdks/knowledgebasesdk/README.md#update_record_multipart) - Update record
 * [update_record](docs/sdks/knowledgebasesdk/README.md#update_record) - Update record
+* [update_record_form](docs/sdks/knowledgebasesdk/README.md#update_record_form) - Update record
 * [delete_record](docs/sdks/knowledgebasesdk/README.md#delete_record) - Delete record
 * [restore_record](docs/sdks/knowledgebasesdk/README.md#restore_record) - Restore a deleted record
 * [restore_records](docs/sdks/knowledgebasesdk/README.md#restore_records) - Restore several deleted records
@@ -445,6 +462,8 @@ with Pipeshub() as pipeshub:
 * [init_auth](docs/sdks/useraccount/README.md#init_auth) - Initialize authentication session
 * [authenticate](docs/sdks/useraccount/README.md#authenticate) - Authenticate user with credentials
 * [refresh_token](docs/sdks/useraccount/README.md#refresh_token) - Refresh access token
+* [get_password_status](docs/sdks/useraccount/README.md#get_password_status) - Get password status
+* [send_password_setup_email](docs/sdks/useraccount/README.md#send_password_setup_email) - Email a link to set a first password
 * [reset_password](docs/sdks/useraccount/README.md#reset_password) - Reset password
 
 ### [WebSearch](docs/sdks/websearchsdk/README.md)
@@ -477,7 +496,12 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_base.upload_records(kb_id="<id>", files=[], files_metadata="[{\"file_path\":\"/docs/report.pdf\",\"last_modified\":\"2024-01-15T10:30:00Z\"}]", is_versioned=True, record_type="FILE")
+    res = pipeshub.knowledge_base.upload_records(kb_id="<id>", files=[], files_metadata=[
+        {
+            "file_path": "/docs/report.pdf",
+            "last_modified": 2024.0,
+        },
+    ], is_versioned="true", record_type="FILE")
 
     with res as event_stream:
         for event in event_stream:
@@ -512,7 +536,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.knowledge_base.update_record(record_id="<id>")
+    res = pipeshub.knowledge_base.update_record_multipart(record_id="<id>")
 
     # Handle response
     print(res)
@@ -597,18 +621,16 @@ with Pipeshub() as pipeshub:
         print(e.raw_response)
 
         # Depending on the method different errors may be thrown
-        if isinstance(e, errors.OAuthErrorResponse):
-            print(e.data.error)  # models.ErrorEnum
-            print(e.data.error_description)  # Optional[str]
-            print(e.data.error_uri)  # Optional[str]
-            print(e.data.state)  # Optional[str]
+        if isinstance(e, errors.ErrorResponse):
+            print(e.data.error)  # models.ErrorResponseError
 ```
 
 ### Error Classes
-**Primary error:**
+**Primary errors:**
 * [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py): The base class for HTTP error responses.
+  * [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). *
 
-<details><summary>Less common errors (39)</summary>
+<details><summary>Less common errors (21)</summary>
 
 <br />
 
@@ -619,40 +641,22 @@ with Pipeshub() as pipeshub:
 
 
 **Inherit from [`PipeshubError`](./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`ErrorResponse`](./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). Applicable to 78 of 137 methods.*
-* [`OAuthClientManagementRateLimitError`](./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 20 of 137 methods.*
-* [`ApplicationJSONErrorResponse`](./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 17 of 137 methods.*
-* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 3 of 137 methods.*
-* [`RateLimitErrorResponse`](./src/pipeshub_sdk/errors/ratelimiterrorresponse.py): Rate-limit error payload (shape differs from standard error responses). Status code `429`. Applicable to 3 of 137 methods.*
-* [`LocalFsDesktopRefusalError`](./src/pipeshub_sdk/errors/localfsdesktoprefusalerror.py): 409 body returned when a Local FS connector cannot sync because of its owner device. Status code `409`. Applicable to 2 of 137 methods.*
-* [`GetKnowledgeHubRootNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesbadrequesterror.py): Invalid request parameters. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesBadRequestError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesbadrequesterror.py): Invalid request parameters or path values. The backend's validation message is returned verbatim in `error.message`. See the examples below for the common triggers. Status code `400`. Applicable to 1 of 137 methods.*
-* [`SearchHistoryBadRequestError`](./src/pipeshub_sdk/errors/searchhistorybadrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 137 methods.*
-* [`GetSearchByIDBadRequestError`](./src/pipeshub_sdk/errors/getsearchbyidbadrequesterror.py): Invalid request — `searchId` failed Zod validation (not a valid ObjectId). Status code `400`. Applicable to 1 of 137 methods.*
-* [`DeleteAgentConversationChatAttachmentBadRequestError`](./src/pipeshub_sdk/errors/deleteagentconversationchatattachmentbadrequesterror.py): Invalid or blank path params (`agentKey` or `recordId`). Status code `400`. Applicable to 1 of 137 methods.*
-* [`GetAvailableModelsByTypeBadRequestError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypebadrequesterror.py): Invalid `modelType` path parameter.  The `modelType` value was not one of the supported enum categories. This response is produced by the Zod validation middleware **before** the handler runs. The `error.metadata.errors` array contains per-field detail about exactly which constraint failed. Status code `400`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubRootNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesUnauthorizedError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 137 methods.*
-* [`SearchHistoryUnauthorizedError`](./src/pipeshub_sdk/errors/searchhistoryunauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 137 methods.*
-* [`GetSearchByIDUnauthorizedError`](./src/pipeshub_sdk/errors/getsearchbyidunauthorizederror.py): Missing or invalid bearer token. Status code `401`. Applicable to 1 of 137 methods.*
-* [`GetAvailableModelsByTypeUnauthorizedError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeunauthorizederror.py): Missing or invalid authentication token.  The bearer token was absent, expired, malformed, or could not be verified by the auth middleware. Status code `401`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubRootNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesForbiddenError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `kb:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 137 methods.*
-* [`SearchHistoryForbiddenError`](./src/pipeshub_sdk/errors/searchhistoryforbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 137 methods.*
-* [`GetSearchByIDForbiddenError`](./src/pipeshub_sdk/errors/getsearchbyidforbiddenerror.py): Bearer token lacks the `semantic:read` scope. Status code `403`. Applicable to 1 of 137 methods.*
-* [`GetAvailableModelsByTypeForbiddenError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeforbiddenerror.py): Insufficient OAuth scope.  Only applies to OAuth tokens. The token did not carry the `config:read` scope required by this endpoint. Regular (non-OAuth) JWT bearer tokens are not subject to scope enforcement and will not receive this error. Status code `403`. Applicable to 1 of 137 methods.*
-* [`StreamRecordErrorResponse`](./src/pipeshub_sdk/errors/streamrecorderrorresponse.py): Error payload returned by the legacy record-stream proxy when the downstream streaming request fails after route middleware has passed. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesNotFoundError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesnotfounderror.py): Parent node not found.  The `parentId` does not correspond to an existing node of the specified `parentType`, or the node has been deleted. Status code `404`. Applicable to 1 of 137 methods.*
-* [`GetSearchByIDNotFoundError`](./src/pipeshub_sdk/errors/getsearchbyidnotfounderror.py): Reserved for parity with sibling routes; this endpoint currently returns `200` with an empty array for an unknown id rather than emitting `404`. Status code `404`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubRootNodesUnprocessableEntityError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunprocessableentityerror.py): A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`), which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the connector allows it and is not affected. Status code `422`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesUnprocessableEntityError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunprocessableentityerror.py): A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`), which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the connector allows it and is not affected. Status code `422`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubRootNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesInternalServerError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 137 methods.*
-* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 137 methods.*
-* [`GetSearchByIDInternalServerError`](./src/pipeshub_sdk/errors/getsearchbyidinternalservererror.py): Server error. Possible causes:  - Explicit `InternalServerError`   or any other 500 `BaseError` thrown by the handler. - Non-`BaseError` exception caught by the   global error middleware. - Response serializer fallback. Status code `500`. Applicable to 1 of 137 methods.*
-* [`GetAvailableModelsByTypeInternalServerError`](./src/pipeshub_sdk/errors/getavailablemodelsbytypeinternalservererror.py): An unexpected error occurred on the server. Status code `500`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubRootNodesServiceUnavailableError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 137 methods.*
-* [`GetKnowledgeHubChildNodesServiceUnavailableError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 137 methods.*
+* [`OAuthClientManagementRateLimitError`](./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 20 of 141 methods.*
+* [`ApplicationJSONErrorResponse`](./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 17 of 141 methods.*
+* [`OAuthErrorResponse`](./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 3 of 141 methods.*
+* [`RateLimitErrorResponse`](./src/pipeshub_sdk/errors/ratelimiterrorresponse.py): Rate-limit error payload (shape differs from standard error responses). Status code `429`. Applicable to 3 of 141 methods.*
+* [`LocalFsDesktopRefusalError`](./src/pipeshub_sdk/errors/localfsdesktoprefusalerror.py): 409 body returned when a Local FS connector cannot sync because of its owner device. Status code `409`. Applicable to 2 of 141 methods.*
+* [`BadRequestError`](./src/pipeshub_sdk/errors/badrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 141 methods.*
+* [`UnauthorizedError`](./src/pipeshub_sdk/errors/unauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 141 methods.*
+* [`OAuthBearerTokenError`](./src/pipeshub_sdk/errors/oauthbearertokenerror.py): Error body written by the OAuth bearer-token middleware (RFC 6750 Section 3.1) on routes that accept only an OAuth access token, such as `GET /oauth2/userinfo`. The same `error`, `error_description` and `scope` values are repeated in the `WWW-Authenticate` response header. This is not the standard `ErrorResponse` envelope: `error` is a string. Applicable to 1 of 141 methods.*
+* [`ForbiddenError`](./src/pipeshub_sdk/errors/forbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 141 methods.*
+* [`StreamRecordErrorResponse`](./src/pipeshub_sdk/errors/streamrecorderrorresponse.py): Error payload returned by the legacy record-stream proxy when the downstream streaming request fails after route middleware has passed. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubRootNodesUnprocessableEntityError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesunprocessableentityerror.py): Either of: - A typed query parameter could not be read: `page` or `limit` is not an   integer or is out of range (`page` below 1, `limit` outside 1-200),   `onlyContainers` or `flattened` is not a boolean, or `page`/`limit` was   sent more than once. `error.message` is the connector service's own   validation text. - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the   database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder   (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),   which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as   `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the   connector allows it and is not affected. Status code `422`. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubChildNodesUnprocessableEntityError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesunprocessableentityerror.py): Either of: - A typed query parameter could not be read: `page` or `limit` is not an   integer or is out of range (`page` below 1, `limit` outside 1-200), or   `onlyContainers` or `flattened` is not a boolean. `error.message` is the   connector service's own validation text. - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the   database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder   (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),   which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as   `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the   connector allows it and is not affected. Status code `422`. Applicable to 1 of 141 methods.*
+* [`UploadAgentConversationChatAttachmentsUnprocessableEntityError`](./src/pipeshub_sdk/errors/uploadagentconversationchatattachmentsunprocessableentityerror.py): A PDF that could not be read within the upload's 50-second budget, or whose parse ran out of memory, is not attached (`<name> is too large or complex to read right now, so it wasn't attached. ...`). Only that upload fails. Status code `422`. Applicable to 1 of 141 methods.*
+* [`SearchHistoryInternalServerError`](./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubRootNodesServiceUnavailableError`](./src/pipeshub_sdk/errors/getknowledgehubrootnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubChildNodesServiceUnavailableError`](./src/pipeshub_sdk/errors/getknowledgehubchildnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 141 methods.*
 * [`ResponseValidationError`](./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
 
 </details>

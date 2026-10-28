@@ -87,10 +87,16 @@ class ToolsetTypedDict(TypedDict):
     display_name: NotRequired[str]
     r"""Human-readable toolset product label (for example `Jira` or `Slack`)."""
     type: NotRequired[str]
-    instance_id: NotRequired[str]
-    r"""Admin-created toolset instance id"""
-    instance_name: NotRequired[str]
-    r"""Human-readable instance label (e.g. sidebar instance name)"""
+    instance_id: NotRequired[Nullable[str]]
+    r"""Admin-created toolset instance id. `null` when the toolset was
+    attached to the agent without an instance.
+
+    """
+    instance_name: NotRequired[Nullable[str]]
+    r"""Human-readable instance label (e.g. sidebar instance name). `null`
+    when the toolset was attached without an instance.
+
+    """
     selected_tools: NotRequired[Nullable[List[str]]]
     r"""Tool names explicitly selected for this toolset instance, when the
     instance was created with a subset selection. `null`/absent when the
@@ -119,11 +125,21 @@ class Toolset(BaseModel):
 
     type: Optional[str] = None
 
-    instance_id: Annotated[Optional[str], pydantic.Field(alias="instanceId")] = None
-    r"""Admin-created toolset instance id"""
+    instance_id: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="instanceId")
+    ] = UNSET
+    r"""Admin-created toolset instance id. `null` when the toolset was
+    attached to the agent without an instance.
 
-    instance_name: Annotated[Optional[str], pydantic.Field(alias="instanceName")] = None
-    r"""Human-readable instance label (e.g. sidebar instance name)"""
+    """
+
+    instance_name: Annotated[
+        OptionalNullable[str], pydantic.Field(alias="instanceName")
+    ] = UNSET
+    r"""Human-readable instance label (e.g. sidebar instance name). `null`
+    when the toolset was attached without an instance.
+
+    """
 
     selected_tools: Annotated[
         OptionalNullable[List[str]], pydantic.Field(alias="selectedTools")
@@ -150,7 +166,7 @@ class Toolset(BaseModel):
                 "tools",
             ]
         )
-        nullable_fields = set(["selectedTools"])
+        nullable_fields = set(["instanceId", "instanceName", "selectedTools"])
         serialized = handler(self)
         m = {}
 

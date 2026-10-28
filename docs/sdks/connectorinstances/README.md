@@ -20,7 +20,8 @@ Get all configured connector instances for your organization.<br><br>
 <b>Overview:</b><br>
 Returns instances created by users, filtered by scope and permissions.
 Team-scope connectors are visible to all org users. Personal connectors
-are only visible to their creators.<br><br>
+are only visible to their creators, not even to admins. Knowledge bases
+(instances of type <code>KB</code>) are not listed here.<br><br>
 <b>Instance States:</b><br>
 <ul>
 <li><b>isConfigured:</b> All required settings are complete</li>
@@ -54,16 +55,16 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                                                                                                                           | Type                                                                                                                                                                | Required                                                                                                                                                            | Description                                                                                                                                                         | Example                                                                                                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scope`                                                                                                                                                             | [Optional[models.ConnectorInstanceListScope]](../../models/connectorinstancelistscope.md)                                                                           | :heavy_minus_sign:                                                                                                                                                  | Filter by scope. Defaults to <code>team</code> when omitted.<br/>                                                                                                   | team                                                                                                                                                                |
-| `page`                                                                                                                                                              | *Optional[int]*                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                  | N/A                                                                                                                                                                 |                                                                                                                                                                     |
-| `limit`                                                                                                                                                             | *Optional[int]*                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                  | N/A                                                                                                                                                                 |                                                                                                                                                                     |
-| `search`                                                                                                                                                            | *Optional[str]*                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                  | Full-text search across instance name, type, and app group                                                                                                          |                                                                                                                                                                     |
-| `is_authenticated`                                                                                                                                                  | *Optional[bool]*                                                                                                                                                    | :heavy_minus_sign:                                                                                                                                                  | Filter by authentication status.<br/><code>true</code> returns only authenticated instances;<br/><code>false</code> returns only unauthenticated ones.<br/>Omit to return all.<br/> |                                                                                                                                                                     |
-| `is_active`                                                                                                                                                         | *Optional[bool]*                                                                                                                                                    | :heavy_minus_sign:                                                                                                                                                  | Filter by active status.<br/><code>true</code> returns only active instances;<br/><code>false</code> returns only inactive ones.<br/>Omit to return all.<br/>       |                                                                                                                                                                     |
-| `connector_type`                                                                                                                                                    | *Optional[str]*                                                                                                                                                     | :heavy_minus_sign:                                                                                                                                                  | Filter by exact connector type string (e.g. <code>Confluence</code>,<br/><code>GoogleDrive</code>). Case-sensitive.<br/>                                            |                                                                                                                                                                     |
-| `retries`                                                                                                                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                    | :heavy_minus_sign:                                                                                                                                                  | Configuration to override the default retry behavior of the client.                                                                                                 |                                                                                                                                                                     |
+| Parameter                                                                                                                                                                                                   | Type                                                                                                                                                                                                        | Required                                                                                                                                                                                                    | Description                                                                                                                                                                                                 | Example                                                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scope`                                                                                                                                                                                                     | [Optional[models.ConnectorInstanceListScope]](../../models/connectorinstancelistscope.md)                                                                                                                   | :heavy_minus_sign:                                                                                                                                                                                          | Filter by scope. Defaults to <code>team</code> when omitted.<br/>                                                                                                                                           | team                                                                                                                                                                                                        |
+| `page`                                                                                                                                                                                                      | *Optional[int]*                                                                                                                                                                                             | :heavy_minus_sign:                                                                                                                                                                                          | Page number, 1-based                                                                                                                                                                                        |                                                                                                                                                                                                             |
+| `limit`                                                                                                                                                                                                     | *Optional[int]*                                                                                                                                                                                             | :heavy_minus_sign:                                                                                                                                                                                          | Items per page                                                                                                                                                                                              |                                                                                                                                                                                                             |
+| `search`                                                                                                                                                                                                    | *Optional[str]*                                                                                                                                                                                             | :heavy_minus_sign:                                                                                                                                                                                          | Full-text search across instance name, type, and app group. The term<br/>is not echoed back in <code>pagination</code>.<br/>                                                                                |                                                                                                                                                                                                             |
+| `is_authenticated`                                                                                                                                                                                          | *Optional[bool]*                                                                                                                                                                                            | :heavy_minus_sign:                                                                                                                                                                                          | Filter by authentication status.<br/><code>true</code> returns only authenticated instances;<br/><code>false</code> returns only unauthenticated ones.<br/>Omit to return all.<br/>                         |                                                                                                                                                                                                             |
+| `is_active`                                                                                                                                                                                                 | *Optional[bool]*                                                                                                                                                                                            | :heavy_minus_sign:                                                                                                                                                                                          | Filter by active status.<br/><code>true</code> returns only active instances;<br/><code>false</code> returns only inactive ones.<br/>Omit to return all.<br/>                                               |                                                                                                                                                                                                             |
+| `connector_type`                                                                                                                                                                                            | *Optional[str]*                                                                                                                                                                                             | :heavy_minus_sign:                                                                                                                                                                                          | Filter by exact connector type string (e.g. <code>Confluence</code>,<br/><code>GoogleDrive</code>). Case-sensitive. An empty or blank value<br/>is refused with `400` (the value is trimmed before it is checked).<br/> |                                                                                                                                                                                                             |
+| `retries`                                                                                                                                                                                                   | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                                            | :heavy_minus_sign:                                                                                                                                                                                          | Configuration to override the default retry behavior of the client.                                                                                                                                         |                                                                                                                                                                                                             |
 
 ### Response
 
@@ -74,6 +75,7 @@ with Pipeshub(
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.ErrorResponse        | 400, 401, 403               | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
 ## create_connector_instance
@@ -114,7 +116,15 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.create_connector_instance(connector_type="confluence", instance_name="My Confluence", scope="personal", auth_type="API_TOKEN")
+    res = pipeshub.connector_instances.create_connector_instance(connector_type="confluence", instance_name="My Confluence", scope="personal", auth_type="API_TOKEN", config=models.CreateConnectorRequestConfig(
+        auth=models.ConnectorAuthConfig(
+            **{
+                "baseUrl": "https://mycompany.atlassian.net",
+                "email": "admin@mycompany.com",
+                "apiToken": "ATATT3x...",
+            },
+        ),
+    ))
 
     # Handle response
     print(res)
@@ -134,7 +144,15 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_instances.create_connector_instance(connector_type="google-drive", instance_name="Company Google Drive", scope="team", auth_type="OAUTH_ADMIN_CONSENT")
+    res = pipeshub.connector_instances.create_connector_instance(connector_type="google-drive", instance_name="Company Google Drive", scope="team", auth_type="OAUTH_ADMIN_CONSENT", config=models.CreateConnectorRequestConfig(
+        auth=models.ConnectorAuthConfig(
+            **{
+                "baseUrl": "https://mycompany.atlassian.net",
+                "email": "admin@mycompany.com",
+                "apiToken": "ATATT3x...",
+            },
+        ),
+    ))
 
     # Handle response
     print(res)
@@ -168,6 +186,34 @@ with Pipeshub(
     print(res)
 
 ```
+### Example Usage: jiraPersonal
+
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="jiraPersonal" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.connector_instances.create_connector_instance(connector_type="Jira Cloud Personal", instance_name="My Jira", scope="personal", auth_type="API_TOKEN", config=models.CreateConnectorRequestConfig(
+        auth=models.ConnectorAuthConfig(
+            **{
+                "baseUrl": "https://mycompany.atlassian.net",
+                "email": "admin@mycompany.com",
+                "apiToken": "ATATT3x...",
+            },
+        ),
+    ))
+
+    # Handle response
+    print(res)
+
+```
 ### Example Usage: jiraSavedOAuthApp
 
 <!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="jiraSavedOAuthApp" -->
@@ -187,6 +233,34 @@ with Pipeshub(
             oauth_config_id="3fa85f64-5717-4562-b3fc-2c963f66afa6",
         ),
     ), base_url="https://pipeshub.example.com")
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: oneDrive
+
+<!-- UsageSnippet language="python" operationID="createConnectorInstance" method="post" path="/connectors" example="oneDrive" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.connector_instances.create_connector_instance(connector_type="OneDrive", instance_name="Company OneDrive", scope="team", auth_type="OAUTH_ADMIN_CONSENT", config=models.CreateConnectorRequestConfig(
+        auth=models.ConnectorAuthConfig(
+            **{
+                "baseUrl": "https://mycompany.atlassian.net",
+                "email": "admin@mycompany.com",
+                "apiToken": "ATATT3x...",
+            },
+        ),
+    ))
 
     # Handle response
     print(res)
@@ -276,7 +350,17 @@ with Pipeshub(
 
 ## get_connector_instance
 
-Retrieve a specific connector instance by ID.
+Retrieve a specific connector instance by ID, together with the setup
+form of its connector type (<code>config</code>).<br><br>
+<b>Who can read an instance:</b><br>
+<ul>
+<li>Team scope: the creator and org admins. Other members get
+<code>404</code>, although the lists show them the instance.</li>
+<li>Personal scope: the creator only. An admin gets <code>404</code>.</li>
+</ul>
+The ID of a knowledge base is accepted too: a knowledge base is stored
+as a connector instance of type <code>KB</code>.
+
 
 ### Example Usage
 
@@ -303,7 +387,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID (`_key` of the instance)                      |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
@@ -315,23 +399,26 @@ with Pipeshub(
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
 | errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
 ## delete_connector_instance
 
-Delete a connector instance and everything synced from it. The request
-answers `202` as soon as the deletion has started; the deletion itself
-runs in the background.<br><br>
-<b>Warning:</b><br>
-Deletion is permanent. The connector's records, record groups,
-permissions and relations are removed from the graph database, its
-embeddings are removed from the vector store, its stored configuration
-and credentials are deleted, and its stored files are deleted (content
-another connector still uses is kept). The records don't go to the
-trash and can't be restored. Its sync schedule is removed too.<br><br>
+Start the deletion of a connector instance and all associated data.<br><br>
+<b>Asynchronous:</b><br>
+The request is answered with <code>202</code> as soon as the instance is
+marked <code>DELETING</code>; its sync is stopped and its records,
+vectors and configuration are removed in the background.<br><br>
 <b>Permissions:</b><br>
-The connector's creator or an admin, for either scope. An admin can
-delete a member's personal connector.
+<ul>
+<li>The creator can delete their own instance</li>
+<li>An org admin can delete any instance, including another user's
+personal one (which the admin cannot read)</li>
+<li>Anyone else gets <code>404</code></li>
+</ul>
+<b>In use:</b><br>
+Refused with <code>409</code> while an agent uses the instance as a
+knowledge source.
 
 
 ### Example Usage
@@ -359,7 +446,7 @@ with Pipeshub(
 
 | Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | N/A                                                                 |
+| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID (`_key` of the instance)                      |
 | `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
 
 ### Response
@@ -370,13 +457,24 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 401, 403, 404, 409          | application/json            |
+| errors.ErrorResponse        | 400, 401, 403, 404, 409     | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
 ## get_connector_stats
 
-Retrieve statistics for a specific connector instance including record counts,
-indexing status breakdown, and sync information.
+Retrieve record counts of a connector instance, in total and per record
+type, broken down by indexing status. The ID of a knowledge base is
+accepted too (a knowledge base is stored as a connector instance of type
+<code>KB</code>); its stats report <code>origin: COLLECTION</code>.<br><br>
+<b>Who can read them:</b> the creator of the instance and, for a team
+instance, org admins. Stats use the same read gate as
+<code>GET /connectors/{connectorId}</code>: anyone else, including an
+admin reading another user's personal instance, gets <code>404</code>
+("This connector was removed, or you no longer have access. ..."), so
+the instance's existence is not confirmed.
+
+An OAuth token holding `kb:read` instead of `connector:read` passes the scope check too.
 
 
 ### Example Usage
@@ -402,10 +500,10 @@ with Pipeshub(
 
 ### Parameters
 
-| Parameter                                                           | Type                                                                | Required                                                            | Description                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `connector_id`                                                      | *str*                                                               | :heavy_check_mark:                                                  | Connector instance ID                                               |
-| `retries`                                                           | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)    | :heavy_minus_sign:                                                  | Configuration to override the default retry behavior of the client. |
+| Parameter                                                                                                                                                                                 | Type                                                                                                                                                                                      | Required                                                                                                                                                                                  | Description                                                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `connector_id`                                                                                                                                                                            | *str*                                                                                                                                                                                     | :heavy_check_mark:                                                                                                                                                                        | Connector instance ID (`_key` of the instance) or knowledge base ID.<br/>Unlike the other instance routes, the ID is not checked against a<br/>pattern: an ID no instance has is answered `404`.<br/> |
+| `retries`                                                                                                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                                                          | :heavy_minus_sign:                                                                                                                                                                        | Configuration to override the default retry behavior of the client.                                                                                                                       |
 
 ### Response
 
@@ -415,7 +513,8 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 401, 403, 404               | application/json            |
+| errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |
 
 ## resync_connector
@@ -426,7 +525,16 @@ Trigger a resync of records from a connector instance.
 
 Fetches content from the external source and updates local records. Use when you suspect data is out of sync.
 
+Only a connector in the caller's list of active connectors
+(`GET /connectors/active`, knowledge bases included) can be resynced.
+Any other ID, including one that does not exist, is refused with `400`.
+The reply only acknowledges that the resync event was published.
+
+Fields of the body other than `connectorName` and `fullSync` are dropped without an error.
+
 **Warning:** This can be resource-intensive for large connectors.
+
+The scope check also accepts `kb:write` in place of `connector:write`.
 
 
 ### Example Usage
@@ -454,7 +562,7 @@ with Pipeshub(
 
 | Parameter                                                                                                                                                 | Type                                                                                                                                                      | Required                                                                                                                                                  | Description                                                                                                                                               | Example                                                                                                                                                   |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `connector_id`                                                                                                                                            | *str*                                                                                                                                                     | :heavy_check_mark:                                                                                                                                        | Connector instance ID                                                                                                                                     |                                                                                                                                                           |
+| `connector_id`                                                                                                                                            | *str*                                                                                                                                                     | :heavy_check_mark:                                                                                                                                        | Connector instance ID. An ID that decodes to a path separator or<br/>another unsafe segment is refused with `400` before the token is checked.<br/>       |                                                                                                                                                           |
 | `connector_name`                                                                                                                                          | *str*                                                                                                                                                     | :heavy_check_mark:                                                                                                                                        | The connector's type as the registry lists it, for example `RSS` or<br/>`Jira`. It names the sync event; the connector synced is always the<br/>one in the path.<br/> | RSS                                                                                                                                                       |
 | `full_sync`                                                                                                                                               | *Optional[bool]*                                                                                                                                          | :heavy_minus_sign:                                                                                                                                        | When true, triggers a full sync instead of incremental.                                                                                                   |                                                                                                                                                           |
 | `retries`                                                                                                                                                 | [Optional[utils.RetryConfig]](../../models/utils/retryconfig.md)                                                                                          | :heavy_minus_sign:                                                                                                                                        | Configuration to override the default retry behavior of the client.                                                                                       |                                                                                                                                                           |
@@ -528,5 +636,6 @@ with Pipeshub(
 
 | Error Type                  | Status Code                 | Content Type                |
 | --------------------------- | --------------------------- | --------------------------- |
-| errors.ErrorResponse        | 401, 403, 404               | application/json            |
+| errors.ErrorResponse        | 400, 401, 403, 404          | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
 | errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |

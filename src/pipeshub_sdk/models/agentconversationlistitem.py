@@ -73,6 +73,8 @@ class AgentConversationListItemSharedWith(BaseModel):
 
 
 class AgentConversationListItemConversationErrorTypedDict(TypedDict):
+    id: NotRequired[str]
+    r"""Sub-document identifier auto-assigned by MongoDB."""
     message: NotRequired[str]
     error_type: NotRequired[str]
     timestamp: NotRequired[datetime]
@@ -82,6 +84,9 @@ class AgentConversationListItemConversationErrorTypedDict(TypedDict):
 
 
 class AgentConversationListItemConversationError(BaseModel):
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Sub-document identifier auto-assigned by MongoDB."""
+
     message: Optional[str] = None
 
     error_type: Annotated[Optional[str], pydantic.Field(alias="errorType")] = None
@@ -97,7 +102,15 @@ class AgentConversationListItemConversationError(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["message", "errorType", "timestamp", "messageId", "stack", "metadata"]
+            [
+                "_id",
+                "message",
+                "errorType",
+                "timestamp",
+                "messageId",
+                "stack",
+                "metadata",
+            ]
         )
         serialized = handler(self)
         m = {}

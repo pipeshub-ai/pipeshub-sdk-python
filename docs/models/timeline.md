@@ -12,7 +12,7 @@ created at its source) or `modified` (its last change). The span is that date's
 bounds (`createdAfter` / `createdBefore`, or `modifiedAfter` / `modifiedBefore`);
 with no start it covers the year before the end, or further back to the earliest
 of the best matches. Bounds on the other date apply to every period. `limit` is the
-number of matches each period's own search asks for (10 when left out); matches from
+number of matches each period's own search asks for; matches from
 the search of the whole span (up to 50) are added to the periods their records are
 dated in, so a period can hold more than `limit`. Each search applies the same permissions
 and filters as a plain search.

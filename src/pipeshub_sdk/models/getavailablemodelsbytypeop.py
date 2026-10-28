@@ -32,122 +32,6 @@ class GetAvailableModelsByTypeRequest(BaseModel):
     """
 
 
-GetAvailableModelsByTypeCodeHTTPInternalServerError = Literal[
-    "HTTP_INTERNAL_SERVER_ERROR",
-]
-
-
-class GetAvailableModelsByTypeErrorHTTPInternalServerErrorTypedDict(TypedDict):
-    code: GetAvailableModelsByTypeCodeHTTPInternalServerError
-    message: str
-
-
-class GetAvailableModelsByTypeErrorHTTPInternalServerError(BaseModel):
-    code: GetAvailableModelsByTypeCodeHTTPInternalServerError
-
-    message: str
-
-
-GetAvailableModelsByTypeForbiddenCode = Literal["HTTP_FORBIDDEN",]
-
-
-class GetAvailableModelsByTypeErrorHTTPForbiddenTypedDict(TypedDict):
-    code: GetAvailableModelsByTypeForbiddenCode
-    message: str
-
-
-class GetAvailableModelsByTypeErrorHTTPForbidden(BaseModel):
-    code: GetAvailableModelsByTypeForbiddenCode
-
-    message: str
-
-
-GetAvailableModelsByTypeUnauthorizedCode = Literal["HTTP_UNAUTHORIZED",]
-
-
-class GetAvailableModelsByTypeErrorHTTPUnauthorizedTypedDict(TypedDict):
-    code: GetAvailableModelsByTypeUnauthorizedCode
-    message: str
-
-
-class GetAvailableModelsByTypeErrorHTTPUnauthorized(BaseModel):
-    code: GetAvailableModelsByTypeUnauthorizedCode
-
-    message: str
-
-
-GetAvailableModelsByTypeCodeValidationError = Literal["VALIDATION_ERROR",]
-
-
-MetadataCode = Union[
-    Literal[
-        "INVALID_TYPE",
-        "INVALID_LITERAL",
-        "INVALID_ENUM",
-        "INVALID_UNION",
-        "INVALID_DISCRIMINATOR",
-        "INVALID_ARGUMENTS",
-        "TOO_SMALL",
-        "TOO_BIG",
-    ],
-    UnrecognizedStr,
-]
-r"""Machine-readable error code mapped from the Zod issue code."""
-
-
-class MetadataErrorTypedDict(TypedDict):
-    field: str
-    r"""Dot-separated path to the failing field within the request (params, body, query)."""
-    message: str
-    r"""Human-readable Zod validation message."""
-    code: MetadataCode
-    r"""Machine-readable error code mapped from the Zod issue code."""
-    value: str
-    r"""The rejected value stringified. May be an empty string when the value is not easily serialisable."""
-
-
-class MetadataError(BaseModel):
-    field: str
-    r"""Dot-separated path to the failing field within the request (params, body, query)."""
-
-    message: str
-    r"""Human-readable Zod validation message."""
-
-    code: MetadataCode
-    r"""Machine-readable error code mapped from the Zod issue code."""
-
-    value: str
-    r"""The rejected value stringified. May be an empty string when the value is not easily serialisable."""
-
-
-class GetAvailableModelsByTypeMetadataTypedDict(TypedDict):
-    r"""Per-field validation detail from Zod."""
-
-    errors: List[MetadataErrorTypedDict]
-
-
-class GetAvailableModelsByTypeMetadata(BaseModel):
-    r"""Per-field validation detail from Zod."""
-
-    errors: List[MetadataError]
-
-
-class GetAvailableModelsByTypeErrorValidationErrorTypedDict(TypedDict):
-    code: GetAvailableModelsByTypeCodeValidationError
-    message: str
-    metadata: GetAvailableModelsByTypeMetadataTypedDict
-    r"""Per-field validation detail from Zod."""
-
-
-class GetAvailableModelsByTypeErrorValidationError(BaseModel):
-    code: GetAvailableModelsByTypeCodeValidationError
-
-    message: str
-
-    metadata: GetAvailableModelsByTypeMetadata
-    r"""Per-field validation detail from Zod."""
-
-
 GetAvailableModelsByTypeStatus = Literal["success",]
 
 
@@ -171,14 +55,14 @@ class GetAvailableModelsByTypeModelTypedDict(TypedDict):
     r"""Provider identifier as stored in configuration (e.g. `openAI`, `azureOpenAI`, `anthropic`, `gemini`, `ollama`)."""
     model_name: str
     r"""Specific model name/identifier forwarded to the provider API when making inference calls."""
-    model_key: str
-    r"""UUID that uniquely identifies the provider configuration entry this model was expanded from. Use this key when calling update/delete endpoints."""
     is_multimodal: bool
     r"""`true` when this model accepts multi-modal inputs (text + images). Always present; defaults to `false` when not explicitly set."""
     is_reasoning: bool
     r"""`true` when this is a reasoning / chain-of-thought model. Always present; defaults to `false` when not explicitly set."""
     is_default: bool
     r"""`true` for the first model in the provider entry that was marked as default. At most one entry per `modelType` will have this set to `true`."""
+    model_key: NotRequired[str]
+    r"""UUID that uniquely identifies the provider configuration entry this model was expanded from. Use this key when calling update/delete endpoints. Absent for an entry of a type other than `llm` or `embedding` that was saved through POST /configurationManager/aiModelsConfig, which gives a key only to `llm` and `embedding` entries; such an entry cannot be updated or deleted by key."""
     model_friendly_name: NotRequired[str]
     r"""Optional human-readable display name. Only present when the provider configuration entry contains exactly one model name (not a comma-separated list) **and** a friendly name was added during configuration."""
     default_reasoning_effort: NotRequired[
@@ -197,9 +81,6 @@ class GetAvailableModelsByTypeModel(BaseModel):
     model_name: Annotated[str, pydantic.Field(alias="modelName")]
     r"""Specific model name/identifier forwarded to the provider API when making inference calls."""
 
-    model_key: Annotated[str, pydantic.Field(alias="modelKey")]
-    r"""UUID that uniquely identifies the provider configuration entry this model was expanded from. Use this key when calling update/delete endpoints."""
-
     is_multimodal: Annotated[bool, pydantic.Field(alias="isMultimodal")]
     r"""`true` when this model accepts multi-modal inputs (text + images). Always present; defaults to `false` when not explicitly set."""
 
@@ -208,6 +89,9 @@ class GetAvailableModelsByTypeModel(BaseModel):
 
     is_default: Annotated[bool, pydantic.Field(alias="isDefault")]
     r"""`true` for the first model in the provider entry that was marked as default. At most one entry per `modelType` will have this set to `true`."""
+
+    model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
+    r"""UUID that uniquely identifies the provider configuration entry this model was expanded from. Use this key when calling update/delete endpoints. Absent for an entry of a type other than `llm` or `embedding` that was saved through POST /configurationManager/aiModelsConfig, which gives a key only to `llm` and `embedding` entries; such an entry cannot be updated or deleted by key."""
 
     model_friendly_name: Annotated[
         Optional[str], pydantic.Field(alias="modelFriendlyName")
@@ -222,7 +106,9 @@ class GetAvailableModelsByTypeModel(BaseModel):
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["modelFriendlyName", "defaultReasoningEffort"])
+        optional_fields = set(
+            ["modelKey", "modelFriendlyName", "defaultReasoningEffort"]
+        )
         serialized = handler(self)
         m = {}
 

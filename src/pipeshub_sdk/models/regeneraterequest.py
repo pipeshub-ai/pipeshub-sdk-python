@@ -13,6 +13,19 @@ from typing import List, Literal, Optional
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
+RegenerateRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""Reasoning effort for this turn, for models that support it. Stored on
+the conversation's model info and forwarded to the AI backend.
+
+"""
+
+
 RegenerateRequestProtocol = Literal["agui",]
 r"""AG-UI is the only supported wire protocol. When present must be
 `\"agui\"`. Omitting the field is equivalent — the server always
@@ -103,9 +116,11 @@ class RegenerateRequestTypedDict(TypedDict):
     the app sends them (`User selections:` followed by one
     `N. \"question\" → answer` line each). When present, the turn is
     re-run with these answers instead of the saved ones, and they are
-    saved in their place. Rejected with 400 when the reply being
-    regenerated did not follow a question card, or when the request
-    also edits the question (`query` or `attachments`).
+    saved in their place. Over 8000 characters, or text not starting with
+    `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+    that did not follow a question card, or a request that also edits
+    the question (`query` or `attachments`), is refused after the stream
+    opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
     """
     model_key: NotRequired[str]
@@ -121,6 +136,11 @@ class RegenerateRequestTypedDict(TypedDict):
     chat_mode: NotRequired[str]
     r"""Chat mode used for regeneration (for example `internal_search`,
     `web_search`, or the universal `agent` mode).
+
+    """
+    reasoning_effort: NotRequired[RegenerateRequestReasoningEffort]
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
 
     """
     timezone: NotRequired[str]
@@ -261,9 +281,11 @@ class RegenerateRequest(BaseModel):
     the app sends them (`User selections:` followed by one
     `N. \"question\" → answer` line each). When present, the turn is
     re-run with these answers instead of the saved ones, and they are
-    saved in their place. Rejected with 400 when the reply being
-    regenerated did not follow a question card, or when the request
-    also edits the question (`query` or `attachments`).
+    saved in their place. Over 8000 characters, or text not starting with
+    `User selections:`, is refused with `400 VALIDATION_ERROR`. A reply
+    that did not follow a question card, or a request that also edits
+    the question (`query` or `attachments`), is refused after the stream
+    opens: a 200 stream ending in a `RUN_ERROR` (see the operation).
 
     """
 
@@ -285,6 +307,15 @@ class RegenerateRequest(BaseModel):
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
     r"""Chat mode used for regeneration (for example `internal_search`,
     `web_search`, or the universal `agent` mode).
+
+    """
+
+    reasoning_effort: Annotated[
+        Optional[RegenerateRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
 
     """
 
@@ -365,6 +396,7 @@ class RegenerateRequest(BaseModel):
                 "modelName",
                 "modelFriendlyName",
                 "chatMode",
+                "reasoningEffort",
                 "timezone",
                 "currentTime",
                 "tools",

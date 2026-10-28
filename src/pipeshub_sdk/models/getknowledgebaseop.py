@@ -9,7 +9,10 @@ from typing_extensions import Annotated, TypedDict
 
 class GetKnowledgeBaseRequestTypedDict(TypedDict):
     kb_id: str
-    r"""Knowledge base ID (non-empty string)"""
+    r"""Knowledge base ID (non-empty string). It is not checked to be a UUID: any other
+    value is looked up and answered `404`.
+
+    """
 
 
 class GetKnowledgeBaseRequest(BaseModel):
@@ -18,4 +21,7 @@ class GetKnowledgeBaseRequest(BaseModel):
         pydantic.Field(alias="kbId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Knowledge base ID (non-empty string)"""
+    r"""Knowledge base ID (non-empty string). It is not checked to be a UUID: any other
+    value is looked up and answered `404`.
+
+    """

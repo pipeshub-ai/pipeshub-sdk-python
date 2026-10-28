@@ -11,7 +11,16 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class ListAgentArchivedConversationsGroupedRequestTypedDict(TypedDict):
     agent_page: NotRequired[int]
+    r"""1-based page over agent groups. Values below 1 are read as 1 and a
+    non-numeric value as the default; neither is refused.
+
+    """
     agent_limit: NotRequired[int]
+    r"""Agent groups per page. Values are clamped to 1..100 and a non-numeric
+    value is read as the default; neither is refused. Each group carries at
+    most 5 conversations.
+
+    """
 
 
 class ListAgentArchivedConversationsGroupedRequest(BaseModel):
@@ -20,12 +29,21 @@ class ListAgentArchivedConversationsGroupedRequest(BaseModel):
         pydantic.Field(alias="agentPage"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 1
+    r"""1-based page over agent groups. Values below 1 are read as 1 and a
+    non-numeric value as the default; neither is refused.
+
+    """
 
     agent_limit: Annotated[
         Optional[int],
         pydantic.Field(alias="agentLimit"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 5
+    r"""Agent groups per page. Values are clamped to 1..100 and a non-numeric
+    value is read as the default; neither is refused. Each group carries at
+    most 5 conversations.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

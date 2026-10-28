@@ -10,7 +10,7 @@ from typing_extensions import Annotated, TypedDict
 
 class GetConnectorInstanceRequestTypedDict(TypedDict):
     connector_id: str
-    r"""Connector instance ID"""
+    r"""Connector instance ID (`_key` of the instance)"""
 
 
 class GetConnectorInstanceRequest(BaseModel):
@@ -19,7 +19,7 @@ class GetConnectorInstanceRequest(BaseModel):
         pydantic.Field(alias="connectorId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Connector instance ID"""
+    r"""Connector instance ID (`_key` of the instance)"""
 
 
 class GetConnectorInstanceResponseTypedDict(TypedDict):

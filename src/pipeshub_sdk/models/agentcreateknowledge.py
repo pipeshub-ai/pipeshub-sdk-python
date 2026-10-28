@@ -16,22 +16,48 @@ AgentCreateKnowledgeFiltersTypedDict = TypeAliasType(
     "AgentCreateKnowledgeFiltersTypedDict",
     Union[AgentKnowledgeFiltersParsedTypedDict, str, List[Any]],
 )
+r"""The source's limit, as an object or its JSON text. An empty string or an empty
+array means no limit. A non-empty array, `null`, or text that is not the JSON of
+an object is refused with `400` (`VALIDATION_ERROR`, \"Knowledge filters must be
+an object, with recordGroups and records as lists of ids\").
+
+"""
 
 
 AgentCreateKnowledgeFilters = TypeAliasType(
     "AgentCreateKnowledgeFilters", Union[AgentKnowledgeFiltersParsed, str, List[Any]]
 )
+r"""The source's limit, as an object or its JSON text. An empty string or an empty
+array means no limit. A non-empty array, `null`, or text that is not the JSON of
+an object is refused with `400` (`VALIDATION_ERROR`, \"Knowledge filters must be
+an object, with recordGroups and records as lists of ids\").
+
+"""
 
 
 class AgentCreateKnowledgeTypedDict(TypedDict):
     connector_id: str
+    r"""Surrounding whitespace is trimmed; a blank id is refused with `400`."""
     filters: NotRequired[AgentCreateKnowledgeFiltersTypedDict]
+    r"""The source's limit, as an object or its JSON text. An empty string or an empty
+    array means no limit. A non-empty array, `null`, or text that is not the JSON of
+    an object is refused with `400` (`VALIDATION_ERROR`, \"Knowledge filters must be
+    an object, with recordGroups and records as lists of ids\").
+
+    """
 
 
 class AgentCreateKnowledge(BaseModel):
     connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
+    r"""Surrounding whitespace is trimmed; a blank id is refused with `400`."""
 
     filters: Optional[AgentCreateKnowledgeFilters] = None
+    r"""The source's limit, as an object or its JSON text. An empty string or an empty
+    array means no limit. A non-empty array, `null`, or text that is not the JSON of
+    an object is refused with `400` (`VALIDATION_ERROR`, \"Knowledge filters must be
+    an object, with recordGroups and records as lists of ids\").
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

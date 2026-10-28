@@ -12,7 +12,14 @@ class ResetPasswordRequestTypedDict(TypedDict):
     r"""Request payload"""
 
     current_password: str
+    r"""The password the account has now. The validator treats it as optional; the handler then refuses a missing or empty value with `400`."""
     new_password: str
+    r"""The new password: at least 8 characters with an uppercase letter, a
+    lowercase letter, a digit and one of `#?!@$%^&*-`, at most 72 bytes, and
+    different from the current one. A value that breaks these rules is
+    refused by the handler with `400`.
+
+    """
     cf_turnstile_response: NotRequired[str]
     r"""Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)"""
 
@@ -21,8 +28,15 @@ class ResetPasswordRequest(BaseModel):
     r"""Request payload"""
 
     current_password: Annotated[str, pydantic.Field(alias="currentPassword")]
+    r"""The password the account has now. The validator treats it as optional; the handler then refuses a missing or empty value with `400`."""
 
     new_password: Annotated[str, pydantic.Field(alias="newPassword")]
+    r"""The new password: at least 8 characters with an uppercase letter, a
+    lowercase letter, a digit and one of `#?!@$%^&*-`, at most 72 bytes, and
+    different from the current one. A value that breaks these rules is
+    refused by the handler with `400`.
+
+    """
 
     cf_turnstile_response: Annotated[
         Optional[str], pydantic.Field(alias="cf-turnstile-response")

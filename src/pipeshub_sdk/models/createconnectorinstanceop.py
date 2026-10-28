@@ -13,6 +13,7 @@ class CreateConnectorInstanceResponseTypedDict(TypedDict):
 
     success: bool
     connector: ConnectorCreatedTypedDict
+    r"""Summary of a connector instance that was just created"""
     message: NotRequired[str]
 
 
@@ -22,6 +23,7 @@ class CreateConnectorInstanceResponse(BaseModel):
     success: bool
 
     connector: ConnectorCreated
+    r"""Summary of a connector instance that was just created"""
 
     message: Optional[str] = None
 

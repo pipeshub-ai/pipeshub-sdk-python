@@ -1,6 +1,8 @@
 # GetConversationByIDQueryParamMessageType
 
-Filter messages by type
+Checked against the listed values (`400` otherwise) but not
+applied: every message type is returned.
+
 
 ## Example Usage
 
@@ -17,3 +19,4 @@ value: GetConversationByIDQueryParamMessageType = "user_query"
 - `"error"`
 - `"feedback"`
 - `"system"`
+- `"tool_call"`

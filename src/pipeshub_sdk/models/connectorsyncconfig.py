@@ -20,9 +20,16 @@ class ConnectorSyncConfigScheduledConfigTypedDict(TypedDict):
     timezone: NotRequired[str]
     start_time: NotRequired[int]
     r"""Epoch milliseconds"""
+    start_date_time: NotRequired[Any]
+    r"""When the schedule starts, as the frontend sends it"""
 
 
 class ConnectorSyncConfigScheduledConfig(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True, arbitrary_types_allowed=True, extra="allow"
+    )
+    __pydantic_extra__: Dict[str, Any] = pydantic.Field(init=False)
+
     interval_minutes: Annotated[
         Optional[int], pydantic.Field(alias="intervalMinutes")
     ] = None
@@ -32,19 +39,37 @@ class ConnectorSyncConfigScheduledConfig(BaseModel):
     start_time: Annotated[Optional[int], pydantic.Field(alias="startTime")] = None
     r"""Epoch milliseconds"""
 
+    start_date_time: Annotated[Optional[Any], pydantic.Field(alias="startDateTime")] = (
+        None
+    )
+    r"""When the schedule starts, as the frontend sends it"""
+
+    @property
+    def additional_properties(self):
+        return self.__pydantic_extra__
+
+    @additional_properties.setter
+    def additional_properties(self, value):
+        self.__pydantic_extra__ = value  # pyright: ignore[reportIncompatibleVariableOverride]
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["intervalMinutes", "timezone", "startTime"])
+        optional_fields = set(
+            ["intervalMinutes", "timezone", "startTime", "startDateTime"]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            serialized.pop(k, serialized.pop(n, None))
 
             if val != UNSET_SENTINEL:
                 if val is not None or k not in optional_fields:
                     m[k] = val
+        for k, v in serialized.items():
+            m[k] = v
 
         return m
 

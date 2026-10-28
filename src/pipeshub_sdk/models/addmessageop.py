@@ -13,7 +13,11 @@ from typing_extensions import Annotated, TypedDict
 class AddMessageRequestRequestTypedDict(TypedDict):
     conversation_id: str
     body: AddMessageRequestTypedDict
-    r"""The follow-up question, with optional scope and model overrides."""
+    r"""The follow-up question, with optional scope and model overrides. A `query` of only
+    whitespace is refused with `400` `HTTP_BAD_REQUEST` (\"Query is required\"), after the
+    validator and before any model runs.
+
+    """
 
 
 class AddMessageRequestRequest(BaseModel):
@@ -27,7 +31,11 @@ class AddMessageRequestRequest(BaseModel):
         AddMessageRequest,
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
-    r"""The follow-up question, with optional scope and model overrides."""
+    r"""The follow-up question, with optional scope and model overrides. A `query` of only
+    whitespace is refused with `400` `HTTP_BAD_REQUEST` (\"Query is required\"), after the
+    validator and before any model runs.
+
+    """
 
 
 class AddMessageResponseResponseTypedDict(TypedDict):

@@ -28,7 +28,11 @@ class OAuthRevokeRequestTypedDict(TypedDict):
     token_type_hint: NotRequired[OAuthRevokeRequestTokenTypeHint]
     r"""Hint about token type (optional, improves performance)"""
     client_secret: NotRequired[str]
-    r"""Client secret"""
+    r"""Client secret. Required for a confidential client (missing or empty: `401 invalid_client`);
+    a public client, such as the first-party device app, is identified by `client_id` alone. A
+    wrong secret is `401 invalid_client`.
+
+    """
 
 
 class OAuthRevokeRequest(BaseModel):
@@ -49,7 +53,11 @@ class OAuthRevokeRequest(BaseModel):
     r"""Hint about token type (optional, improves performance)"""
 
     client_secret: Annotated[Optional[str], FieldMetadata(form=True)] = None
-    r"""Client secret"""
+    r"""Client secret. Required for a confidential client (missing or empty: `401 invalid_client`);
+    a public client, such as the first-party device app, is identified by `client_id` alone. A
+    wrong secret is `401 invalid_client`.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

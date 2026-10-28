@@ -28,6 +28,7 @@ ConnectorNameEnum = Union[
         "CONFLUENCE DATA CENTER PERSONAL",
         "JIRA",
         "JIRA PERSONAL",
+        "JIRA CLOUD PERSONAL",
         "JIRA DATA CENTER",
         "JIRA DATA CENTER PERSONAL",
         "BOX",
@@ -62,6 +63,9 @@ ConnectorNameEnum = Union[
         "DATABASE_SANDBOX",
         "IMAGE_GENERATION",
         "ATTACHMENTS",
+        "DEMO",
+        "SMB",
+        "CIFS",
     ],
     UnrecognizedStr,
 ]

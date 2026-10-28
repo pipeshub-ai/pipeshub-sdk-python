@@ -15,6 +15,7 @@ class ListOAuthConfigsRequestTypedDict(TypedDict):
     page: NotRequired[int]
     limit: NotRequired[int]
     search: NotRequired[str]
+    r"""Case-insensitive substring matched against the name, connector type, group, description and categories"""
 
 
 class ListOAuthConfigsRequest(BaseModel):
@@ -32,6 +33,7 @@ class ListOAuthConfigsRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
+    r"""Case-insensitive substring matched against the name, connector type, group, description and categories"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

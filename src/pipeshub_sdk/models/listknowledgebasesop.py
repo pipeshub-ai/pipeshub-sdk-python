@@ -15,7 +15,7 @@ ListKnowledgeBasesSortBy = Literal[
     "updatedAtTimestamp",
     "userRole",
 ]
-r"""Field to sort by."""
+r"""Field to sort by. An empty value is read as the default."""
 
 
 ListKnowledgeBasesSortOrder = Literal[
@@ -27,21 +27,33 @@ r"""Sort direction."""
 
 class ListKnowledgeBasesRequestTypedDict(TypedDict):
     page: NotRequired[int]
-    r"""Page number (1-indexed). Omitted values default to 1."""
+    r"""Page number (1-indexed). Omitted or empty values default to 1. A page past the last
+    one returns an empty list. The value is read with JavaScript `parseInt`, so text after
+    leading digits is ignored (`1abc` is page 1); send a plain integer.
+
+    """
     limit: NotRequired[int]
-    r"""Results per page (max 100). Omitted values default to 20."""
+    r"""Results per page (max 100). Omitted or empty values default to 20. Read with
+    JavaScript `parseInt` like `page`.
+
+    """
     search: NotRequired[str]
-    r"""Search KB names (max 1000 chars). Rejected if it contains HTML/script tags,
-    event handlers, `javascript:`, or format specifiers (validated in Zod + controller).
+    r"""Search KB names (max 1000 chars after trimming). Rejected with `400` if it contains
+    HTML/script tags, event handlers or `javascript:` (`HTTP_BAD_REQUEST`), or a
+    printf-style format specifier (`VALIDATION_ERROR`). The format-specifier check
+    also catches ordinary text such as `50% discount` (`%`, a space, then a letter
+    like `d`). A value longer than 1000 characters is answered `500`.
 
     """
     permissions: NotRequired[str]
-    r"""Comma-separated permission roles to filter by. Each token must be one of:
-    OWNER, WRITER, READER.
+    r"""Comma-separated permission roles to filter by. Each token must be exactly one of
+    OWNER, WRITER, READER: upper case, with no space around the commas. Empty tokens
+    (`OWNER,,WRITER,`) are dropped, but a value with no role at all (`,`) is rejected.
+    An empty value is read as not sent.
 
     """
     sort_by: NotRequired[ListKnowledgeBasesSortBy]
-    r"""Field to sort by."""
+    r"""Field to sort by. An empty value is read as the default."""
     sort_order: NotRequired[ListKnowledgeBasesSortOrder]
     r"""Sort direction."""
 
@@ -51,20 +63,30 @@ class ListKnowledgeBasesRequest(BaseModel):
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 1
-    r"""Page number (1-indexed). Omitted values default to 1."""
+    r"""Page number (1-indexed). Omitted or empty values default to 1. A page past the last
+    one returns an empty list. The value is read with JavaScript `parseInt`, so text after
+    leading digits is ignored (`1abc` is page 1); send a plain integer.
+
+    """
 
     limit: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = 20
-    r"""Results per page (max 100). Omitted values default to 20."""
+    r"""Results per page (max 100). Omitted or empty values default to 20. Read with
+    JavaScript `parseInt` like `page`.
+
+    """
 
     search: Annotated[
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Search KB names (max 1000 chars). Rejected if it contains HTML/script tags,
-    event handlers, `javascript:`, or format specifiers (validated in Zod + controller).
+    r"""Search KB names (max 1000 chars after trimming). Rejected with `400` if it contains
+    HTML/script tags, event handlers or `javascript:` (`HTTP_BAD_REQUEST`), or a
+    printf-style format specifier (`VALIDATION_ERROR`). The format-specifier check
+    also catches ordinary text such as `50% discount` (`%`, a space, then a letter
+    like `d`). A value longer than 1000 characters is answered `500`.
 
     """
 
@@ -72,8 +94,10 @@ class ListKnowledgeBasesRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated permission roles to filter by. Each token must be one of:
-    OWNER, WRITER, READER.
+    r"""Comma-separated permission roles to filter by. Each token must be exactly one of
+    OWNER, WRITER, READER: upper case, with no space around the commas. Empty tokens
+    (`OWNER,,WRITER,`) are dropped, but a value with no role at all (`,`) is rejected.
+    An empty value is read as not sent.
 
     """
 
@@ -82,7 +106,7 @@ class ListKnowledgeBasesRequest(BaseModel):
         pydantic.Field(alias="sortBy"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "name"
-    r"""Field to sort by."""
+    r"""Field to sort by. An empty value is read as the default."""
 
     sort_order: Annotated[
         Optional[ListKnowledgeBasesSortOrder],

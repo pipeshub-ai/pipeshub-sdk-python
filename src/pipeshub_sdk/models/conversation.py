@@ -39,6 +39,19 @@ the last message keeps the partial answer
 """
 
 
+ConversationReasoningEffort = Union[
+    Literal[
+        "none",
+        "low",
+        "medium",
+        "high",
+        "max",
+    ],
+    UnrecognizedStr,
+]
+r"""Reasoning effort requested for the turn, when one was set."""
+
+
 class ConversationModelInfo1TypedDict(TypedDict):
     r"""AI model configuration used"""
 
@@ -48,6 +61,8 @@ class ConversationModelInfo1TypedDict(TypedDict):
     r"""Friendly display name of the selected model"""
     model_provider: NotRequired[str]
     chat_mode: NotRequired[str]
+    reasoning_effort: NotRequired[ConversationReasoningEffort]
+    r"""Reasoning effort requested for the turn, when one was set."""
 
 
 class ConversationModelInfo1(BaseModel):
@@ -68,10 +83,22 @@ class ConversationModelInfo1(BaseModel):
 
     chat_mode: Annotated[Optional[str], pydantic.Field(alias="chatMode")] = None
 
+    reasoning_effort: Annotated[
+        Optional[ConversationReasoningEffort], pydantic.Field(alias="reasoningEffort")
+    ] = None
+    r"""Reasoning effort requested for the turn, when one was set."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["modelKey", "modelName", "modelFriendlyName", "modelProvider", "chatMode"]
+            [
+                "modelKey",
+                "modelName",
+                "modelFriendlyName",
+                "modelProvider",
+                "chatMode",
+                "reasoningEffort",
+            ]
         )
         serialized = handler(self)
         m = {}
@@ -99,6 +126,8 @@ ConversationSharedWithAccessLevel = Union[
 class ConversationSharedWithTypedDict(TypedDict):
     user_id: NotRequired[str]
     access_level: NotRequired[ConversationSharedWithAccessLevel]
+    id: NotRequired[str]
+    r"""Subdocument identifier auto-assigned by MongoDB."""
 
 
 class ConversationSharedWith(BaseModel):
@@ -108,9 +137,12 @@ class ConversationSharedWith(BaseModel):
         Optional[ConversationSharedWithAccessLevel], pydantic.Field(alias="accessLevel")
     ] = None
 
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Subdocument identifier auto-assigned by MongoDB."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["userId", "accessLevel"])
+        optional_fields = set(["userId", "accessLevel", "_id"])
         serialized = handler(self)
         m = {}
 
@@ -127,6 +159,8 @@ class ConversationSharedWith(BaseModel):
 
 class ConversationConversationErrorTypedDict(TypedDict):
     message: str
+    id: NotRequired[str]
+    r"""Sub-document identifier auto-assigned by MongoDB."""
     error_type: NotRequired[str]
     timestamp: NotRequired[datetime]
     message_id: NotRequired[str]
@@ -136,6 +170,9 @@ class ConversationConversationErrorTypedDict(TypedDict):
 
 class ConversationConversationError(BaseModel):
     message: str
+
+    id: Annotated[Optional[str], pydantic.Field(alias="_id")] = None
+    r"""Sub-document identifier auto-assigned by MongoDB."""
 
     error_type: Annotated[Optional[str], pydantic.Field(alias="errorType")] = None
 
@@ -150,7 +187,7 @@ class ConversationConversationError(BaseModel):
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
-            ["errorType", "timestamp", "messageId", "stack", "metadata"]
+            ["_id", "errorType", "timestamp", "messageId", "stack", "metadata"]
         )
         serialized = handler(self)
         m = {}
@@ -289,6 +326,8 @@ class ConversationTypedDict(TypedDict):
     them with `GET /agents/{agentKey}/conversations/{conversationId}`.
 
     """
+    v: NotRequired[int]
+    r"""Mongoose document version key."""
 
 
 class Conversation(BaseModel):
@@ -433,6 +472,9 @@ class Conversation(BaseModel):
 
     """
 
+    v: Annotated[Optional[int], pydantic.Field(alias="__v")] = None
+    r"""Mongoose document version key."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -464,6 +506,7 @@ class Conversation(BaseModel):
                 "projectVisibility",
                 "sharedBy",
                 "agentKey",
+                "__v",
             ]
         )
         nullable_fields = set(["archivedBy", "projectId", "projectVisibility"])

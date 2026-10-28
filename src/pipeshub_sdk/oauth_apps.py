@@ -68,7 +68,7 @@ class OAuthApps(BaseSDK):
 
         :param limit: Items per page (defaults to `20` when omitted or empty; max 100).
 
-        :param status: Filter by status
+        :param status: Filter by status. `revoked` always yields an empty page, because an app only becomes revoked by being deleted and deleted apps are never listed.
         :param search: Search by app name or description (case-insensitive)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -138,6 +138,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthAppListResponse, http_res)
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -148,6 +151,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -188,7 +194,7 @@ class OAuthApps(BaseSDK):
 
         :param limit: Items per page (defaults to `20` when omitted or empty; max 100).
 
-        :param status: Filter by status
+        :param status: Filter by status. `revoked` always yields an empty page, because an app only becomes revoked by being deleted and deleted apps are never listed.
         :param search: Search by app name or description (case-insensitive)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -258,6 +264,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthAppListResponse, http_res)
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -268,6 +277,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -330,12 +342,20 @@ class OAuthApps(BaseSDK):
         :param description: App description
         :param redirect_uris: Allowed redirect URIs (max 10). Required when an effective grant list includes `authorization_code`
             (including the default when `allowedGrantTypes` is omitted).
+            Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+            `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+            `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+            The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+            Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+            `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+            allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+            with no host does not parse. The pattern approximates these rules.
 
         :param allowed_grant_types: Allowed grant types. Defaults to `[\"authorization_code\", \"refresh_token\"]` if omitted (applied by the service, not Zod).
 
-        :param homepage_url: App homepage URL (shown during authorization)
-        :param privacy_policy_url: Privacy policy URL
-        :param terms_of_service_url: Terms of service URL
+        :param homepage_url: App homepage URL (shown during authorization). Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param privacy_policy_url: Privacy policy URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param terms_of_service_url: Terms of service URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
         :param is_confidential: Whether the app can securely store secrets.
             - `true`: Server-side app (secret required for token requests)
             - `false`: Browser/mobile app (must use PKCE)
@@ -446,6 +466,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -508,12 +531,20 @@ class OAuthApps(BaseSDK):
         :param description: App description
         :param redirect_uris: Allowed redirect URIs (max 10). Required when an effective grant list includes `authorization_code`
             (including the default when `allowedGrantTypes` is omitted).
+            Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+            `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+            `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+            The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+            Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+            `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+            allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+            with no host does not parse. The pattern approximates these rules.
 
         :param allowed_grant_types: Allowed grant types. Defaults to `[\"authorization_code\", \"refresh_token\"]` if omitted (applied by the service, not Zod).
 
-        :param homepage_url: App homepage URL (shown during authorization)
-        :param privacy_policy_url: Privacy policy URL
-        :param terms_of_service_url: Terms of service URL
+        :param homepage_url: App homepage URL (shown during authorization). Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param privacy_policy_url: Privacy policy URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param terms_of_service_url: Terms of service URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
         :param is_confidential: Whether the app can securely store secrets.
             - `true`: Server-side app (secret required for token requests)
             - `false`: Browser/mobile app (must use PKCE)
@@ -624,6 +655,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -718,6 +752,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthScopesGroupedResponse, http_res)
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -728,6 +765,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -822,6 +862,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthScopesGroupedResponse, http_res)
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["401", "403"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -832,6 +875,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -929,7 +975,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthAppResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -939,6 +987,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1036,7 +1087,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthAppResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1046,6 +1099,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1102,7 +1158,7 @@ class OAuthApps(BaseSDK):
 
         Creator-only: even org admins cannot edit apps owned by other users.
 
-        When modifying `allowedScopes`, the new set must remain a subset of the caller's role-aware scope list (same rule as `GET /oauth-clients/scopes`). When adding `authorization_code` to `allowedGrantTypes`, `redirectUris` becomes required and must contain at least one URI; otherwise the request is rejected with `400` by the Zod refine on `updateAppSchema`.
+        When modifying `allowedScopes`, the new set must remain a subset of the caller's role-aware scope list (same rule as `GET /oauth-clients/scopes`). The Zod refine on `updateAppSchema` only looks at the body: it refuses `allowedGrantTypes` containing `authorization_code` together with an empty `redirectUris` (`400 VALIDATION_ERROR`), but sending `authorization_code` without `redirectUris` is accepted even when the stored app has no redirect URI.
 
         This endpoint never rotates the client secret — use `POST /oauth-clients/{appId}/regenerate-secret` for that.
 
@@ -1114,16 +1170,27 @@ class OAuthApps(BaseSDK):
         :param description: App description
         :param redirect_uris: Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
             Preserved in the database even if `authorization_code` is removed from grant types.
+            Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+            `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+            `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+            The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+            Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+            `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+            allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+            with no host does not parse. The pattern approximates these rules.
 
         :param allowed_grant_types:
         :param allowed_scopes:
-        :param homepage_url:
-        :param privacy_policy_url:
-        :param terms_of_service_url:
+        :param homepage_url: `null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param privacy_policy_url: `null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param terms_of_service_url: `null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
         :param access_token_lifetime:
         :param refresh_token_lifetime:
-        :param knowledge_limit: `null` lifts the limit. Any change, a lift included, revokes the
-            app's outstanding tokens, so users connect again.
+        :param knowledge_limit: `null` lifts the limit. A change that takes anything away revokes
+            the app's outstanding tokens, so users connect again. A change
+            that only adds (a lift included) keeps them: each token, and each
+            refresh of it, stays at the limit its user agreed to, and the new
+            items reach a user once they connect again.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1169,7 +1236,7 @@ class OAuthApps(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -1177,7 +1244,11 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UpdateOAuthAppRequest
+                request.body if request is not None else None,
+                False,
+                True,
+                "json",
+                Optional[models.UpdateOAuthAppRequest],
             ),
             allow_empty_value=None,
             allowed_fields=["bearer_auth"],
@@ -1213,7 +1284,7 @@ class OAuthApps(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateOAuthAppResponse, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -1224,6 +1295,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1280,7 +1354,7 @@ class OAuthApps(BaseSDK):
 
         Creator-only: even org admins cannot edit apps owned by other users.
 
-        When modifying `allowedScopes`, the new set must remain a subset of the caller's role-aware scope list (same rule as `GET /oauth-clients/scopes`). When adding `authorization_code` to `allowedGrantTypes`, `redirectUris` becomes required and must contain at least one URI; otherwise the request is rejected with `400` by the Zod refine on `updateAppSchema`.
+        When modifying `allowedScopes`, the new set must remain a subset of the caller's role-aware scope list (same rule as `GET /oauth-clients/scopes`). The Zod refine on `updateAppSchema` only looks at the body: it refuses `allowedGrantTypes` containing `authorization_code` together with an empty `redirectUris` (`400 VALIDATION_ERROR`), but sending `authorization_code` without `redirectUris` is accepted even when the stored app has no redirect URI.
 
         This endpoint never rotates the client secret — use `POST /oauth-clients/{appId}/regenerate-secret` for that.
 
@@ -1292,16 +1366,27 @@ class OAuthApps(BaseSDK):
         :param description: App description
         :param redirect_uris: Allowed redirect URIs (up to 10). Required when `authorization_code` grant type is enabled.
             Preserved in the database even if `authorization_code` is removed from grant types.
+            Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+            `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+            `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+            The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+            Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+            `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+            allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+            with no host does not parse. The pattern approximates these rules.
 
         :param allowed_grant_types:
         :param allowed_scopes:
-        :param homepage_url:
-        :param privacy_policy_url:
-        :param terms_of_service_url:
+        :param homepage_url: `null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param privacy_policy_url: `null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
+        :param terms_of_service_url: `null` clears it. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say.
         :param access_token_lifetime:
         :param refresh_token_lifetime:
-        :param knowledge_limit: `null` lifts the limit. Any change, a lift included, revokes the
-            app's outstanding tokens, so users connect again.
+        :param knowledge_limit: `null` lifts the limit. A change that takes anything away revokes
+            the app's outstanding tokens, so users connect again. A change
+            that only adds (a lift included) keeps them: each token, and each
+            refresh of it, stays at the limit its user agreed to, and the new
+            items reach a user once they connect again.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -1347,7 +1432,7 @@ class OAuthApps(BaseSDK):
             base_url=base_url,
             url_variables=url_variables,
             request=request,
-            request_body_required=True,
+            request_body_required=False,
             request_has_path_params=True,
             request_has_query_params=True,
             user_agent_header="user-agent",
@@ -1355,7 +1440,11 @@ class OAuthApps(BaseSDK):
             http_headers=http_headers,
             security=self.sdk_configuration.security,
             get_serialized_body=lambda: utils.serialize_request_body(
-                request.body, False, False, "json", models.UpdateOAuthAppRequest
+                request.body if request is not None else None,
+                False,
+                True,
+                "json",
+                Optional[models.UpdateOAuthAppRequest],
             ),
             allow_empty_value=None,
             allowed_fields=["bearer_auth"],
@@ -1391,7 +1480,7 @@ class OAuthApps(BaseSDK):
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.UpdateOAuthAppResponse, http_res)
         if utils.match_response(
-            http_res, ["400", "401", "403", "404"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -1402,6 +1491,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1499,7 +1591,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteOAuthAppResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1509,6 +1603,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1606,7 +1703,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.DeleteOAuthAppResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1616,6 +1715,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1717,7 +1819,9 @@ class OAuthApps(BaseSDK):
             return unmarshal_json_response(
                 models.RegenerateOAuthAppSecretResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1727,6 +1831,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1828,7 +1935,9 @@ class OAuthApps(BaseSDK):
             return unmarshal_json_response(
                 models.RegenerateOAuthAppSecretResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -1838,6 +1947,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1949,6 +2061,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2060,6 +2175,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2086,7 +2204,7 @@ class OAuthApps(BaseSDK):
 
         Moves a suspended OAuth app back to `status: \"active\"`, restoring its ability to authenticate and obtain new tokens via `POST /oauth2/token`.
 
-        A revoked app cannot be reactivated (returns `400`); the only path back is to register a new app. Activating an app that is already active also returns `400`.
+        Activating an app that is already active returns `400`. A deleted app (the only way an app becomes `revoked`) is hidden from every lookup, so activating it returns `404`, not the service's \"Cannot activate a revoked app\" `400`; the only path back is to register a new app.
 
         Creator-only.
 
@@ -2171,6 +2289,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2197,7 +2318,7 @@ class OAuthApps(BaseSDK):
 
         Moves a suspended OAuth app back to `status: \"active\"`, restoring its ability to authenticate and obtain new tokens via `POST /oauth2/token`.
 
-        A revoked app cannot be reactivated (returns `400`); the only path back is to register a new app. Activating an app that is already active also returns `400`.
+        Activating an app that is already active returns `400`. A deleted app (the only way an app becomes `revoked`) is hidden from every lookup, so activating it returns `404`, not the service's \"Cannot activate a revoked app\" `400`; the only path back is to register a new app.
 
         Creator-only.
 
@@ -2282,6 +2403,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2381,7 +2505,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthAppTokensListResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -2391,6 +2517,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2490,7 +2619,9 @@ class OAuthApps(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthAppTokensListResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -2500,6 +2631,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -2526,7 +2660,7 @@ class OAuthApps(BaseSDK):
 
         Revokes every access and refresh token currently issued to an OAuth app, in a single operation. Use this for emergency credential rotation, suspected secret leaks, or as a follow-up to `POST /oauth-clients/{appId}/regenerate-secret` when you want existing sessions invalidated immediately rather than letting them expire naturally.
 
-        The response `count` is the total number of tokens revoked across both types. Clients of this app must then obtain new tokens via the standard OAuth flow.
+        The response carries only a confirmation `message`; it does not say how many tokens were revoked. Clients of this app must then obtain new tokens via the standard OAuth flow.
 
         Creator-only.
 
@@ -2601,7 +2735,9 @@ class OAuthApps(BaseSDK):
             return unmarshal_json_response(
                 models.RevokeAllOAuthAppTokensResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -2611,6 +2747,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -2637,7 +2776,7 @@ class OAuthApps(BaseSDK):
 
         Revokes every access and refresh token currently issued to an OAuth app, in a single operation. Use this for emergency credential rotation, suspected secret leaks, or as a follow-up to `POST /oauth-clients/{appId}/regenerate-secret` when you want existing sessions invalidated immediately rather than letting them expire naturally.
 
-        The response `count` is the total number of tokens revoked across both types. Clients of this app must then obtain new tokens via the standard OAuth flow.
+        The response carries only a confirmation `message`; it does not say how many tokens were revoked. Clients of this app must then obtain new tokens via the standard OAuth flow.
 
         Creator-only.
 
@@ -2712,7 +2851,9 @@ class OAuthApps(BaseSDK):
             return unmarshal_json_response(
                 models.RevokeAllOAuthAppTokensResponse, http_res
             )
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
             )
@@ -2722,6 +2863,9 @@ class OAuthApps(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

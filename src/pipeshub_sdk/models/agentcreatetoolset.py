@@ -12,7 +12,10 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class AgentCreateToolsetTypedDict(TypedDict):
     name: AgentCreateToolsetName
-    r"""Registered toolset name (lowercase) accepted by the create-agent gateway."""
+    r"""Toolset name. Surrounding whitespace is trimmed before the check, so
+    `\"  slack  \"` is accepted.
+
+    """
     display_name: NotRequired[str]
     type: NotRequired[str]
     instance_id: NotRequired[str]
@@ -22,7 +25,10 @@ class AgentCreateToolsetTypedDict(TypedDict):
 
 class AgentCreateToolset(BaseModel):
     name: AgentCreateToolsetName
-    r"""Registered toolset name (lowercase) accepted by the create-agent gateway."""
+    r"""Toolset name. Surrounding whitespace is trimmed before the check, so
+    `\"  slack  \"` is accepted.
+
+    """
 
     display_name: Annotated[Optional[str], pydantic.Field(alias="displayName")] = None
 

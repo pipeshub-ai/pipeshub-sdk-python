@@ -46,18 +46,24 @@ class ListAgentConversationsRequestTypedDict(TypedDict):
     """
     search: NotRequired[str]
     r"""Case-insensitive search term applied to conversation `title` and
-    `messages.content`. Maximum length is 1000 characters. HTML/XSS
-    payloads and format specifiers are rejected.
+    `messages.content`. Maximum length is 1000 characters. A printf-style
+    format specifier (`%s`, `%x`, ...) is refused with `VALIDATION_ERROR`;
+    markup (HTML tags, `javascript:`, event handlers) is refused with
+    `HTTP_BAD_REQUEST` by the sanitizer every route runs.
 
     """
     start_date: NotRequired[str]
-    r"""Inclusive lower bound on `createdAt`. The handler accepts any
-    JavaScript-parseable date string; invalid values return HTTP 400.
+    r"""Inclusive lower bound on `createdAt`, as an ISO 8601 date or
+    date-time. The validator accepts any string JavaScript `Date` can
+    parse (so also forms like `May 1 2026`); one it cannot parse returns
+    HTTP 400.
 
     """
     end_date: NotRequired[str]
-    r"""Inclusive upper bound on `createdAt`. The handler accepts any
-    JavaScript-parseable date string; invalid values return HTTP 400.
+    r"""Inclusive upper bound on `createdAt`, as an ISO 8601 date or
+    date-time. The validator accepts any string JavaScript `Date` can
+    parse (so also forms like `May 1 2026`); one it cannot parse returns
+    HTTP 400.
 
     """
     status: NotRequired[str]
@@ -75,7 +81,7 @@ class ListAgentConversationsRequestTypedDict(TypedDict):
     project_id: NotRequired[str]
     r"""Restrict results to a single project. Pass a project's `id`, or
     the literal string `unassigned` to list agent conversations with
-    no `projectId`.
+    no `projectId`. Anything else is refused with HTTP 400.
 
     """
 
@@ -132,8 +138,10 @@ class ListAgentConversationsRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Case-insensitive search term applied to conversation `title` and
-    `messages.content`. Maximum length is 1000 characters. HTML/XSS
-    payloads and format specifiers are rejected.
+    `messages.content`. Maximum length is 1000 characters. A printf-style
+    format specifier (`%s`, `%x`, ...) is refused with `VALIDATION_ERROR`;
+    markup (HTML tags, `javascript:`, event handlers) is refused with
+    `HTTP_BAD_REQUEST` by the sanitizer every route runs.
 
     """
 
@@ -142,8 +150,10 @@ class ListAgentConversationsRequest(BaseModel):
         pydantic.Field(alias="startDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Inclusive lower bound on `createdAt`. The handler accepts any
-    JavaScript-parseable date string; invalid values return HTTP 400.
+    r"""Inclusive lower bound on `createdAt`, as an ISO 8601 date or
+    date-time. The validator accepts any string JavaScript `Date` can
+    parse (so also forms like `May 1 2026`); one it cannot parse returns
+    HTTP 400.
 
     """
 
@@ -152,8 +162,10 @@ class ListAgentConversationsRequest(BaseModel):
         pydantic.Field(alias="endDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Inclusive upper bound on `createdAt`. The handler accepts any
-    JavaScript-parseable date string; invalid values return HTTP 400.
+    r"""Inclusive upper bound on `createdAt`, as an ISO 8601 date or
+    date-time. The validator accepts any string JavaScript `Date` can
+    parse (so also forms like `May 1 2026`); one it cannot parse returns
+    HTTP 400.
 
     """
 
@@ -185,7 +197,7 @@ class ListAgentConversationsRequest(BaseModel):
     ] = None
     r"""Restrict results to a single project. Pass a project's `id`, or
     the literal string `unassigned` to list agent conversations with
-    no `projectId`.
+    no `projectId`. Anything else is refused with HTTP 400.
 
     """
 

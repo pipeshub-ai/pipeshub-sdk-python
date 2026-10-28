@@ -51,6 +51,14 @@ class CreateOAuthAppRequestTypedDict(TypedDict):
     redirect_uris: NotRequired[List[str]]
     r"""Allowed redirect URIs (max 10). Required when an effective grant list includes `authorization_code`
     (including the default when `allowedGrantTypes` is omitted).
+    Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+    `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+    `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+    The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+    Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+    `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+    allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+    with no host does not parse. The pattern approximates these rules.
 
     """
     allowed_grant_types: NotRequired[List[CreateOAuthAppRequestAllowedGrantType]]
@@ -58,11 +66,11 @@ class CreateOAuthAppRequestTypedDict(TypedDict):
 
     """
     homepage_url: NotRequired[str]
-    r"""App homepage URL (shown during authorization)"""
+    r"""App homepage URL (shown during authorization). Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
     privacy_policy_url: NotRequired[str]
-    r"""Privacy policy URL"""
+    r"""Privacy policy URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
     terms_of_service_url: NotRequired[str]
-    r"""Terms of service URL"""
+    r"""Terms of service URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
     is_confidential: NotRequired[bool]
     r"""Whether the app can securely store secrets.
     - `true`: Server-side app (secret required for token requests)
@@ -127,6 +135,14 @@ class CreateOAuthAppRequest(BaseModel):
     ] = None
     r"""Allowed redirect URIs (max 10). Required when an effective grant list includes `authorization_code`
     (including the default when `allowedGrantTypes` is omitted).
+    Each URI must parse as a URL (`VALIDATION_ERROR` otherwise), and the service then refuses with
+    `400 OAUTH_INVALID_REDIRECT_URI` any URI that is not `https:` and whose host is not `localhost` or
+    `127.0.0.1` (any scheme is let through on those two hosts), or that carries a fragment.
+    The one exception is the literal `cursor://anysphere.cursor-mcp/oauth/callback`.
+    Both checks use WHATWG `new URL()`, so the scheme and a `localhost` host match in any case,
+    `https:` may be followed by any number of `/` or `\` (or none), and surrounding whitespace is
+    allowed and trimmed before the URI is stored; the URI is otherwise stored as sent. `https://`
+    with no host does not parse. The pattern approximates these rules.
 
     """
 
@@ -139,17 +155,17 @@ class CreateOAuthAppRequest(BaseModel):
     """
 
     homepage_url: Annotated[Optional[str], pydantic.Field(alias="homepageUrl")] = None
-    r"""App homepage URL (shown during authorization)"""
+    r"""App homepage URL (shown during authorization). Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
 
     privacy_policy_url: Annotated[
         Optional[str], pydantic.Field(alias="privacyPolicyUrl")
     ] = None
-    r"""Privacy policy URL"""
+    r"""Privacy policy URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
 
     terms_of_service_url: Annotated[
         Optional[str], pydantic.Field(alias="termsOfServiceUrl")
     ] = None
-    r"""Terms of service URL"""
+    r"""Terms of service URL. Must parse as a URL (`z.string().url()`); the pattern is the closest JSON Schema can say."""
 
     is_confidential: Annotated[
         Optional[bool], pydantic.Field(alias="isConfidential")

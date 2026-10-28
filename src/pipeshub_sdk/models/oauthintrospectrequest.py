@@ -28,7 +28,11 @@ class OAuthIntrospectRequestTypedDict(TypedDict):
     token_type_hint: NotRequired[OAuthIntrospectRequestTokenTypeHint]
     r"""Hint about token type"""
     client_secret: NotRequired[str]
-    r"""Client secret"""
+    r"""Client secret. Not checked by the validator, but client authentication cannot succeed
+    without it: when it is missing the route answers `{active: false}` even for a live token, for public and confidential clients
+    alike. A wrong secret is `401 invalid_client`.
+
+    """
 
 
 class OAuthIntrospectRequest(BaseModel):
@@ -49,7 +53,11 @@ class OAuthIntrospectRequest(BaseModel):
     r"""Hint about token type"""
 
     client_secret: Annotated[Optional[str], FieldMetadata(form=True)] = None
-    r"""Client secret"""
+    r"""Client secret. Not checked by the validator, but client authentication cannot succeed
+    without it: when it is missing the route answers `{active: false}` even for a live token, for public and confidential clients
+    alike. A wrong secret is `401 invalid_client`.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

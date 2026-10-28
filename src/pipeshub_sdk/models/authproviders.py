@@ -16,7 +16,12 @@ from typing_extensions import NotRequired, TypedDict
 
 
 class AuthProvidersTypedDict(TypedDict):
-    r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    r"""Settings of the external sign-in providers among the allowed methods, keyed by provider.
+    A provider is listed whenever its settings can be read, which is also the case when
+    nothing has been saved for it yet: its entry is then an empty object. Only `google`
+    and `microsoft` have a sign-in flow.
+
+    """
 
     google: NotRequired[AuthProviderGooglePublicConfigTypedDict]
     r"""Public Google OAuth settings returned to clients"""
@@ -25,7 +30,12 @@ class AuthProvidersTypedDict(TypedDict):
 
 
 class AuthProviders(BaseModel):
-    r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    r"""Settings of the external sign-in providers among the allowed methods, keyed by provider.
+    A provider is listed whenever its settings can be read, which is also the case when
+    nothing has been saved for it yet: its entry is then an empty object. Only `google`
+    and `microsoft` have a sign-in flow.
+
+    """
 
     google: Optional[AuthProviderGooglePublicConfig] = None
     r"""Public Google OAuth settings returned to clients"""

@@ -50,7 +50,10 @@ class ConnectorFilters(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id:
+        :param connector_id: Connector instance ID: 1-64 letters, digits, `_` or `-`
+            (`400 VALIDATION_ERROR` otherwise). An ID that decodes to an unsafe
+            path segment is refused with `400` before the token is checked.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -119,6 +122,9 @@ class ConnectorFilters(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -171,7 +177,10 @@ class ConnectorFilters(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id:
+        :param connector_id: Connector instance ID: 1-64 letters, digits, `_` or `-`
+            (`400 VALIDATION_ERROR` otherwise). An ID that decodes to an unsafe
+            path segment is refused with `400` before the token is checked.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -242,6 +251,9 @@ class ConnectorFilters(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -279,7 +291,6 @@ class ConnectorFilters(BaseSDK):
         What this endpoint saves goes to <code>filters.values</code>, which sync does not read:
         sync reads <code>filters.sync</code> and <code>filters.indexing</code>.<br><br>
         Save the user's filter selections for a connector.<br><br>
-        <b>Overview:</b><br>
         <b>Request:</b><br>
         <code>filters</code> must hold at least one entry: <code>{\"filters\": {}}</code> is
         refused with <code>400</code>. The server stores whatever it is given under the
@@ -290,7 +301,10 @@ class ConnectorFilters(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id:
+        :param connector_id: Connector instance ID. Unlike `GET` on this path, not checked for
+            shape: an ID that matches no instance is a `404`. An ID that decodes
+            to an unsafe path segment is refused with `400` before the token is checked.
+
         :param filters: Filter values to save (structure depends on connector's filter schema). Must not be empty.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -368,6 +382,9 @@ class ConnectorFilters(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -407,7 +424,6 @@ class ConnectorFilters(BaseSDK):
         What this endpoint saves goes to <code>filters.values</code>, which sync does not read:
         sync reads <code>filters.sync</code> and <code>filters.indexing</code>.<br><br>
         Save the user's filter selections for a connector.<br><br>
-        <b>Overview:</b><br>
         <b>Request:</b><br>
         <code>filters</code> must hold at least one entry: <code>{\"filters\": {}}</code> is
         refused with <code>400</code>. The server stores whatever it is given under the
@@ -418,7 +434,10 @@ class ConnectorFilters(BaseSDK):
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id:
+        :param connector_id: Connector instance ID. Unlike `GET` on this path, not checked for
+            shape: an ID that matches no instance is a `404`. An ID that decodes
+            to an unsafe path segment is refused with `400` before the token is checked.
+
         :param filters: Filter values to save (structure depends on connector's filter schema). Must not be empty.
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -498,6 +517,9 @@ class ConnectorFilters(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -532,13 +554,16 @@ class ConnectorFilters(BaseSDK):
         Get options for a dynamic filter field with pagination.<br><br>
         <b>Overview:</b><br>
         For filters with <code>optionSourceType: dynamic</code>, options are loaded
-        from the connected service. This supports pagination and search.<br><br>
+        from the connected service. This supports pagination and search. The
+        connector is started on demand with its saved credentials, so the
+        connected service must be reachable.<br><br>
         <b>Scoped options (GitLab):</b><br>
         When fetching options for the <code>project_ids</code> filter key, pass
         one or more <code>contextGroupPath</code> query parameters to restrict
         the returned repositories to those that belong to the specified GitLab
         group namespace paths (e.g. <code>myorg/team</code>). This is used to
-        populate the project filter after the user has selected groups.<br><br>
+        populate the project filter after the user has selected groups. Other
+        connectors accept and ignore both group path parameters.<br><br>
         <b>Examples:</b><br>
         <ul>
         <li>Google Drive folders list</li>
@@ -547,28 +572,36 @@ class ConnectorFilters(BaseSDK):
         <li>GitLab groups list (<code>filterKey=group_ids</code>)</li>
         <li>GitLab projects scoped to groups (<code>filterKey=project_ids&amp;contextGroupPath=myorg/team</code>)</li>
         </ul>
+        Query parameters other than the six below are dropped without an error.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param connector_id: Connector instance ID
-        :param filter_key: Filter field key
-        :param page:
-        :param limit:
+        :param filter_key: Filter field key, the `name` of a field in the connector type's
+            `config.filters` (`GET /connectors/registry/{connectorType}/schema`).
+            An unsafe path segment is refused with `400` before the token is checked.
+
+        :param page: Page number. An empty value is refused.
+        :param limit: Page size, 1 to 100. A value above 100 or an empty value is refused
+            by the gateway's validator (\"Limit must be between 1 and 100.\").
+
         :param search: Search term for filtering options
-        :param cursor: Cursor for cursor-based pagination
+        :param cursor: Cursor for cursor-based pagination, passed on to connectors that page by cursor
         :param context_group_path: One or more GitLab group namespace paths (e.g. `myorg/team`).
             When provided for the `project_ids` filter key, the returned
             options are scoped to repositories that belong to those groups.
             Repeat the parameter for multiple groups:
-            `?contextGroupPath=groupA&contextGroupPath=groupB`
+            `?contextGroupPath=groupA&contextGroupPath=groupB`. Blank values
+            are dropped.
 
         :param exclude_context_group_path: One or more GitLab group namespace paths to exclude. When provided
             for the `project_ids` filter key, the returned options omit
             repositories that belong to those groups (used when the
             `group_ids` sync filter is `not_in`). Repeat the parameter for
             multiple groups:
-            `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`
+            `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`.
+            Blank values are dropped.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -651,6 +684,9 @@ class ConnectorFilters(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -685,13 +721,16 @@ class ConnectorFilters(BaseSDK):
         Get options for a dynamic filter field with pagination.<br><br>
         <b>Overview:</b><br>
         For filters with <code>optionSourceType: dynamic</code>, options are loaded
-        from the connected service. This supports pagination and search.<br><br>
+        from the connected service. This supports pagination and search. The
+        connector is started on demand with its saved credentials, so the
+        connected service must be reachable.<br><br>
         <b>Scoped options (GitLab):</b><br>
         When fetching options for the <code>project_ids</code> filter key, pass
         one or more <code>contextGroupPath</code> query parameters to restrict
         the returned repositories to those that belong to the specified GitLab
         group namespace paths (e.g. <code>myorg/team</code>). This is used to
-        populate the project filter after the user has selected groups.<br><br>
+        populate the project filter after the user has selected groups. Other
+        connectors accept and ignore both group path parameters.<br><br>
         <b>Examples:</b><br>
         <ul>
         <li>Google Drive folders list</li>
@@ -700,28 +739,36 @@ class ConnectorFilters(BaseSDK):
         <li>GitLab groups list (<code>filterKey=group_ids</code>)</li>
         <li>GitLab projects scoped to groups (<code>filterKey=project_ids&amp;contextGroupPath=myorg/team</code>)</li>
         </ul>
+        Query parameters other than the six below are dropped without an error.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
         :param connector_id: Connector instance ID
-        :param filter_key: Filter field key
-        :param page:
-        :param limit:
+        :param filter_key: Filter field key, the `name` of a field in the connector type's
+            `config.filters` (`GET /connectors/registry/{connectorType}/schema`).
+            An unsafe path segment is refused with `400` before the token is checked.
+
+        :param page: Page number. An empty value is refused.
+        :param limit: Page size, 1 to 100. A value above 100 or an empty value is refused
+            by the gateway's validator (\"Limit must be between 1 and 100.\").
+
         :param search: Search term for filtering options
-        :param cursor: Cursor for cursor-based pagination
+        :param cursor: Cursor for cursor-based pagination, passed on to connectors that page by cursor
         :param context_group_path: One or more GitLab group namespace paths (e.g. `myorg/team`).
             When provided for the `project_ids` filter key, the returned
             options are scoped to repositories that belong to those groups.
             Repeat the parameter for multiple groups:
-            `?contextGroupPath=groupA&contextGroupPath=groupB`
+            `?contextGroupPath=groupA&contextGroupPath=groupB`. Blank values
+            are dropped.
 
         :param exclude_context_group_path: One or more GitLab group namespace paths to exclude. When provided
             for the `project_ids` filter key, the returned options omit
             repositories that belong to those groups (used when the
             `group_ids` sync filter is `not_in`). Repeat the parameter for
             multiple groups:
-            `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`
+            `?excludeContextGroupPath=groupA&excludeContextGroupPath=groupB`.
+            Blank values are dropped.
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -802,6 +849,9 @@ class ConnectorFilters(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):

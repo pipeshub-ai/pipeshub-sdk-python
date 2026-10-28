@@ -8,11 +8,17 @@ from typing_extensions import Annotated, TypedDict
 
 
 class RestoreRecordsRequestBodyTypedDict(TypedDict):
+    r"""Request body for POST /knowledgeBase/records/restore. Fields other than `recordIds` are dropped by the validator, not refused."""
+
     record_ids: List[str]
+    r"""Record ids to restore. An id listed more than once is restored, and answered, once."""
 
 
 class RestoreRecordsRequestBody(BaseModel):
+    r"""Request body for POST /knowledgeBase/records/restore. Fields other than `recordIds` are dropped by the validator, not refused."""
+
     record_ids: Annotated[List[str], pydantic.Field(alias="recordIds")]
+    r"""Record ids to restore. An id listed more than once is restored, and answered, once."""
 
 
 try:

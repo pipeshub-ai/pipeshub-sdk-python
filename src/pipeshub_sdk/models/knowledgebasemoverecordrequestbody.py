@@ -2,22 +2,25 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, Nullable, UNSET_SENTINEL
+from pipeshub_sdk.utils import FieldMetadata
 import pydantic
 from pydantic import model_serializer
 from typing_extensions import Annotated, TypedDict
 
 
 class KnowledgeBaseMoveRecordRequestBodyTypedDict(TypedDict):
-    r"""Request body for PUT /knowledgeBase/{kbId}/record/{recordId}/move (moveRecord)."""
+    r"""Request body for PUT /knowledgeBase/{kbId}/record/{recordId}/move (moveRecord). Fields other than `newParentId` are dropped by the validator, not refused."""
 
     new_parent_id: Nullable[str]
     r"""Target folder ID, or null to move the record to the knowledge base root"""
 
 
 class KnowledgeBaseMoveRecordRequestBody(BaseModel):
-    r"""Request body for PUT /knowledgeBase/{kbId}/record/{recordId}/move (moveRecord)."""
+    r"""Request body for PUT /knowledgeBase/{kbId}/record/{recordId}/move (moveRecord). Fields other than `newParentId` are dropped by the validator, not refused."""
 
-    new_parent_id: Annotated[Nullable[str], pydantic.Field(alias="newParentId")]
+    new_parent_id: Annotated[
+        Nullable[str], pydantic.Field(alias="newParentId"), FieldMetadata(form=True)
+    ]
     r"""Target folder ID, or null to move the record to the knowledge base root"""
 
     @model_serializer(mode="wrap")

@@ -42,9 +42,10 @@ class AIModelsProviders(BaseSDK):
         - When no providers of the requested type are configured the endpoint still
         returns HTTP **200** with an empty `models` array — this is **not** an error.
 
-        **Access control:** requires a valid bearer token. For OAuth tokens the
-        `config:read` scope must be present; regular JWT bearer tokens pass through
-        without scope enforcement.
+        **Access control:** requires a valid bearer token, from any member of the
+        organization (there is no admin check). For OAuth tokens the `config:read` scope
+        must be present; regular JWT bearer tokens pass through without scope enforcement.
+        The query string is not read.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -120,32 +121,12 @@ class AIModelsProviders(BaseSDK):
             return unmarshal_json_response(
                 models.GetAvailableModelsByTypeResponse, http_res
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeBadRequestErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeUnauthorizedErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeForbiddenErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeInternalServerErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -189,9 +170,10 @@ class AIModelsProviders(BaseSDK):
         - When no providers of the requested type are configured the endpoint still
         returns HTTP **200** with an empty `models` array — this is **not** an error.
 
-        **Access control:** requires a valid bearer token. For OAuth tokens the
-        `config:read` scope must be present; regular JWT bearer tokens pass through
-        without scope enforcement.
+        **Access control:** requires a valid bearer token, from any member of the
+        organization (there is no admin check). For OAuth tokens the `config:read` scope
+        must be present; regular JWT bearer tokens pass through without scope enforcement.
+        The query string is not read.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
@@ -267,32 +249,12 @@ class AIModelsProviders(BaseSDK):
             return unmarshal_json_response(
                 models.GetAvailableModelsByTypeResponse, http_res
             )
-        if utils.match_response(http_res, "400", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeBadRequestErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeBadRequestError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "401", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeUnauthorizedErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeUnauthorizedError(
-                response_data, http_res
-            )
-        if utils.match_response(http_res, "403", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeForbiddenErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeForbiddenError(response_data, http_res)
+        if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
-            response_data = unmarshal_json_response(
-                errors.GetAvailableModelsByTypeInternalServerErrorData, http_res
-            )
-            raise errors.GetAvailableModelsByTypeInternalServerError(
-                response_data, http_res
-            )
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

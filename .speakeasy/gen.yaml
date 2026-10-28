@@ -31,7 +31,7 @@ generation:
     generateNewTests: false
     skipResponseBodyAssertions: false
 python:
-  version: 1.8.0
+  version: 1.8.1
   additionalDependencies:
     dependencies: {}
     dev: {}
@@ -90,9 +90,9 @@ python:
   multipartArrayFormat: standard
   optionalDependencies:
     langchain:
-      langchain-core: ">=0.3.0"
+      langchain-core: '>=0.3.0'
     llamaindex:
-      llama-index-core: ">=0.11.0"
+      llama-index-core: '>=0.11.0'
   outputModelSuffix: output
   packageManager: uv
   packageName: pipeshub-sdk

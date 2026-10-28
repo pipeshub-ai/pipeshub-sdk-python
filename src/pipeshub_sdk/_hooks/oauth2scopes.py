@@ -141,3 +141,18 @@ class OAuth2Scope(str, Enum):
 
     CRAWL_WRITE = "crawl:write"
     r"""Create and manage crawling jobs"""
+
+    SKILL_READ = "skill:read"
+    r"""Read custom agent skills"""
+
+    SKILL_WRITE = "skill:write"
+    r"""Create and manage custom agent skills"""
+
+    MCP_READ = "mcp:read"
+    r"""Read MCP servers and their tools"""
+
+    MCP_WRITE = "mcp:write"
+    r"""Add, configure and authenticate MCP servers"""
+
+    MCP_DELETE = "mcp:delete"
+    r"""Remove MCP servers and their credentials"""

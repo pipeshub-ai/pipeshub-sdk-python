@@ -10,14 +10,20 @@ class CreateKnowledgeBaseRequestTypedDict(TypedDict):
     r"""Request payload"""
 
     kb_name: str
-    r"""Name of the knowledge base"""
+    r"""Name of the knowledge base. Leading and trailing whitespace is removed
+    first, so a name made only of whitespace is refused as empty.
+
+    """
 
 
 class CreateKnowledgeBaseRequest(BaseModel):
     r"""Request payload"""
 
     kb_name: Annotated[str, pydantic.Field(alias="kbName")]
-    r"""Name of the knowledge base"""
+    r"""Name of the knowledge base. Leading and trailing whitespace is removed
+    first, so a name made only of whitespace is refused as empty.
+
+    """
 
 
 try:

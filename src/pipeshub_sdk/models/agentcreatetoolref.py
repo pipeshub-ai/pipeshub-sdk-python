@@ -10,14 +10,18 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class AgentCreateToolRefTypedDict(TypedDict):
     name: str
+    r"""Surrounding whitespace is trimmed; a blank name is refused with `400`."""
     full_name: NotRequired[str]
+    r"""Surrounding whitespace is trimmed; a blank value is refused with `400`."""
     description: NotRequired[str]
 
 
 class AgentCreateToolRef(BaseModel):
     name: str
+    r"""Surrounding whitespace is trimmed; a blank name is refused with `400`."""
 
     full_name: Annotated[Optional[str], pydantic.Field(alias="fullName")] = None
+    r"""Surrounding whitespace is trimmed; a blank value is refused with `400`."""
 
     description: Optional[str] = None
 

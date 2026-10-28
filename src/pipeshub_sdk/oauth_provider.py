@@ -15,6 +15,9 @@ class OAuthProvider(BaseSDK):
     - `authorization_code` - Standard OAuth flow with PKCE support
     - `client_credentials` - Machine-to-machine authentication
     - `refresh_token` - Token refresh for long-lived access
+    - `urn:ietf:params:oauth:grant-type:device_code` - Device authorization grant (RFC 8628) for devices and CLIs without a browser; started with `POST /oauth2/device_authorization`
+
+    **Dynamic Client Registration (RFC 7591):** `POST /oauth2/register`, only when the instance enables it.
 
     **Security Features:**
     - PKCE (Proof Key for Code Exchange) for public clients
@@ -30,7 +33,7 @@ class OAuthProvider(BaseSDK):
     **Machine tokens (`client_credentials`) — gateway and downstream identity:**
     Access tokens may encode **`userId === client_id`**. The **Node.js API gateway** resolves the effective user to the application's **token identity**: the service account it is pointed at (**`tokenIdentityUserId`**), or its creator for an application registered before a service account was required and never bound. It loads the application by **`client_id`** on every such token and takes the identity from that record.
 
-    The JWT's **`createdBy`** claim is a cross-check rather than a source: despite its name it carries the identity, not who registered the application, and a token whose claim disagrees with the record is refused with **401**. Pointing an application at a different service account also revokes the tokens it has already issued, so a stale claim should not arrive in the first place.
+    The JWT's **`createdBy`** claim is a cross-check rather than a source: despite its name it carries the identity, not who registered the application, and a token whose claim disagrees with the record is refused with **401** (\"This token was issued for an identity the application no longer acts as\"), and so is a token whose app was deleted (\"OAuth app not found or revoked\"). Pointing an application at a different service account also revokes the tokens it has already issued, so a stale claim should not arrive in the first place.
 
     **Python services:** Validate `Authorization: Bearer` as today and use the JWT payload’s **`userId`** as-is for scopes and user-scoped logic. Where a machine token carries **`userId === client_id`** and a **`createdBy`** claim, Python copies that claim onto **`userId`** first, so both halves of the product agree on the identity.
 
@@ -44,6 +47,7 @@ class OAuthProvider(BaseSDK):
         grant_type: models.GrantType,
         code: Optional[str] = None,
         redirect_uri: Optional[str] = None,
+        device_code: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         refresh_token: Optional[str] = None,
@@ -61,12 +65,15 @@ class OAuthProvider(BaseSDK):
 
         OAuth 2.0 Token Endpoint (RFC 6749 Section 4.1.3).
 
-        Exchanges an authorization code, client credentials, refresh token, or
+        Exchanges an authorization code, client credentials, refresh token, device code or
         service token for access tokens.
+        Successful responses carry `Cache-Control: no-store` and `Pragma: no-cache`.
 
         **Grant Types:**
         - `authorization_code`: Exchange auth code for tokens (user-based)
         - `client_credentials`: Get tokens for machine-to-machine auth
+        - `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device authorization
+        (RFC 8628); answered `400` with `authorization_pending` until the user approves
         - `refresh_token`: Get new access token using refresh token. The refresh token must have been issued to the presenting `client_id`; one issued to another client is rejected with `400 invalid_grant` and is left untouched (not rotated, not revoked).
         - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
         delegation (RFC 8693). A service account exchanges its own token for
@@ -80,7 +87,7 @@ class OAuthProvider(BaseSDK):
         the cause is recorded in the delegation log, which only an
         administrator can read.
 
-        For **`client_credentials`**, access tokens represent the **service account the app is pointed at** (`tokenIdentityUserId`), or the **OAuth app creator** for an app registered before that was required and never bound. The JWT may encode **`userId === client_id`**; the **Node API gateway** loads the application record and resolves the identity from it, treating the **`createdBy`** claim as a cross-check — see **OAuth Provider** tag.
+        For **`client_credentials`**, access tokens represent the **service account the app is pointed at** (`tokenIdentityUserId`), or the **OAuth app creator** for an app registered before that was required and never bound. The JWT may encode **`userId === client_id`**; the **Node API gateway** loads the application record on every request and resolves the identity from it, treating the **`createdBy`** claim as a cross-check and refusing a token whose claim no longer matches it — see **OAuth Provider** tag.
 
         **Client Authentication:**
         Can be provided via:
@@ -96,6 +103,8 @@ class OAuthProvider(BaseSDK):
             - `authorization_code`: Exchange auth code for tokens
             - `client_credentials`: Machine-to-machine auth
             - `refresh_token`: Get new access token using refresh token
+            - `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device
+            authorization (RFC 8628) started with `POST /oauth2/device_authorization`
             - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
             delegation (RFC 8693). Exchanges a service token for a
             short-lived token that acts as one named person. Enterprise
@@ -104,7 +113,10 @@ class OAuthProvider(BaseSDK):
 
         :param code: Authorization code (required for authorization_code grant)
         :param redirect_uri: Redirect URI (required for authorization_code grant)
-        :param client_id: Client ID (can also be sent via Basic auth header)
+        :param device_code: The `device_code` from `POST /oauth2/device_authorization` (required for the device_code
+            grant; without it the answer is `400 invalid_grant`)
+
+        :param client_id: Client ID (can also be sent via Basic auth header, which then takes precedence)
         :param client_secret: Client secret (can also be sent via Basic auth header)
         :param refresh_token: Refresh token (required for refresh_token grant)
         :param scope: Requested scopes (optional, defaults to original grant scopes)
@@ -142,6 +154,7 @@ class OAuthProvider(BaseSDK):
             grant_type=grant_type,
             code=code,
             redirect_uri=redirect_uri,
+            device_code=device_code,
             client_id=client_id,
             client_secret=client_secret,
             refresh_token=refresh_token,
@@ -197,7 +210,10 @@ class OAuthProvider(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthTokenResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.BadRequestUnion, http_res)
+            raise errors.BadRequest(response_data, http_res)
+        if utils.match_response(http_res, "401", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthErrorResponseData, http_res
             )
@@ -207,6 +223,9 @@ class OAuthProvider(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -226,6 +245,7 @@ class OAuthProvider(BaseSDK):
         grant_type: models.GrantType,
         code: Optional[str] = None,
         redirect_uri: Optional[str] = None,
+        device_code: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         refresh_token: Optional[str] = None,
@@ -243,12 +263,15 @@ class OAuthProvider(BaseSDK):
 
         OAuth 2.0 Token Endpoint (RFC 6749 Section 4.1.3).
 
-        Exchanges an authorization code, client credentials, refresh token, or
+        Exchanges an authorization code, client credentials, refresh token, device code or
         service token for access tokens.
+        Successful responses carry `Cache-Control: no-store` and `Pragma: no-cache`.
 
         **Grant Types:**
         - `authorization_code`: Exchange auth code for tokens (user-based)
         - `client_credentials`: Get tokens for machine-to-machine auth
+        - `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device authorization
+        (RFC 8628); answered `400` with `authorization_pending` until the user approves
         - `refresh_token`: Get new access token using refresh token. The refresh token must have been issued to the presenting `client_id`; one issued to another client is rejected with `400 invalid_grant` and is left untouched (not rotated, not revoked).
         - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
         delegation (RFC 8693). A service account exchanges its own token for
@@ -262,7 +285,7 @@ class OAuthProvider(BaseSDK):
         the cause is recorded in the delegation log, which only an
         administrator can read.
 
-        For **`client_credentials`**, access tokens represent the **service account the app is pointed at** (`tokenIdentityUserId`), or the **OAuth app creator** for an app registered before that was required and never bound. The JWT may encode **`userId === client_id`**; the **Node API gateway** loads the application record and resolves the identity from it, treating the **`createdBy`** claim as a cross-check — see **OAuth Provider** tag.
+        For **`client_credentials`**, access tokens represent the **service account the app is pointed at** (`tokenIdentityUserId`), or the **OAuth app creator** for an app registered before that was required and never bound. The JWT may encode **`userId === client_id`**; the **Node API gateway** loads the application record on every request and resolves the identity from it, treating the **`createdBy`** claim as a cross-check and refusing a token whose claim no longer matches it — see **OAuth Provider** tag.
 
         **Client Authentication:**
         Can be provided via:
@@ -278,6 +301,8 @@ class OAuthProvider(BaseSDK):
             - `authorization_code`: Exchange auth code for tokens
             - `client_credentials`: Machine-to-machine auth
             - `refresh_token`: Get new access token using refresh token
+            - `urn:ietf:params:oauth:grant-type:device_code`: Poll for the tokens of a device
+            authorization (RFC 8628) started with `POST /oauth2/device_authorization`
             - `urn:ietf:params:oauth:grant-type:token-exchange`: Service-account
             delegation (RFC 8693). Exchanges a service token for a
             short-lived token that acts as one named person. Enterprise
@@ -286,7 +311,10 @@ class OAuthProvider(BaseSDK):
 
         :param code: Authorization code (required for authorization_code grant)
         :param redirect_uri: Redirect URI (required for authorization_code grant)
-        :param client_id: Client ID (can also be sent via Basic auth header)
+        :param device_code: The `device_code` from `POST /oauth2/device_authorization` (required for the device_code
+            grant; without it the answer is `400 invalid_grant`)
+
+        :param client_id: Client ID (can also be sent via Basic auth header, which then takes precedence)
         :param client_secret: Client secret (can also be sent via Basic auth header)
         :param refresh_token: Refresh token (required for refresh_token grant)
         :param scope: Requested scopes (optional, defaults to original grant scopes)
@@ -324,6 +352,7 @@ class OAuthProvider(BaseSDK):
             grant_type=grant_type,
             code=code,
             redirect_uri=redirect_uri,
+            device_code=device_code,
             client_id=client_id,
             client_secret=client_secret,
             refresh_token=refresh_token,
@@ -379,7 +408,10 @@ class OAuthProvider(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthTokenResponse, http_res)
-        if utils.match_response(http_res, ["400", "401"], "application/json"):
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.BadRequestUnion, http_res)
+            raise errors.BadRequest(response_data, http_res)
+        if utils.match_response(http_res, "401", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthErrorResponseData, http_res
             )
@@ -389,6 +421,9 @@ class OAuthProvider(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -433,7 +468,10 @@ class OAuthProvider(BaseSDK):
         :param token: The token to revoke
         :param client_id: Client ID
         :param token_type_hint: Hint about token type (optional, improves performance)
-        :param client_secret: Client secret
+        :param client_secret: Client secret. Required for a confidential client (missing or empty: `401 invalid_client`);
+            a public client, such as the first-party device app, is identified by `client_id` alone. A
+            wrong secret is `401 invalid_client`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -501,6 +539,9 @@ class OAuthProvider(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "*"):
             return
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "401", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthErrorResponseData, http_res
@@ -511,6 +552,9 @@ class OAuthProvider(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -555,7 +599,10 @@ class OAuthProvider(BaseSDK):
         :param token: The token to revoke
         :param client_id: Client ID
         :param token_type_hint: Hint about token type (optional, improves performance)
-        :param client_secret: Client secret
+        :param client_secret: Client secret. Required for a confidential client (missing or empty: `401 invalid_client`);
+            a public client, such as the first-party device app, is identified by `client_id` alone. A
+            wrong secret is `401 invalid_client`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -623,6 +670,9 @@ class OAuthProvider(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "*"):
             return
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "401", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthErrorResponseData, http_res
@@ -633,6 +683,9 @@ class OAuthProvider(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -677,7 +730,10 @@ class OAuthProvider(BaseSDK):
         :param token: The token to introspect
         :param client_id: Client ID
         :param token_type_hint: Hint about token type
-        :param client_secret: Client secret
+        :param client_secret: Client secret. Not checked by the validator, but client authentication cannot succeed
+            without it: when it is missing the route answers `{active: false}` even for a live token, for public and confidential clients
+            alike. A wrong secret is `401 invalid_client`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -745,6 +801,9 @@ class OAuthProvider(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthIntrospectResponse, http_res)
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "401", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthErrorResponseData, http_res
@@ -755,6 +814,9 @@ class OAuthProvider(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -799,7 +861,10 @@ class OAuthProvider(BaseSDK):
         :param token: The token to introspect
         :param client_id: Client ID
         :param token_type_hint: Hint about token type
-        :param client_secret: Client secret
+        :param client_secret: Client secret. Not checked by the validator, but client authentication cannot succeed
+            without it: when it is missing the route answers `{active: false}` even for a live token, for public and confidential clients
+            alike. A wrong secret is `401 invalid_client`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -867,6 +932,9 @@ class OAuthProvider(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.OAuthIntrospectResponse, http_res)
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "401", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthErrorResponseData, http_res
@@ -877,6 +945,9 @@ class OAuthProvider(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

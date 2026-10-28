@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.utils import FieldMetadata
 from pydantic import model_serializer
 from typing import Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class RevokePatRequestTypedDict(TypedDict):
@@ -16,6 +17,11 @@ class RevokePatRequestTypedDict(TypedDict):
     """
 
     reason: NotRequired[str]
+    r"""Stored on the revocation for auditing. There is no body validator:
+    a `reason` that is not a string is ignored rather than refused, and
+    the revocation goes ahead with the default reason.
+
+    """
 
 
 class RevokePatRequest(BaseModel):
@@ -26,7 +32,12 @@ class RevokePatRequest(BaseModel):
 
     """
 
-    reason: Optional[str] = None
+    reason: Annotated[Optional[str], FieldMetadata(form=True)] = None
+    r"""Stored on the revocation for auditing. There is no body validator:
+    a `reason` that is not a string is ignored rather than refused, and
+    the revocation goes ahead with the default reason.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

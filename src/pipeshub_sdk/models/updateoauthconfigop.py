@@ -220,19 +220,13 @@ UpdateOAuthConfigRequestBodyTypedDict = TypeAliasType(
     "UpdateOAuthConfigRequestBodyTypedDict",
     Union[RequestBody1TypedDict, RequestBody2TypedDict],
 )
-r"""Send `oauthInstanceName`, `config`, or both; a body with neither is
-refused, even if it carries `baseUrl`.
-
-"""
+r"""At least one of `oauthInstanceName` and `config` must be present. Other fields are ignored."""
 
 
 UpdateOAuthConfigRequestBody = TypeAliasType(
     "UpdateOAuthConfigRequestBody", Union[RequestBody1, RequestBody2]
 )
-r"""Send `oauthInstanceName`, `config`, or both; a body with neither is
-refused, even if it carries `baseUrl`.
-
-"""
+r"""At least one of `oauthInstanceName` and `config` must be present. Other fields are ignored."""
 
 
 class UpdateOAuthConfigRequestTypedDict(TypedDict):

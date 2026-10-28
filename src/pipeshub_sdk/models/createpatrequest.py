@@ -26,7 +26,8 @@ r"""Token lifetime. Defaults to `30` if omitted — a token minted
 without an explicit choice shouldn't default to the longest
 lifetime. `\"never\"` is stored as a ~100-year expiry (the
 underlying schema field is required and TTL-indexed, so there's
-no literal null option).
+no literal null option). Any other value, including `null` and the
+string `\"30\"`, is a `400` validation error.
 
 """
 
@@ -36,13 +37,17 @@ r"""Token lifetime. Defaults to `30` if omitted — a token minted
 without an explicit choice shouldn't default to the longest
 lifetime. `\"never\"` is stored as a ~100-year expiry (the
 underlying schema field is required and TTL-indexed, so there's
-no literal null option).
+no literal null option). Any other value, including `null` and the
+string `\"30\"`, is a `400` validation error.
 
 """
 
 
 class CreatePatRequestTypedDict(TypedDict):
-    r"""Request to create a personal access token (`createPatTokenSchema` in `pat.validators.ts`)."""
+    r"""Request to create a personal access token (`createPatTokenSchema` in `pat.validators.ts`).
+    Fields not listed here are stripped by the validator and ignored.
+
+    """
 
     name: str
     r"""Label to help you recognize the token later"""
@@ -57,7 +62,8 @@ class CreatePatRequestTypedDict(TypedDict):
     without an explicit choice shouldn't default to the longest
     lifetime. `\"never\"` is stored as a ~100-year expiry (the
     underlying schema field is required and TTL-indexed, so there's
-    no literal null option).
+    no literal null option). Any other value, including `null` and the
+    string `\"30\"`, is a `400` validation error.
 
     """
     knowledge_limit: NotRequired[KnowledgeLimitTypedDict]
@@ -72,7 +78,10 @@ class CreatePatRequestTypedDict(TypedDict):
 
 
 class CreatePatRequest(BaseModel):
-    r"""Request to create a personal access token (`createPatTokenSchema` in `pat.validators.ts`)."""
+    r"""Request to create a personal access token (`createPatTokenSchema` in `pat.validators.ts`).
+    Fields not listed here are stripped by the validator and ignored.
+
+    """
 
     name: str
     r"""Label to help you recognize the token later"""
@@ -91,7 +100,8 @@ class CreatePatRequest(BaseModel):
     without an explicit choice shouldn't default to the longest
     lifetime. `\"never\"` is stored as a ~100-year expiry (the
     underlying schema field is required and TTL-indexed, so there's
-    no literal null option).
+    no literal null option). Any other value, including `null` and the
+    string `\"30\"`, is a `400` validation error.
 
     """
 

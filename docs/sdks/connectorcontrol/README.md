@@ -47,7 +47,7 @@ with Pipeshub(
     ),
 ) as pipeshub:
 
-    res = pipeshub.connector_control.toggle_connector(connector_id="<id>", type_="sync")
+    res = pipeshub.connector_control.toggle_connector(connector_id="<id>", type_="sync", full_sync=False)
 
     # Handle response
     print(res)

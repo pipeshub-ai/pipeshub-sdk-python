@@ -32,9 +32,6 @@ class SemanticSearchGraphRecordTypedDict(TypedDict):
 
     """
 
-    key: NotRequired[Nullable[str]]
-    id: NotRequired[Nullable[str]]
-    rev: NotRequired[Nullable[str]]
     record_name: NotRequired[Nullable[str]]
     external_record_id: NotRequired[Nullable[str]]
     record_type: NotRequired[Nullable[str]]
@@ -104,6 +101,19 @@ class SemanticSearchGraphRecordTypedDict(TypedDict):
     definition: NotRequired[Nullable[str]]
     source_tables: NotRequired[Nullable[List[str]]]
     row_count: NotRequired[Nullable[float]]
+    is_placeholder: NotRequired[bool]
+    r"""`true` when the record is a stub parent created for an ancestor that
+    is not yet synced or is out of scope; replaced when the real record syncs.
+
+    """
+    location: NotRequired[str]
+    r"""Where the record sits, from its source down to its parent, as
+    `Name (App ID: id) -> Name (Record Group ID: id) -> Name (Record ID: id)`,
+    resolved at retrieval time (not stored on the record).
+    It names only the ancestors the caller can open; for a connected app
+    with a limit, only those inside the limit. Absent when none is left.
+
+    """
     status_summary: NotRequired[str]
     r"""Where a ticket, pull request or project stands, in one short phrase, on
     `records` entries only: for example `Merged 2026-09-25 by alice`,
@@ -119,13 +129,9 @@ class SemanticSearchGraphRecordTypedDict(TypedDict):
     connected app with a limit, only records inside it. Absent when there are none.
 
     """
-    location: NotRequired[str]
-    r"""Where the record sits, from its source down to its parent, as
-    `Name (App ID: id) -> Name (Record Group ID: id) -> Name (Record ID: id)`.
-    It names only the ancestors the caller can open; for a connected app
-    with a limit, only those inside the limit. Absent when none is left.
-
-    """
+    key: NotRequired[Nullable[str]]
+    id: NotRequired[Nullable[str]]
+    rev: NotRequired[Nullable[str]]
 
 
 class SemanticSearchGraphRecord(BaseModel):
@@ -141,12 +147,6 @@ class SemanticSearchGraphRecord(BaseModel):
     covers that app whole; this applies to each hit's `metadata` too.
 
     """
-
-    key: Annotated[OptionalNullable[str], pydantic.Field(alias="_key")] = UNSET
-
-    id: Annotated[OptionalNullable[str], pydantic.Field(alias="_id")] = UNSET
-
-    rev: Annotated[OptionalNullable[str], pydantic.Field(alias="_rev")] = UNSET
 
     record_name: Annotated[
         OptionalNullable[str], pydantic.Field(alias="recordName")
@@ -368,6 +368,23 @@ class SemanticSearchGraphRecord(BaseModel):
         UNSET
     )
 
+    is_placeholder: Annotated[Optional[bool], pydantic.Field(alias="isPlaceholder")] = (
+        None
+    )
+    r"""`true` when the record is a stub parent created for an ancestor that
+    is not yet synced or is out of scope; replaced when the real record syncs.
+
+    """
+
+    location: Optional[str] = None
+    r"""Where the record sits, from its source down to its parent, as
+    `Name (App ID: id) -> Name (Record Group ID: id) -> Name (Record ID: id)`,
+    resolved at retrieval time (not stored on the record).
+    It names only the ancestors the caller can open; for a connected app
+    with a limit, only those inside the limit. Absent when none is left.
+
+    """
+
     status_summary: Annotated[Optional[str], pydantic.Field(alias="statusSummary")] = (
         None
     )
@@ -390,21 +407,16 @@ class SemanticSearchGraphRecord(BaseModel):
 
     """
 
-    location: Optional[str] = None
-    r"""Where the record sits, from its source down to its parent, as
-    `Name (App ID: id) -> Name (Record Group ID: id) -> Name (Record ID: id)`.
-    It names only the ancestors the caller can open; for a connected app
-    with a limit, only those inside the limit. Absent when none is left.
+    key: Annotated[OptionalNullable[str], pydantic.Field(alias="_key")] = UNSET
 
-    """
+    id: Annotated[OptionalNullable[str], pydantic.Field(alias="_id")] = UNSET
+
+    rev: Annotated[OptionalNullable[str], pydantic.Field(alias="_rev")] = UNSET
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
             [
-                "_key",
-                "_id",
-                "_rev",
                 "recordName",
                 "externalRecordId",
                 "recordType",
@@ -460,16 +472,17 @@ class SemanticSearchGraphRecord(BaseModel):
                 "definition",
                 "sourceTables",
                 "rowCount",
+                "isPlaceholder",
+                "location",
                 "statusSummary",
                 "linkedRecords",
-                "location",
+                "_key",
+                "_id",
+                "_rev",
             ]
         )
         nullable_fields = set(
             [
-                "_key",
-                "_id",
-                "_rev",
                 "recordName",
                 "externalRecordId",
                 "recordType",
@@ -525,6 +538,9 @@ class SemanticSearchGraphRecord(BaseModel):
                 "definition",
                 "sourceTables",
                 "rowCount",
+                "_key",
+                "_id",
+                "_rev",
             ]
         )
         serialized = handler(self)

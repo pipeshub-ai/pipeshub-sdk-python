@@ -30,7 +30,7 @@ class ConnectorToggleRequest(BaseModel):
     type: ConnectorToggleRequestType
     r"""'sync' flips data synchronization; 'agent' flips use by agents"""
 
-    full_sync: Annotated[Optional[bool], pydantic.Field(alias="fullSync")] = None
+    full_sync: Annotated[Optional[bool], pydantic.Field(alias="fullSync")] = False
     r"""When turning sync on, start from scratch"""
 
     device_id: Annotated[Optional[str], pydantic.Field(alias="deviceId")] = None

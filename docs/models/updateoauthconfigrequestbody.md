@@ -1,8 +1,6 @@
 # UpdateOAuthConfigRequestBody
 
-Send `oauthInstanceName`, `config`, or both; a body with neither is
-refused, even if it carries `baseUrl`.
-
+At least one of `oauthInstanceName` and `config` must be present. Other fields are ignored.
 
 
 ## Supported Types

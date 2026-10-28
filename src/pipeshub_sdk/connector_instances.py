@@ -33,7 +33,8 @@ class ConnectorInstances(BaseSDK):
         <b>Overview:</b><br>
         Returns instances created by users, filtered by scope and permissions.
         Team-scope connectors are visible to all org users. Personal connectors
-        are only visible to their creators.<br><br>
+        are only visible to their creators, not even to admins. Knowledge bases
+        (instances of type <code>KB</code>) are not listed here.<br><br>
         <b>Instance States:</b><br>
         <ul>
         <li><b>isConfigured:</b> All required settings are complete</li>
@@ -48,9 +49,11 @@ class ConnectorInstances(BaseSDK):
 
         :param scope: Filter by scope. Defaults to <code>team</code> when omitted.
 
-        :param page:
-        :param limit:
-        :param search: Full-text search across instance name, type, and app group
+        :param page: Page number, 1-based
+        :param limit: Items per page
+        :param search: Full-text search across instance name, type, and app group. The term
+            is not echoed back in <code>pagination</code>.
+
         :param is_authenticated: Filter by authentication status.
             <code>true</code> returns only authenticated instances;
             <code>false</code> returns only unauthenticated ones.
@@ -62,7 +65,8 @@ class ConnectorInstances(BaseSDK):
             Omit to return all.
 
         :param connector_type: Filter by exact connector type string (e.g. <code>Confluence</code>,
-            <code>GoogleDrive</code>). Case-sensitive.
+            <code>GoogleDrive</code>). Case-sensitive. An empty or blank value
+            is refused with `400` (the value is trimmed before it is checked).
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -140,6 +144,9 @@ class ConnectorInstances(BaseSDK):
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -174,7 +181,8 @@ class ConnectorInstances(BaseSDK):
         <b>Overview:</b><br>
         Returns instances created by users, filtered by scope and permissions.
         Team-scope connectors are visible to all org users. Personal connectors
-        are only visible to their creators.<br><br>
+        are only visible to their creators, not even to admins. Knowledge bases
+        (instances of type <code>KB</code>) are not listed here.<br><br>
         <b>Instance States:</b><br>
         <ul>
         <li><b>isConfigured:</b> All required settings are complete</li>
@@ -189,9 +197,11 @@ class ConnectorInstances(BaseSDK):
 
         :param scope: Filter by scope. Defaults to <code>team</code> when omitted.
 
-        :param page:
-        :param limit:
-        :param search: Full-text search across instance name, type, and app group
+        :param page: Page number, 1-based
+        :param limit: Items per page
+        :param search: Full-text search across instance name, type, and app group. The term
+            is not echoed back in <code>pagination</code>.
+
         :param is_authenticated: Filter by authentication status.
             <code>true</code> returns only authenticated instances;
             <code>false</code> returns only unauthenticated ones.
@@ -203,7 +213,8 @@ class ConnectorInstances(BaseSDK):
             Omit to return all.
 
         :param connector_type: Filter by exact connector type string (e.g. <code>Confluence</code>,
-            <code>GoogleDrive</code>). Case-sensitive.
+            <code>GoogleDrive</code>). Case-sensitive. An empty or blank value
+            is refused with `400` (the value is trimmed before it is checked).
 
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -279,6 +290,9 @@ class ConnectorInstances(BaseSDK):
                 models.ListConnectorInstancesResponse, http_res
             )
         if utils.match_response(http_res, ["400", "401", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -613,11 +627,21 @@ class ConnectorInstances(BaseSDK):
     ) -> models.GetConnectorInstanceResponse:
         r"""Get connector instance
 
-        Retrieve a specific connector instance by ID.
+        Retrieve a specific connector instance by ID, together with the setup
+        form of its connector type (<code>config</code>).<br><br>
+        <b>Who can read an instance:</b><br>
+        <ul>
+        <li>Team scope: the creator and org admins. Other members get
+        <code>404</code>, although the lists show them the instance.</li>
+        <li>Personal scope: the creator only. An admin gets <code>404</code>.</li>
+        </ul>
+        The ID of a knowledge base is accepted too: a knowledge base is stored
+        as a connector instance of type <code>KB</code>.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id: Connector instance ID
+        :param connector_id: Connector instance ID (`_key` of the instance)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -688,6 +712,9 @@ class ConnectorInstances(BaseSDK):
         if utils.match_response(
             http_res, ["400", "401", "403", "404"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -714,11 +741,21 @@ class ConnectorInstances(BaseSDK):
     ) -> models.GetConnectorInstanceResponse:
         r"""Get connector instance
 
-        Retrieve a specific connector instance by ID.
+        Retrieve a specific connector instance by ID, together with the setup
+        form of its connector type (<code>config</code>).<br><br>
+        <b>Who can read an instance:</b><br>
+        <ul>
+        <li>Team scope: the creator and org admins. Other members get
+        <code>404</code>, although the lists show them the instance.</li>
+        <li>Personal scope: the creator only. An admin gets <code>404</code>.</li>
+        </ul>
+        The ID of a knowledge base is accepted too: a knowledge base is stored
+        as a connector instance of type <code>KB</code>.
+
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id: Connector instance ID
+        :param connector_id: Connector instance ID (`_key` of the instance)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -791,6 +828,9 @@ class ConnectorInstances(BaseSDK):
         ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -815,24 +855,26 @@ class ConnectorInstances(BaseSDK):
     ) -> models.DeleteConnectorInstanceResponse:
         r"""Delete connector instance
 
-        Delete a connector instance and everything synced from it. The request
-        answers `202` as soon as the deletion has started; the deletion itself
-        runs in the background.<br><br>
-        <b>Warning:</b><br>
-        Deletion is permanent. The connector's records, record groups,
-        permissions and relations are removed from the graph database, its
-        embeddings are removed from the vector store, its stored configuration
-        and credentials are deleted, and its stored files are deleted (content
-        another connector still uses is kept). The records don't go to the
-        trash and can't be restored. Its sync schedule is removed too.<br><br>
+        Start the deletion of a connector instance and all associated data.<br><br>
+        <b>Asynchronous:</b><br>
+        The request is answered with <code>202</code> as soon as the instance is
+        marked <code>DELETING</code>; its sync is stopped and its records,
+        vectors and configuration are removed in the background.<br><br>
         <b>Permissions:</b><br>
-        The connector's creator or an admin, for either scope. An admin can
-        delete a member's personal connector.
+        <ul>
+        <li>The creator can delete their own instance</li>
+        <li>An org admin can delete any instance, including another user's
+        personal one (which the admin cannot read)</li>
+        <li>Anyone else gets <code>404</code></li>
+        </ul>
+        <b>In use:</b><br>
+        Refused with <code>409</code> while an agent uses the instance as a
+        knowledge source.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id:
+        :param connector_id: Connector instance ID (`_key` of the instance)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -901,8 +943,11 @@ class ConnectorInstances(BaseSDK):
                 models.DeleteConnectorInstanceResponse, http_res
             )
         if utils.match_response(
-            http_res, ["401", "403", "404", "409"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -929,24 +974,26 @@ class ConnectorInstances(BaseSDK):
     ) -> models.DeleteConnectorInstanceResponse:
         r"""Delete connector instance
 
-        Delete a connector instance and everything synced from it. The request
-        answers `202` as soon as the deletion has started; the deletion itself
-        runs in the background.<br><br>
-        <b>Warning:</b><br>
-        Deletion is permanent. The connector's records, record groups,
-        permissions and relations are removed from the graph database, its
-        embeddings are removed from the vector store, its stored configuration
-        and credentials are deleted, and its stored files are deleted (content
-        another connector still uses is kept). The records don't go to the
-        trash and can't be restored. Its sync schedule is removed too.<br><br>
+        Start the deletion of a connector instance and all associated data.<br><br>
+        <b>Asynchronous:</b><br>
+        The request is answered with <code>202</code> as soon as the instance is
+        marked <code>DELETING</code>; its sync is stopped and its records,
+        vectors and configuration are removed in the background.<br><br>
         <b>Permissions:</b><br>
-        The connector's creator or an admin, for either scope. An admin can
-        delete a member's personal connector.
+        <ul>
+        <li>The creator can delete their own instance</li>
+        <li>An org admin can delete any instance, including another user's
+        personal one (which the admin cannot read)</li>
+        <li>Anyone else gets <code>404</code></li>
+        </ul>
+        <b>In use:</b><br>
+        Refused with <code>409</code> while an agent uses the instance as a
+        knowledge source.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id:
+        :param connector_id: Connector instance ID (`_key` of the instance)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1015,8 +1062,11 @@ class ConnectorInstances(BaseSDK):
                 models.DeleteConnectorInstanceResponse, http_res
             )
         if utils.match_response(
-            http_res, ["401", "403", "404", "409"], "application/json"
+            http_res, ["400", "401", "403", "404", "409"], "application/json"
         ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -1043,13 +1093,26 @@ class ConnectorInstances(BaseSDK):
     ) -> models.ConnectorStats:
         r"""Get connector statistics
 
-        Retrieve statistics for a specific connector instance including record counts,
-        indexing status breakdown, and sync information.
+        Retrieve record counts of a connector instance, in total and per record
+        type, broken down by indexing status. The ID of a knowledge base is
+        accepted too (a knowledge base is stored as a connector instance of type
+        <code>KB</code>); its stats report <code>origin: COLLECTION</code>.<br><br>
+        <b>Who can read them:</b> the creator of the instance and, for a team
+        instance, org admins. Stats use the same read gate as
+        <code>GET /connectors/{connectorId}</code>: anyone else, including an
+        admin reading another user's personal instance, gets <code>404</code>
+        (\"This connector was removed, or you no longer have access. ...\"), so
+        the instance's existence is not confirmed.
+
+        An OAuth token holding `kb:read` instead of `connector:read` passes the scope check too.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id: Connector instance ID
+        :param connector_id: Connector instance ID (`_key` of the instance) or knowledge base ID.
+            Unlike the other instance routes, the ID is not checked against a
+            pattern: an ID no instance has is answered `404`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1115,7 +1178,12 @@ class ConnectorInstances(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ConnectorStats, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -1142,13 +1210,26 @@ class ConnectorInstances(BaseSDK):
     ) -> models.ConnectorStats:
         r"""Get connector statistics
 
-        Retrieve statistics for a specific connector instance including record counts,
-        indexing status breakdown, and sync information.
+        Retrieve record counts of a connector instance, in total and per record
+        type, broken down by indexing status. The ID of a knowledge base is
+        accepted too (a knowledge base is stored as a connector instance of type
+        <code>KB</code>); its stats report <code>origin: COLLECTION</code>.<br><br>
+        <b>Who can read them:</b> the creator of the instance and, for a team
+        instance, org admins. Stats use the same read gate as
+        <code>GET /connectors/{connectorId}</code>: anyone else, including an
+        admin reading another user's personal instance, gets <code>404</code>
+        (\"This connector was removed, or you no longer have access. ...\"), so
+        the instance's existence is not confirmed.
+
+        An OAuth token holding `kb:read` instead of `connector:read` passes the scope check too.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id: Connector instance ID
+        :param connector_id: Connector instance ID (`_key` of the instance) or knowledge base ID.
+            Unlike the other instance routes, the ID is not checked against a
+            pattern: an ID no instance has is answered `404`.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1214,7 +1295,12 @@ class ConnectorInstances(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.ConnectorStats, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -1249,12 +1335,23 @@ class ConnectorInstances(BaseSDK):
 
         Fetches content from the external source and updates local records. Use when you suspect data is out of sync.
 
+        Only a connector in the caller's list of active connectors
+        (`GET /connectors/active`, knowledge bases included) can be resynced.
+        Any other ID, including one that does not exist, is refused with `400`.
+        The reply only acknowledges that the resync event was published.
+
+        Fields of the body other than `connectorName` and `fullSync` are dropped without an error.
+
         **Warning:** This can be resource-intensive for large connectors.
+
+        The scope check also accepts `kb:write` in place of `connector:write`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id: Connector instance ID
+        :param connector_id: Connector instance ID. An ID that decodes to a path separator or
+            another unsafe segment is refused with `400` before the token is checked.
+
         :param connector_name: The connector's type as the registry lists it, for example `RSS` or
             `Jira`. It names the sync event; the connector synced is always the
             one in the path.
@@ -1375,12 +1472,23 @@ class ConnectorInstances(BaseSDK):
 
         Fetches content from the external source and updates local records. Use when you suspect data is out of sync.
 
+        Only a connector in the caller's list of active connectors
+        (`GET /connectors/active`, knowledge bases included) can be resynced.
+        Any other ID, including one that does not exist, is refused with `400`.
+        The reply only acknowledges that the resync event was published.
+
+        Fields of the body other than `connectorName` and `fullSync` are dropped without an error.
+
         **Warning:** This can be resource-intensive for large connectors.
+
+        The scope check also accepts `kb:write` in place of `connector:write`.
 
 
         If set, this operation will use either `bearer_auth` or `oauth2` from the global security.
 
-        :param connector_id: Connector instance ID
+        :param connector_id: Connector instance ID. An ID that decodes to a path separator or
+            another unsafe segment is refused with `400` before the token is checked.
+
         :param connector_name: The connector's type as the registry lists it, for example `RSS` or
             `Jira`. It names the sync event; the connector synced is always the
             one in the path.
@@ -1578,7 +1686,12 @@ class ConnectorInstances(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.StopConnectorSyncResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -1690,7 +1803,12 @@ class ConnectorInstances(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.StopConnectorSyncResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "404"], "application/json"):
+        if utils.match_response(
+            http_res, ["400", "401", "403", "404"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):

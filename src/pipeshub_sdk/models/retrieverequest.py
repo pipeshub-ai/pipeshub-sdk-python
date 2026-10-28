@@ -11,9 +11,9 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class RetrieveRequestTypedDict(TypedDict):
     query: str
-    r"""What to find, searched as written unless `rewriteQuery` is true."""
+    r"""What to find. This text is always searched."""
     limit: NotRequired[int]
-    r"""Most chunks to return, best first."""
+    r"""Most chunks to return, best first. Left out, the AI service uses 8."""
     filters: NotRequired[FiltersTypedDict]
     r"""What retrieval is narrowed to for a turn: whole apps, and selections below app
     level (record groups, folders, records). The keys are a union. For **org assistant**
@@ -55,15 +55,18 @@ class RetrieveRequestTypedDict(TypedDict):
 
     """
     rewrite_query: NotRequired[bool]
-    r"""Rewrite and expand the query with the org's model first (slower)."""
+    r"""Also search rewritten and expanded versions of the query, made by the
+    org's model (slower). The original text is still searched.
+
+    """
 
 
 class RetrieveRequest(BaseModel):
     query: str
-    r"""What to find, searched as written unless `rewriteQuery` is true."""
+    r"""What to find. This text is always searched."""
 
     limit: Optional[int] = 8
-    r"""Most chunks to return, best first."""
+    r"""Most chunks to return, best first. Left out, the AI service uses 8."""
 
     filters: Optional[Filters] = None
     r"""What retrieval is narrowed to for a turn: whole apps, and selections below app
@@ -122,7 +125,10 @@ class RetrieveRequest(BaseModel):
     rewrite_query: Annotated[Optional[bool], pydantic.Field(alias="rewriteQuery")] = (
         False
     )
-    r"""Rewrite and expand the query with the org's model first (slower)."""
+    r"""Also search rewritten and expanded versions of the query, made by the
+    org's model (slower). The original text is still searched.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

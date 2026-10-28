@@ -1,7 +1,7 @@
 # GetKnowledgeHubRootNodesSortBy
 
 Field to sort results by. Omitted → default `updatedAt`.
-Unknown value → silently falls back to `name`.
+Any other value is answered `400` ("Invalid sort_by: ...").
 
 
 ## Example Usage

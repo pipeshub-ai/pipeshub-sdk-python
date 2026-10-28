@@ -8,17 +8,33 @@ from typing_extensions import NotRequired, TypedDict
 
 
 class ConnectorDocumentationLinkTypedDict(TypedDict):
+    r"""A help link shown on a connector's setup page"""
+
     title: NotRequired[str]
+    r"""Link text"""
     url: NotRequired[str]
+    r"""Link target"""
     type: NotRequired[str]
+    r"""Free-form link category set by the connector, for example
+    `setup`, `pipeshub`, `api` or `docs`.
+
+    """
 
 
 class ConnectorDocumentationLink(BaseModel):
+    r"""A help link shown on a connector's setup page"""
+
     title: Optional[str] = None
+    r"""Link text"""
 
     url: Optional[str] = None
+    r"""Link target"""
 
     type: Optional[str] = None
+    r"""Free-form link category set by the connector, for example
+    `setup`, `pipeshub`, `api` or `docs`.
+
+    """
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):

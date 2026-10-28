@@ -49,10 +49,25 @@ AgentStreamCreateConversationRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+AgentStreamCreateConversationRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""Reasoning effort for this turn, for models that support it. Stored on
+the conversation's model info and forwarded to the AI backend.
+
+"""
+
+
 class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     r"""Request body for `POST /agents/{agentKey}/conversations/stream`.
     `query` and `chatMode: quick` are required; all other fields are
     optional overrides. Unknown fields are stripped during validation.
+    Unlike the non-streaming route, a `query` of only whitespace is
+    accepted and starts a conversation.
 
     """
 
@@ -93,6 +108,9 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     least viewer access to. Same fallback/merge semantics as
     `POST /conversations/create`. Ignored on follow-up turns — the
     session row is the source of truth once the conversation exists.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
     project_visibility: NotRequired[
@@ -104,7 +122,9 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     """
     model_key: NotRequired[str]
     r"""AI model configuration id for this turn. Omit to use the agent's
-    default model.
+    default model. A key that names no configured model is not refused:
+    the turn runs on the organization's default model and the unknown
+    key is still stored in the conversation's `modelInfo`.
 
     """
     model_name: NotRequired[str]
@@ -165,12 +185,19 @@ class AgentStreamCreateConversationRequestTypedDict(TypedDict):
     {runId}` while the stream is still generating.
 
     """
+    reasoning_effort: NotRequired[AgentStreamCreateConversationRequestReasoningEffort]
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
 
 
 class AgentStreamCreateConversationRequest(BaseModel):
     r"""Request body for `POST /agents/{agentKey}/conversations/stream`.
     `query` and `chatMode: quick` are required; all other fields are
     optional overrides. Unknown fields are stripped during validation.
+    Unlike the non-streaming route, a `query` of only whitespace is
+    accepted and starts a conversation.
 
     """
 
@@ -221,6 +248,9 @@ class AgentStreamCreateConversationRequest(BaseModel):
     least viewer access to. Same fallback/merge semantics as
     `POST /conversations/create`. Ignored on follow-up turns — the
     session row is the source of truth once the conversation exists.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
 
@@ -235,7 +265,9 @@ class AgentStreamCreateConversationRequest(BaseModel):
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""AI model configuration id for this turn. Omit to use the agent's
-    default model.
+    default model. A key that names no configured model is not refused:
+    the turn runs on the organization's default model and the unknown
+    key is still stored in the conversation's `modelInfo`.
 
     """
 
@@ -319,6 +351,15 @@ class AgentStreamCreateConversationRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[AgentStreamCreateConversationRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -341,6 +382,7 @@ class AgentStreamCreateConversationRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

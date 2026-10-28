@@ -1,10 +1,12 @@
 # ConnectorDocumentationLink
 
+A help link shown on a connector's setup page
+
 
 ## Fields
 
-| Field              | Type               | Required           | Description        |
-| ------------------ | ------------------ | ------------------ | ------------------ |
-| `title`            | *Optional[str]*    | :heavy_minus_sign: | N/A                |
-| `url`              | *Optional[str]*    | :heavy_minus_sign: | N/A                |
-| `type`             | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| Field                                                                                            | Type                                                                                             | Required                                                                                         | Description                                                                                      | Example                                                                                          |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `title`                                                                                          | *Optional[str]*                                                                                  | :heavy_minus_sign:                                                                               | Link text                                                                                        | Azure AD App Registration Setup                                                                  |
+| `url`                                                                                            | *Optional[str]*                                                                                  | :heavy_minus_sign:                                                                               | Link target                                                                                      |                                                                                                  |
+| `type`                                                                                           | *Optional[str]*                                                                                  | :heavy_minus_sign:                                                                               | Free-form link category set by the connector, for example<br/>`setup`, `pipeshub`, `api` or `docs`.<br/> | setup                                                                                            |

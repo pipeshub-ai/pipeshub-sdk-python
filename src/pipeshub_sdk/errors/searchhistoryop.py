@@ -10,7 +10,7 @@ from typing import Optional
 
 
 class SearchHistoryInternalServerErrorData(BaseModel):
-    error: models_searchhistoryop.SearchHistoryInternalServerErrorError
+    error: models_searchhistoryop.InternalServerErrorError
     r"""Error payload."""
 
 
@@ -32,20 +32,20 @@ class SearchHistoryInternalServerError(PipeshubError):
         object.__setattr__(self, "data", data)
 
 
-class SearchHistoryForbiddenErrorData(BaseModel):
-    error: models_searchhistoryop.SearchHistoryForbiddenError
+class ForbiddenErrorData(BaseModel):
+    error: models_searchhistoryop.ForbiddenError
     r"""Error payload."""
 
 
 @dataclass(unsafe_hash=True)
-class SearchHistoryForbiddenError(PipeshubError):
+class ForbiddenError(PipeshubError):
     r"""Error envelope for a failed request."""
 
-    data: SearchHistoryForbiddenErrorData = field(hash=False)
+    data: ForbiddenErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: SearchHistoryForbiddenErrorData,
+        data: ForbiddenErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -55,20 +55,20 @@ class SearchHistoryForbiddenError(PipeshubError):
         object.__setattr__(self, "data", data)
 
 
-class SearchHistoryUnauthorizedErrorData(BaseModel):
-    error: models_searchhistoryop.SearchHistoryUnauthorizedError
+class UnauthorizedErrorData(BaseModel):
+    error: models_searchhistoryop.UnauthorizedError
     r"""Error payload."""
 
 
 @dataclass(unsafe_hash=True)
-class SearchHistoryUnauthorizedError(PipeshubError):
+class UnauthorizedError(PipeshubError):
     r"""Error envelope for a failed request."""
 
-    data: SearchHistoryUnauthorizedErrorData = field(hash=False)
+    data: UnauthorizedErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: SearchHistoryUnauthorizedErrorData,
+        data: UnauthorizedErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):
@@ -78,20 +78,20 @@ class SearchHistoryUnauthorizedError(PipeshubError):
         object.__setattr__(self, "data", data)
 
 
-class SearchHistoryBadRequestErrorData(BaseModel):
-    error: models_searchhistoryop.SearchHistoryBadRequestError
+class BadRequestErrorData(BaseModel):
+    error: models_searchhistoryop.BadRequestError
     r"""Error payload."""
 
 
 @dataclass(unsafe_hash=True)
-class SearchHistoryBadRequestError(PipeshubError):
+class BadRequestError(PipeshubError):
     r"""Error envelope for a failed request."""
 
-    data: SearchHistoryBadRequestErrorData = field(hash=False)
+    data: BadRequestErrorData = field(hash=False)
 
     def __init__(
         self,
-        data: SearchHistoryBadRequestErrorData,
+        data: BadRequestErrorData,
         raw_response: httpx.Response,
         body: Optional[str] = None,
     ):

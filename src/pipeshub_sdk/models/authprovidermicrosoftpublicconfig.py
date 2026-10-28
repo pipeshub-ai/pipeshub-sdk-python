@@ -15,6 +15,8 @@ class AuthProviderMicrosoftPublicConfigTypedDict(TypedDict):
     r"""Microsoft tenant ID"""
     client_id: NotRequired[str]
     r"""Microsoft OAuth client ID"""
+    authority: NotRequired[str]
+    r"""Sign-in authority URL, built on save as `https://login.microsoftonline.com/{tenantId}`"""
     enable_jit: NotRequired[bool]
     r"""Whether just-in-time user provisioning is enabled for Microsoft"""
 
@@ -28,12 +30,15 @@ class AuthProviderMicrosoftPublicConfig(BaseModel):
     client_id: Annotated[Optional[str], pydantic.Field(alias="clientId")] = None
     r"""Microsoft OAuth client ID"""
 
+    authority: Optional[str] = None
+    r"""Sign-in authority URL, built on save as `https://login.microsoftonline.com/{tenantId}`"""
+
     enable_jit: Annotated[Optional[bool], pydantic.Field(alias="enableJit")] = None
     r"""Whether just-in-time user provisioning is enabled for Microsoft"""
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["tenantId", "clientId", "enableJit"])
+        optional_fields = set(["tenantId", "clientId", "authority", "enableJit"])
         serialized = handler(self)
         m = {}
 

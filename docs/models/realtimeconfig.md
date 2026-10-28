@@ -3,7 +3,7 @@
 
 ## Fields
 
-| Field              | Type               | Required           | Description        |
-| ------------------ | ------------------ | ------------------ | ------------------ |
-| `supported`        | *Optional[bool]*   | :heavy_minus_sign: | N/A                |
-| `connection_type`  | *Optional[str]*    | :heavy_minus_sign: | N/A                |
+| Field              | Type               | Required           | Description        | Example            |
+| ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| `supported`        | *Optional[bool]*   | :heavy_minus_sign: | N/A                |                    |
+| `connection_type`  | *Optional[str]*    | :heavy_minus_sign: | N/A                | WEBSOCKET          |

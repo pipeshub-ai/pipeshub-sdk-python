@@ -19,10 +19,6 @@ ConversationMessageStreamRequestChatMode = Literal[
     "internal_search",
     "web_search",
 ]
-r"""Optional execution mode for non-stream consumers of this shared
-request schema.
-
-"""
 
 
 ConversationMessageStreamRequestProtocol = Literal["agui",]
@@ -42,10 +38,26 @@ ConversationMessageStreamRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+ConversationMessageStreamRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""How hard a reasoning model should think for this turn. Saved in
+the conversation's `modelInfo`.
+
+"""
+
+
 class ConversationMessageStreamRequestTypedDict(TypedDict):
     r"""Request body for
     `POST /conversations/{conversationId}/messages/stream`. The public
-    stream requires an explicit universal execution mode.
+    stream requires an explicit universal execution mode; the legacy
+    modes the non-streaming route accepts are refused here. Unlike the
+    non-streaming route, a `query` of only whitespace is not refused:
+    the turn runs with it.
 
     """
 
@@ -55,10 +67,6 @@ class ConversationMessageStreamRequestTypedDict(TypedDict):
 
     """
     chat_mode: ConversationMessageStreamRequestChatMode
-    r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
-
-    """
     filters: NotRequired[FiltersTypedDict]
     r"""What retrieval is narrowed to for a turn: whole apps, and selections below app
     level (record groups, folders, records). The keys are a union. For **org assistant**
@@ -157,12 +165,20 @@ class ConversationMessageStreamRequestTypedDict(TypedDict):
     stream is still generating.
 
     """
+    reasoning_effort: NotRequired[ConversationMessageStreamRequestReasoningEffort]
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
 
 
 class ConversationMessageStreamRequest(BaseModel):
     r"""Request body for
     `POST /conversations/{conversationId}/messages/stream`. The public
-    stream requires an explicit universal execution mode.
+    stream requires an explicit universal execution mode; the legacy
+    modes the non-streaming route accepts are refused here. Unlike the
+    non-streaming route, a `query` of only whitespace is not refused:
+    the turn runs with it.
 
     """
 
@@ -175,10 +191,6 @@ class ConversationMessageStreamRequest(BaseModel):
     chat_mode: Annotated[
         ConversationMessageStreamRequestChatMode, pydantic.Field(alias="chatMode")
     ]
-    r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
-
-    """
 
     filters: Optional[Filters] = None
     r"""What retrieval is narrowed to for a turn: whole apps, and selections below app
@@ -306,6 +318,15 @@ class ConversationMessageStreamRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[ConversationMessageStreamRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -325,6 +346,7 @@ class ConversationMessageStreamRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

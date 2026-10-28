@@ -10,7 +10,7 @@ from typing import Optional
 
 
 class OAuthErrorResponseData(BaseModel):
-    error: models_oautherrorresponse.ErrorEnum
+    error: models_oautherrorresponse.OAuthErrorResponseError
     r"""Error code. Common values:
     - `invalid_request` - Missing or invalid parameter
     - `invalid_client` - Client authentication failed

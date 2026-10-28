@@ -3,6 +3,10 @@
 from __future__ import annotations
 from .filteroption import FilterOption, FilterOptionTypedDict
 from .knowledgehubnode import KnowledgeHubNode, KnowledgeHubNodeTypedDict
+from .semanticsearchgraphrecord import (
+    SemanticSearchGraphRecord,
+    SemanticSearchGraphRecordTypedDict,
+)
 from pipeshub_sdk.types import (
     BaseModel,
     Nullable,
@@ -14,7 +18,7 @@ from pipeshub_sdk.utils import validate_const
 import pydantic
 from pydantic import model_serializer
 from pydantic.functional_validators import AfterValidator
-from typing import List, Literal
+from typing import Dict, List, Literal
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
@@ -127,8 +131,8 @@ class ParentNode(BaseModel):
 
 
 class KnowledgeHubNodesResponsePaginationTypedDict(TypedDict):
-    page: int
-    r"""Current page (1-indexed)."""
+    page: Nullable[int]
+    r"""Current page (1-indexed). `null` when the request pages by `cursor`."""
     limit: int
     r"""Page size."""
     total_items: int
@@ -137,7 +141,8 @@ class KnowledgeHubNodesResponsePaginationTypedDict(TypedDict):
     grow from page to page and is final once `hasNext` is false.
 
     """
-    total_pages: int
+    total_pages: Nullable[int]
+    r"""Number of pages. `null` when the request pages by `cursor`."""
     has_next: bool
     has_prev: bool
     next_cursor: NotRequired[Nullable[str]]
@@ -153,8 +158,8 @@ class KnowledgeHubNodesResponsePaginationTypedDict(TypedDict):
 
 
 class KnowledgeHubNodesResponsePagination(BaseModel):
-    page: int
-    r"""Current page (1-indexed)."""
+    page: Nullable[int]
+    r"""Current page (1-indexed). `null` when the request pages by `cursor`."""
 
     limit: int
     r"""Page size."""
@@ -166,7 +171,8 @@ class KnowledgeHubNodesResponsePagination(BaseModel):
 
     """
 
-    total_pages: Annotated[int, pydantic.Field(alias="totalPages")]
+    total_pages: Annotated[Nullable[int], pydantic.Field(alias="totalPages")]
+    r"""Number of pages. `null` when the request pages by `cursor`."""
 
     has_next: Annotated[bool, pydantic.Field(alias="hasNext")]
 
@@ -203,7 +209,15 @@ class KnowledgeHubNodesResponsePagination(BaseModel):
             ["nextCursor", "prevCursor", "startIndex", "endIndex", "currentPageItems"]
         )
         nullable_fields = set(
-            ["nextCursor", "prevCursor", "startIndex", "endIndex", "currentPageItems"]
+            [
+                "page",
+                "totalPages",
+                "nextCursor",
+                "prevCursor",
+                "startIndex",
+                "endIndex",
+                "currentPageItems",
+            ]
         )
         serialized = handler(self)
         m = {}
@@ -674,6 +688,16 @@ class KnowledgeHubNodesResponseTypedDict(TypedDict):
     r"""Present when `include=permissions`; otherwise `null`."""
     success: Literal[True]
     r"""Always `true` on HTTP 200. Failures use 4xx/5xx error envelopes, not this body shape."""
+    error_code: NotRequired[Nullable[int]]
+    r"""Status the connector service turns a failed lookup into. Always `null` on HTTP 200:
+    a failure is answered with that status and the error envelope instead of this body.
+
+    """
+    typed_records: NotRequired[Nullable[Dict[str, SemanticSearchGraphRecordTypedDict]]]
+    r"""Full record documents keyed by record ID. Filled only for in-process callers
+    (the agent's knowledge navigator); always `null` over HTTP.
+
+    """
 
 
 class KnowledgeHubNodesResponse(BaseModel):
@@ -726,17 +750,54 @@ class KnowledgeHubNodesResponse(BaseModel):
     ] = True
     r"""Always `true` on HTTP 200. Failures use 4xx/5xx error envelopes, not this body shape."""
 
+    error_code: Annotated[OptionalNullable[int], pydantic.Field(alias="errorCode")] = (
+        UNSET
+    )
+    r"""Status the connector service turns a failed lookup into. Always `null` on HTTP 200:
+    a failure is answered with that status and the error envelope instead of this body.
+
+    """
+
+    typed_records: OptionalNullable[Dict[str, SemanticSearchGraphRecord]] = UNSET
+    r"""Full record documents keyed by record ID. Filled only for in-process callers
+    (the agent's knowledge navigator); always `null` over HTTP.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
+        optional_fields = set(["errorCode", "typed_records"])
+        nullable_fields = set(
+            [
+                "error",
+                "errorCode",
+                "typed_records",
+                "id",
+                "currentNode",
+                "parentNode",
+                "breadcrumbs",
+                "counts",
+                "permissions",
+            ]
+        )
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
 
             if val != UNSET_SENTINEL:
-                m[k] = val
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
 
         return m
 

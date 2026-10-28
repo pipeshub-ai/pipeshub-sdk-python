@@ -45,6 +45,18 @@ GetAllConversationsQueryParamSortOrder = Literal[
 r"""Sort direction. Defaults to `desc` unless set to `asc`."""
 
 
+GetAllConversationsSharedEnum = Literal[
+    "true",
+    "false",
+    "1",
+    "0",
+]
+r"""When set, filters by `isShared`. Accepts exactly `true`,
+`false`, `1` or `0`.
+
+"""
+
+
 class GetAllConversationsRequestTypedDict(TypedDict):
     source: NotRequired[QueryParamSource]
     r"""`owned` — owner list (`userId` filter only).
@@ -53,10 +65,15 @@ class GetAllConversationsRequestTypedDict(TypedDict):
     Defaults to `owned` when omitted.
 
     """
-    page: NotRequired[int]
-    r"""Page number (1-based). Defaults to 1."""
+    page: NotRequired[float]
+    r"""Page number (1-based). Defaults to 1. The validator accepts any number, so a
+    fraction such as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+    """
     limit: NotRequired[int]
-    r"""Page size. Defaults to 20; capped by the server (max 100)."""
+    r"""Page size. Defaults to 10; values above 100, and fractions, are refused (`400 VALIDATION_ERROR`).
+
+    """
     sort_by: NotRequired[GetAllConversationsQueryParamSortBy]
     r"""Sort field. Invalid values fall back to `lastActivityAt`."""
     sort_order: NotRequired[GetAllConversationsQueryParamSortOrder]
@@ -66,12 +83,18 @@ class GetAllConversationsRequestTypedDict(TypedDict):
     search: NotRequired[str]
     r"""Case-insensitive match on title and message content (max 1000 characters)."""
     start_date: NotRequired[datetime]
-    r"""Filter by `createdAt` ≥ this ISO date."""
+    r"""Filter by `createdAt` ≥ this instant. Must be a full ISO 8601
+    date-time with `Z` or a numeric offset; a bare date is refused.
+
+    """
     end_date: NotRequired[datetime]
-    r"""Filter by `createdAt` ≤ this ISO date."""
-    shared: NotRequired[str]
-    r"""When set, filters by `isShared`. Accepts case-insensitive
-    `true`/`false`, or `1`/`0`.
+    r"""Filter by `createdAt` ≤ this instant. Must be a full ISO 8601
+    date-time with `Z` or a numeric offset; a bare date is refused.
+
+    """
+    shared: NotRequired[GetAllConversationsSharedEnum]
+    r"""When set, filters by `isShared`. Accepts exactly `true`,
+    `false`, `1` or `0`.
 
     """
     project_id: NotRequired[str]
@@ -97,16 +120,21 @@ class GetAllConversationsRequest(BaseModel):
     """
 
     page: Annotated[
-        Optional[int],
+        Optional[float],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Page number (1-based). Defaults to 1."""
+    r"""Page number (1-based). Defaults to 1. The validator accepts any number, so a
+    fraction such as `1.5` is not refused; it is truncated (`1.5` reads as page 1).
+
+    """
 
     limit: Annotated[
         Optional[int],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
-    ] = None
-    r"""Page size. Defaults to 20; capped by the server (max 100)."""
+    ] = 10
+    r"""Page size. Defaults to 10; values above 100, and fractions, are refused (`400 VALIDATION_ERROR`).
+
+    """
 
     sort_by: Annotated[
         Optional[GetAllConversationsQueryParamSortBy],
@@ -140,21 +168,27 @@ class GetAllConversationsRequest(BaseModel):
         pydantic.Field(alias="startDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter by `createdAt` ≥ this ISO date."""
+    r"""Filter by `createdAt` ≥ this instant. Must be a full ISO 8601
+    date-time with `Z` or a numeric offset; a bare date is refused.
+
+    """
 
     end_date: Annotated[
         Optional[datetime],
         pydantic.Field(alias="endDate"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Filter by `createdAt` ≤ this ISO date."""
+    r"""Filter by `createdAt` ≤ this instant. Must be a full ISO 8601
+    date-time with `Z` or a numeric offset; a bare date is refused.
+
+    """
 
     shared: Annotated[
-        Optional[str],
+        Optional[GetAllConversationsSharedEnum],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""When set, filters by `isShared`. Accepts case-insensitive
-    `true`/`false`, or `1`/`0`.
+    r"""When set, filters by `isShared`. Accepts exactly `true`,
+    `false`, `1` or `0`.
 
     """
 
@@ -398,7 +432,7 @@ class GetAllConversationsApplied(BaseModel):
     """
 
 
-class GetAllConversationsSharedTypedDict(TypedDict):
+class GetAllConversationsSharedResponseTypedDict(TypedDict):
     values: NotRequired[List[str]]
     r"""Accepted values for the `shared` query param."""
     description: NotRequired[str]
@@ -406,7 +440,7 @@ class GetAllConversationsSharedTypedDict(TypedDict):
     applied: NotRequired[bool]
 
 
-class GetAllConversationsShared(BaseModel):
+class GetAllConversationsSharedResponse(BaseModel):
     values: Optional[List[str]] = None
     r"""Accepted values for the `shared` query param."""
 
@@ -1057,7 +1091,7 @@ class GetAllConversationsSortingMessages(BaseModel):
 
 
 class GetAllConversationsAvailableTypedDict(TypedDict):
-    shared: GetAllConversationsSharedTypedDict
+    shared: GetAllConversationsSharedResponseTypedDict
     tags: GetAllConversationsTagsTypedDict
     min_messages: GetAllConversationsMinMessagesTypedDict
     search: GetAllConversationsSearchTypedDict
@@ -1069,7 +1103,7 @@ class GetAllConversationsAvailableTypedDict(TypedDict):
 
 
 class GetAllConversationsAvailable(BaseModel):
-    shared: GetAllConversationsShared
+    shared: GetAllConversationsSharedResponse
 
     tags: GetAllConversationsTags
 

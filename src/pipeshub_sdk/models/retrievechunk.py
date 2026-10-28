@@ -10,109 +10,75 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import List, Optional
+from typing import List
 from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class RetrieveChunkRecordTypedDict(TypedDict):
-    record_id: NotRequired[str]
-    name: NotRequired[Nullable[str]]
-    connector: NotRequired[Nullable[str]]
-    mime_type: NotRequired[Nullable[str]]
-    updated_at: NotRequired[Nullable[str]]
+    record_id: str
+    name: Nullable[str]
+    connector: Nullable[str]
+    mime_type: Nullable[str]
+    updated_at: Nullable[str]
 
 
 class RetrieveChunkRecord(BaseModel):
-    record_id: Annotated[Optional[str], pydantic.Field(alias="recordId")] = None
+    record_id: Annotated[str, pydantic.Field(alias="recordId")]
 
-    name: OptionalNullable[str] = UNSET
+    name: Nullable[str]
 
-    connector: OptionalNullable[str] = UNSET
+    connector: Nullable[str]
 
-    mime_type: Annotated[OptionalNullable[str], pydantic.Field(alias="mimeType")] = (
-        UNSET
-    )
+    mime_type: Annotated[Nullable[str], pydantic.Field(alias="mimeType")]
 
-    updated_at: Annotated[OptionalNullable[str], pydantic.Field(alias="updatedAt")] = (
-        UNSET
-    )
+    updated_at: Annotated[Nullable[str], pydantic.Field(alias="updatedAt")]
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(
-            ["recordId", "name", "connector", "mimeType", "updatedAt"]
-        )
-        nullable_fields = set(["name", "connector", "mimeType", "updatedAt"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
-            is_nullable_and_explicitly_set = (
-                k in nullable_fields
-                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
-            )
 
             if val != UNSET_SENTINEL:
-                if (
-                    val is not None
-                    or k not in optional_fields
-                    or is_nullable_and_explicitly_set
-                ):
-                    m[k] = val
+                m[k] = val
 
         return m
 
 
 class RetrieveChunkCitationTypedDict(TypedDict):
-    url: NotRequired[Nullable[str]]
+    url: Nullable[str]
     r"""Deep link to the passage (a `#:~:text=` fragment where the source supports one)."""
-    record_url: NotRequired[Nullable[str]]
+    record_url: Nullable[str]
     r"""Link to the record itself."""
-    page_num: NotRequired[Nullable[List[int]]]
-    block_index: NotRequired[Nullable[int]]
+    page_num: Nullable[List[int]]
+    block_index: Nullable[int]
 
 
 class RetrieveChunkCitation(BaseModel):
-    url: OptionalNullable[str] = UNSET
+    url: Nullable[str]
     r"""Deep link to the passage (a `#:~:text=` fragment where the source supports one)."""
 
-    record_url: Annotated[OptionalNullable[str], pydantic.Field(alias="recordUrl")] = (
-        UNSET
-    )
+    record_url: Annotated[Nullable[str], pydantic.Field(alias="recordUrl")]
     r"""Link to the record itself."""
 
-    page_num: Annotated[
-        OptionalNullable[List[int]], pydantic.Field(alias="pageNum")
-    ] = UNSET
+    page_num: Annotated[Nullable[List[int]], pydantic.Field(alias="pageNum")]
 
-    block_index: Annotated[
-        OptionalNullable[int], pydantic.Field(alias="blockIndex")
-    ] = UNSET
+    block_index: Annotated[Nullable[int], pydantic.Field(alias="blockIndex")]
 
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
-        optional_fields = set(["url", "recordUrl", "pageNum", "blockIndex"])
-        nullable_fields = set(["url", "recordUrl", "pageNum", "blockIndex"])
         serialized = handler(self)
         m = {}
 
         for n, f in type(self).model_fields.items():
             k = f.alias or n
             val = serialized.get(k, serialized.get(n))
-            is_nullable_and_explicitly_set = (
-                k in nullable_fields
-                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
-            )
 
             if val != UNSET_SENTINEL:
-                if (
-                    val is not None
-                    or k not in optional_fields
-                    or is_nullable_and_explicitly_set
-                ):
-                    m[k] = val
+                m[k] = val
 
         return m
 

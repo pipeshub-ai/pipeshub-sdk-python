@@ -29,7 +29,12 @@ class InitAuthResponseTypedDict(TypedDict):
     message: str
     r"""Response message"""
     auth_providers: AuthProvidersTypedDict
-    r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    r"""Settings of the external sign-in providers among the allowed methods, keyed by provider.
+    A provider is listed whenever its settings can be read, which is also the case when
+    nothing has been saved for it yet: its entry is then an empty object. Only `google`
+    and `microsoft` have a sign-in flow.
+
+    """
     jit_enabled: bool
     r"""True when at least one allowed external provider has JIT provisioning enabled"""
 
@@ -49,7 +54,12 @@ class InitAuthResponse(BaseModel):
     r"""Response message"""
 
     auth_providers: Annotated[AuthProviders, pydantic.Field(alias="authProviders")]
-    r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    r"""Settings of the external sign-in providers among the allowed methods, keyed by provider.
+    A provider is listed whenever its settings can be read, which is also the case when
+    nothing has been saved for it yet: its entry is then an empty object. Only `google`
+    and `microsoft` have a sign-in flow.
+
+    """
 
     jit_enabled: Annotated[bool, pydantic.Field(alias="jitEnabled")]
     r"""True when at least one allowed external provider has JIT provisioning enabled"""

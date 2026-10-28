@@ -29,9 +29,10 @@ receive a flat, enumerable collection.
 - When no providers of the requested type are configured the endpoint still
   returns HTTP **200** with an empty `models` array — this is **not** an error.
 
-**Access control:** requires a valid bearer token. For OAuth tokens the
-`config:read` scope must be present; regular JWT bearer tokens pass through
-without scope enforcement.
+**Access control:** requires a valid bearer token, from any member of the
+organization (there is no admin check). For OAuth tokens the `config:read` scope
+must be present; regular JWT bearer tokens pass through without scope enforcement.
+The query string is not read.
 
 
 ### Example Usage: no_models_configured
@@ -88,10 +89,8 @@ with Pipeshub(
 
 ### Errors
 
-| Error Type                                         | Status Code                                        | Content Type                                       |
-| -------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
-| errors.GetAvailableModelsByTypeBadRequestError     | 400                                                | application/json                                   |
-| errors.GetAvailableModelsByTypeUnauthorizedError   | 401                                                | application/json                                   |
-| errors.GetAvailableModelsByTypeForbiddenError      | 403                                                | application/json                                   |
-| errors.GetAvailableModelsByTypeInternalServerError | 500                                                | application/json                                   |
-| errors.PipeshubDefaultError                        | 4XX, 5XX                                           | \*/\*                                              |
+| Error Type                  | Status Code                 | Content Type                |
+| --------------------------- | --------------------------- | --------------------------- |
+| errors.ErrorResponse        | 400, 401, 403               | application/json            |
+| errors.ErrorResponse        | 500                         | application/json            |
+| errors.PipeshubDefaultError | 4XX, 5XX                    | \*/\*                       |

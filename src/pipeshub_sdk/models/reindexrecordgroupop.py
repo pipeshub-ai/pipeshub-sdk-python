@@ -15,7 +15,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 
 class ReindexRecordGroupRequestTypedDict(TypedDict):
     record_group_id: str
-    r"""Folder ID or KB ID"""
+    r"""Record group ID (from a connector sync; not a knowledge base or folder id)"""
     body: NotRequired[ReindexRecordGroupRequestBodyTypedDict]
     r"""Request payload"""
 
@@ -26,7 +26,7 @@ class ReindexRecordGroupRequest(BaseModel):
         pydantic.Field(alias="recordGroupId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Folder ID or KB ID"""
+    r"""Record group ID (from a connector sync; not a knowledge base or folder id)"""
 
     body: Annotated[
         Optional[ReindexRecordGroupRequestBody],

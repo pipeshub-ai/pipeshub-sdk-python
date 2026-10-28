@@ -22,7 +22,12 @@ class AuthenticateMultiStepResponseTypedDict(TypedDict):
     allowed_methods: List[str]
     r"""Allowed method types for the next step"""
     auth_providers: AuthProvidersTypedDict
-    r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    r"""Settings of the external sign-in providers among the allowed methods, keyed by provider.
+    A provider is listed whenever its settings can be read, which is also the case when
+    nothing has been saved for it yet: its entry is then an empty object. Only `google`
+    and `microsoft` have a sign-in flow.
+
+    """
 
 
 class AuthenticateMultiStepResponse(BaseModel):
@@ -38,7 +43,12 @@ class AuthenticateMultiStepResponse(BaseModel):
     r"""Allowed method types for the next step"""
 
     auth_providers: Annotated[AuthProviders, pydantic.Field(alias="authProviders")]
-    r"""Configuration for external authentication providers (returned when those methods are allowed)"""
+    r"""Settings of the external sign-in providers among the allowed methods, keyed by provider.
+    A provider is listed whenever its settings can be read, which is also the case when
+    nothing has been saved for it yet: its entry is then an empty object. Only `google`
+    and `microsoft` have a sign-in flow.
+
+    """
 
 
 try:

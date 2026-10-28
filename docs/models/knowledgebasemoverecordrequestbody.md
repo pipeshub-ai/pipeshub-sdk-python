@@ -1,6 +1,6 @@
 # KnowledgeBaseMoveRecordRequestBody
 
-Request body for PUT /knowledgeBase/{kbId}/record/{recordId}/move (moveRecord).
+Request body for PUT /knowledgeBase/{kbId}/record/{recordId}/move (moveRecord). Fields other than `newParentId` are dropped by the validator, not refused.
 
 
 ## Fields

@@ -9,7 +9,11 @@ from typing_extensions import Annotated, TypedDict
 
 class GetConnectorStatsRequestTypedDict(TypedDict):
     connector_id: str
-    r"""Connector instance ID"""
+    r"""Connector instance ID (`_key` of the instance) or knowledge base ID.
+    Unlike the other instance routes, the ID is not checked against a
+    pattern: an ID no instance has is answered `404`.
+
+    """
 
 
 class GetConnectorStatsRequest(BaseModel):
@@ -18,4 +22,8 @@ class GetConnectorStatsRequest(BaseModel):
         pydantic.Field(alias="connectorId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
-    r"""Connector instance ID"""
+    r"""Connector instance ID (`_key` of the instance) or knowledge base ID.
+    Unlike the other instance routes, the ID is not checked against a
+    pattern: an ID no instance has is answered `404`.
+
+    """

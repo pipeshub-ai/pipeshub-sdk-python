@@ -1,11 +1,10 @@
 # UpdateRecordRequestBody
 
-Request payload
+Request payload. Optional: without one nothing changes.
 
 
 ## Fields
 
-| Field                                                              | Type                                                               | Required                                                           | Description                                                        |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `record_name`                                                      | *Optional[str]*                                                    | :heavy_minus_sign:                                                 | New name for the record                                            |
-| `file`                                                             | [Optional[models.UpdateRecordFile]](../models/updaterecordfile.md) | :heavy_minus_sign:                                                 | Replacement file content                                           |
+| Field                                                                   | Type                                                                    | Required                                                                | Description                                                             |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `record_name`                                                           | *Optional[str]*                                                         | :heavy_minus_sign:                                                      | New name for the record (rename only; a file needs the multipart form). |

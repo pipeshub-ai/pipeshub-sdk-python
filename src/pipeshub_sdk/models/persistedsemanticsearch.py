@@ -9,6 +9,7 @@ from .persistedsemanticsearchsharedwithentry import (
     PersistedSemanticSearchSharedWithEntry,
     PersistedSemanticSearchSharedWithEntryTypedDict,
 )
+from .redactedsource import RedactedSource, RedactedSourceTypedDict
 from datetime import datetime
 from pipeshub_sdk.types import (
     BaseModel,
@@ -19,8 +20,19 @@ from pipeshub_sdk.types import (
 )
 import pydantic
 from pydantic import model_serializer
-from typing import Dict, List, Optional
-from typing_extensions import Annotated, NotRequired, TypedDict
+from typing import Dict, List, Optional, Union
+from typing_extensions import Annotated, NotRequired, TypeAliasType, TypedDict
+
+
+CitationIDTypedDict = TypeAliasType(
+    "CitationIDTypedDict",
+    Union[RedactedSourceTypedDict, PersistedSemanticSearchCitationTypedDict],
+)
+
+
+CitationID = TypeAliasType(
+    "CitationID", Union[RedactedSource, PersistedSemanticSearchCitation]
+)
 
 
 class PersistedSemanticSearchTypedDict(TypedDict):
@@ -40,7 +52,11 @@ class PersistedSemanticSearchTypedDict(TypedDict):
     limit: int
     org_id: str
     user_id: str
-    citation_ids: List[PersistedSemanticSearchCitationTypedDict]
+    citation_ids: List[CitationIDTypedDict]
+    r"""For a search shared with the viewer, a hit the viewer cannot read is a
+    `RedactedSource`.
+
+    """
     records: Dict[str, str]
     r"""Map of source-record id (or `_key`) to a JSON-stringified record object.
     Clients must `JSON.parse` each value before reading fields.
@@ -85,9 +101,11 @@ class PersistedSemanticSearch(BaseModel):
 
     user_id: Annotated[str, pydantic.Field(alias="userId")]
 
-    citation_ids: Annotated[
-        List[PersistedSemanticSearchCitation], pydantic.Field(alias="citationIds")
-    ]
+    citation_ids: Annotated[List[CitationID], pydantic.Field(alias="citationIds")]
+    r"""For a search shared with the viewer, a hit the viewer cannot read is a
+    `RedactedSource`.
+
+    """
 
     records: Dict[str, str]
     r"""Map of source-record id (or `_key`) to a JSON-stringified record object.

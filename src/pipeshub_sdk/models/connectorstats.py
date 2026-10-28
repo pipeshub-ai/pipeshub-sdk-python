@@ -5,11 +5,21 @@ from .connectorindexingstatuscounts import (
     ConnectorIndexingStatusCounts,
     ConnectorIndexingStatusCountsTypedDict,
 )
-from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL, UnrecognizedStr
 import pydantic
 from pydantic import model_serializer
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional, Union
 from typing_extensions import Annotated, NotRequired, TypedDict
+
+
+ConnectorStatsOrigin = Union[
+    Literal[
+        "CONNECTOR",
+        "COLLECTION",
+    ],
+    UnrecognizedStr,
+]
+r"""Where the records come from; `CONNECTOR` for a connector."""
 
 
 class StatsTypedDict(TypedDict):
@@ -118,7 +128,7 @@ class ByRecordType(BaseModel):
 class DataTypedDict(TypedDict):
     org_id: str
     connector_id: str
-    origin: str
+    origin: ConnectorStatsOrigin
     r"""Where the records come from; `CONNECTOR` for a connector."""
     stats: StatsTypedDict
     by_record_type: List[ByRecordTypeTypedDict]
@@ -130,7 +140,7 @@ class Data(BaseModel):
 
     connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
 
-    origin: str
+    origin: ConnectorStatsOrigin
     r"""Where the records come from; `CONNECTOR` for a connector."""
 
     stats: Stats

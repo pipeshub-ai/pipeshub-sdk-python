@@ -19,7 +19,11 @@ class ChatAttachmentUploadRefTypedDict(TypedDict):
     record_name: str
     r"""Original filename stored for the attachment."""
     mime_type: str
-    r"""MIME type of the uploaded file."""
+    r"""MIME type of the stored file. For an image whose bytes are a JPEG or a PNG it is
+    `image/jpeg` or `image/png` as the bytes say, whatever type was declared; other
+    files keep the declared type. Files, images included, are stored as sent.
+
+    """
     extension: str
     r"""File extension derived by the backend."""
     virtual_record_id: str
@@ -43,7 +47,11 @@ class ChatAttachmentUploadRef(BaseModel):
     r"""Original filename stored for the attachment."""
 
     mime_type: Annotated[str, pydantic.Field(alias="mimeType")]
-    r"""MIME type of the uploaded file."""
+    r"""MIME type of the stored file. For an image whose bytes are a JPEG or a PNG it is
+    `image/jpeg` or `image/png` as the bytes say, whatever type was declared; other
+    files keep the declared type. Files, images included, are stored as sent.
+
+    """
 
     extension: str
     r"""File extension derived by the backend."""

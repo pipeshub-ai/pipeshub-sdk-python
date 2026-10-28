@@ -10,6 +10,7 @@ from typing_extensions import Annotated, TypedDict
 
 class DeleteConnectorInstanceRequestTypedDict(TypedDict):
     connector_id: str
+    r"""Connector instance ID (`_key` of the instance)"""
 
 
 class DeleteConnectorInstanceRequest(BaseModel):
@@ -18,28 +19,37 @@ class DeleteConnectorInstanceRequest(BaseModel):
         pydantic.Field(alias="connectorId"),
         FieldMetadata(path=PathParamMetadata(style="simple", explode=False)),
     ]
+    r"""Connector instance ID (`_key` of the instance)"""
 
 
 DeleteConnectorInstanceStatus = Literal["DELETING",]
 
 
 class DeleteConnectorInstanceResponseTypedDict(TypedDict):
-    r"""Deletion started"""
+    r"""Deletion accepted. The connector is marked `DELETING` and removed in
+    the background, so a `GET` shortly afterwards answers `404`.
+
+    """
 
     success: bool
     message: str
     connector_id: str
+    r"""ID of the connector being deleted"""
     status: DeleteConnectorInstanceStatus
 
 
 class DeleteConnectorInstanceResponse(BaseModel):
-    r"""Deletion started"""
+    r"""Deletion accepted. The connector is marked `DELETING` and removed in
+    the background, so a `GET` shortly afterwards answers `404`.
+
+    """
 
     success: bool
 
     message: str
 
     connector_id: Annotated[str, pydantic.Field(alias="connectorId")]
+    r"""ID of the connector being deleted"""
 
     status: DeleteConnectorInstanceStatus
 

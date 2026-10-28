@@ -25,6 +25,10 @@ class ConnectorAuthFieldTypedDict(TypedDict):
     is_secret: NotRequired[bool]
     r"""Stored values come back masked"""
     options: NotRequired[List[Any]]
+    saved_only: NotRequired[bool]
+    r"""Shown only on an instance that already has a value saved for it, never on a new one: a way of signing in kept for instances set up with it. Absent means false."""
+    required_unless_saved: NotRequired[str]
+    r"""Name of another field: this field is required, except on an instance that has a value saved for that field. Absent means `required` alone applies."""
 
 
 class ConnectorAuthField(BaseModel):
@@ -55,6 +59,14 @@ class ConnectorAuthField(BaseModel):
 
     options: Optional[List[Any]] = None
 
+    saved_only: Annotated[Optional[bool], pydantic.Field(alias="savedOnly")] = None
+    r"""Shown only on an instance that already has a value saved for it, never on a new one: a way of signing in kept for instances set up with it. Absent means false."""
+
+    required_unless_saved: Annotated[
+        Optional[str], pydantic.Field(alias="requiredUnlessSaved")
+    ] = None
+    r"""Name of another field: this field is required, except on an instance that has a value saved for that field. Absent means `required` alone applies."""
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -70,6 +82,8 @@ class ConnectorAuthField(BaseModel):
                 "validation",
                 "isSecret",
                 "options",
+                "savedOnly",
+                "requiredUnlessSaved",
             ]
         )
         serialized = handler(self)

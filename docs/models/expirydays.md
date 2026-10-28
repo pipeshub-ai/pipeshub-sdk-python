@@ -4,7 +4,8 @@ Token lifetime. Defaults to `30` if omitted — a token minted
 without an explicit choice shouldn't default to the longest
 lifetime. `"never"` is stored as a ~100-year expiry (the
 underlying schema field is required and TTL-indexed, so there's
-no literal null option).
+no literal null option). Any other value, including `null` and the
+string `"30"`, is a `400` validation error.
 
 
 

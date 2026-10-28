@@ -63,7 +63,8 @@ class PersonalAccessTokens(BaseSDK):
         Lists the caller's own active (non-revoked, unexpired) personal
         access tokens, newest first, capped at 100 rows server-side. Never
         returns another user's tokens — see `GET /personal-access-tokens/admin`
-        for the org-admin, cross-user view.
+        for the org-admin, cross-user view. The handler reads no query parameters
+        and ignores any that are sent.
 
         Shares the same per-user rate limiter as `/oauth-clients/*`
         (default 1000 req/min, `MAX_OAUTH_CLIENT_REQUESTS_PER_MINUTE`).
@@ -136,11 +137,17 @@ class PersonalAccessTokens(BaseSDK):
                 errors.ApplicationJSONErrorResponseData, http_res
             )
             raise errors.ApplicationJSONErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["400", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "429", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -167,7 +174,8 @@ class PersonalAccessTokens(BaseSDK):
         Lists the caller's own active (non-revoked, unexpired) personal
         access tokens, newest first, capped at 100 rows server-side. Never
         returns another user's tokens — see `GET /personal-access-tokens/admin`
-        for the org-admin, cross-user view.
+        for the org-admin, cross-user view. The handler reads no query parameters
+        and ignores any that are sent.
 
         Shares the same per-user rate limiter as `/oauth-clients/*`
         (default 1000 req/min, `MAX_OAUTH_CLIENT_REQUESTS_PER_MINUTE`).
@@ -240,11 +248,17 @@ class PersonalAccessTokens(BaseSDK):
                 errors.ApplicationJSONErrorResponseData, http_res
             )
             raise errors.ApplicationJSONErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["400", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "429", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -310,7 +324,8 @@ class PersonalAccessTokens(BaseSDK):
             without an explicit choice shouldn't default to the longest
             lifetime. `\"never\"` is stored as a ~100-year expiry (the
             underlying schema field is required and TTL-indexed, so there's
-            no literal null option).
+            no literal null option). Any other value, including `null` and the
+            string `\"30\"`, is a `400` validation error.
 
         :param knowledge_limit: What a connected app may see: an OAuth app's limit is picked by its
             creator and holds for every user who connects it; a personal access
@@ -402,6 +417,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -467,7 +485,8 @@ class PersonalAccessTokens(BaseSDK):
             without an explicit choice shouldn't default to the longest
             lifetime. `\"never\"` is stored as a ~100-year expiry (the
             underlying schema field is required and TTL-indexed, so there's
-            no literal null option).
+            no literal null option). Any other value, including `null` and the
+            string `\"30\"`, is a `400` validation error.
 
         :param knowledge_limit: What a connected app may see: an OAuth app's limit is picked by its
             creator and holds for every user who connects it; a personal access
@@ -559,6 +578,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -586,7 +608,8 @@ class PersonalAccessTokens(BaseSDK):
         definitions, for populating the create-token scope picker. Unlike
         `GET /oauth-clients/scopes`, this is **not** grouped by category and
         **not** role-aware — every org member sees the same set, since PAT
-        scope selection isn't gated by admin status.
+        scope selection isn't gated by admin status. The handler reads no query
+        parameters and ignores any that are sent.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -656,11 +679,17 @@ class PersonalAccessTokens(BaseSDK):
                 errors.ApplicationJSONErrorResponseData, http_res
             )
             raise errors.ApplicationJSONErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["400", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "429", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -688,7 +717,8 @@ class PersonalAccessTokens(BaseSDK):
         definitions, for populating the create-token scope picker. Unlike
         `GET /oauth-clients/scopes`, this is **not** grouped by category and
         **not** role-aware — every org member sees the same set, since PAT
-        scope selection isn't gated by admin status.
+        scope selection isn't gated by admin status. The handler reads no query
+        parameters and ignores any that are sent.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -758,11 +788,17 @@ class PersonalAccessTokens(BaseSDK):
                 errors.ApplicationJSONErrorResponseData, http_res
             )
             raise errors.ApplicationJSONErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["400", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "429", "application/json"):
             response_data = unmarshal_json_response(
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -799,7 +835,10 @@ class PersonalAccessTokens(BaseSDK):
         If set, this operation will use `bearer_auth` from the global security.
 
         :param token_id: Personal access token ID
-        :param reason:
+        :param reason: Stored on the revocation for auditing. There is no body validator:
+            a `reason` that is not a string is ignored rather than refused, and
+            the revocation goes ahead with the default reason.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -875,6 +914,9 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RevokePatResponse, http_res)
+        if utils.match_response(http_res, ["400", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["401", "404"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -885,6 +927,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -921,7 +966,10 @@ class PersonalAccessTokens(BaseSDK):
         If set, this operation will use `bearer_auth` from the global security.
 
         :param token_id: Personal access token ID
-        :param reason:
+        :param reason: Stored on the revocation for auditing. There is no body validator:
+            a `reason` that is not a string is ignored rather than refused, and
+            the revocation goes ahead with the default reason.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -997,6 +1045,9 @@ class PersonalAccessTokens(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RevokePatResponse, http_res)
+        if utils.match_response(http_res, ["400", "403"], "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, ["401", "404"], "application/json"):
             response_data = unmarshal_json_response(
                 errors.ApplicationJSONErrorResponseData, http_res
@@ -1007,6 +1058,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1042,6 +1096,10 @@ class PersonalAccessTokens(BaseSDK):
         Requires org-admin privileges (`userAdminCheck`): a non-admin caller
         gets `403` (`ForbiddenError`, message
         \"You need admin access to do this. Ask an admin in your organisation.\").
+        The admin check runs before the query is validated, so a non-admin gets
+        `403` even for an invalid `page` or `limit`. Query parameters other than
+        `page` and `limit` are ignored. A page past the end answers `200` with an
+        empty `data` array.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1124,6 +1182,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1159,6 +1220,10 @@ class PersonalAccessTokens(BaseSDK):
         Requires org-admin privileges (`userAdminCheck`): a non-admin caller
         gets `403` (`ForbiddenError`, message
         \"You need admin access to do this. Ask an admin in your organisation.\").
+        The admin check runs before the query is validated, so a non-admin gets
+        `403` even for an invalid `page` or `limit`. Query parameters other than
+        `page` and `limit` are ignored. A page past the end answers `200` with an
+        empty `data` array.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -1241,6 +1306,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
@@ -1276,7 +1344,10 @@ class PersonalAccessTokens(BaseSDK):
         If set, this operation will use `bearer_auth` from the global security.
 
         :param token_id: Personal access token ID
-        :param reason:
+        :param reason: Stored on the revocation for auditing. There is no body validator:
+            a `reason` that is not a string is ignored rather than refused, and
+            the revocation goes ahead with the default reason.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1364,6 +1435,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
@@ -1399,7 +1473,10 @@ class PersonalAccessTokens(BaseSDK):
         If set, this operation will use `bearer_auth` from the global security.
 
         :param token_id: Personal access token ID
-        :param reason:
+        :param reason: Stored on the revocation for auditing. There is no body validator:
+            a `reason` that is not a string is ignored rather than refused, and
+            the revocation goes ahead with the default reason.
+
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
         :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
@@ -1487,6 +1564,9 @@ class PersonalAccessTokens(BaseSDK):
                 errors.OAuthClientManagementRateLimitErrorData, http_res
             )
             raise errors.OAuthClientManagementRateLimitError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(

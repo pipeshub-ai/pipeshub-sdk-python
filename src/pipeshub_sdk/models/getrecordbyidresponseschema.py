@@ -35,7 +35,7 @@ Absent on records written before the field existed; read as OPEN.
 """
 
 
-class GetRecordByIDResponseSchemaFileRecordTypedDict(TypedDict):
+class FileRecordTypedDict(TypedDict):
     id: str
     org_id: str
     name: str
@@ -66,7 +66,7 @@ class GetRecordByIDResponseSchemaFileRecordTypedDict(TypedDict):
     r"""The same path on local storage; `null` in the same cases as `path`."""
 
 
-class GetRecordByIDResponseSchemaFileRecord(BaseModel):
+class FileRecord(BaseModel):
     id: str
 
     org_id: Annotated[str, pydantic.Field(alias="orgId")]
@@ -184,11 +184,11 @@ class GetRecordByIDResponseSchemaFileRecord(BaseModel):
         return m
 
 
-class GetRecordByIDResponseSchemaMailRecordTypedDict(TypedDict):
+class MailRecordTypedDict(TypedDict):
     pass
 
 
-class GetRecordByIDResponseSchemaMailRecord(BaseModel):
+class MailRecord(BaseModel):
     pass
 
 
@@ -263,8 +263,8 @@ class GetRecordByIDResponseSchemaRecordTypedDict(TypedDict):
     mime_type: Nullable[str]
     size_in_bytes: Nullable[int]
     web_url: Nullable[str]
-    file_record: Nullable[GetRecordByIDResponseSchemaFileRecordTypedDict]
-    mail_record: Nullable[GetRecordByIDResponseSchemaMailRecordTypedDict]
+    file_record: Nullable[FileRecordTypedDict]
+    mail_record: Nullable[MailRecordTypedDict]
     ticket_record: Nullable[TicketRecordTypedDict]
     external_root_group_id: NotRequired[Nullable[str]]
     external_group_id: NotRequired[Nullable[str]]
@@ -491,15 +491,9 @@ class GetRecordByIDResponseSchemaRecord(BaseModel):
 
     web_url: Annotated[Nullable[str], pydantic.Field(alias="webUrl")]
 
-    file_record: Annotated[
-        Nullable[GetRecordByIDResponseSchemaFileRecord],
-        pydantic.Field(alias="fileRecord"),
-    ]
+    file_record: Annotated[Nullable[FileRecord], pydantic.Field(alias="fileRecord")]
 
-    mail_record: Annotated[
-        Nullable[GetRecordByIDResponseSchemaMailRecord],
-        pydantic.Field(alias="mailRecord"),
-    ]
+    mail_record: Annotated[Nullable[MailRecord], pydantic.Field(alias="mailRecord")]
 
     ticket_record: Annotated[
         Nullable[TicketRecord], pydantic.Field(alias="ticketRecord")
@@ -1123,7 +1117,7 @@ class GetRecordByIDResponseSchema(BaseModel):
 
 
 try:
-    GetRecordByIDResponseSchemaFileRecord.model_rebuild()
+    FileRecord.model_rebuild()
 except NameError:
     pass
 try:

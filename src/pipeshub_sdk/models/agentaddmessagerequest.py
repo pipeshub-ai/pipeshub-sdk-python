@@ -39,6 +39,19 @@ AgentAddMessageRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+AgentAddMessageRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""Reasoning effort for this turn, for models that support it. Stored on
+the conversation's model info and forwarded to the AI backend.
+
+"""
+
+
 class AgentAddMessageRequestTypedDict(TypedDict):
     r"""Follow-up turn on an agent conversation. Used as-is by the
     non-streaming `POST /agents/{agentKey}/conversations/{conversationId}/messages`,
@@ -77,7 +90,8 @@ class AgentAddMessageRequestTypedDict(TypedDict):
     """
     model_key: NotRequired[str]
     r"""AI model configuration id override for this turn. Omit to use the
-    agent's default model.
+    agent's default model. A key that names no configured model is not
+    refused: the turn runs on the organization's default model.
 
     """
     model_name: NotRequired[str]
@@ -136,6 +150,11 @@ class AgentAddMessageRequestTypedDict(TypedDict):
     {runId}` while the stream is still generating.
 
     """
+    reasoning_effort: NotRequired[AgentAddMessageRequestReasoningEffort]
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
 
 
 class AgentAddMessageRequest(BaseModel):
@@ -185,7 +204,8 @@ class AgentAddMessageRequest(BaseModel):
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""AI model configuration id override for this turn. Omit to use the
-    agent's default model.
+    agent's default model. A key that names no configured model is not
+    refused: the turn runs on the organization's default model.
 
     """
 
@@ -269,6 +289,15 @@ class AgentAddMessageRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[AgentAddMessageRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -289,6 +318,7 @@ class AgentAddMessageRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

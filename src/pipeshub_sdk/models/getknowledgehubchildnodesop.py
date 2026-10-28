@@ -21,8 +21,9 @@ ParentType = Literal[
 ]
 r"""Type of the parent node whose children to retrieve.
 
-Must be one of: `app`, `recordGroup`, `folder`, `record`.
-Any other value returns a 400 error.
+Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+Any other value returns a 400 error, and so does a type that does not
+match what `parentId` is (for example `folder` with a knowledge base id).
 
 """
 
@@ -35,7 +36,7 @@ GetKnowledgeHubChildNodesSortBy = Literal[
     "type",
 ]
 r"""Field to sort results by. Omitted → default `updatedAt`.
-Unknown value → silently falls back to `name`.
+Any other value is answered `400` (\"Invalid sort_by: ...\").
 
 """
 
@@ -44,8 +45,8 @@ GetKnowledgeHubChildNodesSortOrder = Literal[
     "asc",
     "desc",
 ]
-r"""Sort direction. Omitted → default `desc`.
-Unknown value → silently falls back to `asc`.
+r"""Sort direction. Omitted → default `desc`. Read case-insensitively;
+any other value is answered `400` (\"Invalid sort_order: ...\").
 
 """
 
@@ -54,15 +55,18 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
     parent_type: ParentType
     r"""Type of the parent node whose children to retrieve.
 
-    Must be one of: `app`, `recordGroup`, `folder`, `record`.
-    Any other value returns a 400 error.
+    Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+    Any other value returns a 400 error, and so does a type that does not
+    match what `parentId` is (for example `folder` with a knowledge base id).
 
     """
     parent_id: str
     r"""Identifier of the parent node. Must be a valid UUID
     (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-    Any value that does not match this format returns a 400 error.
+    Any value that does not match this format returns a 400 error. The format
+    check ignores letter case but ids are stored in lower case, so an
+    upper-case UUID passes the check and is answered 404.
 
     """
     only_containers: NotRequired[bool]
@@ -89,30 +93,33 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
     """
     sort_by: NotRequired[GetKnowledgeHubChildNodesSortBy]
     r"""Field to sort results by. Omitted → default `updatedAt`.
-    Unknown value → silently falls back to `name`.
+    Any other value is answered `400` (\"Invalid sort_by: ...\").
 
     """
     sort_order: NotRequired[GetKnowledgeHubChildNodesSortOrder]
-    r"""Sort direction. Omitted → default `desc`.
-    Unknown value → silently falls back to `asc`.
+    r"""Sort direction. Omitted → default `desc`. Read case-insensitively;
+    any other value is answered `400` (\"Invalid sort_order: ...\").
 
     """
     q: NotRequired[str]
     r"""Full-text search query. Must be between 2 and 500 characters
-    (inclusive). When provided, the endpoint searches across all
+    (inclusive) after surrounding whitespace is removed, otherwise `400`.
+    When provided, the endpoint searches across all
     descendants of the parent node.
+    A repeated `q` is joined with commas into one query, and a `q` sent as an object
+    (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
     """
     node_types: NotRequired[str]
-    r"""Comma-separated list of node types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of node types to include. An unknown value is
+    answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `folder`, `app`, `recordGroup`, `record`
 
     """
     record_types: NotRequired[str]
-    r"""Comma-separated list of record types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of record types to include. An unknown value is
+    answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
     `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -124,8 +131,8 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
 
     """
     origins: NotRequired[str]
-    r"""Comma-separated list of origin types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of origin types to include. An unknown value is
+    answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
     Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -137,12 +144,12 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
 
     """
     indexing_status: NotRequired[str]
-    r"""Comma-separated list of indexing statuses to include. Invalid values
-    are silently ignored. Maximum 100 items.
+    r"""Comma-separated list of indexing statuses to include. An unknown value
+    is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
     Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
     `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
     """
     created_at: NotRequired[str]
@@ -174,7 +181,8 @@ class GetKnowledgeHubChildNodesRequestTypedDict(TypedDict):
     """
     include: NotRequired[str]
     r"""Comma-separated list of additional response sections to include.
-    Invalid values are silently ignored. Maximum 100 items.
+    An unknown value is answered `400` (\"Invalid include value(s): ...\").
+    Maximum 100 items.
 
     Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -189,8 +197,9 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
     ]
     r"""Type of the parent node whose children to retrieve.
 
-    Must be one of: `app`, `recordGroup`, `folder`, `record`.
-    Any other value returns a 400 error.
+    Must be one of: `app`, `recordGroup`, `folder`, `record` (case-sensitive).
+    Any other value returns a 400 error, and so does a type that does not
+    match what `parentId` is (for example `folder` with a knowledge base id).
 
     """
 
@@ -202,7 +211,9 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
     r"""Identifier of the parent node. Must be a valid UUID
     (e.g. `f3a4b5b6-5b6c-4e85-9097-3202cfe696fc`).
 
-    Any value that does not match this format returns a 400 error.
+    Any value that does not match this format returns a 400 error. The format
+    check ignores letter case but ids are stored in lower case, so an
+    upper-case UUID passes the check and is answered 404.
 
     """
 
@@ -251,7 +262,7 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "updatedAt"
     r"""Field to sort results by. Omitted → default `updatedAt`.
-    Unknown value → silently falls back to `name`.
+    Any other value is answered `400` (\"Invalid sort_by: ...\").
 
     """
 
@@ -260,8 +271,8 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         pydantic.Field(alias="sortOrder"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = "desc"
-    r"""Sort direction. Omitted → default `desc`.
-    Unknown value → silently falls back to `asc`.
+    r"""Sort direction. Omitted → default `desc`. Read case-insensitively;
+    any other value is answered `400` (\"Invalid sort_order: ...\").
 
     """
 
@@ -270,8 +281,11 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Full-text search query. Must be between 2 and 500 characters
-    (inclusive). When provided, the endpoint searches across all
+    (inclusive) after surrounding whitespace is removed, otherwise `400`.
+    When provided, the endpoint searches across all
     descendants of the parent node.
+    A repeated `q` is joined with commas into one query, and a `q` sent as an object
+    (`q[a]=b`) is refused with `400` (\"Search query must be text\").
 
     """
 
@@ -280,8 +294,8 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         pydantic.Field(alias="nodeTypes"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of node types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of node types to include. An unknown value is
+    answered `400` (\"Invalid node_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `folder`, `app`, `recordGroup`, `record`
 
@@ -292,8 +306,8 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         pydantic.Field(alias="recordTypes"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of record types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of record types to include. An unknown value is
+    answered `400` (\"Invalid record_types value(s): ...\"). Maximum 100 items.
 
     Valid values: `FILE`, `DRIVE`, `WEBPAGE`, `DATABASE`, `DATASOURCE`,
     `MESSAGE`, `MAIL`, `GROUP_MAIL`, `TICKET`, `COMMENT`,
@@ -309,8 +323,8 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         Optional[str],
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of origin types to include. Invalid values are
-    silently ignored. Maximum 100 items.
+    r"""Comma-separated list of origin types to include. An unknown value is
+    answered `400` (\"Invalid origins value(s): ...\"). Maximum 100 items.
 
     Valid values: `COLLECTION`, `CONNECTOR`
 
@@ -332,12 +346,12 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         pydantic.Field(alias="indexingStatus"),
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
-    r"""Comma-separated list of indexing statuses to include. Invalid values
-    are silently ignored. Maximum 100 items.
+    r"""Comma-separated list of indexing statuses to include. An unknown value
+    is answered `400` (\"Invalid indexing_status value(s): ...\"). Maximum 100 items.
 
     Valid values: `NOT_STARTED`, `PAUSED`, `IN_PROGRESS`, `COMPLETED`,
     `FAILED`, `FILE_TYPE_NOT_SUPPORTED`, `AUTO_INDEX_OFF`, `EMPTY`,
-    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`
+    `ENABLE_MULTIMODAL_MODELS`, `QUEUED`, `SKIPPED`, `PASSWORD_PROTECTED`
 
     """
 
@@ -391,7 +405,8 @@ class GetKnowledgeHubChildNodesRequest(BaseModel):
         FieldMetadata(query=QueryParamMetadata(style="form", explode=True)),
     ] = None
     r"""Comma-separated list of additional response sections to include.
-    Invalid values are silently ignored. Maximum 100 items.
+    An unknown value is answered `400` (\"Invalid include value(s): ...\").
+    Maximum 100 items.
 
     Valid values: `breadcrumbs`, `counts`, `availableFilters`, `permissions`
 
@@ -467,22 +482,6 @@ class GetKnowledgeHubChildNodesServiceUnavailableError(BaseModel):
         return m
 
 
-GetKnowledgeHubChildNodesCodeHTTPInternalServerError = Literal[
-    "HTTP_INTERNAL_SERVER_ERROR",
-]
-
-
-class GetKnowledgeHubChildNodesErrorHTTPInternalServerErrorTypedDict(TypedDict):
-    code: GetKnowledgeHubChildNodesCodeHTTPInternalServerError
-    message: str
-
-
-class GetKnowledgeHubChildNodesErrorHTTPInternalServerError(BaseModel):
-    code: GetKnowledgeHubChildNodesCodeHTTPInternalServerError
-
-    message: str
-
-
 GetKnowledgeHubChildNodesUnprocessableEntityCode = Literal["HTTP_UNPROCESSABLE_ENTITY",]
 
 
@@ -514,62 +513,6 @@ class GetKnowledgeHubChildNodesUnprocessableEntityError(BaseModel):
                     m[k] = val
 
         return m
-
-
-GetKnowledgeHubChildNodesNotFoundCode = Literal["HTTP_NOT_FOUND",]
-
-
-class GetKnowledgeHubChildNodesNotFoundErrorTypedDict(TypedDict):
-    code: GetKnowledgeHubChildNodesNotFoundCode
-    message: str
-
-
-class GetKnowledgeHubChildNodesNotFoundError(BaseModel):
-    code: GetKnowledgeHubChildNodesNotFoundCode
-
-    message: str
-
-
-GetKnowledgeHubChildNodesForbiddenCode = Literal["HTTP_FORBIDDEN",]
-
-
-class GetKnowledgeHubChildNodesErrorHTTPForbiddenTypedDict(TypedDict):
-    code: GetKnowledgeHubChildNodesForbiddenCode
-    message: str
-
-
-class GetKnowledgeHubChildNodesErrorHTTPForbidden(BaseModel):
-    code: GetKnowledgeHubChildNodesForbiddenCode
-
-    message: str
-
-
-GetKnowledgeHubChildNodesUnauthorizedCode = Literal["HTTP_UNAUTHORIZED",]
-
-
-class GetKnowledgeHubChildNodesErrorHTTPUnauthorizedTypedDict(TypedDict):
-    code: GetKnowledgeHubChildNodesUnauthorizedCode
-    message: str
-
-
-class GetKnowledgeHubChildNodesErrorHTTPUnauthorized(BaseModel):
-    code: GetKnowledgeHubChildNodesUnauthorizedCode
-
-    message: str
-
-
-GetKnowledgeHubChildNodesCodeHTTPBadRequest = Literal["HTTP_BAD_REQUEST",]
-
-
-class GetKnowledgeHubChildNodesErrorHTTPBadRequestTypedDict(TypedDict):
-    code: GetKnowledgeHubChildNodesCodeHTTPBadRequest
-    message: str
-
-
-class GetKnowledgeHubChildNodesErrorHTTPBadRequest(BaseModel):
-    code: GetKnowledgeHubChildNodesCodeHTTPBadRequest
-
-    message: str
 
 
 class GetKnowledgeHubChildNodesResponseTypedDict(TypedDict):

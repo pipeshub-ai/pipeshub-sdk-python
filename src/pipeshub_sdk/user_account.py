@@ -302,8 +302,10 @@ class UserAccount(BaseSDK):
 
         - `password`: `{ \"credentials\": { \"password\": \"your-password\" } }`
         - `otp`: `{ \"credentials\": { \"otp\": \"123456\" } }` (6-digit code, valid for 10 minutes)
-        - `google`: `{ \"credentials\": \"google-id-token-string\" }`
-        - `microsoft`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
+        - `google`: `{ \"credentials\": \"google-id-token-string\" }`. The object form
+        `{ \"credentials\": { \"credential\": \"...\" } }` passes the first token check, but by code
+        reading the second check is handed the whole object, so it ends in `500`
+        - `microsoft`: `{ \"credentials\": { \"idToken\": \"...\" } }` (only `idToken` is read)
 
         SAML (`samlSso`), generic OAuth (`oauth`) and Azure AD (`azureAd`) sign-in were removed in 1.0;
         this endpoint answers `400` for them. Azure AD accounts sign in with `microsoft`.
@@ -320,18 +322,36 @@ class UserAccount(BaseSDK):
 
         **Security:**
 
-        - Account locks for 24 hours after 5 consecutive failed attempts, and the owner is
+        - Account locks for 24 hours after 10 consecutive failed attempts, and the owner is
         sent an email saying so. While it is locked, sign-in is refused with the same answer
         as a wrong password or code, even when the password or code is right
         - CAPTCHA may be required if enabled (pass `cf-turnstile-response`)
         - An email with no account gets the same status and message as a real account given
         a wrong password (`400`) or a wrong, missing or expired sign-in code (`401`)
+        - The session token is single-use for the final step: once tokens are returned the
+        session is gone, and sending it again answers `401`
+
+        **Order of checks:** the session token is checked before the body, so a request
+        without a valid `x-session-token` answers `401` whatever its body holds.
 
 
         :param x_session_token: Session token received from `/initAuth` endpoint
-        :param method: Authentication method to use
-        :param credentials: Credentials based on the authentication method
-        :param email: Optional email for verification (used with some OAuth methods)
+        :param method: Authentication method to use. It must be one the session's current step allows;
+            any other value, known or not, is answered `400`.
+
+        :param credentials: Credentials based on the authentication method; the shape each method needs is
+            listed above. The validator only checks that this is a non-empty string or an
+            object whose `password`, `otp`, `token`, `code`, `accessToken` and `idToken`,
+            when present, are strings; other fields of the object are passed through. An
+            object without the field its method needs is refused later as a failed sign-in,
+            not as a validation error: `microsoft` without `idToken` answers `400`, and a Google
+            token that is not a JWT answers `500`.
+
+        :param email: The account's email. Used when the session was started without one
+            (`/initAuth` with no `email`); when neither carries an email, password and
+            code sign-in answer `500`. Ignored by the external-provider methods, which
+            take the email from the provider.
+
         :param cf_turnstile_response: Cloudflare Turnstile CAPTCHA token (optional, if CAPTCHA is enabled)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -403,7 +423,7 @@ class UserAccount(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthenticateResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(http_res, ["400", "401"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "429", "application/json"):
@@ -449,8 +469,10 @@ class UserAccount(BaseSDK):
 
         - `password`: `{ \"credentials\": { \"password\": \"your-password\" } }`
         - `otp`: `{ \"credentials\": { \"otp\": \"123456\" } }` (6-digit code, valid for 10 minutes)
-        - `google`: `{ \"credentials\": \"google-id-token-string\" }`
-        - `microsoft`: `{ \"credentials\": { \"accessToken\": \"...\", \"idToken\": \"...\" } }`
+        - `google`: `{ \"credentials\": \"google-id-token-string\" }`. The object form
+        `{ \"credentials\": { \"credential\": \"...\" } }` passes the first token check, but by code
+        reading the second check is handed the whole object, so it ends in `500`
+        - `microsoft`: `{ \"credentials\": { \"idToken\": \"...\" } }` (only `idToken` is read)
 
         SAML (`samlSso`), generic OAuth (`oauth`) and Azure AD (`azureAd`) sign-in were removed in 1.0;
         this endpoint answers `400` for them. Azure AD accounts sign in with `microsoft`.
@@ -467,18 +489,36 @@ class UserAccount(BaseSDK):
 
         **Security:**
 
-        - Account locks for 24 hours after 5 consecutive failed attempts, and the owner is
+        - Account locks for 24 hours after 10 consecutive failed attempts, and the owner is
         sent an email saying so. While it is locked, sign-in is refused with the same answer
         as a wrong password or code, even when the password or code is right
         - CAPTCHA may be required if enabled (pass `cf-turnstile-response`)
         - An email with no account gets the same status and message as a real account given
         a wrong password (`400`) or a wrong, missing or expired sign-in code (`401`)
+        - The session token is single-use for the final step: once tokens are returned the
+        session is gone, and sending it again answers `401`
+
+        **Order of checks:** the session token is checked before the body, so a request
+        without a valid `x-session-token` answers `401` whatever its body holds.
 
 
         :param x_session_token: Session token received from `/initAuth` endpoint
-        :param method: Authentication method to use
-        :param credentials: Credentials based on the authentication method
-        :param email: Optional email for verification (used with some OAuth methods)
+        :param method: Authentication method to use. It must be one the session's current step allows;
+            any other value, known or not, is answered `400`.
+
+        :param credentials: Credentials based on the authentication method; the shape each method needs is
+            listed above. The validator only checks that this is a non-empty string or an
+            object whose `password`, `otp`, `token`, `code`, `accessToken` and `idToken`,
+            when present, are strings; other fields of the object are passed through. An
+            object without the field its method needs is refused later as a failed sign-in,
+            not as a validation error: `microsoft` without `idToken` answers `400`, and a Google
+            token that is not a JWT answers `500`.
+
+        :param email: The account's email. Used when the session was started without one
+            (`/initAuth` with no `email`); when neither carries an email, password and
+            code sign-in answer `500`. Ignored by the external-provider methods, which
+            take the email from the provider.
+
         :param cf_turnstile_response: Cloudflare Turnstile CAPTCHA token (optional, if CAPTCHA is enabled)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -550,7 +590,7 @@ class UserAccount(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.AuthenticateResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(http_res, ["400", "401"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "429", "application/json"):
@@ -593,6 +633,7 @@ class UserAccount(BaseSDK):
 
         - Pass the refresh token as a Bearer token in the Authorization header
         - Returns a new access token and basic user information
+        - The request body and query string are not read
 
         **Token Lifetimes:**
 
@@ -664,7 +705,7 @@ class UserAccount(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RefreshTokenResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(http_res, ["400", "401"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
@@ -702,6 +743,7 @@ class UserAccount(BaseSDK):
 
         - Pass the refresh token as a Bearer token in the Authorization header
         - Returns a new access token and basic user information
+        - The request body and query string are not read
 
         **Token Lifetimes:**
 
@@ -773,10 +815,382 @@ class UserAccount(BaseSDK):
         response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
             return unmarshal_json_response(models.RefreshTokenResponse, http_res)
-        if utils.match_response(http_res, ["400", "401", "404"], "application/json"):
+        if utils.match_response(http_res, ["400", "401"], "application/json"):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def get_password_status(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetPasswordStatusResponse:
+        r"""Get password status
+
+        Returns whether the authenticated user has a password set. Users who signed in only through SSO do not.
+
+        If set, this operation will use `bearer_auth` from the global security.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request(
+            method="GET",
+            path="/userAccount/password/status",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getPasswordStatus",
+                oauth2_scopes=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["User Account"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.GetPasswordStatusResponse, http_res)
+        if utils.match_response(http_res, "401", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def get_password_status_async(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.GetPasswordStatusResponse:
+        r"""Get password status
+
+        Returns whether the authenticated user has a password set. Users who signed in only through SSO do not.
+
+        If set, this operation will use `bearer_auth` from the global security.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request_async(
+            method="GET",
+            path="/userAccount/password/status",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="getPasswordStatus",
+                oauth2_scopes=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["User Account"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(models.GetPasswordStatusResponse, http_res)
+        if utils.match_response(http_res, "401", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = await utils.stream_to_text_async(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    def send_password_setup_email(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SendPasswordSetupEmailResponse:
+        r"""Email a link to set a first password
+
+        Sends the authenticated user a single-use link, to the email on their account, for setting a first password.
+        For users who have no password yet, for example those who signed in with Google. Users who already have one change it with `POST /userAccount/password/reset`.
+
+
+        If set, this operation will use `bearer_auth` from the global security.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request(
+            method="POST",
+            path="/userAccount/password/setup/email",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = self.do_request(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="sendPasswordSetupEmail",
+                oauth2_scopes=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["User Account"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SendPasswordSetupEmailResponse, http_res
+            )
+        if utils.match_response(
+            http_res, ["400", "401", "404", "429"], "application/json"
+        ):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+        if utils.match_response(http_res, "5XX", "*"):
+            http_res_text = utils.stream_to_text(http_res)
+            raise errors.PipeshubDefaultError(
+                "API error occurred", http_res, http_res_text
+            )
+
+        raise errors.PipeshubDefaultError("Unexpected response received", http_res)
+
+    async def send_password_setup_email_async(
+        self,
+        *,
+        retries: OptionalNullable[utils.RetryConfig] = UNSET,
+        server_url: Optional[str] = None,
+        timeout_ms: Optional[int] = None,
+        http_headers: Optional[Mapping[str, str]] = None,
+    ) -> models.SendPasswordSetupEmailResponse:
+        r"""Email a link to set a first password
+
+        Sends the authenticated user a single-use link, to the email on their account, for setting a first password.
+        For users who have no password yet, for example those who signed in with Google. Users who already have one change it with `POST /userAccount/password/reset`.
+
+
+        If set, this operation will use `bearer_auth` from the global security.
+
+        :param retries: Override the default retry configuration for this method
+        :param server_url: Override the default server URL for this method
+        :param timeout_ms: Override the default request timeout configuration for this method in milliseconds
+        :param http_headers: Additional headers to set or replace on requests.
+        """
+        base_url = None
+        url_variables = None
+        if timeout_ms is None:
+            timeout_ms = self.sdk_configuration.timeout_ms
+
+        if server_url is not None:
+            base_url = server_url
+        else:
+            base_url = self._get_url(base_url, url_variables)
+        req = self._build_request_async(
+            method="POST",
+            path="/userAccount/password/setup/email",
+            base_url=base_url,
+            url_variables=url_variables,
+            request=None,
+            request_body_required=False,
+            request_has_path_params=False,
+            request_has_query_params=True,
+            user_agent_header="user-agent",
+            accept_header_value="application/json",
+            http_headers=http_headers,
+            security=self.sdk_configuration.security,
+            allow_empty_value=None,
+            allowed_fields=["bearer_auth"],
+            timeout_ms=timeout_ms,
+        )
+
+        if retries == UNSET:
+            if self.sdk_configuration.retry_config is not UNSET:
+                retries = self.sdk_configuration.retry_config
+
+        retry_config = None
+        if isinstance(retries, utils.RetryConfig):
+            retry_config = (retries, ["429", "500", "502", "503", "504"])
+
+        http_res = await self.do_request_async(
+            hook_ctx=HookContext(
+                config=self.sdk_configuration,
+                base_url=base_url or "",
+                operation_id="sendPasswordSetupEmail",
+                oauth2_scopes=None,
+                security_source=get_security_from_env(
+                    self.sdk_configuration.security, models.Security
+                ),
+                tags=["User Account"],
+                extensions=None,
+            ),
+            request=req,
+            is_error_status_code=lambda c: utils.match_status_codes(["4XX", "5XX"], c),
+            retry_config=retry_config,
+        )
+
+        response_data: Any = None
+        if utils.match_response(http_res, "200", "application/json"):
+            return unmarshal_json_response(
+                models.SendPasswordSetupEmailResponse, http_res
+            )
+        if utils.match_response(
+            http_res, ["400", "401", "404", "429"], "application/json"
+        ):
             response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
             raise errors.ErrorResponse(response_data, http_res)
         if utils.match_response(http_res, "4XX", "*"):
@@ -811,11 +1225,22 @@ class UserAccount(BaseSDK):
 
         Allows a logged-in user to change their password by providing the current password and a new password.
 
+        **Order of checks:** the access token is read before the body, so a request without
+        an `Authorization` header answers `400` whatever its body holds. Body fields other
+        than the three below are dropped by the validator, and the query string is not read.
+
+        **Effect on sessions:** the change ends refresh tokens issued before it. The response
+        carries a new access token.
+
 
         If set, this operation will use `bearer_auth` from the global security.
 
-        :param current_password:
-        :param new_password:
+        :param current_password: The password the account has now. The validator treats it as optional; the handler then refuses a missing or empty value with `400`.
+        :param new_password: The new password: at least 8 characters with an uppercase letter, a
+            lowercase letter, a digit and one of `#?!@$%^&*-`, at most 72 bytes, and
+            different from the current one. A value that breaks these rules is
+            refused by the handler with `400`.
+
         :param cf_turnstile_response: Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method
@@ -932,11 +1357,22 @@ class UserAccount(BaseSDK):
 
         Allows a logged-in user to change their password by providing the current password and a new password.
 
+        **Order of checks:** the access token is read before the body, so a request without
+        an `Authorization` header answers `400` whatever its body holds. Body fields other
+        than the three below are dropped by the validator, and the query string is not read.
+
+        **Effect on sessions:** the change ends refresh tokens issued before it. The response
+        carries a new access token.
+
 
         If set, this operation will use `bearer_auth` from the global security.
 
-        :param current_password:
-        :param new_password:
+        :param current_password: The password the account has now. The validator treats it as optional; the handler then refuses a missing or empty value with `400`.
+        :param new_password: The new password: at least 8 characters with an uppercase letter, a
+            lowercase letter, a digit and one of `#?!@$%^&*-`, at most 72 bytes, and
+            different from the current one. A value that breaks these rules is
+            refused by the handler with `400`.
+
         :param cf_turnstile_response: Cloudflare Turnstile CAPTCHA token (required when Turnstile is configured server-side)
         :param retries: Override the default retry configuration for this method
         :param server_url: Override the default server URL for this method

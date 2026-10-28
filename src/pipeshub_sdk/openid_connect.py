@@ -6,7 +6,7 @@ from pipeshub_sdk._hooks import HookContext
 from pipeshub_sdk.types import OptionalNullable, UNSET
 from pipeshub_sdk.utils import get_security_from_env
 from pipeshub_sdk.utils.unmarshal_json_response import unmarshal_json_response
-from typing import Mapping, Optional
+from typing import Any, Mapping, Optional
 
 
 class OpenIDConnect(BaseSDK):
@@ -35,7 +35,7 @@ class OpenIDConnect(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.OAuthUserInfoResponse:
+    ) -> models.OauthUserInfoResponseResponse:
         r"""Get authenticated user information
 
         OpenID Connect UserInfo Endpoint.
@@ -50,6 +50,8 @@ class OpenIDConnect(BaseSDK):
 
         **Authentication:**
         Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
+
+        The route takes no parameters; query parameters are ignored.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -111,9 +113,26 @@ class OpenIDConnect(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.OAuthUserInfoResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            return models.OauthUserInfoResponseResponse(
+                result=unmarshal_json_response(models.OAuthUserInfoResponse, http_res),
+                headers={},
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403"], "application/json"):
+            response_data = unmarshal_json_response(
+                errors.OAuthBearerTokenErrorData, http_res
+            )
+            raise errors.OAuthBearerTokenError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.OauthUserInfoInternalServerErrorUnion, http_res
+            )
+            raise errors.OauthUserInfoInternalServerError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = utils.stream_to_text(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text
@@ -133,7 +152,7 @@ class OpenIDConnect(BaseSDK):
         server_url: Optional[str] = None,
         timeout_ms: Optional[int] = None,
         http_headers: Optional[Mapping[str, str]] = None,
-    ) -> models.OAuthUserInfoResponse:
+    ) -> models.OauthUserInfoResponseResponse:
         r"""Get authenticated user information
 
         OpenID Connect UserInfo Endpoint.
@@ -148,6 +167,8 @@ class OpenIDConnect(BaseSDK):
 
         **Authentication:**
         Pass the access token as a Bearer token: `Authorization: Bearer {access_token}`
+
+        The route takes no parameters; query parameters are ignored.
 
 
         If set, this operation will use `bearer_auth` from the global security.
@@ -209,9 +230,26 @@ class OpenIDConnect(BaseSDK):
             retry_config=retry_config,
         )
 
+        response_data: Any = None
         if utils.match_response(http_res, "200", "application/json"):
-            return unmarshal_json_response(models.OAuthUserInfoResponse, http_res)
-        if utils.match_response(http_res, ["401", "403", "4XX"], "*"):
+            return models.OauthUserInfoResponseResponse(
+                result=unmarshal_json_response(models.OAuthUserInfoResponse, http_res),
+                headers={},
+            )
+        if utils.match_response(http_res, "400", "application/json"):
+            response_data = unmarshal_json_response(errors.ErrorResponseData, http_res)
+            raise errors.ErrorResponse(response_data, http_res)
+        if utils.match_response(http_res, ["401", "403"], "application/json"):
+            response_data = unmarshal_json_response(
+                errors.OAuthBearerTokenErrorData, http_res
+            )
+            raise errors.OAuthBearerTokenError(response_data, http_res)
+        if utils.match_response(http_res, "500", "application/json"):
+            response_data = unmarshal_json_response(
+                errors.OauthUserInfoInternalServerErrorUnion, http_res
+            )
+            raise errors.OauthUserInfoInternalServerError(response_data, http_res)
+        if utils.match_response(http_res, "4XX", "*"):
             http_res_text = await utils.stream_to_text_async(http_res)
             raise errors.PipeshubDefaultError(
                 "API error occurred", http_res, http_res_text

@@ -34,6 +34,73 @@ LastSyncOutcome = Union[
 r"""How the last sync run ended"""
 
 
+Severity = Union[
+    Literal[
+        "warning",
+        "error",
+    ],
+    UnrecognizedStr,
+]
+
+
+Action = Literal["authenticate",]
+r"""Where in the connector panel it is done; authenticate opens the Authenticate tab"""
+
+
+class ActionItemTypedDict(TypedDict):
+    code: str
+    r"""Identifies the item for the connector, e.g. certificate_sign_in"""
+    severity: Severity
+    title: str
+    message: str
+    action: NotRequired[Nullable[Action]]
+    r"""Where in the connector panel it is done; authenticate opens the Authenticate tab"""
+    docs_url: NotRequired[Nullable[str]]
+    r"""The setup steps for it, on the docs site"""
+
+
+class ActionItem(BaseModel):
+    code: str
+    r"""Identifies the item for the connector, e.g. certificate_sign_in"""
+
+    severity: Severity
+
+    title: str
+
+    message: str
+
+    action: OptionalNullable[Action] = UNSET
+    r"""Where in the connector panel it is done; authenticate opens the Authenticate tab"""
+
+    docs_url: Annotated[OptionalNullable[str], pydantic.Field(alias="docsUrl")] = UNSET
+    r"""The setup steps for it, on the docs site"""
+
+    @model_serializer(mode="wrap")
+    def serialize_model(self, handler):
+        optional_fields = set(["action", "docsUrl"])
+        nullable_fields = set(["action", "docsUrl"])
+        serialized = handler(self)
+        m = {}
+
+        for n, f in type(self).model_fields.items():
+            k = f.alias or n
+            val = serialized.get(k, serialized.get(n))
+            is_nullable_and_explicitly_set = (
+                k in nullable_fields
+                and (self.__pydantic_fields_set__.intersection({n}))  # pylint: disable=no-member
+            )
+
+            if val != UNSET_SENTINEL:
+                if (
+                    val is not None
+                    or k not in optional_fields
+                    or is_nullable_and_explicitly_set
+                ):
+                    m[k] = val
+
+        return m
+
+
 class ConnectorInstanceTypedDict(TypedDict):
     r"""A connector instance: its type's registry entry plus the instance's own state."""
 
@@ -44,10 +111,13 @@ class ConnectorInstanceTypedDict(TypedDict):
     type: NotRequired[str]
     r"""Connector type"""
     app_group: NotRequired[str]
+    r"""Product family the connector belongs to"""
     supported_auth_types: NotRequired[List[ConnectorAuthType]]
+    r"""Authentication methods the connector type supports"""
     app_description: NotRequired[str]
     app_categories: NotRequired[List[str]]
     icon_path: NotRequired[str]
+    r"""Path of the connector icon"""
     supports_realtime: NotRequired[bool]
     supports_sync: NotRequired[bool]
     supports_agent: NotRequired[bool]
@@ -57,8 +127,11 @@ class ConnectorInstanceTypedDict(TypedDict):
     r"""For a team connector type, its personal counterpart, if any"""
     connector_info: NotRequired[Nullable[str]]
     r"""Guidance shown before setup"""
-    auth_type: NotRequired[ConnectorAuthType]
-    r"""How a connector instance signs in to its source. Each connector type supports a subset; see `supportedAuthTypes` in the registry."""
+    auth_type: NotRequired[Nullable[str]]
+    r"""Authentication method chosen when the instance was created, one of
+    the type's `supportedAuthTypes`.
+
+    """
     scope: NotRequired[ConnectorScope]
     r"""Scope determines visibility and access control for connectors:<br>
     <ul>
@@ -85,12 +158,12 @@ class ConnectorInstanceTypedDict(TypedDict):
     r"""Local FS only. The desktop device that owns this connector"""
     owner_device_name: NotRequired[Nullable[str]]
     r"""Local FS only. Display name of the desktop device that owns this connector"""
-    created_by: NotRequired[str]
+    created_by: NotRequired[Nullable[str]]
     updated_by: NotRequired[Nullable[str]]
     r"""Null for an instance nobody has updated, for example the personal KB connector"""
-    created_at_timestamp: NotRequired[int]
+    created_at_timestamp: NotRequired[Nullable[int]]
     r"""Epoch milliseconds"""
-    updated_at_timestamp: NotRequired[int]
+    updated_at_timestamp: NotRequired[Nullable[int]]
     r"""Epoch milliseconds"""
     last_sync_started_at_timestamp: NotRequired[Nullable[int]]
     r"""Epoch ms when the last sync run started; absent before the first run"""
@@ -100,6 +173,8 @@ class ConnectorInstanceTypedDict(TypedDict):
     r"""How the last sync run ended"""
     last_sync_summary: NotRequired[Nullable[Dict[str, Any]]]
     r"""What the last run did, in the connector's own terms. For a Web connector: pagesSaved (written this run), pagesStored (kept after it, which Maximum pages caps), pagesVisited, failed, failedByStatus, robotsSkipped, noindexSkipped, skippedMaxPages, deferred, pruned, sitemapUrls, stopReason (max_pages, time_limit, stalled, rate_limited or null) and resumed."""
+    action_items: NotRequired[List[ActionItemTypedDict]]
+    r"""What the connector's admin has to do, shown as an action-needed badge on the instance card. Written by the connector at the end of each sync and when its auth settings are saved; empty when nothing is needed."""
     config: NotRequired[ConnectorSchemaTypedDict]
     r"""Configuration form for a connector type: the auth fields per auth type, the sync strategies and settings, and the sync and indexing filters."""
 
@@ -117,10 +192,12 @@ class ConnectorInstance(BaseModel):
     r"""Connector type"""
 
     app_group: Annotated[Optional[str], pydantic.Field(alias="appGroup")] = None
+    r"""Product family the connector belongs to"""
 
     supported_auth_types: Annotated[
         Optional[List[ConnectorAuthType]], pydantic.Field(alias="supportedAuthTypes")
     ] = None
+    r"""Authentication methods the connector type supports"""
 
     app_description: Annotated[
         Optional[str], pydantic.Field(alias="appDescription")
@@ -131,6 +208,7 @@ class ConnectorInstance(BaseModel):
     ] = None
 
     icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
+    r"""Path of the connector icon"""
 
     supports_realtime: Annotated[
         Optional[bool], pydantic.Field(alias="supportsRealtime")
@@ -163,10 +241,13 @@ class ConnectorInstance(BaseModel):
     ] = UNSET
     r"""Guidance shown before setup"""
 
-    auth_type: Annotated[
-        Optional[ConnectorAuthType], pydantic.Field(alias="authType")
-    ] = None
-    r"""How a connector instance signs in to its source. Each connector type supports a subset; see `supportedAuthTypes` in the registry."""
+    auth_type: Annotated[OptionalNullable[str], pydantic.Field(alias="authType")] = (
+        UNSET
+    )
+    r"""Authentication method chosen when the instance was created, one of
+    the type's `supportedAuthTypes`.
+
+    """
 
     scope: Optional[ConnectorScope] = None
     r"""Scope determines visibility and access control for connectors:<br>
@@ -219,7 +300,9 @@ class ConnectorInstance(BaseModel):
     ] = UNSET
     r"""Local FS only. Display name of the desktop device that owns this connector"""
 
-    created_by: Annotated[Optional[str], pydantic.Field(alias="createdBy")] = None
+    created_by: Annotated[OptionalNullable[str], pydantic.Field(alias="createdBy")] = (
+        UNSET
+    )
 
     updated_by: Annotated[OptionalNullable[str], pydantic.Field(alias="updatedBy")] = (
         UNSET
@@ -227,13 +310,13 @@ class ConnectorInstance(BaseModel):
     r"""Null for an instance nobody has updated, for example the personal KB connector"""
 
     created_at_timestamp: Annotated[
-        Optional[int], pydantic.Field(alias="createdAtTimestamp")
-    ] = None
+        OptionalNullable[int], pydantic.Field(alias="createdAtTimestamp")
+    ] = UNSET
     r"""Epoch milliseconds"""
 
     updated_at_timestamp: Annotated[
-        Optional[int], pydantic.Field(alias="updatedAtTimestamp")
-    ] = None
+        OptionalNullable[int], pydantic.Field(alias="updatedAtTimestamp")
+    ] = UNSET
     r"""Epoch milliseconds"""
 
     last_sync_started_at_timestamp: Annotated[
@@ -255,6 +338,11 @@ class ConnectorInstance(BaseModel):
         OptionalNullable[Dict[str, Any]], pydantic.Field(alias="lastSyncSummary")
     ] = UNSET
     r"""What the last run did, in the connector's own terms. For a Web connector: pagesSaved (written this run), pagesStored (kept after it, which Maximum pages caps), pagesVisited, failed, failedByStatus, robotsSkipped, noindexSkipped, skippedMaxPages, deferred, pruned, sitemapUrls, stopReason (max_pages, time_limit, stalled, rate_limited or null) and resumed."""
+
+    action_items: Annotated[
+        Optional[List[ActionItem]], pydantic.Field(alias="actionItems")
+    ] = None
+    r"""What the connector's admin has to do, shown as an action-needed badge on the instance card. Written by the connector at the end of each sync and when its auth settings are saved; empty when nothing is needed."""
 
     config: Optional[ConnectorSchema] = None
     r"""Configuration form for a connector type: the auth fields per auth type, the sync strategies and settings, and the sync and indexing filters."""
@@ -298,6 +386,7 @@ class ConnectorInstance(BaseModel):
                 "lastSyncFinishedAtTimestamp",
                 "lastSyncOutcome",
                 "lastSyncSummary",
+                "actionItems",
                 "config",
             ]
         )
@@ -305,10 +394,14 @@ class ConnectorInstance(BaseModel):
             [
                 "personalConnectorType",
                 "connectorInfo",
+                "authType",
                 "status",
                 "ownerDeviceId",
                 "ownerDeviceName",
+                "createdBy",
                 "updatedBy",
+                "createdAtTimestamp",
+                "updatedAtTimestamp",
                 "lastSyncStartedAtTimestamp",
                 "lastSyncFinishedAtTimestamp",
                 "lastSyncOutcome",
@@ -337,6 +430,10 @@ class ConnectorInstance(BaseModel):
         return m
 
 
+try:
+    ActionItem.model_rebuild()
+except NameError:
+    pass
 try:
     ConnectorInstance.model_rebuild()
 except NameError:

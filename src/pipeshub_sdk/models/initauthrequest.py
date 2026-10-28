@@ -2,25 +2,26 @@
 
 from __future__ import annotations
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
+from pipeshub_sdk.utils import FieldMetadata
 from pydantic import model_serializer
 from typing import Optional
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import Annotated, NotRequired, TypedDict
 
 
 class InitAuthRequestTypedDict(TypedDict):
-    r"""Optional JSON body for `/userAccount/initAuth`. Valid shapes include: omitting the body entirely, sending `{}` (empty object), or `{ \"email\": \"<address>\" }`. Neither the body nor `email` is required. When `email` is omitted or empty, the session is still created and `allowedMethods` / `authProviders` are returned as usual; clients typically supply `email` later on `/userAccount/authenticate`. The `email` property remains supported mainly for legacy clients and backward compatibility."""
+    r"""Optional JSON body for `/userAccount/initAuth`. Valid shapes include: omitting the body entirely, sending `{}` (empty object), or `{ \"email\": \"<address>\" }`. Neither the body nor `email` is required. When `email` is omitted, the session is still created and `allowedMethods` / `authProviders` are returned as usual; clients typically supply `email` later on `/userAccount/authenticate`. The `email` property remains supported mainly for legacy clients and backward compatibility. Fields other than `email` are dropped by the validator, not refused."""
 
     email: NotRequired[str]
-    r"""Optional; retained for legacy reasons. When set, stored on the auth session for correlation with later `/authenticate` calls (RFC 5321 compliant address).
+    r"""Optional; retained for legacy reasons. When set, stored on the auth session for correlation with later `/authenticate` calls (RFC 5321 compliant address). When the property is present it must be a well-formed address of at most 254 characters: an empty string, `null` or a malformed address is answered `400`.
 
     """
 
 
 class InitAuthRequest(BaseModel):
-    r"""Optional JSON body for `/userAccount/initAuth`. Valid shapes include: omitting the body entirely, sending `{}` (empty object), or `{ \"email\": \"<address>\" }`. Neither the body nor `email` is required. When `email` is omitted or empty, the session is still created and `allowedMethods` / `authProviders` are returned as usual; clients typically supply `email` later on `/userAccount/authenticate`. The `email` property remains supported mainly for legacy clients and backward compatibility."""
+    r"""Optional JSON body for `/userAccount/initAuth`. Valid shapes include: omitting the body entirely, sending `{}` (empty object), or `{ \"email\": \"<address>\" }`. Neither the body nor `email` is required. When `email` is omitted, the session is still created and `allowedMethods` / `authProviders` are returned as usual; clients typically supply `email` later on `/userAccount/authenticate`. The `email` property remains supported mainly for legacy clients and backward compatibility. Fields other than `email` are dropped by the validator, not refused."""
 
-    email: Optional[str] = None
-    r"""Optional; retained for legacy reasons. When set, stored on the auth session for correlation with later `/authenticate` calls (RFC 5321 compliant address).
+    email: Annotated[Optional[str], FieldMetadata(form=True)] = None
+    r"""Optional; retained for legacy reasons. When set, stored on the auth session for correlation with later `/authenticate` calls (RFC 5321 compliant address). When the property is present it must be a well-formed address of at most 254 characters: an empty string, `null` or a malformed address is answered `400`.
 
     """
 

@@ -31,9 +31,16 @@ CreateConversationRequestChatMode = Literal[
     "agent",
     "internal_search",
     "web_search",
+    "deep",
+    "quick",
+    "verification",
+    "auto",
 ]
 r"""Optional execution mode for non-stream consumers of this shared
-request schema.
+request schema. `deep`, `quick`, `verification` and `auto` are
+legacy values: still accepted, they run as `internal_search`.
+The streaming routes accept only `agent`, `internal_search` and
+`web_search`. `agent:<mode>` is refused.
 `agent` uses the universal agent loop, while `internal_search`
 and `web_search` use their corresponding assistant search paths.
 
@@ -57,6 +64,19 @@ CreateConversationRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+CreateConversationRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""How hard a reasoning model should think for this turn. Saved in
+the conversation's `modelInfo`.
+
+"""
+
+
 class CreateConversationRequestTypedDict(TypedDict):
     r"""Request body for creating a new AI conversation.
 
@@ -70,11 +90,14 @@ class CreateConversationRequestTypedDict(TypedDict):
     - Suggests follow-up questions based on the conversation
 
     **History:** a new conversation starts with no history, and
-    history is never accepted from the caller. A body carrying a
-    non-empty `previousConversations` is rejected with 400 (an empty
-    list is ignored). Send follow-up questions to
+    history is never accepted from the caller. A body carrying
+    `previousConversations` with any value but an empty list (`null`, a
+    string or an object included) is rejected with 400; an empty list is
+    dropped. Send follow-up questions to
     `POST /conversations/{conversationId}/messages`; the server replays
     the stored conversation.
+
+    Fields not listed here are dropped by the gateway's validator, not refused.
 
     """
 
@@ -131,6 +154,9 @@ class CreateConversationRequestTypedDict(TypedDict):
     `filters`/`attachments`, they are merged in as a fallback (the
     request always wins). Ignored on follow-up turns — only
     meaningful when creating a conversation.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
     project_visibility: NotRequired[CreateConversationRequestProjectVisibility]
@@ -146,6 +172,9 @@ class CreateConversationRequestTypedDict(TypedDict):
     Available models depend on organization settings. When neither
     `modelKey` nor `modelName` is sent, the organization's default
     model answers and is saved in the conversation's `modelInfo`.
+    A key that matches no configured model is not refused: the
+    default model answers, and the unknown key is still saved in
+    `modelInfo`.
 
     """
     model_name: NotRequired[str]
@@ -154,7 +183,10 @@ class CreateConversationRequestTypedDict(TypedDict):
     r"""Friendly display name of the selected model"""
     chat_mode: NotRequired[CreateConversationRequestChatMode]
     r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
+    request schema. `deep`, `quick`, `verification` and `auto` are
+    legacy values: still accepted, they run as `internal_search`.
+    The streaming routes accept only `agent`, `internal_search` and
+    `web_search`. `agent:<mode>` is refused.
     `agent` uses the universal agent loop, while `internal_search`
     and `web_search` use their corresponding assistant search paths.
 
@@ -212,6 +244,11 @@ class CreateConversationRequestTypedDict(TypedDict):
     one just can't cooperatively cancel the run.
 
     """
+    reasoning_effort: NotRequired[CreateConversationRequestReasoningEffort]
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
 
 
 class CreateConversationRequest(BaseModel):
@@ -227,11 +264,14 @@ class CreateConversationRequest(BaseModel):
     - Suggests follow-up questions based on the conversation
 
     **History:** a new conversation starts with no history, and
-    history is never accepted from the caller. A body carrying a
-    non-empty `previousConversations` is rejected with 400 (an empty
-    list is ignored). Send follow-up questions to
+    history is never accepted from the caller. A body carrying
+    `previousConversations` with any value but an empty list (`null`, a
+    string or an object included) is rejected with 400; an empty list is
+    dropped. Send follow-up questions to
     `POST /conversations/{conversationId}/messages`; the server replays
     the stored conversation.
+
+    Fields not listed here are dropped by the gateway's validator, not refused.
 
     """
 
@@ -295,6 +335,9 @@ class CreateConversationRequest(BaseModel):
     `filters`/`attachments`, they are merged in as a fallback (the
     request always wins). Ignored on follow-up turns — only
     meaningful when creating a conversation.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
 
@@ -315,6 +358,9 @@ class CreateConversationRequest(BaseModel):
     Available models depend on organization settings. When neither
     `modelKey` nor `modelName` is sent, the organization's default
     model answers and is saved in the conversation's `modelInfo`.
+    A key that matches no configured model is not refused: the
+    default model answers, and the unknown key is still saved in
+    `modelInfo`.
 
     """
 
@@ -330,7 +376,10 @@ class CreateConversationRequest(BaseModel):
         Optional[CreateConversationRequestChatMode], pydantic.Field(alias="chatMode")
     ] = None
     r"""Optional execution mode for non-stream consumers of this shared
-    request schema.
+    request schema. `deep`, `quick`, `verification` and `auto` are
+    legacy values: still accepted, they run as `internal_search`.
+    The streaming routes accept only `agent`, `internal_search` and
+    `web_search`. `agent:<mode>` is refused.
     `agent` uses the universal agent loop, while `internal_search`
     and `web_search` use their corresponding assistant search paths.
 
@@ -409,6 +458,15 @@ class CreateConversationRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[CreateConversationRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""How hard a reasoning model should think for this turn. Saved in
+    the conversation's `modelInfo`.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -432,6 +490,7 @@ class CreateConversationRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

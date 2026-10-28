@@ -28,15 +28,24 @@ class ConnectorRegistryEntryTypedDict(TypedDict):
     type: NotRequired[str]
     r"""Connector type: the value to pass as `connectorType`"""
     app_group: NotRequired[str]
+    r"""Product family the connector belongs to"""
     supported_auth_types: NotRequired[List[ConnectorAuthType]]
+    r"""Authentication methods an instance of this type can be created with"""
     app_description: NotRequired[str]
+    r"""One-line description of what the connector syncs"""
     app_categories: NotRequired[List[str]]
+    r"""Categories the connector is listed under"""
     icon_path: NotRequired[str]
+    r"""Path of the connector icon"""
     supports_realtime: NotRequired[bool]
+    r"""Whether the connector can receive real-time updates"""
     supports_sync: NotRequired[bool]
+    r"""Whether the connector syncs data into the knowledge base"""
     supports_agent: NotRequired[bool]
+    r"""Whether the connector can be used by AI agents"""
     documentation_links: NotRequired[List[ConnectorDocumentationLinkTypedDict]]
     is_admin_access_required: NotRequired[bool]
+    r"""Whether setting the connector up needs admin rights in the source system"""
     personal_connector_type: NotRequired[Nullable[str]]
     r"""For a team connector type, its personal counterpart, if any"""
     connector_info: NotRequired[Nullable[str]]
@@ -61,32 +70,40 @@ class ConnectorRegistryEntry(BaseModel):
     r"""Connector type: the value to pass as `connectorType`"""
 
     app_group: Annotated[Optional[str], pydantic.Field(alias="appGroup")] = None
+    r"""Product family the connector belongs to"""
 
     supported_auth_types: Annotated[
         Optional[List[ConnectorAuthType]], pydantic.Field(alias="supportedAuthTypes")
     ] = None
+    r"""Authentication methods an instance of this type can be created with"""
 
     app_description: Annotated[
         Optional[str], pydantic.Field(alias="appDescription")
     ] = None
+    r"""One-line description of what the connector syncs"""
 
     app_categories: Annotated[
         Optional[List[str]], pydantic.Field(alias="appCategories")
     ] = None
+    r"""Categories the connector is listed under"""
 
     icon_path: Annotated[Optional[str], pydantic.Field(alias="iconPath")] = None
+    r"""Path of the connector icon"""
 
     supports_realtime: Annotated[
         Optional[bool], pydantic.Field(alias="supportsRealtime")
     ] = None
+    r"""Whether the connector can receive real-time updates"""
 
     supports_sync: Annotated[Optional[bool], pydantic.Field(alias="supportsSync")] = (
         None
     )
+    r"""Whether the connector syncs data into the knowledge base"""
 
     supports_agent: Annotated[Optional[bool], pydantic.Field(alias="supportsAgent")] = (
         None
     )
+    r"""Whether the connector can be used by AI agents"""
 
     documentation_links: Annotated[
         Optional[List[ConnectorDocumentationLink]],
@@ -96,6 +113,7 @@ class ConnectorRegistryEntry(BaseModel):
     is_admin_access_required: Annotated[
         Optional[bool], pydantic.Field(alias="isAdminAccessRequired")
     ] = None
+    r"""Whether setting the connector up needs admin rights in the source system"""
 
     personal_connector_type: Annotated[
         OptionalNullable[str], pydantic.Field(alias="personalConnectorType")

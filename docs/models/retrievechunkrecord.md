@@ -3,10 +3,10 @@
 
 ## Fields
 
-| Field                   | Type                    | Required                | Description             |
-| ----------------------- | ----------------------- | ----------------------- | ----------------------- |
-| `record_id`             | *Optional[str]*         | :heavy_minus_sign:      | N/A                     |
-| `name`                  | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |
-| `connector`             | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |
-| `mime_type`             | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |
-| `updated_at`            | *OptionalNullable[str]* | :heavy_minus_sign:      | N/A                     |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `record_id`        | *str*              | :heavy_check_mark: | N/A                |
+| `name`             | *Nullable[str]*    | :heavy_check_mark: | N/A                |
+| `connector`        | *Nullable[str]*    | :heavy_check_mark: | N/A                |
+| `mime_type`        | *Nullable[str]*    | :heavy_check_mark: | N/A                |
+| `updated_at`       | *Nullable[str]*    | :heavy_check_mark: | N/A                |

@@ -49,14 +49,28 @@ AgentCreateConversationRequestKeywordSearchBudget = Literal[
 r"""How long each search waits for the keyword (grep) match after its semantic results are in. `short` waits at most 5 seconds and keeps the keyword matches found by then, for callers that would rather answer sooner, such as agents calling chat over MCP. `full`, or leaving it out, waits for all of it. Deployments running `HIGH_ACCURACY_MODE` always wait in full."""
 
 
+AgentCreateConversationRequestReasoningEffort = Literal[
+    "none",
+    "low",
+    "medium",
+    "high",
+    "max",
+]
+r"""Reasoning effort for this turn, for models that support it. Stored on
+the conversation's model info and forwarded to the AI backend.
+
+"""
+
+
 class AgentCreateConversationRequestTypedDict(TypedDict):
     r"""First turn of an agent conversation. Used as-is by the non-streaming
     `POST /agents/{agentKey}/conversations`, where `chatMode` may be
     omitted; `AgentStreamCreateConversationRequest` additionally requires
     it. Unknown fields are stripped during validation, except
     `previousConversations`: history is never accepted from the caller,
-    so a non-empty `previousConversations` is rejected with 400 (an
-    empty list is ignored). Follow-up turns go to
+    so `previousConversations` with any value but an empty list (`null`,
+    a string or an object included) is rejected with 400; an empty list
+    is dropped. Follow-up turns go to
     `POST /agents/{agentKey}/conversations/{conversationId}/messages`,
     where the server replays the stored conversation.
 
@@ -93,6 +107,9 @@ class AgentCreateConversationRequestTypedDict(TypedDict):
     least viewer access to. Same fallback/merge semantics as
     `POST /conversations/create`. Ignored on follow-up turns — the
     session row is the source of truth once the conversation exists.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
     project_visibility: NotRequired[AgentCreateConversationRequestProjectVisibility]
@@ -108,7 +125,9 @@ class AgentCreateConversationRequestTypedDict(TypedDict):
     """
     model_key: NotRequired[str]
     r"""AI model configuration id for this turn. Omit to use the agent's
-    default model.
+    default model. A key that names no configured model is not refused:
+    the turn runs on the organization's default model and the unknown
+    key is still stored in the conversation's `modelInfo`.
 
     """
     model_name: NotRequired[str]
@@ -169,6 +188,11 @@ class AgentCreateConversationRequestTypedDict(TypedDict):
     {runId}` while the stream is still generating.
 
     """
+    reasoning_effort: NotRequired[AgentCreateConversationRequestReasoningEffort]
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
 
 
 class AgentCreateConversationRequest(BaseModel):
@@ -177,8 +201,9 @@ class AgentCreateConversationRequest(BaseModel):
     omitted; `AgentStreamCreateConversationRequest` additionally requires
     it. Unknown fields are stripped during validation, except
     `previousConversations`: history is never accepted from the caller,
-    so a non-empty `previousConversations` is rejected with 400 (an
-    empty list is ignored). Follow-up turns go to
+    so `previousConversations` with any value but an empty list (`null`,
+    a string or an object included) is rejected with 400; an empty list
+    is dropped. Follow-up turns go to
     `POST /agents/{agentKey}/conversations/{conversationId}/messages`,
     where the server replays the stored conversation.
 
@@ -222,6 +247,9 @@ class AgentCreateConversationRequest(BaseModel):
     least viewer access to. Same fallback/merge semantics as
     `POST /conversations/create`. Ignored on follow-up turns — the
     session row is the source of truth once the conversation exists.
+    An OAuth token or PAT also needs `project:read`. An archived
+    project answers `409`; a project the caller cannot see, `404`,
+    before any stream opens.
 
     """
 
@@ -246,7 +274,9 @@ class AgentCreateConversationRequest(BaseModel):
 
     model_key: Annotated[Optional[str], pydantic.Field(alias="modelKey")] = None
     r"""AI model configuration id for this turn. Omit to use the agent's
-    default model.
+    default model. A key that names no configured model is not refused:
+    the turn runs on the organization's default model and the unknown
+    key is still stored in the conversation's `modelInfo`.
 
     """
 
@@ -330,6 +360,15 @@ class AgentCreateConversationRequest(BaseModel):
 
     """
 
+    reasoning_effort: Annotated[
+        Optional[AgentCreateConversationRequestReasoningEffort],
+        pydantic.Field(alias="reasoningEffort"),
+    ] = None
+    r"""Reasoning effort for this turn, for models that support it. Stored on
+    the conversation's model info and forwarded to the AI backend.
+
+    """
+
     @model_serializer(mode="wrap")
     def serialize_model(self, handler):
         optional_fields = set(
@@ -353,6 +392,7 @@ class AgentCreateConversationRequest(BaseModel):
                 "keywordSearchBudget",
                 "toolApproval",
                 "runId",
+                "reasoningEffort",
             ]
         )
         serialized = handler(self)

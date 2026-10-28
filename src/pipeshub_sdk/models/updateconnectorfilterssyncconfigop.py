@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 from .connectorstoredconfig import ConnectorStoredConfig, ConnectorStoredConfigTypedDict
-from .updateconnectorfilterssyncrequest import (
-    UpdateConnectorFiltersSyncRequest,
-    UpdateConnectorFiltersSyncRequestTypedDict,
+from .updateconnectorfilterssyncrequest_union import (
+    UpdateConnectorFiltersSyncRequestUnion,
+    UpdateConnectorFiltersSyncRequestUnionTypedDict,
 )
 from pipeshub_sdk.types import BaseModel, UNSET_SENTINEL
 from pipeshub_sdk.utils import FieldMetadata, PathParamMetadata, RequestMetadata
@@ -17,7 +17,7 @@ from typing_extensions import Annotated, NotRequired, TypedDict
 class UpdateConnectorFiltersSyncConfigRequestTypedDict(TypedDict):
     connector_id: str
     r"""Connector instance ID"""
-    body: UpdateConnectorFiltersSyncRequestTypedDict
+    body: UpdateConnectorFiltersSyncRequestUnionTypedDict
     r"""Request payload"""
 
 
@@ -30,7 +30,7 @@ class UpdateConnectorFiltersSyncConfigRequest(BaseModel):
     r"""Connector instance ID"""
 
     body: Annotated[
-        UpdateConnectorFiltersSyncRequest,
+        UpdateConnectorFiltersSyncRequestUnion,
         FieldMetadata(request=RequestMetadata(media_type="application/json")),
     ]
     r"""Request payload"""
