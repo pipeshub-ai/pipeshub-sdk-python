@@ -12,7 +12,7 @@ dependencies = [
 ]
 urls.homepage = "https://pipeshub.com"
 urls.repository = "https://github.com/pipeshub-ai/pipeshub-sdk-python"
-urls.documentation = "https://docs.pipeshub.com/developer/getting-started"
+urls.documentation = "https://docs.pipeshub.com/developer/api-reference"
 license = { text = "Apache-2.0" }
 
 [project.optional-dependencies]

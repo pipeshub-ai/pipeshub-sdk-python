@@ -6,14 +6,14 @@ management:
   speakeasyVersion: 1.801.0
   generationVersion: 2.946.0
   releaseVersion: 2.0.0
-  configChecksum: f718f7b536cc393734f90d0a1ee218d4
+  configChecksum: b2d16a2506cd40b312a848f20e1cd885
   repoURL: https://github.com/pipeshub-ai/pipeshub-sdk-python
   installationURL: https://github.com/pipeshub-ai/pipeshub-sdk-python.git
   published: true
 persistentEdits:
-  generation_id: 24075f80-5ea7-48d1-b51e-c47d1c3af8f4
-  pristine_commit_hash: 009570777e137eaee63f64931a97eba66d27154e
-  pristine_tree_hash: 8c0d0e7debad5472b294cd7cefd5470546703ee8
+  generation_id: bb3406b9-af73-4ea2-898d-c061fd1ac4cd
+  pristine_commit_hash: 2cad632da895393d31d2e7bb7efa4612b8ecb73b
+  pristine_tree_hash: bafa269db138e2900a10160ae7c7cf6932f5ab9f
 features:
   python:
     additionalDependencies: 1.1.0
@@ -4149,8 +4149,8 @@ trackedFiles:
     pristine_git_object: 3075abab37faa3863076fba0ca7769eeb353c1dc
   pyproject.toml:
     id: 5d07e7d72637
-    last_write_checksum: sha1:93284e89182ea8c4d7253af87299a82521018ed9
-    pristine_git_object: dbf3acd41cdaf54d5d1cbe009b482cc26955b81e
+    last_write_checksum: sha1:ad4dc1cf73f4b53fa27157e4cda399eb16255efe
+    pristine_git_object: 9f6dbd9e0efda2c7354ce776536d6191c34c9c06
   scripts/prepare_readme.py:
     id: e0c5957a6035
     last_write_checksum: sha1:01ed17d63607a8ce49af656e4736e2e473a3d3f9

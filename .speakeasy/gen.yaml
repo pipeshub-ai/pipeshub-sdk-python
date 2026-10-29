@@ -53,7 +53,7 @@ python:
   constFieldCasing: normal
   defaultErrorName: PipeshubDefaultError
   description: Official Python SDK for the PipesHub API. Search and chat over your company's knowledge.
-  documentationUrl: https://docs.pipeshub.com/developer/getting-started
+  documentationUrl: https://docs.pipeshub.com/developer/api-reference
   durationFormat: false
   enableCustomCodeRegions: false
   enumFormat: union
