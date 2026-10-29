@@ -1,17 +1,19 @@
 lockVersion: 2.0.0
 id: 086dcfb9-75aa-430a-bc0b-1f4d5b0a89bd
 management:
-  docChecksum: caae7eb2327e6df06a27766de8bf23dd
+  docChecksum: 82040a15fc78b5c965fb8ef82b168cd3
   docVersion: 1.0.0
   speakeasyVersion: 1.801.0
   generationVersion: 2.946.0
   releaseVersion: 2.0.0
-  configChecksum: 0e8b7b80d9669e51c1e96156bb9a0082
+  configChecksum: f718f7b536cc393734f90d0a1ee218d4
+  repoURL: https://github.com/pipeshub-ai/pipeshub-sdk-python
+  installationURL: https://github.com/pipeshub-ai/pipeshub-sdk-python.git
   published: true
 persistentEdits:
-  generation_id: 447d0ee4-b79b-4600-960a-438d78487751
-  pristine_commit_hash: 3cd8f2a36449f386b65533bf8770a38b7913e9a7
-  pristine_tree_hash: 541c48b2bdcc6680fa06670daca1e24a17d3d959
+  generation_id: 24075f80-5ea7-48d1-b51e-c47d1c3af8f4
+  pristine_commit_hash: 009570777e137eaee63f64931a97eba66d27154e
+  pristine_tree_hash: 8c0d0e7debad5472b294cd7cefd5470546703ee8
 features:
   python:
     additionalDependencies: 1.1.0
@@ -4147,12 +4149,16 @@ trackedFiles:
     pristine_git_object: 3075abab37faa3863076fba0ca7769eeb353c1dc
   pyproject.toml:
     id: 5d07e7d72637
-    last_write_checksum: sha1:f75cb0fa35173ec205fe286ca89a20e7f0ed708f
-    pristine_git_object: 49a9d4855cccee2a033d1731f036becb6503ce30
+    last_write_checksum: sha1:93284e89182ea8c4d7253af87299a82521018ed9
+    pristine_git_object: dbf3acd41cdaf54d5d1cbe009b482cc26955b81e
+  scripts/prepare_readme.py:
+    id: e0c5957a6035
+    last_write_checksum: sha1:01ed17d63607a8ce49af656e4736e2e473a3d3f9
+    pristine_git_object: 297ba95833a2c3e553b8516a79e0c44ba9ba53d2
   scripts/publish.sh:
     id: fe273b08f514
-    last_write_checksum: sha1:adc9b741c12ad1591ab4870eabe20f0d0a86cd1a
-    pristine_git_object: ef28dc10c60d7d6a4bac0c6a1e9caba36b471861
+    last_write_checksum: sha1:b290b25b36dca3d5eb1a2e66a2e1bcf2e7326cf3
+    pristine_git_object: c35748f360329c2bc370e9b189f49b1a360b2c48
   src/pipeshub_sdk/__init__.py:
     id: 9251d8adc6e1
     last_write_checksum: sha1:da077c0bdfcef64a4a5aea91a17292f72fa2b088
@@ -5951,8 +5957,8 @@ trackedFiles:
     pristine_git_object: 3e38f1a929f7d6b1d6de74604aa87e3d8f010544
   src/pipeshub_sdk/sdk.py:
     id: 9430f0363adf
-    last_write_checksum: sha1:c54025436719e9952593455fbc3b1b5a62921a97
-    pristine_git_object: 8b9925ea7f1e4fec7ec590fab1ee6b9530b09255
+    last_write_checksum: sha1:6c00c6a9f699a879f9bc16f203a7d80a07e2191d
+    pristine_git_object: 8677b986e5547ab96fe1755e4ad96b81407349d0
   src/pipeshub_sdk/sdkconfiguration.py:
     id: d503178da5d8
     last_write_checksum: sha1:6042207f66191555094230ec464070be148b54df
