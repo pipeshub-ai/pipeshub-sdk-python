@@ -1,7 +1,7 @@
 # PipesHub Python SDK
 
 [![PyPI version](https://img.shields.io/pypi/v/pipeshub-sdk.svg)](https://pypi.org/project/pipeshub-sdk/)
-[![Python versions](https://img.shields.io/pypi/pyversions/pipeshub-sdk.svg)](https://pypi.org/project/pipeshub-sdk/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://pypi.org/project/pipeshub-sdk/)
 [![License](https://img.shields.io/github/license/pipeshub-ai/pipeshub-sdk-python.svg)](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/main/LICENSE)
 
 The PipesHub Python SDK provides access to the [PipesHub](https://pipeshub.com) API from Python 3.10+ applications. PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jira, indexes their content, and answers questions with citations to the source. With this SDK you can search and chat over that knowledge, run agents, and manage knowledge bases and connectors.
