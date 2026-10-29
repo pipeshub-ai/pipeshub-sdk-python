@@ -1,12 +1,19 @@
 <!-- Start SDK Example Usage [usage] -->
+### Retrieve passages with citations
+
 ```python
 # Synchronous Example
-from pipeshub_sdk import Pipeshub
+import os
+from pipeshub_sdk import Pipeshub, models
 
 
-with Pipeshub() as pipeshub:
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
+    res = pipeshub.semantic_search.retrieve(query="how do we roll back a canary?", limit=8, rewrite_query=False)
 
     # Handle response
     print(res)
@@ -19,13 +26,18 @@ The same SDK client can also be used to make asynchronous requests by importing 
 ```python
 # Asynchronous Example
 import asyncio
-from pipeshub_sdk import Pipeshub
+import os
+from pipeshub_sdk import Pipeshub, models
 
 async def main():
 
-    async with Pipeshub() as pipeshub:
+    async with Pipeshub(
+        security=models.Security(
+            bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+        ),
+    ) as pipeshub:
 
-        res = await pipeshub.o_auth_provider.oauth_token_async(grant_type="client_credentials")
+        res = await pipeshub.semantic_search.retrieve_async(query="how do we roll back a canary?", limit=8, rewrite_query=False)
 
         # Handle response
         print(res)

@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: 086dcfb9-75aa-430a-bc0b-1f4d5b0a89bd
 management:
-  docChecksum: 82040a15fc78b5c965fb8ef82b168cd3
+  docChecksum: 4e64bf7934257a5119986bb2008e9e51
   docVersion: 1.0.0
   speakeasyVersion: 1.801.0
   generationVersion: 2.946.0
@@ -11,9 +11,9 @@ management:
   installationURL: https://github.com/pipeshub-ai/pipeshub-sdk-python.git
   published: true
 persistentEdits:
-  generation_id: bb3406b9-af73-4ea2-898d-c061fd1ac4cd
-  pristine_commit_hash: 2cad632da895393d31d2e7bb7efa4612b8ecb73b
-  pristine_tree_hash: bafa269db138e2900a10160ae7c7cf6932f5ab9f
+  generation_id: 133009d4-d664-479e-b4f2-fce573204e70
+  pristine_commit_hash: cf1c21ec232d2ffa568275b02bb54d6d3205d63c
+  pristine_tree_hash: 191e9bbbb18caa02b22517d34c9d386aef506301
 features:
   python:
     additionalDependencies: 1.1.0
@@ -27,6 +27,7 @@ features:
     enumUnions: 0.1.1
     envVarSecurityUsage: 0.3.3
     errorUnions: 1.0.2
+    examples: 3.0.4
     flatRequests: 1.0.1
     flattening: 3.1.1
     globalSecurity: 3.0.7
@@ -57,8 +58,8 @@ trackedFiles:
     pristine_git_object: 8d79f0abb72526f1fb34a4c03e5bba612c6ba2ae
   USAGE.md:
     id: 3aed33ce6e6f
-    last_write_checksum: sha1:125754a057370e3708619ae3ab7b0d228f08a5d3
-    pristine_git_object: f1fad8f13655a26eef7ab048a28f27193e3f3a27
+    last_write_checksum: sha1:6a58f321290a45fddecf44de586b21b6599d79f1
+    pristine_git_object: 247009ae90c8790d2018fbd3b98d13fe36ca4a70
   docs/errors/applicationjsonerrorresponse.md:
     id: eacc9caffb98
     last_write_checksum: sha1:7ef1add2c11635ceb4ec1ee95c905ec8b0f289f2
@@ -4129,8 +4130,8 @@ trackedFiles:
     pristine_git_object: 2b787273c0f112f6bfc37e3c8efd097cbc81a29a
   docs/sdks/semanticsearch/README.md:
     id: dcaf2a437dec
-    last_write_checksum: sha1:dfee6d0c230dcadef6f67c39fbbcd9ba33a2b852
-    pristine_git_object: bc6c6382e2a587e07a8b08af2fadd3c3bd1fb5f6
+    last_write_checksum: sha1:e15971cc0e077b71ec8ed187c043de300f1f6310
+    pristine_git_object: 213d5f8a319bb03459fc96620fa75605719c0347
   docs/sdks/useraccount/README.md:
     id: 442d2e5df2cd
     last_write_checksum: sha1:6743acd9e824357262673d37e8fefe36ca6ef4d2
@@ -4149,8 +4150,8 @@ trackedFiles:
     pristine_git_object: 3075abab37faa3863076fba0ca7769eeb353c1dc
   pyproject.toml:
     id: 5d07e7d72637
-    last_write_checksum: sha1:ad4dc1cf73f4b53fa27157e4cda399eb16255efe
-    pristine_git_object: 9f6dbd9e0efda2c7354ce776536d6191c34c9c06
+    last_write_checksum: sha1:13231574a0b1649bdfda81ae3a1d189f8941c2a8
+    pristine_git_object: 162dffdf2462916bc2c8211b9e5295815ad9f283
   scripts/prepare_readme.py:
     id: e0c5957a6035
     last_write_checksum: sha1:01ed17d63607a8ce49af656e4736e2e473a3d3f9
@@ -5957,8 +5958,8 @@ trackedFiles:
     pristine_git_object: 3e38f1a929f7d6b1d6de74604aa87e3d8f010544
   src/pipeshub_sdk/sdk.py:
     id: 9430f0363adf
-    last_write_checksum: sha1:6c00c6a9f699a879f9bc16f203a7d80a07e2191d
-    pristine_git_object: 8677b986e5547ab96fe1755e4ad96b81407349d0
+    last_write_checksum: sha1:bbd7f972a53b3f73c42ebaccd3110b7e5c908ddc
+    pristine_git_object: 6ff6d50776d9f4b1eed974f9102c943854b77047
   src/pipeshub_sdk/sdkconfiguration.py:
     id: d503178da5d8
     last_write_checksum: sha1:6042207f66191555094230ec464070be148b54df
@@ -10587,7 +10588,7 @@ examples:
   retrieve:
     simple:
       requestBody:
-        application/json: {"query": "how do we roll back a canary?", "limit": 8, "filters": {"kb": ["3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b90"]}, "rewriteQuery": false}
+        application/json: {"query": "how do we roll back a canary?", "limit": 8, "rewriteQuery": false}
       responses:
         "200":
           application/json: {"chunks": [{"id": "<id>", "text": "<value>", "record": {"recordId": "<id>", "name": "<value>", "connector": "<value>", "mimeType": "<value>", "updatedAt": "1735674666672"}, "citation": {"url": "https://crazy-horde.net/", "recordUrl": "https://pure-detective.org/", "pageNum": null, "blockIndex": 533417}}], "incomplete": true}

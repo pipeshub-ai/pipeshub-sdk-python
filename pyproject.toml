@@ -33,13 +33,13 @@ dev = [
     "pytest-xdist (>=3.8.0,<4.0.0)",
 ]
 
+devDependencies = [
+]
+
 peerDependencies = [
 ]
 
 dependencies = [
-]
-
-devDependencies = [
 ]
 
 [tool.setuptools.packages.find]

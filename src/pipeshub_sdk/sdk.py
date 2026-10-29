@@ -301,10 +301,10 @@ class Pipeshub(BaseSDK):
                 server_url = utils.template_url(server_url, url_params)
         server_defaults: List[Dict[str, str]] = [
             {
-                "instance_url": instance_url or "https://app.pipeshub.com",
+                "instance_url": instance_url or "app.pipeshub.com",
             },
             {
-                "instance_url": instance_url or "https://app.pipeshub.com",
+                "instance_url": instance_url or "app.pipeshub.com",
             },
         ]
 

@@ -1,28 +1,37 @@
-# pipeshub-sdk
-pipeshub-sdk is the official python client library for integrating Pipeshub into your product and internal tools
+# PipesHub Python SDK
 
-**Compatibility:** SDK version 1.7.0 is compatible with PipesHub [v0.9.1](https://github.com/pipeshub-ai/pipeshub-ai/releases/tag/v0.9.1).
+[![PyPI version](https://img.shields.io/pypi/v/pipeshub-sdk.svg)](https://pypi.org/project/pipeshub-sdk/)
+[![Python versions](https://img.shields.io/pypi/pyversions/pipeshub-sdk.svg)](https://pypi.org/project/pipeshub-sdk/)
+[![License](https://img.shields.io/github/license/pipeshub-ai/pipeshub-sdk-python.svg)](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/main/LICENSE)
 
-<!-- Start Summary [summary] -->
-## Summary
+The PipesHub Python SDK provides access to the [PipesHub](https://pipeshub.com) API from Python 3.10+ applications. PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jira, indexes their content, and answers questions with citations to the source. With this SDK you can search and chat over that knowledge, run agents, and manage knowledge bases and connectors.
 
-PipesHub API: Search and chat over your company's knowledge from your own code.
+The SDK has type hints for every request and response, and both synchronous and asynchronous clients. It is generated with [Speakeasy](https://www.speakeasy.com) from the [PipesHub OpenAPI spec](https://github.com/pipeshub-ai/open-api).
 
-PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jira, indexes their content, and answers questions with citations to the source. Use this SDK to search, chat with assistants and agents, manage knowledge bases and connectors, and sign in with OAuth 2.0 or a personal access token.
+**Compatibility:** SDK version 2.0.0 is compatible with PipesHub [v1.0.0](https://github.com/pipeshub-ai/pipeshub-ai/releases/tag/v1.0.0).
 
-API reference: https://docs.pipeshub.com/developer/api-reference
-<!-- End Summary [summary] -->
+## Documentation
+
+- [Personal access tokens](https://docs.pipeshub.com/developer/personal-access-tokens): create the token the SDK signs in with.
+- [Retrieval API](https://docs.pipeshub.com/developer/retrieval-api): permission-filtered passages with citations, for your own RAG or agent.
+- [API reference](https://docs.pipeshub.com/developer/api-reference): the PipesHub HTTP API.
+- [Available methods](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#available-resources-and-operations): every SDK method, linked to its parameters, response and errors.
+- [Examples](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/examples/): runnable programs for search, chat, agents, knowledge bases and connectors.
+- [Changelog](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/CHANGELOG.md)
+
+The client connects to PipesHub Cloud (`https://app.pipeshub.com`) by default. For a self-hosted instance, pass `server_url="https://<your-instance>/api/v1"` (see [Server Selection](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#server-selection)).
+
+<!-- No Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
 ## Table of Contents
 <!-- $toc-max-depth=2 -->
-* [pipeshub-sdk](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#pipeshub-sdk)
+* [PipesHub Python SDK](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#pipeshub-python-sdk)
+  * [Documentation](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#documentation)
   * [SDK Installation](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#sdk-installation)
-  * [IDE Support](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#ide-support)
   * [SDK Example Usage](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#sdk-example-usage)
   * [Retrieval for RAG and agent frameworks](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#retrieval-for-rag-and-agent-frameworks)
   * [Authentication](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#authentication)
-  * [Available Resources and Operations](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#available-resources-and-operations)
   * [Server-sent event streaming](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#server-sent-event-streaming)
   * [File uploads](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#file-uploads)
   * [Retries](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#retries)
@@ -31,6 +40,11 @@ API reference: https://docs.pipeshub.com/developer/api-reference
   * [Custom HTTP Client](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#custom-http-client)
   * [Resource Management](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#resource-management)
   * [Debugging](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#debugging)
+  * [IDE Support](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#ide-support)
+  * [Available Resources and Operations](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#available-resources-and-operations)
+  * [Support](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#support)
+  * [Contributing](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#contributing)
+  * [License](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#license)
 
 <!-- End Table of Contents [toc] -->
 
@@ -100,29 +114,24 @@ Once that is saved to a file, you can run it with `uv run script.py` where
 `script.py` can be replaced with the actual file name.
 <!-- End SDK Installation [installation] -->
 
-<!-- Start IDE Support [idesupport] -->
-## IDE Support
-
-### PyCharm
-
-Generally, the SDK will work well with most IDEs out of the box. However, when using PyCharm, you can enjoy much better integration with Pydantic by installing an additional plugin.
-
-- [PyCharm Pydantic Plugin](https://docs.pydantic.dev/latest/integrations/pycharm/)
-<!-- End IDE Support [idesupport] -->
-
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
-### Example
+### Retrieve passages with citations
 
 ```python
 # Synchronous Example
-from pipeshub_sdk import Pipeshub
+import os
+from pipeshub_sdk import Pipeshub, models
 
 
-with Pipeshub() as pipeshub:
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
 
-    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
+    res = pipeshub.semantic_search.retrieve(query="how do we roll back a canary?", limit=8, rewrite_query=False)
 
     # Handle response
     print(res)
@@ -135,13 +144,18 @@ The same SDK client can also be used to make asynchronous requests by importing 
 ```python
 # Asynchronous Example
 import asyncio
-from pipeshub_sdk import Pipeshub
+import os
+from pipeshub_sdk import Pipeshub, models
 
 async def main():
 
-    async with Pipeshub() as pipeshub:
+    async with Pipeshub(
+        security=models.Security(
+            bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+        ),
+    ) as pipeshub:
 
-        res = await pipeshub.o_auth_provider.oauth_token_async(grant_type="client_credentials")
+        res = await pipeshub.semantic_search.retrieve_async(query="how do we roll back a canary?", limit=8, rewrite_query=False)
 
         # Handle response
         print(res)
@@ -222,6 +236,406 @@ with Pipeshub() as pipeshub:
 
 ```
 <!-- End Authentication [security] -->
+
+<!-- Start Server-sent event streaming [eventstream] -->
+## Server-sent event streaming
+
+[Server-sent events][mdn-sse] are used to stream content from certain
+operations. These operations will expose the stream as [Generator][generator] that
+can be consumed using a simple `for` loop. The loop will
+terminate when the server no longer has any events to send and closes the
+underlying connection.  
+
+The stream is also a [Context Manager][context-manager] and can be used with the `with` statement and will close the
+underlying connection when the context is exited.
+
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.upload_records(kb_id="<id>", files=[], files_metadata=[
+        {
+            "file_path": "/docs/report.pdf",
+            "last_modified": 2024.0,
+        },
+    ], is_versioned="true", record_type="FILE")
+
+    with res as event_stream:
+        for event in event_stream:
+            # handle event
+            print(event, flush=True)
+
+```
+
+[mdn-sse]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
+[generator]: https://book.pythontips.com/en/latest/generators.html
+[context-manager]: https://book.pythontips.com/en/latest/context_managers.html
+<!-- End Server-sent event streaming [eventstream] -->
+
+<!-- Start File uploads [file-upload] -->
+## File uploads
+
+Certain SDK methods accept file objects as part of a request body or multi-part request. It is possible and typically recommended to upload files as a stream rather than reading the entire contents into memory. This avoids excessive memory consumption and potentially crashing with out-of-memory errors when working with very large files. The following example demonstrates how to attach a file stream to a request.
+
+> [!TIP]
+>
+> For endpoints that handle file uploads bytes arrays can also be used. However, using streams is recommended for large files.
+>
+
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.knowledge_base.update_record_multipart(record_id="<id>")
+
+    # Handle response
+    print(res)
+
+```
+<!-- End File uploads [file-upload] -->
+
+<!-- Start Retries [retries] -->
+## Retries
+
+Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
+
+To change the default retry strategy for a single API call, simply provide a `RetryConfig` object to the call:
+```python
+from pipeshub_sdk import Pipeshub
+from pipeshub_sdk.utils import BackoffStrategy, RetryConfig
+
+
+with Pipeshub() as pipeshub:
+
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials",
+        RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
+
+    # Handle response
+    print(res)
+
+```
+
+If you'd like to override the default retry strategy for all operations that support retries, you can use the `retry_config` optional parameter when initializing the SDK:
+```python
+from pipeshub_sdk import Pipeshub
+from pipeshub_sdk.utils import BackoffStrategy, RetryConfig
+
+
+with Pipeshub(
+    retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
+) as pipeshub:
+
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
+
+    # Handle response
+    print(res)
+
+```
+<!-- End Retries [retries] -->
+
+<!-- Start Error Handling [errors] -->
+## Error Handling
+
+[`PipeshubError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/pipeshuberror.py) is the base class for all HTTP error responses. It has the following properties:
+
+| Property           | Type             | Description                                                                             |
+| ------------------ | ---------------- | --------------------------------------------------------------------------------------- |
+| `err.message`      | `str`            | Error message                                                                           |
+| `err.status_code`  | `int`            | HTTP response status code eg `404`                                                      |
+| `err.headers`      | `httpx.Headers`  | HTTP response headers                                                                   |
+| `err.body`         | `str`            | HTTP body. Can be empty string if no body is returned.                                  |
+| `err.raw_response` | `httpx.Response` | Raw HTTP response                                                                       |
+| `err.data`         |                  | Optional. Some errors may contain structured data. [See Error Classes](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#error-classes). |
+
+### Example
+```python
+from pipeshub_sdk import Pipeshub, errors
+
+
+with Pipeshub() as pipeshub:
+    res = None
+    try:
+
+        res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
+
+        # Handle response
+        print(res)
+
+
+    except errors.PipeshubError as e:
+        # The base class for HTTP error responses
+        print(e.message)
+        print(e.status_code)
+        print(e.body)
+        print(e.headers)
+        print(e.raw_response)
+
+        # Depending on the method different errors may be thrown
+        if isinstance(e, errors.ErrorResponse):
+            print(e.data.error)  # models.ErrorResponseError
+```
+
+### Error Classes
+**Primary errors:**
+* [`PipeshubError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/pipeshuberror.py): The base class for HTTP error responses.
+  * [`ErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). *
+
+<details><summary>Less common errors (21)</summary>
+
+<br />
+
+**Network errors:**
+* [`httpx.RequestError`](https://www.python-httpx.org/exceptions/#httpx.RequestError): Base class for request errors.
+    * [`httpx.ConnectError`](https://www.python-httpx.org/exceptions/#httpx.ConnectError): HTTP client was unable to make a request to a server.
+    * [`httpx.TimeoutException`](https://www.python-httpx.org/exceptions/#httpx.TimeoutException): HTTP request timed out.
+
+
+**Inherit from [`PipeshubError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/pipeshuberror.py)**:
+* [`OAuthClientManagementRateLimitError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 20 of 141 methods.*
+* [`ApplicationJSONErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 17 of 141 methods.*
+* [`OAuthErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 3 of 141 methods.*
+* [`RateLimitErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/ratelimiterrorresponse.py): Rate-limit error payload (shape differs from standard error responses). Status code `429`. Applicable to 3 of 141 methods.*
+* [`LocalFsDesktopRefusalError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/localfsdesktoprefusalerror.py): 409 body returned when a Local FS connector cannot sync because of its owner device. Status code `409`. Applicable to 2 of 141 methods.*
+* [`BadRequestError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/badrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 141 methods.*
+* [`UnauthorizedError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/unauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 141 methods.*
+* [`OAuthBearerTokenError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/oauthbearertokenerror.py): Error body written by the OAuth bearer-token middleware (RFC 6750 Section 3.1) on routes that accept only an OAuth access token, such as `GET /oauth2/userinfo`. The same `error`, `error_description` and `scope` values are repeated in the `WWW-Authenticate` response header. This is not the standard `ErrorResponse` envelope: `error` is a string. Applicable to 1 of 141 methods.*
+* [`ForbiddenError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/forbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 141 methods.*
+* [`StreamRecordErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/streamrecorderrorresponse.py): Error payload returned by the legacy record-stream proxy when the downstream streaming request fails after route middleware has passed. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubRootNodesUnprocessableEntityError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubrootnodesunprocessableentityerror.py): Either of: - A typed query parameter could not be read: `page` or `limit` is not an   integer or is out of range (`page` below 1, `limit` outside 1-200),   `onlyContainers` or `flattened` is not a boolean, or `page`/`limit` was   sent more than once. `error.message` is the connector service's own   validation text. - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the   database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder   (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),   which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as   `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the   connector allows it and is not affected. Status code `422`. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubChildNodesUnprocessableEntityError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubchildnodesunprocessableentityerror.py): Either of: - A typed query parameter could not be read: `page` or `limit` is not an   integer or is out of range (`page` below 1, `limit` outside 1-200), or   `onlyContainers` or `flattened` is not a boolean. `error.message` is the   connector service's own validation text. - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the   database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder   (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),   which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as   `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the   connector allows it and is not affected. Status code `422`. Applicable to 1 of 141 methods.*
+* [`UploadAgentConversationChatAttachmentsUnprocessableEntityError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/uploadagentconversationchatattachmentsunprocessableentityerror.py): A PDF that could not be read within the upload's 50-second budget, or whose parse ran out of memory, is not attached (`<name> is too large or complex to read right now, so it wasn't attached. ...`). Only that upload fails. Status code `422`. Applicable to 1 of 141 methods.*
+* [`SearchHistoryInternalServerError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubRootNodesServiceUnavailableError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubrootnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 141 methods.*
+* [`GetKnowledgeHubChildNodesServiceUnavailableError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubchildnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 141 methods.*
+* [`ResponseValidationError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
+
+</details>
+
+\* Check [the method documentation](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#available-resources-and-operations) to see if the error is applicable.
+<!-- End Error Handling [errors] -->
+
+<!-- Start Server Selection [server] -->
+## Server Selection
+
+### Select Server by Index
+
+You can override the default server globally by passing a server index to the `server_idx: int` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
+
+| #   | Server                          | Variables      | Description                                       |
+| --- | ------------------------------- | -------------- | ------------------------------------------------- |
+| 0   | `https://{instance_url}/api/v1` | `instance_url` | Base API URL                                      |
+| 1   | `https://{instance_url}`        | `instance_url` | Root URL (used for MCP endpoints mounted at /mcp) |
+
+If the selected server has variables, you may override its default values through the additional parameters made available in the SDK constructor:
+
+| Variable       | Parameter           | Default              | Description                                                                                                                                                  |
+| -------------- | ------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `instance_url` | `instance_url: str` | `"app.pipeshub.com"` | Host name, with an optional port, of a PipesHub instance served over HTTPS. For a plain-HTTP instance, such as a local one, set the full server URL instead. |
+
+#### Example
+
+```python
+from pipeshub_sdk import Pipeshub
+
+
+with Pipeshub(
+    server_idx=0,
+    instance_url="app.pipeshub.com",
+) as pipeshub:
+
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
+
+    # Handle response
+    print(res)
+
+```
+
+### Override Server URL Per-Client
+
+The default server can also be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
+```python
+from pipeshub_sdk import Pipeshub
+
+
+with Pipeshub(
+    server_url="https://app.pipeshub.com",
+) as pipeshub:
+
+    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
+
+    # Handle response
+    print(res)
+
+```
+<!-- End Server Selection [server] -->
+
+<!-- Start Custom HTTP Client [http-client] -->
+## Custom HTTP Client
+
+The Python SDK makes API calls using the [httpx](https://www.python-httpx.org/) HTTP library.  In order to provide a convenient way to configure timeouts, cookies, proxies, custom headers, and other low-level configuration, you can initialize the SDK client with your own HTTP client instance.
+Depending on whether you are using the sync or async version of the SDK, you can pass an instance of `HttpClient` or `AsyncHttpClient` respectively, which are Protocol's ensuring that the client has the necessary methods to make API calls.
+This allows you to wrap the client with your own custom logic, such as adding custom headers, logging, or error handling, or you can just pass an instance of `httpx.Client` or `httpx.AsyncClient` directly.
+
+For example, you could specify a header for every request that this sdk makes as follows:
+```python
+from pipeshub_sdk import Pipeshub
+import httpx
+
+http_client = httpx.Client(headers={"x-custom-header": "someValue"})
+s = Pipeshub(client=http_client)
+```
+
+or you could wrap the client with your own custom logic:
+```python
+from pipeshub_sdk import Pipeshub
+from pipeshub_sdk.httpclient import AsyncHttpClient
+import httpx
+
+class CustomClient(AsyncHttpClient):
+    client: AsyncHttpClient
+
+    def __init__(self, client: AsyncHttpClient):
+        self.client = client
+
+    async def send(
+        self,
+        request: httpx.Request,
+        *,
+        stream: bool = False,
+        auth: Union[
+            httpx._types.AuthTypes, httpx._client.UseClientDefault, None
+        ] = httpx.USE_CLIENT_DEFAULT,
+        follow_redirects: Union[
+            bool, httpx._client.UseClientDefault
+        ] = httpx.USE_CLIENT_DEFAULT,
+    ) -> httpx.Response:
+        request.headers["Client-Level-Header"] = "added by client"
+
+        return await self.client.send(
+            request, stream=stream, auth=auth, follow_redirects=follow_redirects
+        )
+
+    def build_request(
+        self,
+        method: str,
+        url: httpx._types.URLTypes,
+        *,
+        content: Optional[httpx._types.RequestContent] = None,
+        data: Optional[httpx._types.RequestData] = None,
+        files: Optional[httpx._types.RequestFiles] = None,
+        json: Optional[Any] = None,
+        params: Optional[httpx._types.QueryParamTypes] = None,
+        headers: Optional[httpx._types.HeaderTypes] = None,
+        cookies: Optional[httpx._types.CookieTypes] = None,
+        timeout: Union[
+            httpx._types.TimeoutTypes, httpx._client.UseClientDefault
+        ] = httpx.USE_CLIENT_DEFAULT,
+        extensions: Optional[httpx._types.RequestExtensions] = None,
+    ) -> httpx.Request:
+        return self.client.build_request(
+            method,
+            url,
+            content=content,
+            data=data,
+            files=files,
+            json=json,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            timeout=timeout,
+            extensions=extensions,
+        )
+
+s = Pipeshub(async_client=CustomClient(httpx.AsyncClient()))
+```
+### httpx2 (Pydantic's httpx fork)
+
+[httpx2](https://httpx2.pydantic.dev/) is Pydantic's maintained fork of `httpx`. To run this SDK on httpx2, call `alias_httpx()` at your program's entry point, before importing the SDK, so every `import httpx` — including the ones inside the SDK — resolves to `httpx2`:
+```python
+import httpx2
+
+httpx2.alias_httpx()
+
+from pipeshub_sdk import Pipeshub
+
+s = Pipeshub()
+```
+
+An SDK can also be generated against httpx2 directly, so it depends on the fork instead of `httpx`, by setting `python.httpClientLibrary: httpx2` in `gen.yaml`.
+<!-- End Custom HTTP Client [http-client] -->
+
+<!-- Start Resource Management [resource-management] -->
+## Resource Management
+
+The `Pipeshub` class implements the context manager protocol and registers a finalizer function to close the underlying sync and async HTTPX clients it uses under the hood. This will close HTTP connections, release memory and free up other resources held by the SDK. In short-lived Python programs and notebooks that make a few SDK method calls, resource management may not be a concern. However, in longer-lived programs, it is beneficial to create a single SDK instance via a [context manager][context-manager] and reuse it across the application.
+
+[context-manager]: https://docs.python.org/3/reference/datamodel.html#context-managers
+
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+def main():
+
+    with Pipeshub(
+        security=models.Security(
+            bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+        ),
+    ) as pipeshub:
+        # Rest of application here...
+
+
+# Or when using async:
+async def amain():
+
+    async with Pipeshub(
+        security=models.Security(
+            bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+        ),
+    ) as pipeshub:
+        # Rest of application here...
+```
+<!-- End Resource Management [resource-management] -->
+
+<!-- Start Debugging [debug] -->
+## Debugging
+
+You can setup your SDK to emit debug logs for SDK requests and responses.
+
+You can pass your own logger class directly into your SDK.
+```python
+from pipeshub_sdk import Pipeshub
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+s = Pipeshub(debug_logger=logging.getLogger("pipeshub_sdk"))
+```
+
+You can also enable a default debug logger by setting an environment variable `PIPESHUB_DEBUG` to true.
+<!-- End Debugging [debug] -->
+
+<!-- Start IDE Support [idesupport] -->
+## IDE Support
+
+### PyCharm
+
+Generally, the SDK will work well with most IDEs out of the box. However, when using PyCharm, you can enjoy much better integration with Pydantic by installing an additional plugin.
+
+- [PyCharm Pydantic Plugin](https://docs.pydantic.dev/latest/integrations/pycharm/)
+<!-- End IDE Support [idesupport] -->
 
 <!-- Start Available Resources and Operations [operations] -->
 ## Available Resources and Operations
@@ -439,385 +853,18 @@ with Pipeshub() as pipeshub:
 </details>
 <!-- End Available Resources and Operations [operations] -->
 
-<!-- Start Server-sent event streaming [eventstream] -->
-## Server-sent event streaming
-
-[Server-sent events][mdn-sse] are used to stream content from certain
-operations. These operations will expose the stream as [Generator][generator] that
-can be consumed using a simple `for` loop. The loop will
-terminate when the server no longer has any events to send and closes the
-underlying connection.  
-
-The stream is also a [Context Manager][context-manager] and can be used with the `with` statement and will close the
-underlying connection when the context is exited.
-
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.knowledge_base.upload_records(kb_id="<id>", files=[], files_metadata=[
-        {
-            "file_path": "/docs/report.pdf",
-            "last_modified": 2024.0,
-        },
-    ], is_versioned="true", record_type="FILE")
-
-    with res as event_stream:
-        for event in event_stream:
-            # handle event
-            print(event, flush=True)
-
-```
-
-[mdn-sse]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
-[generator]: https://book.pythontips.com/en/latest/generators.html
-[context-manager]: https://book.pythontips.com/en/latest/context_managers.html
-<!-- End Server-sent event streaming [eventstream] -->
-
-<!-- Start File uploads [file-upload] -->
-## File uploads
-
-Certain SDK methods accept file objects as part of a request body or multi-part request. It is possible and typically recommended to upload files as a stream rather than reading the entire contents into memory. This avoids excessive memory consumption and potentially crashing with out-of-memory errors when working with very large files. The following example demonstrates how to attach a file stream to a request.
-
-> [!TIP]
->
-> For endpoints that handle file uploads bytes arrays can also be used. However, using streams is recommended for large files.
->
-
-```python
-import os
-from pipeshub_sdk import Pipeshub, models
-
-
-with Pipeshub(
-    security=models.Security(
-        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
-    ),
-) as pipeshub:
-
-    res = pipeshub.knowledge_base.update_record_multipart(record_id="<id>")
-
-    # Handle response
-    print(res)
-
-```
-<!-- End File uploads [file-upload] -->
-
-<!-- Start Retries [retries] -->
-## Retries
-
-Some of the endpoints in this SDK support retries. If you use the SDK without any configuration, it will fall back to the default retry strategy provided by the API. However, the default retry strategy can be overridden on a per-operation basis, or across the entire SDK.
-
-To change the default retry strategy for a single API call, simply provide a `RetryConfig` object to the call:
-```python
-from pipeshub_sdk import Pipeshub
-from pipeshub_sdk.utils import BackoffStrategy, RetryConfig
-
-
-with Pipeshub() as pipeshub:
-
-    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials",
-        RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False))
-
-    # Handle response
-    print(res)
-
-```
-
-If you'd like to override the default retry strategy for all operations that support retries, you can use the `retry_config` optional parameter when initializing the SDK:
-```python
-from pipeshub_sdk import Pipeshub
-from pipeshub_sdk.utils import BackoffStrategy, RetryConfig
-
-
-with Pipeshub(
-    retry_config=RetryConfig("backoff", BackoffStrategy(1, 50, 1.1, 100), False),
-) as pipeshub:
-
-    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
-
-    # Handle response
-    print(res)
-
-```
-<!-- End Retries [retries] -->
-
-<!-- Start Error Handling [errors] -->
-## Error Handling
-
-[`PipeshubError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/pipeshuberror.py) is the base class for all HTTP error responses. It has the following properties:
-
-| Property           | Type             | Description                                                                             |
-| ------------------ | ---------------- | --------------------------------------------------------------------------------------- |
-| `err.message`      | `str`            | Error message                                                                           |
-| `err.status_code`  | `int`            | HTTP response status code eg `404`                                                      |
-| `err.headers`      | `httpx.Headers`  | HTTP response headers                                                                   |
-| `err.body`         | `str`            | HTTP body. Can be empty string if no body is returned.                                  |
-| `err.raw_response` | `httpx.Response` | Raw HTTP response                                                                       |
-| `err.data`         |                  | Optional. Some errors may contain structured data. [See Error Classes](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#error-classes). |
-
-### Example
-```python
-from pipeshub_sdk import Pipeshub, errors
-
-
-with Pipeshub() as pipeshub:
-    res = None
-    try:
-
-        res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
-
-        # Handle response
-        print(res)
-
-
-    except errors.PipeshubError as e:
-        # The base class for HTTP error responses
-        print(e.message)
-        print(e.status_code)
-        print(e.body)
-        print(e.headers)
-        print(e.raw_response)
-
-        # Depending on the method different errors may be thrown
-        if isinstance(e, errors.ErrorResponse):
-            print(e.data.error)  # models.ErrorResponseError
-```
-
-### Error Classes
-**Primary errors:**
-* [`PipeshubError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/pipeshuberror.py): The base class for HTTP error responses.
-  * [`ErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/errorresponse.py): Standard error envelope returned by all errors routed through `ErrorMiddleware`. Applies to all `BaseError` subclasses including `HttpError`, `ValidationError`, and others. The `code` field is a machine-readable string identifying the error type (e.g. `HTTP_UNAUTHORIZED`, `HTTP_NOT_FOUND`, `VALIDATION_ERROR`, `INTERNAL_ERROR`). *
-
-<details><summary>Less common errors (21)</summary>
-
-<br />
-
-**Network errors:**
-* [`httpx.RequestError`](https://www.python-httpx.org/exceptions/#httpx.RequestError): Base class for request errors.
-    * [`httpx.ConnectError`](https://www.python-httpx.org/exceptions/#httpx.ConnectError): HTTP client was unable to make a request to a server.
-    * [`httpx.TimeoutException`](https://www.python-httpx.org/exceptions/#httpx.TimeoutException): HTTP request timed out.
-
-
-**Inherit from [`PipeshubError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/pipeshuberror.py)**:
-* [`OAuthClientManagementRateLimitError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/oauthclientmanagementratelimiterror.py): JSON body when OAuth client management routes exceed the per-minute rate limit (same limiter as other `/oauth-clients/*` routes). Status code `429`. Applicable to 20 of 141 methods.*
-* [`ApplicationJSONErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/applicationjsonerrorresponse.py): Standard JSON error envelope from `ErrorMiddleware` for `BaseError` subclasses (`error.middleware.ts`). Returned for most API 4xx errors (unauthorized, forbidden, not found, validation failures, etc.). Applicable to 17 of 141 methods.*
-* [`OAuthErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/oautherrorresponse.py): OAuth 2.0 Error Response (RFC 6749 Section 5.2). Standard error format for OAuth endpoints. Applicable to 3 of 141 methods.*
-* [`RateLimitErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/ratelimiterrorresponse.py): Rate-limit error payload (shape differs from standard error responses). Status code `429`. Applicable to 3 of 141 methods.*
-* [`LocalFsDesktopRefusalError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/localfsdesktoprefusalerror.py): 409 body returned when a Local FS connector cannot sync because of its owner device. Status code `409`. Applicable to 2 of 141 methods.*
-* [`BadRequestError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/badrequesterror.py): Error envelope for a failed request. Status code `400`. Applicable to 1 of 141 methods.*
-* [`UnauthorizedError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/unauthorizederror.py): Error envelope for a failed request. Status code `401`. Applicable to 1 of 141 methods.*
-* [`OAuthBearerTokenError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/oauthbearertokenerror.py): Error body written by the OAuth bearer-token middleware (RFC 6750 Section 3.1) on routes that accept only an OAuth access token, such as `GET /oauth2/userinfo`. The same `error`, `error_description` and `scope` values are repeated in the `WWW-Authenticate` response header. This is not the standard `ErrorResponse` envelope: `error` is a string. Applicable to 1 of 141 methods.*
-* [`ForbiddenError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/forbiddenerror.py): Error envelope for a failed request. Status code `403`. Applicable to 1 of 141 methods.*
-* [`StreamRecordErrorResponse`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/streamrecorderrorresponse.py): Error payload returned by the legacy record-stream proxy when the downstream streaming request fails after route middleware has passed. Applicable to 1 of 141 methods.*
-* [`GetKnowledgeHubRootNodesUnprocessableEntityError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubrootnodesunprocessableentityerror.py): Either of: - A typed query parameter could not be read: `page` or `limit` is not an   integer or is out of range (`page` below 1, `limit` outside 1-200),   `onlyContainers` or `flattened` is not a boolean, or `page`/`limit` was   sent more than once. `error.message` is the connector service's own   validation text. - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the   database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder   (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),   which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as   `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the   connector allows it and is not affected. Status code `422`. Applicable to 1 of 141 methods.*
-* [`GetKnowledgeHubChildNodesUnprocessableEntityError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubchildnodesunprocessableentityerror.py): Either of: - A typed query parameter could not be read: `page` or `limit` is not an   integer or is out of range (`page` below 1, `limit` outside 1-200), or   `onlyContainers` or `flattened` is not a boolean. `error.message` is the   connector service's own validation text. - A listing that spans a whole connector (a flattened listing, a search or a filter) was too large for the   database to hold in memory, so it was refused instead of cut short. No page is returned. Open a folder   (`GET /knowledgeBase/knowledge-hub/nodes/{parentType}/{parentId}`) to see its records, or add a search (`q`),   which keeps only matching records in memory. Choosing a connector, or a filter that keeps most records (such as   `nodeTypes`), does not help. Sorting by name with no filters is served from stored visibility where the   connector allows it and is not affected. Status code `422`. Applicable to 1 of 141 methods.*
-* [`UploadAgentConversationChatAttachmentsUnprocessableEntityError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/uploadagentconversationchatattachmentsunprocessableentityerror.py): A PDF that could not be read within the upload's 50-second budget, or whose parse ran out of memory, is not attached (`<name> is too large or complex to read right now, so it wasn't attached. ...`). Only that upload fails. Status code `422`. Applicable to 1 of 141 methods.*
-* [`SearchHistoryInternalServerError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/searchhistoryinternalservererror.py): Error envelope for a failed request. Status code `500`. Applicable to 1 of 141 methods.*
-* [`GetKnowledgeHubRootNodesServiceUnavailableError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubrootnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 141 methods.*
-* [`GetKnowledgeHubChildNodesServiceUnavailableError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/getknowledgehubchildnodesserviceunavailableerror.py): The database could not give this listing the memory it needs right now, because other requests were using it (nothing is wrong with the request). Retry after `Retry-After` seconds; the web app retries by itself. The body is the gateway's own busy message, not the service's wording. Status code `503`. Applicable to 1 of 141 methods.*
-* [`ResponseValidationError`](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/./src/pipeshub_sdk/errors/responsevalidationerror.py): Type mismatch between the response data and the expected Pydantic model. Provides access to the Pydantic validation error via the `cause` attribute.
-
-</details>
-
-\* Check [the method documentation](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#available-resources-and-operations) to see if the error is applicable.
-<!-- End Error Handling [errors] -->
-
-<!-- Start Server Selection [server] -->
-## Server Selection
-
-### Select Server by Index
-
-You can override the default server globally by passing a server index to the `server_idx: int` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
-
-| #   | Server                          | Variables      | Description                                       |
-| --- | ------------------------------- | -------------- | ------------------------------------------------- |
-| 0   | `https://{instance_url}/api/v1` | `instance_url` | Base API URL                                      |
-| 1   | `https://{instance_url}`        | `instance_url` | Root URL (used for MCP endpoints mounted at /mcp) |
-
-If the selected server has variables, you may override its default values through the additional parameters made available in the SDK constructor:
-
-| Variable       | Parameter           | Default                      | Description     |
-| -------------- | ------------------- | ---------------------------- | --------------- |
-| `instance_url` | `instance_url: str` | `"https://app.pipeshub.com"` | Base server URL |
-
-#### Example
-
-```python
-from pipeshub_sdk import Pipeshub
-
-
-with Pipeshub(
-    server_idx=0,
-    instance_url="https://app.pipeshub.com",
-) as pipeshub:
-
-    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
-
-    # Handle response
-    print(res)
-
-```
-
-### Override Server URL Per-Client
-
-The default server can also be overridden globally by passing a URL to the `server_url: str` optional parameter when initializing the SDK client instance. For example:
-```python
-from pipeshub_sdk import Pipeshub
-
-
-with Pipeshub(
-    server_url="https://https://app.pipeshub.com",
-) as pipeshub:
-
-    res = pipeshub.o_auth_provider.oauth_token(grant_type="client_credentials")
-
-    # Handle response
-    print(res)
-
-```
-<!-- End Server Selection [server] -->
-
-<!-- Start Custom HTTP Client [http-client] -->
-## Custom HTTP Client
-
-The Python SDK makes API calls using the [httpx](https://www.python-httpx.org/) HTTP library.  In order to provide a convenient way to configure timeouts, cookies, proxies, custom headers, and other low-level configuration, you can initialize the SDK client with your own HTTP client instance.
-Depending on whether you are using the sync or async version of the SDK, you can pass an instance of `HttpClient` or `AsyncHttpClient` respectively, which are Protocol's ensuring that the client has the necessary methods to make API calls.
-This allows you to wrap the client with your own custom logic, such as adding custom headers, logging, or error handling, or you can just pass an instance of `httpx.Client` or `httpx.AsyncClient` directly.
-
-For example, you could specify a header for every request that this sdk makes as follows:
-```python
-from pipeshub_sdk import Pipeshub
-import httpx
-
-http_client = httpx.Client(headers={"x-custom-header": "someValue"})
-s = Pipeshub(client=http_client)
-```
-
-or you could wrap the client with your own custom logic:
-```python
-from pipeshub_sdk import Pipeshub
-from pipeshub_sdk.httpclient import AsyncHttpClient
-import httpx
-
-class CustomClient(AsyncHttpClient):
-    client: AsyncHttpClient
-
-    def __init__(self, client: AsyncHttpClient):
-        self.client = client
-
-    async def send(
-        self,
-        request: httpx.Request,
-        *,
-        stream: bool = False,
-        auth: Union[
-            httpx._types.AuthTypes, httpx._client.UseClientDefault, None
-        ] = httpx.USE_CLIENT_DEFAULT,
-        follow_redirects: Union[
-            bool, httpx._client.UseClientDefault
-        ] = httpx.USE_CLIENT_DEFAULT,
-    ) -> httpx.Response:
-        request.headers["Client-Level-Header"] = "added by client"
-
-        return await self.client.send(
-            request, stream=stream, auth=auth, follow_redirects=follow_redirects
-        )
-
-    def build_request(
-        self,
-        method: str,
-        url: httpx._types.URLTypes,
-        *,
-        content: Optional[httpx._types.RequestContent] = None,
-        data: Optional[httpx._types.RequestData] = None,
-        files: Optional[httpx._types.RequestFiles] = None,
-        json: Optional[Any] = None,
-        params: Optional[httpx._types.QueryParamTypes] = None,
-        headers: Optional[httpx._types.HeaderTypes] = None,
-        cookies: Optional[httpx._types.CookieTypes] = None,
-        timeout: Union[
-            httpx._types.TimeoutTypes, httpx._client.UseClientDefault
-        ] = httpx.USE_CLIENT_DEFAULT,
-        extensions: Optional[httpx._types.RequestExtensions] = None,
-    ) -> httpx.Request:
-        return self.client.build_request(
-            method,
-            url,
-            content=content,
-            data=data,
-            files=files,
-            json=json,
-            params=params,
-            headers=headers,
-            cookies=cookies,
-            timeout=timeout,
-            extensions=extensions,
-        )
-
-s = Pipeshub(async_client=CustomClient(httpx.AsyncClient()))
-```
-### httpx2 (Pydantic's httpx fork)
-
-[httpx2](https://httpx2.pydantic.dev/) is Pydantic's maintained fork of `httpx`. To run this SDK on httpx2, call `alias_httpx()` at your program's entry point, before importing the SDK, so every `import httpx` — including the ones inside the SDK — resolves to `httpx2`:
-```python
-import httpx2
-
-httpx2.alias_httpx()
-
-from pipeshub_sdk import Pipeshub
-
-s = Pipeshub()
-```
-
-An SDK can also be generated against httpx2 directly, so it depends on the fork instead of `httpx`, by setting `python.httpClientLibrary: httpx2` in `gen.yaml`.
-<!-- End Custom HTTP Client [http-client] -->
-
-<!-- Start Resource Management [resource-management] -->
-## Resource Management
-
-The `Pipeshub` class implements the context manager protocol and registers a finalizer function to close the underlying sync and async HTTPX clients it uses under the hood. This will close HTTP connections, release memory and free up other resources held by the SDK. In short-lived Python programs and notebooks that make a few SDK method calls, resource management may not be a concern. However, in longer-lived programs, it is beneficial to create a single SDK instance via a [context manager][context-manager] and reuse it across the application.
-
-[context-manager]: https://docs.python.org/3/reference/datamodel.html#context-managers
-
-```python
-from pipeshub_sdk import Pipeshub
-def main():
-
-    with Pipeshub() as pipeshub:
-        # Rest of application here...
-
-
-# Or when using async:
-async def amain():
-
-    async with Pipeshub() as pipeshub:
-        # Rest of application here...
-```
-<!-- End Resource Management [resource-management] -->
-
-<!-- Start Debugging [debug] -->
-## Debugging
-
-You can setup your SDK to emit debug logs for SDK requests and responses.
-
-You can pass your own logger class directly into your SDK.
-```python
-from pipeshub_sdk import Pipeshub
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-s = Pipeshub(debug_logger=logging.getLogger("pipeshub_sdk"))
-```
-
-You can also enable a default debug logger by setting an environment variable `PIPESHUB_DEBUG` to true.
-<!-- End Debugging [debug] -->
-
 <!-- Placeholder for Future Speakeasy SDK Sections -->
+
+## Support
+
+- Bugs and feature requests: [open an issue](https://github.com/pipeshub-ai/pipeshub-sdk-python/issues).
+- Questions: the [PipesHub Discord](https://discord.com/invite/K5RskzJBm2).
+- PipesHub itself: [pipeshub-ai/pipeshub-ai](https://github.com/pipeshub-ai/pipeshub-ai).
+
+## Contributing
+
+Most of this SDK is generated, so direct changes to generated files are overwritten by the next release. Please open an issue instead. See [CONTRIBUTING.md](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/CONTRIBUTING.md).
+
+## License
+
+Licensed under the [Apache License 2.0](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/LICENSE).
