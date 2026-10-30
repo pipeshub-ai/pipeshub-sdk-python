@@ -1,5 +1,6 @@
 from .types import Hooks
 from .requestid import RequestIDHook
+from .versioncheck import VersionCheckHook
 
 
 # This file is only ever generated once on the first generation and then is free to be modified.
@@ -12,3 +13,4 @@ def init_hooks(hooks: Hooks):
     with an instance of a hook that implements that specific Hook interface
     Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance"""
     hooks.register_before_request_hook(RequestIDHook())
+    hooks.register_before_request_hook(VersionCheckHook())
