@@ -10,14 +10,12 @@ PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jir
 
 ## Documentation
 
-- [Personal access tokens](https://docs.pipeshub.com/developer/personal-access-tokens): create the token the SDK signs in with.
-- [Retrieval API](https://docs.pipeshub.com/developer/retrieval-api): permission-filtered passages with citations, for your own RAG or agent.
 - [API reference](https://docs.pipeshub.com/developer/api-reference): the PipesHub HTTP API.
 - [Available methods](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#available-resources-and-operations): every SDK method, linked to its parameters, response and errors.
 - [Examples](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/examples/): runnable programs for search, chat, agents, knowledge bases and connectors.
 - [Changelog](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/CHANGELOG.md)
 
-The client connects to PipesHub Cloud (`https://app.pipeshub.com`) by default. For a self-hosted instance, pass `server_url="https://<your-instance>/api/v1"` (see [Server Selection](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#server-selection)).
+The client signs in with a [personal access token](https://docs.pipeshub.com/developer/personal-access-tokens) and connects to PipesHub Cloud (`https://app.pipeshub.com`) by default. For a self-hosted instance, pass `server_url="https://<your-instance>/api/v1"` (see [Server Selection](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/master/#server-selection)).
 
 <!-- No Summary [summary] -->
 
