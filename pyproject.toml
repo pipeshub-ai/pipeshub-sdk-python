@@ -1,6 +1,6 @@
 [project]
 name = "pipeshub-sdk"
-version = "2.0.0"
+version = "2.0.1"
 description = "Official Python SDK for the PipesHub API. Search and chat over your company's knowledge."
 authors = [{ name = "Pipeshub" },]
 readme = "README-PYPI.md"
@@ -33,13 +33,13 @@ dev = [
     "pytest-xdist (>=3.8.0,<4.0.0)",
 ]
 
-peerDependencies = [
-]
-
 dependencies = [
 ]
 
 devDependencies = [
+]
+
+peerDependencies = [
 ]
 
 [tool.setuptools.packages.find]

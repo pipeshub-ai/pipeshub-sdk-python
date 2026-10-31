@@ -32,7 +32,7 @@ generation:
     skipResponseBodyAssertions: false
   repoUrl: https://github.com/pipeshub-ai/pipeshub-sdk-python
 python:
-  version: 2.0.0
+  version: 2.0.1
   additionalDependencies:
     dependencies: {}
     dev: {}
