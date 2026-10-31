@@ -4,9 +4,9 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://pypi.org/project/pipeshub-sdk/)
 [![License](https://img.shields.io/github/license/pipeshub-ai/pipeshub-sdk-python.svg)](https://github.com/pipeshub-ai/pipeshub-sdk-python/blob/main/LICENSE)
 
-The official Python SDK for [PipesHub](https://pipeshub.com). Search your company's knowledge and get answers with citations, run agents, and manage knowledge bases and connectors, all from your Python code.
+This is the official Python SDK for [PipesHub](https://pipeshub.com). Search your company's knowledge and get answers with citations, run agents, and manage knowledge bases and connectors, all from your Python code.
 
-PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jira and indexes their content. The SDK supports Python 3.10 and later, has type hints for every request and response, and offers both synchronous and asynchronous clients. It is generated with [Speakeasy](https://www.speakeasy.com) from the [PipesHub OpenAPI spec](https://github.com/pipeshub-ai/open-api).
+PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jira and indexes their content. The SDK supports Python 3.10 and later, has type hints for every request and response, and offers both synchronous and asynchronous clients.
 
 ## Documentation
 
