@@ -14,7 +14,7 @@ PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jir
 - [Available methods](#available-resources-and-operations): every SDK method, linked to its parameters, response and errors.
 - [Examples](examples/): runnable programs for search, chat, agents, knowledge bases and connectors.
 
-The client signs in with a [personal access token](https://docs.pipeshub.com/developer/personal-access-tokens) and connects to PipesHub Cloud (`https://app.pipeshub.com`) by default. For a self-hosted instance, pass `server_url="https://<your-instance>/api/v1"` (see [Server Selection](#server-selection)).
+The client signs in with either a [personal access token](https://docs.pipeshub.com/developer/personal-access-tokens) or an [OAuth 2.0](https://docs.pipeshub.com/developer/oauth2) access token (see [Authentication](#authentication)). It connects to PipesHub Cloud (`https://app.pipeshub.com`) by default. For a self-hosted instance, pass `server_url="https://<your-instance>/api/v1"` (see [Server Selection](#server-selection)).
 
 <!-- No Summary [summary] -->
 
