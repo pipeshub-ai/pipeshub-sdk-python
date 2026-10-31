@@ -22,6 +22,10 @@ jobs:
         with:
           python-version: "3.10"
 
+      # pyproject's readme is README-PYPI.md: README.md with links made absolute for PyPI.
+      - name: Prepare PyPI README
+        run: python scripts/prepare_readme.py
+
       - name: Build package
         run: uv build
 

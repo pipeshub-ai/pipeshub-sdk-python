@@ -1,17 +1,19 @@
 lockVersion: 2.0.0
 id: 086dcfb9-75aa-430a-bc0b-1f4d5b0a89bd
 management:
-  docChecksum: caae7eb2327e6df06a27766de8bf23dd
+  docChecksum: 33d1bafce6edf89acc5e973b9581bbaf
   docVersion: 1.0.0
   speakeasyVersion: 1.801.0
   generationVersion: 2.946.0
   releaseVersion: 2.0.0
-  configChecksum: 0e8b7b80d9669e51c1e96156bb9a0082
+  configChecksum: b2d16a2506cd40b312a848f20e1cd885
+  repoURL: https://github.com/pipeshub-ai/pipeshub-sdk-python
+  installationURL: https://github.com/pipeshub-ai/pipeshub-sdk-python.git
   published: true
 persistentEdits:
-  generation_id: 447d0ee4-b79b-4600-960a-438d78487751
-  pristine_commit_hash: 3cd8f2a36449f386b65533bf8770a38b7913e9a7
-  pristine_tree_hash: 541c48b2bdcc6680fa06670daca1e24a17d3d959
+  generation_id: 6ffabb37-11e3-493d-93db-3290ae982d9a
+  pristine_commit_hash: ccfc1131efc91c7ea2883664066e936bd84b169b
+  pristine_tree_hash: f0aa5781ba789c137d84858854c3aab2e544e4cf
 features:
   python:
     additionalDependencies: 1.1.0
@@ -25,6 +27,7 @@ features:
     enumUnions: 0.1.1
     envVarSecurityUsage: 0.3.3
     errorUnions: 1.0.2
+    examples: 3.0.4
     flatRequests: 1.0.1
     flattening: 3.1.1
     globalSecurity: 3.0.7
@@ -55,8 +58,8 @@ trackedFiles:
     pristine_git_object: 8d79f0abb72526f1fb34a4c03e5bba612c6ba2ae
   USAGE.md:
     id: 3aed33ce6e6f
-    last_write_checksum: sha1:125754a057370e3708619ae3ab7b0d228f08a5d3
-    pristine_git_object: f1fad8f13655a26eef7ab048a28f27193e3f3a27
+    last_write_checksum: sha1:6a58f321290a45fddecf44de586b21b6599d79f1
+    pristine_git_object: 247009ae90c8790d2018fbd3b98d13fe36ca4a70
   docs/errors/applicationjsonerrorresponse.md:
     id: eacc9caffb98
     last_write_checksum: sha1:7ef1add2c11635ceb4ec1ee95c905ec8b0f289f2
@@ -4127,8 +4130,8 @@ trackedFiles:
     pristine_git_object: 2b787273c0f112f6bfc37e3c8efd097cbc81a29a
   docs/sdks/semanticsearch/README.md:
     id: dcaf2a437dec
-    last_write_checksum: sha1:dfee6d0c230dcadef6f67c39fbbcd9ba33a2b852
-    pristine_git_object: bc6c6382e2a587e07a8b08af2fadd3c3bd1fb5f6
+    last_write_checksum: sha1:a2591912a29108581d97b5d9c34b171dc5039a2b
+    pristine_git_object: 79ad74106e113224f2469c1dea0875151b0060d0
   docs/sdks/useraccount/README.md:
     id: 442d2e5df2cd
     last_write_checksum: sha1:6743acd9e824357262673d37e8fefe36ca6ef4d2
@@ -4147,12 +4150,16 @@ trackedFiles:
     pristine_git_object: 3075abab37faa3863076fba0ca7769eeb353c1dc
   pyproject.toml:
     id: 5d07e7d72637
-    last_write_checksum: sha1:f75cb0fa35173ec205fe286ca89a20e7f0ed708f
-    pristine_git_object: 49a9d4855cccee2a033d1731f036becb6503ce30
+    last_write_checksum: sha1:ad4dc1cf73f4b53fa27157e4cda399eb16255efe
+    pristine_git_object: 9f6dbd9e0efda2c7354ce776536d6191c34c9c06
+  scripts/prepare_readme.py:
+    id: e0c5957a6035
+    last_write_checksum: sha1:01ed17d63607a8ce49af656e4736e2e473a3d3f9
+    pristine_git_object: 297ba95833a2c3e553b8516a79e0c44ba9ba53d2
   scripts/publish.sh:
     id: fe273b08f514
-    last_write_checksum: sha1:adc9b741c12ad1591ab4870eabe20f0d0a86cd1a
-    pristine_git_object: ef28dc10c60d7d6a4bac0c6a1e9caba36b471861
+    last_write_checksum: sha1:b290b25b36dca3d5eb1a2e66a2e1bcf2e7326cf3
+    pristine_git_object: c35748f360329c2bc370e9b189f49b1a360b2c48
   src/pipeshub_sdk/__init__.py:
     id: 9251d8adc6e1
     last_write_checksum: sha1:da077c0bdfcef64a4a5aea91a17292f72fa2b088
@@ -5951,8 +5958,8 @@ trackedFiles:
     pristine_git_object: 3e38f1a929f7d6b1d6de74604aa87e3d8f010544
   src/pipeshub_sdk/sdk.py:
     id: 9430f0363adf
-    last_write_checksum: sha1:c54025436719e9952593455fbc3b1b5a62921a97
-    pristine_git_object: 8b9925ea7f1e4fec7ec590fab1ee6b9530b09255
+    last_write_checksum: sha1:ed82e2508a559e646cabae27c31abdbd3245395b
+    pristine_git_object: 2e66926128c03299531aa5511e95316724f157e6
   src/pipeshub_sdk/sdkconfiguration.py:
     id: d503178da5d8
     last_write_checksum: sha1:6042207f66191555094230ec464070be148b54df
@@ -10584,7 +10591,7 @@ examples:
         application/json: {"query": "how do we roll back a canary?", "limit": 8, "filters": {"kb": ["3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b90"]}, "rewriteQuery": false}
       responses:
         "200":
-          application/json: {"chunks": [{"id": "<id>", "text": "<value>", "record": {"recordId": "<id>", "name": "<value>", "connector": "<value>", "mimeType": "<value>", "updatedAt": "1735674666672"}, "citation": {"url": "https://crazy-horde.net/", "recordUrl": "https://pure-detective.org/", "pageNum": null, "blockIndex": 533417}}], "incomplete": true}
+          application/json: {"chunks": [{"id": "<id>", "text": "<value>", "record": {"recordId": "<id>", "name": "<value>", "connector": "<value>", "mimeType": "<value>", "updatedAt": "1735683497228"}, "citation": {"url": "https://interesting-sauerkraut.name/", "recordUrl": "https://excitable-tenant.com", "pageNum": [309685, 213678], "blockIndex": 458991}}], "incomplete": true}
         "400":
           application/json: {"error": {"code": "HTTP_FORBIDDEN", "message": "You need admin access to do this. Ask an admin in your organisation."}}
         "500":
@@ -10594,7 +10601,17 @@ examples:
         application/json: {"query": "<value>", "limit": 8, "rewriteQuery": false}
       responses:
         "200":
-          application/json: {"chunks": [{"id": "<id>", "text": "<value>", "record": {"recordId": "<id>", "name": "<value>", "connector": "<value>", "mimeType": "<value>", "updatedAt": "1735674666672"}, "citation": {"url": "https://crazy-horde.net/", "recordUrl": "https://pure-detective.org/", "pageNum": null, "blockIndex": 533417}}], "incomplete": true}
+          application/json: {"chunks": [{"id": "<id>", "text": "<value>", "record": {"recordId": "<id>", "name": "<value>", "connector": "<value>", "mimeType": "<value>", "updatedAt": "1735683497228"}, "citation": {"url": "https://interesting-sauerkraut.name/", "recordUrl": "https://excitable-tenant.com", "pageNum": [309685, 213678], "blockIndex": 458991}}], "incomplete": true}
+        "400":
+          application/json: {"error": {"code": "HTTP_FORBIDDEN", "message": "You need admin access to do this. Ask an admin in your organisation."}}
+        "500":
+          application/json: {"error": {"code": "HTTP_FORBIDDEN", "message": "You need admin access to do this. Ask an admin in your organisation."}}
+    basic:
+      requestBody:
+        application/json: {"query": "how do we roll back a canary?", "limit": 8, "rewriteQuery": false}
+      responses:
+        "200":
+          application/json: {"chunks": [{"id": "<id>", "text": "<value>", "record": {"recordId": "<id>", "name": "<value>", "connector": "<value>", "mimeType": "<value>", "updatedAt": "1735683497228"}, "citation": {"url": "https://interesting-sauerkraut.name/", "recordUrl": "https://excitable-tenant.com", "pageNum": [309685, 213678], "blockIndex": 458991}}], "incomplete": true}
         "400":
           application/json: {"error": {"code": "HTTP_FORBIDDEN", "message": "You need admin access to do this. Ask an admin in your organisation."}}
         "500":

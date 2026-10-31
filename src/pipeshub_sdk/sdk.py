@@ -40,17 +40,11 @@ if TYPE_CHECKING:
 
 
 class Pipeshub(BaseSDK):
-    r"""PipesHub API: Unified API documentation for PipesHub services.
+    r"""PipesHub API: Search and chat over your company's knowledge, with citations to the source.
 
-    PipesHub is an enterprise-grade platform providing:
-    - User authentication and management
-    - Document storage and version control
-    - Knowledge base management
-    - Enterprise search and conversational AI
-    - Third-party integrations via connectors
-    - System configuration management
-    - Crawling job scheduling
-    - Email services
+    PipesHub connects workplace apps such as Google Drive, Slack, Confluence and Jira and indexes
+    their content. This API searches and chats over that knowledge, runs agents, and manages
+    knowledge bases, connectors, users and access.
 
     ## Authentication
     Most endpoints require JWT Bearer token authentication. Some internal endpoints use scoped tokens for service-to-service communication.
@@ -331,10 +325,10 @@ class Pipeshub(BaseSDK):
                 server_url = utils.template_url(server_url, url_params)
         server_defaults: List[Dict[str, str]] = [
             {
-                "instance_url": instance_url or "https://app.pipeshub.com",
+                "instance_url": instance_url or "app.pipeshub.com",
             },
             {
-                "instance_url": instance_url or "https://app.pipeshub.com",
+                "instance_url": instance_url or "app.pipeshub.com",
             },
         ]
 

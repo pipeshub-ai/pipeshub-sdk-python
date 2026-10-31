@@ -31,7 +31,27 @@ Nothing to find (no match, no accessible records, nothing indexed
 yet) is a `200` with an empty `chunks` list.
 
 
-### Example Usage
+### Example Usage: basic
+
+<!-- UsageSnippet language="python" operationID="retrieve" method="post" path="/retrieve" example="basic" -->
+```python
+import os
+from pipeshub_sdk import Pipeshub, models
+
+
+with Pipeshub(
+    security=models.Security(
+        bearer_auth=os.getenv("PIPESHUB_BEARER_AUTH", ""),
+    ),
+) as pipeshub:
+
+    res = pipeshub.semantic_search.retrieve(query="how do we roll back a canary?", limit=8, rewrite_query=False)
+
+    # Handle response
+    print(res)
+
+```
+### Example Usage: simple
 
 <!-- UsageSnippet language="python" operationID="retrieve" method="post" path="/retrieve" example="simple" -->
 ```python
